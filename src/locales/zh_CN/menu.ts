@@ -58,5 +58,11 @@ export default {
   rule: '规则管理',
   api: '服务开发',
   api_dev: 'API开发',
-  api_manager: 'API管理'
+  api_manager: 'API管理',
+  data_assets: '数据资产',
+  assets_overview: '资产总览',
+  assets_catalog: '资产目录',
+  rest: '接口管理',
+  rest_dev: '接口注册',
+  rest_manager: '接口管理'
 }

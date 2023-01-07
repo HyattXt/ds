@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts" setup>
-import {defineComponent, getCurrentInstance, ref} from 'vue'
+import {defineComponent,  ref} from 'vue'
   import step1 from './Step1.vue'
   import step2 from './Step2.vue'
   import step3 from './Step3.vue'
@@ -38,7 +38,9 @@ import {defineComponent, getCurrentInstance, ref} from 'vue'
 
   const currentTab = ref(1)
   const currentStatus = ref('process')
-  const SecondDevUrl = getCurrentInstance().appContext.config.globalProperties
+  const SecondDevApiUrl = import.meta.env.MODE === 'development'
+    ? import.meta.env.VITE_APP_DEV_API_URL
+    : import.meta.env.VITE_APP_PROD_API_URL
   const params = ref({
     id: -1,
     apiName: '',
@@ -89,8 +91,8 @@ import {defineComponent, getCurrentInstance, ref} from 'vue'
 
   function nextStep3() {
     return new Promise((resolve) => {
-      const url = SecondDevUrl.SecondDevUrl+'/interface-ui/api/save-api?id=-1'
-      const urlUpdate = SecondDevUrl.SecondDevUrl+'/interface/update'
+      const url = SecondDevApiUrl+'/interface-ui/api/save-api?id=-1'
+      const urlUpdate = SecondDevApiUrl+'/interface/update'
       let apiId = ''
       axios
         .post(url, params.value)

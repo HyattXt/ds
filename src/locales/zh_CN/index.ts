@@ -31,6 +31,7 @@ import security from '@/locales/zh_CN/security'
 import theme from '@/locales/zh_CN/theme'
 import user_dropdown from '@/locales/zh_CN/user-dropdown'
 import api from '@/locales/zh_CN/api'
+import data_assets from '@/locales/zh_CN/dataassets'
 
 export default {
   login,
@@ -48,5 +49,6 @@ export default {
   datasource,
   data_quality,
   crontab,
-  api
+  api,
+  data_assets
 }

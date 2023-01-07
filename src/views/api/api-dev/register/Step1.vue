@@ -87,7 +87,7 @@
 </template>
 
 <script lang="ts" setup>
-import {getCurrentInstance, ref} from 'vue'
+import { ref} from 'vue'
   import { useMessage } from 'naive-ui'
   import axios from 'axios'
   import { replace } from 'lodash'
@@ -98,7 +98,9 @@ import {getCurrentInstance, ref} from 'vue'
   const kvValue = ref([])
   const bodyValue = ref([])
   const emit = defineEmits(['nextStep'])
-  const SecondDevUrl = getCurrentInstance().appContext.config.globalProperties
+  const SecondDevApiUrl = import.meta.env.MODE === 'development'
+    ? import.meta.env.VITE_APP_DEV_API_URL
+    : import.meta.env.VITE_APP_PROD_API_URL
   const formValue = ref({
     apiName: '',
     apiPath: '',
@@ -112,7 +114,7 @@ import {getCurrentInstance, ref} from 'vue'
 
   let validatePath = (rule: any, value: any, callback: any) => {
     return new Promise<void>((resolve, reject) => {
-      let url = SecondDevUrl.SecondDevUrl+'/interface/getApiPath'
+      let url = SecondDevApiUrl+'/interface/getApiPath'
       let body = { apiPath: '/proxy' + value }
       console.log(body)
       //0存在，1不存在
@@ -181,7 +183,7 @@ import {getCurrentInstance, ref} from 'vue'
   function formSubmit() {
     form1Ref.value.validate((errors: any) => {
       if (!errors) {
-        let insUrl = SecondDevUrl.SecondDevUrl+'/interface/insert'
+        let insUrl = SecondDevApiUrl+'/interface/insert'
         let sample = {
           requestHeader: [],
           requestBody: {},

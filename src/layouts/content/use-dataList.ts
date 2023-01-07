@@ -47,7 +47,10 @@ import {
   ApartmentOutlined,
   BarsOutlined,
   CloudServerOutlined,
-  ApiOutlined
+  ApiOutlined,
+  PieChartOutlined,
+  BarChartOutlined,
+  BoxPlotOutlined
 } from '@vicons/antd'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/store/user/user'
@@ -323,6 +326,35 @@ export function useDataList() {
           {
             label: t('menu.api_manager'),
             key: '/service/api-manager',
+            icon: renderIcon(BarsOutlined)
+          }
+        ]
+      },
+      {
+        label: () => h(NEllipsis, null, { default: () => t('menu.data_assets') }),
+        key: 'data-assets',
+        icon: renderIcon(PieChartOutlined),
+        children: [
+          {
+            label: t('menu.assets_overview'),
+            key: '/data-assets/assets-overview',
+            icon: renderIcon(BarChartOutlined)
+          },
+          {
+            label: t('menu.assets_catalog'),
+            key: '/data-assets/assets-catalog',
+            icon: renderIcon(BarsOutlined)
+          }
+        ]
+      },
+      {
+        label: () => h(NEllipsis, null, { default: () => t('menu.rest') }),
+        key: 'rest',
+        icon: renderIcon(BoxPlotOutlined),
+        children: [
+          {
+            label: t('menu.rest_manager'),
+            key: '/rest/rest-manager',
             icon: renderIcon(BarsOutlined)
           }
         ]

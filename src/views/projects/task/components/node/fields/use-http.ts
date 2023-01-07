@@ -17,6 +17,9 @@
 import { useI18n } from 'vue-i18n'
 import { useCustomParams } from '.'
 import type { IJsonItem } from '../types'
+import { onMounted, ref} from "vue";
+import axios from "axios";
+import {useMessage} from "naive-ui";
 
 export function useHttp(model: { [field: string]: any }): IJsonItem[] {
   const { t } = useI18n()
@@ -40,11 +43,43 @@ export function useHttp(model: { [field: string]: any }): IJsonItem[] {
     }
   ]
 
+  const restOptions = ref([] as { label: string; value: number }[])
+  const restUrl = import.meta.env.MODE === 'development'
+      ? import.meta.env.VITE_APP_DEV_REST_URL
+      : import.meta.env.VITE_APP_PROD_REST_URL
+
+  function queryRestSourceList() {
+    let restOptionUrl = restUrl+'/httpHandle/getHttpDataListByParams'
+    const params = {
+      'pageNum': 1,
+      'pageSize': 100,
+      'taskName': ''
+    }
+    axios
+        .post(restOptionUrl, params)
+        .then(function (response) {
+          restOptions.value = response.data.data.map((item: any) => ({
+            label: item.taskName,
+            value: item.id
+          }))
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+  }
+  const onChange = () => {
+    queryRestSourceList()
+  }
+  onMounted( () => {
+    queryRestSourceList()
+  })
+
   return [
     {
       type: 'input',
       field: 'url',
       name: t('project.node.http_url'),
+      value: 'http://localhost:8187/httpHandle/schedulerHttpDataHandle',
       props: {
         placeholder: t('project.node.http_url_tips')
       },
@@ -76,6 +111,7 @@ export function useHttp(model: { [field: string]: any }): IJsonItem[] {
         {
           type: 'input',
           field: 'prop',
+          value: 'id',
           span: 6,
           props: {
             placeholder: t('project.node.prop_tips'),
@@ -107,9 +143,10 @@ export function useHttp(model: { [field: string]: any }): IJsonItem[] {
           value: 'PARAMETER'
         },
         {
-          type: 'input',
+          type: 'select',
           field: 'value',
-          span: 6,
+          options: restOptions,
+          span: 8,
           props: {
             placeholder: t('project.node.value_tips'),
             maxLength: 256

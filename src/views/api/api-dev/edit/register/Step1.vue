@@ -75,7 +75,7 @@
 </template>
 
 <script lang="ts" setup>
-import {getCurrentInstance, onMounted, ref} from 'vue'
+import { onMounted, ref} from 'vue'
   import { useMessage } from 'naive-ui'
   import axios from 'axios'
   import { useRoute } from 'vue-router'
@@ -87,7 +87,9 @@ import {getCurrentInstance, onMounted, ref} from 'vue'
   const bodyValue = ref([])
   const emit = defineEmits(['nextStep'])
   const route = useRoute()
-  const SecondDevUrl = getCurrentInstance().appContext.config.globalProperties
+  const SecondDevApiUrl = import.meta.env.MODE === 'development'
+    ? import.meta.env.VITE_APP_DEV_API_URL
+    : import.meta.env.VITE_APP_PROD_API_URL
   const formValue = ref({
     apiName: '',
     apiPath: '',
@@ -130,7 +132,7 @@ import {getCurrentInstance, onMounted, ref} from 'vue'
   function formSubmit() {
     form1Ref.value.validate((errors: any) => {
       if (!errors) {
-        let insUrl = SecondDevUrl.SecondDevUrl+'/interface/update'
+        let insUrl = SecondDevApiUrl+'/interface/update'
         let sample = {
           requestHeader: [],
           requestBody: {},
@@ -177,7 +179,7 @@ import {getCurrentInstance, onMounted, ref} from 'vue'
   }
 
   onMounted(() => {
-    let url = SecondDevUrl.SecondDevUrl+'/interface/getInterfaceInfoById'
+    let url = SecondDevApiUrl+'/interface/getInterfaceInfoById'
     let params = { apiId: '' }
     params.apiId = route.query.apiId
     console.log(params)

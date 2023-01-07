@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts" setup>
-import {getCurrentInstance, Ref, ref} from 'vue'
+import { ref} from 'vue'
   import { useMessage } from 'naive-ui'
   import axios from 'axios'
 
@@ -54,7 +54,9 @@ import {getCurrentInstance, Ref, ref} from 'vue'
   const message = useMessage()
   const tList = ref([])
   const colList = ref([])
-  const SecondDevUrl = getCurrentInstance().appContext.config.globalProperties
+  const SecondDevApiUrl = import.meta.env.MODE === 'development'
+    ? import.meta.env.VITE_APP_DEV_API_URL
+    : import.meta.env.VITE_APP_PROD_API_URL
 
 const formValue = ref({
     sourceType: '',
@@ -63,7 +65,7 @@ const formValue = ref({
   })
 
   function queryTab() {
-    const url = SecondDevUrl.SecondDevUrl+'/interface/getTables'
+    const url = SecondDevApiUrl+'/interface/getTables'
 
     axios.get(url).then(function (response) {
       console.log(response)
@@ -72,7 +74,7 @@ const formValue = ref({
   }
 
   function queryCol(table: string) {
-    const url = SecondDevUrl.SecondDevUrl+'/interface/getColumnsByTable'
+    const url = SecondDevApiUrl+'/interface/getColumnsByTable'
     const params = {
       tableName: table
     }

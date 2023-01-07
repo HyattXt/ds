@@ -57,7 +57,15 @@ export default defineConfig({
         target: loadEnv('development', './').VITE_APP_DEV_API_URL,
         changeOrigin: true
       },
+      '/getSqlLineageListByParams': {
+      target: loadEnv('development', './').VITE_APP_DEV_ASSETS_URL,
+      changeOrigin: true
+      },
       '/api': {
+        target: loadEnv('development', './').VITE_APP_DEV_API_URL,
+        changeOrigin: true
+      },
+      '/httpHandle': {
         target: loadEnv('development', './').VITE_APP_DEV_API_URL,
         changeOrigin: true
       }

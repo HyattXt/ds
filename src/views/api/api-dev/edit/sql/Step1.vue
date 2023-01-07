@@ -64,7 +64,7 @@
 </template>
 
 <script lang="ts" setup>
-import {getCurrentInstance, onMounted, ref} from 'vue'
+import { onMounted, ref} from 'vue'
   import { useMessage } from 'naive-ui'
   import axios from 'axios'
   import { useRoute } from 'vue-router'
@@ -73,7 +73,9 @@ import {getCurrentInstance, onMounted, ref} from 'vue'
   const emit = defineEmits(['nextStep'])
   const form1Ref: any = ref(null)
   const message = useMessage()
-  const SecondDevUrl = getCurrentInstance().appContext.config.globalProperties
+  const SecondDevApiUrl = import.meta.env.MODE === 'development'
+    ? import.meta.env.VITE_APP_DEV_API_URL
+    : import.meta.env.VITE_APP_PROD_API_URL
   const formValue = ref({
     apiId: '',
     apiName: '',
@@ -129,7 +131,7 @@ import {getCurrentInstance, onMounted, ref} from 'vue'
   }
 
   onMounted(() => {
-    let url = SecondDevUrl.SecondDevUrl+'/interface/getInterfaceInfoById'
+    let url = SecondDevApiUrl+'/interface/getInterfaceInfoById'
     let params = { apiId: '' }
     params.apiId = route.query.apiId
     console.log(params)

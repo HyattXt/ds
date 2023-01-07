@@ -58,5 +58,11 @@ export default {
   rule: 'Rule management',
   api: 'Api',
   api_dev: 'API development',
-  api_manager: 'API manager'
+  api_manager: 'API manager',
+  data_assets: 'Data Assets',
+  assets_overview: 'Assets Overview',
+  assets_catalog: 'Assets Catalog',
+  rest: 'Http manager',
+  rest_dev: 'Http development',
+  rest_manager: 'Http manager'
 }

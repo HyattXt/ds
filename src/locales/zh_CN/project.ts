@@ -385,6 +385,7 @@ export default {
     http_url: '请求地址',
     http_url_tips: '请填写请求地址(必填)',
     http_url_validator: '请求地址需包含http或者https',
+    http_rest: '请求接口',
     http_method: '请求类型',
     http_parameters: '请求参数',
     http_check_condition: '校验条件',

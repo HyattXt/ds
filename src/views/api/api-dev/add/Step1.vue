@@ -63,17 +63,19 @@
 </template>
 
 <script lang="ts" setup>
-  import { getCurrentInstance, ref } from 'vue'
+  import { ref } from 'vue'
   import { useMessage } from 'naive-ui'
   import axios from 'axios'
   const emit = defineEmits(['nextStep'])
   const form1Ref: any = ref(null)
   const message = useMessage()
-  const SecondDevUrl = getCurrentInstance().appContext.config.globalProperties
+  const SecondDevApiUrl = import.meta.env.MODE === 'development'
+    ? import.meta.env.VITE_APP_DEV_API_URL
+    : import.meta.env.VITE_APP_PROD_API_URL
 
   let validatePath = (rule: any, value: any, callback: any) => {
     return new Promise<void>((resolve, reject) => {
-      let url = SecondDevUrl.SecondDevUrl+'/interface/getApiPath'
+      let url = SecondDevApiUrl+'/interface/getApiPath'
       let body = { apiPath: value }
       console.log(body)
       //0存在，1不存在

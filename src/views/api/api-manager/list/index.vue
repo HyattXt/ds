@@ -3,7 +3,7 @@
     <n-card size="small">
       <n-space justify="end" style="height: 40px">
         <n-form ref="formRef" :model="pagination">
-          <n-grid :cols="26" :x-gap="24">
+          <n-grid :cols="26" :x-gap="12">
             <n-form-item-gi
               :span="6"
               :show-label="false"
@@ -318,7 +318,9 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
     apiPath = ''
   ) {
     return new Promise((resolve) => {
-      const url = getCurrentInstance().appContext.config.globalProperties.SecondDevUrl+'/interface/getList'
+      const url = import.meta.env.MODE === 'development'
+          ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/getList'
+          : import.meta.env.VITE_APP_PROD_API_URL+'/interface/getList'
       const params = {
         pageNum: page,
       'pageSize': pageSize,
@@ -360,7 +362,9 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
 
   export default defineComponent({
     setup() {
-      const ip = ref(import.meta.env.VITE_APP_DEV_API_URL)
+      const ip = ref(import.meta.env.MODE === 'development'
+          ? import.meta.env.VITE_APP_DEV_API_URL
+          : import.meta.env.VITE_APP_PROD_API_URL)
       const dataRef = ref([])
       const loadingRef = ref(true)
       const active = ref(false)
@@ -390,8 +394,12 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
       const message = useMessage()
 
       function queryUser() {
-        const listUrl = getCurrentInstance().appContext.config.globalProperties.SecondDevUrl+'/interface/getUser'
-        const authListUrl = getCurrentInstance().appContext.config.globalProperties.SecondDevUrl+'/interface/getAuthorizeInfo'
+        const listUrl = import.meta.env.MODE === 'development'
+            ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/getUser'
+            : import.meta.env.VITE_APP_PROD_API_URL+'/interface/getUser'
+        const authListUrl = import.meta.env.MODE === 'development'
+            ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/getAuthorizeInfo'
+            : import.meta.env.VITE_APP_PROD_API_URL+'/interface/getAuthorizeInfo'
         axios.get(listUrl).then(function (response) {
           console.log(response)
           userList.value = response.data.data
@@ -431,7 +439,9 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
       }
 
       function queryBasic(apiId) {
-        const url = getCurrentInstance().appContext.config.globalProperties.SecondDevUrl+'/interface/getInterfaceInfoById'
+        const url = import.meta.env.MODE === 'development'
+            ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/getInterfaceInfoById'
+            : import.meta.env.VITE_APP_PROD_API_URL+'/interface/getInterfaceInfoById'
         let basicPar = {
           apiId: drawId.value
         }
@@ -496,7 +506,9 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
       }
 
       function subAuth() {
-        let subUrl = getCurrentInstance().appContext.config.globalProperties.SecondDevUrl+'/interface/insertAuthorizeInfo'
+        let subUrl = import.meta.env.MODE === 'development'
+            ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/insertAuthorizeInfo'
+            : import.meta.env.VITE_APP_PROD_API_URL+'/interface/insertAuthorizeInfo'
         let requestBody = {
           apiId: drawId.value,
         'authorizeId': apiAuthorizer.value
@@ -527,7 +539,9 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
             pub(row) {
               if (row.apiStatus === '待发布') {
                 if (row.apiFlag === '接口开发') {
-                  let urlPub = getCurrentInstance().appContext.config.globalProperties.SecondDevUrl+'/interface-ui/api/publish?id=${row.apiId}'
+                  let urlPub = import.meta.env.MODE === 'development'
+                      ? import.meta.env.VITE_APP_DEV_API_URL+`/interface-ui/api/publish?id=${row.apiId}`
+                      : import.meta.env.VITE_APP_PROD_API_URL+`/interface-ui/api/publish?id=${row.apiId}`
                   let pubPar = {
                     id: ''
                   }
@@ -544,7 +558,9 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
                       console.log(error)
                     })
                 } else {
-                  let urlPub = getCurrentInstance().appContext.config.globalProperties.SecondDevUrl+'/interface/update'
+                  let urlPub = import.meta.env.MODE === 'development'
+                      ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/update'
+                      : import.meta.env.VITE_APP_PROD_API_URL+'/interface/update'
                   let pubPar = {
                     apiId: '',
                     apiStatus: 1
@@ -563,7 +579,9 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
                     })
                 }
               } else {
-                let urlPub = getCurrentInstance().appContext.config.globalProperties.SecondDevUrl+'/interface/update'
+                let urlPub = import.meta.env.MODE === 'development'
+                    ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/update'
+                    : import.meta.env.VITE_APP_PROD_API_URL+'/interface/update'
                 let pubPar = {
                   apiId: '',
                   apiStatus: 0

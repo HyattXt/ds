@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts" setup>
-import {getCurrentInstance, onMounted, ref} from 'vue'
+import { onMounted, ref} from 'vue'
   import { useMessage } from 'naive-ui'
   import { Codemirror } from 'vue-codemirror'
   import { sql } from '@codemirror/lang-sql'
@@ -47,7 +47,9 @@ import {getCurrentInstance, onMounted, ref} from 'vue'
   const message = useMessage()
   const loading = ref(false)
   const kvValue = ref([])
-  const SecondDevUrl = getCurrentInstance().appContext.config.globalProperties
+  const SecondDevApiUrl = import.meta.env.MODE === 'development'
+    ? import.meta.env.VITE_APP_DEV_API_URL
+    : import.meta.env.VITE_APP_PROD_API_URL
   const formValue = ref({
     codeValue: '',
     apiSample: ''
@@ -64,7 +66,7 @@ import {getCurrentInstance, onMounted, ref} from 'vue'
   const emit = defineEmits(['prevStep', 'nextStep'])
 
   onMounted(() => {
-    let url = SecondDevUrl.SecondDevUrl+'/interface/getInterfaceInfoById'
+    let url = SecondDevApiUrl+'/interface/getInterfaceInfoById'
     let params = { apiId: '' }
     params.apiId = route.query.apiId
     console.log(params)

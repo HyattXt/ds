@@ -390,6 +390,7 @@ export default {
     http_url: 'Http Url',
     http_url_tips: 'Please Enter Http Url',
     http_url_validator: 'The request address must contain HTTP or HTTPS',
+    http_rest: 'Http Rest',
     http_method: 'Http Method',
     http_parameters: 'Http Parameters',
     http_check_condition: 'Http Check Condition',

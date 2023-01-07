@@ -33,8 +33,10 @@ const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 
 app.config.globalProperties.echarts = echarts
-app.config.globalProperties.SecondDevUrl =
+app.config.globalProperties.SecondDevApiUrl =
     import.meta.env.MODE === 'development' ? import.meta.env.VITE_APP_DEV_API_URL : import.meta.env.VITE_APP_PROD_API_URL
+app.config.globalProperties.SecondDevAssetsUrl =
+    import.meta.env.MODE === 'development' ? import.meta.env.VITE_APP_DEV_ASSETS_URL : import.meta.env.VITE_APP_PROD_ASSETS_URL
 
 app.use(naive)
 app.use(router)

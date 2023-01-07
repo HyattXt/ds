@@ -31,7 +31,7 @@
           </n-card>
         </n-modal>
         <n-form ref="formRef" :model="pagination">
-          <n-grid :cols="26" :x-gap="24">
+          <n-grid :cols="26" :x-gap="12">
             <n-form-item-gi
               :span="6"
               :show-label="false"
@@ -302,7 +302,9 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
     apiPath = ''
   ) {
     return new Promise((resolve) => {
-      const url = getCurrentInstance().appContext.config.globalProperties.SecondDevUrl+'/interface/getList'
+      const url = import.meta.env.MODE === 'development'
+          ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/getList'
+          : import.meta.env.VITE_APP_PROD_API_URL+'/interface/getList'
       const params = {
         pageNum: page,
         pageSize: pageSize,
@@ -431,7 +433,9 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
           },
           {
             del(row) {
-              let urlDel = getCurrentInstance().appContext.config.globalProperties.SecondDevUrl+'/interface/deleteByApiId'
+              let urlDel = import.meta.env.MODE === 'development'
+                  ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/deleteByApiId'
+                  : import.meta.env.VITE_APP_PROD_API_URL+'/interface/deleteByApiId'
               let delPar = {
                 apiId: ''
               }
@@ -629,7 +633,9 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
           }
           if (url.indexOf('proxy') > 0) {
             if (drawMethod.value === 'GET') {
-              let regUrl = getCurrentInstance().appContext.config.globalProperties.SecondDevUrl+url.replace('/proxy', '/debug/proxy')
+              let regUrl = import.meta.env.MODE === 'development'
+                  ? import.meta.env.VITE_APP_DEV_API_URL+url.replace('/proxy', '/debug/proxy')
+                  : import.meta.env.VITE_APP_PROD_API_URL+url.replace('/proxy', '/debug/proxy')
               console.log(requestBody)
               console.log(url)
               axios
@@ -643,7 +649,9 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
                   console.log(error)
                 })
             } else {
-              let regUrl = getCurrentInstance().appContext.config.globalProperties.SecondDevUrl+url.replace('/proxy', '/debug/proxy')
+              let regUrl = import.meta.env.MODE === 'development'
+                  ? import.meta.env.VITE_APP_DEV_API_URL+url.replace('/proxy', '/debug/proxy')
+                  : import.meta.env.VITE_APP_PROD_API_URL+url.replace('/proxy', '/debug/proxy')
               console.log(requestBody)
               console.log(url)
               axios
@@ -658,7 +666,9 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
                 })
             }
           } else {
-            let sqlUrl = getCurrentInstance().appContext.config.globalProperties.SecondDevUrl+'/interface-ui/api/perform?id=' + drawId.value
+            let sqlUrl = import.meta.env.MODE === 'development'
+                ? import.meta.env.VITE_APP_DEV_API_URL+'/interface-ui/api/perform?id=' + drawId.value
+                : import.meta.env.VITE_APP_PROD_API_URL+'/interface-ui/api/perform?id=' + drawId.value
             let sqlBody = {
               id: drawId.value,
               select: 'POST',
