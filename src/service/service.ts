@@ -74,6 +74,7 @@ service.interceptors.request.use((config: AxiosRequestConfig<any>) => {
   config.headers = config.headers || {}
   if (language) config.headers.language = language
 
+  // @ts-ignore
   config.headers['uniwater_utoken'] = localStorage.getItem('uniwater_utoken')
 
   return config
