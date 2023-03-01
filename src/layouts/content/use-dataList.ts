@@ -313,7 +313,7 @@ export function useDataList() {
                 }
               ]
       },
-      {
+      /*{
         label: () => h(NEllipsis, null, { default: () => t('menu.api') }),
         key: 'service',
         icon: renderIcon(ApiOutlined),
@@ -358,7 +358,7 @@ export function useDataList() {
             icon: renderIcon(BarsOutlined)
           }
         ]
-      }
+      }*/
     ]
   }
 
