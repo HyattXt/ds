@@ -76,10 +76,7 @@ const Navbar = defineComponent({
             onUpdateValue={this.handleMenuClick}
           />
         </div>
-        <div class={styles.settings}>
-          <Theme />
-          <User userDropdownOptions={this.userDropdownOptions} />
-        </div>
+
       </div>
     )
   }
