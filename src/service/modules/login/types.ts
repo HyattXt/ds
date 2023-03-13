@@ -24,4 +24,7 @@ interface SessionIdRes {
   sessionId: string
 }
 
-export { LoginReq, SessionIdRes }
+interface UniWaterUToken {
+  uniwater_utoken: string
+}
+export { LoginReq, SessionIdRes, UniWaterUToken }

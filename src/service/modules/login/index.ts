@@ -25,3 +25,10 @@ export function login(data: LoginReq): any {
     data
   })
 }
+export function login1(data: any): any {
+  return axios({
+    url: '/login1',
+    method: 'post',
+    data
+  })
+}

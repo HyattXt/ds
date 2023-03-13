@@ -19,6 +19,7 @@ import { defineComponent, PropType } from 'vue'
 import { useProcessDefinition } from '../use-process-definition'
 import BarChart from '@/components/chart/modules/Bar'
 import Card from '@/components/card'
+import {DefinitionChartData} from "@/views/home/types";
 
 const props = {
   title: {
@@ -30,10 +31,13 @@ const DefinitionCard = defineComponent({
   name: 'DefinitionCard',
   props,
   setup() {
-    const { getProcessDefinition } = useProcessDefinition()
-    const processDefinition = getProcessDefinition()
-
-    return { processDefinition }
+    let processDefinition:DefinitionChartData = { xAxisData: [], seriesData: [] };
+    setTimeout(() => {
+      const { getProcessDefinition } = useProcessDefinition()
+      // @ts-ignore
+      processDefinition = getProcessDefinition()
+    },2000 )
+    return {processDefinition}
   },
   render() {
     const { title, processDefinition } = this

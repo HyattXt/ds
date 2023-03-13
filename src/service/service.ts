@@ -94,4 +94,13 @@ service.interceptors.response.use((res: AxiosResponse) => {
   }
 }, err)
 
+export function getUrlParam(name:String) {
+  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+  let params =
+      window.location.search == "" ? window.location.href.substring(window.location.href.indexOf("?") + 1) : window.location.search.substring(1);
+  var r = params.match(reg); //匹配目标参数
+  if (r != null) return decodeURI(r[2]);
+  return null; //返回参数值
+}
+
 export { service as axios }

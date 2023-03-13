@@ -15,18 +15,53 @@
  * limitations under the License.
  */
 
-import { defineComponent, onMounted, ref, toRefs, watch } from 'vue'
+import {defineAsyncComponent, defineComponent, onMounted, ref, toRefs, watch} from 'vue'
 import { NGrid, NGi } from 'naive-ui'
 import { startOfToday, getTime } from 'date-fns'
 import { useI18n } from 'vue-i18n'
 import { useTaskState } from './use-task-state'
 import { useProcessState } from './use-process-state'
 import StateCard from './components/state-card'
-import DefinitionCard from './components/definition-card'
+//import DefinitionCard from './components/definition-card'
+import {getUrlParam} from "@/service/service";
+import {login1} from "@/service/modules/login";
+import {SessionIdRes} from "@/service/modules/login/types";
+import {UserInfoRes} from "@/service/modules/users/types";
+import {getUserInfo} from "@/service/modules/users";
+import {useUserStore} from "@/store/user/user";
+import {useTimezoneStore} from "@/store/timezone/timezone";
+const DefinitionCard = defineAsyncComponent(() => import('./components/definition-card'))
 
 export default defineComponent({
   name: 'home',
   setup() {
+    const userStore = useUserStore()
+    const timezoneStore = useTimezoneStore()
+    const initData = () => {
+      taskStateRef.value = getTaskState(dateRef.value) || taskStateRef.value
+      processStateRef.value =
+          getProcessState(dateRef.value) || processStateRef.value
+    }
+
+    const loginNew = async () => {
+
+      var uniwater_utoken = getUrlParam("uniwater_utoken") || ""
+      if (uniwater_utoken){
+        const loginRes: SessionIdRes = await login1({uniwater_utoken : uniwater_utoken})
+        await userStore.setSessionId(loginRes.sessionId)
+        userStore.setSessionId(loginRes.sessionId)
+
+        const userInfoRes: UserInfoRes = await getUserInfo()
+        await userStore.setUserInfo(userInfoRes)
+
+        const timezone = userInfoRes.timeZone ? userInfoRes.timeZone : 'UTC'
+        await timezoneStore.setTimezone(timezone)
+      }
+
+      initData()
+
+    }
+    loginNew();
     const { t, locale } = useI18n()
     const dateRef = ref([getTime(startOfToday()), Date.now()])
     const taskStateRef = ref()
@@ -34,11 +69,6 @@ export default defineComponent({
     const { getTaskState, taskVariables } = useTaskState()
     const { getProcessState, processVariables } = useProcessState()
 
-    const initData = () => {
-      taskStateRef.value = getTaskState(dateRef.value) || taskStateRef.value
-      processStateRef.value =
-        getProcessState(dateRef.value) || processStateRef.value
-    }
 
     const handleTaskDate = (val: any) => {
       taskStateRef.value = getTaskState(val)
@@ -49,7 +79,9 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      initData()
+      if (userStore.sessionId){
+        initData()
+      }
     })
 
     watch(
