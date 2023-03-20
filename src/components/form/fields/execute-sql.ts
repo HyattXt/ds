@@ -59,27 +59,11 @@ export function renderExecuteSql( item: IJsonItem, fields: { [field: string]: an
         if(typeof(fields.dataTarget) == 'undefined'){message.error('请选择目标源')}else execute()
     }
 
-    return  h(NButton, {
-            ...props,
-            type:'info',
-            onClick: () => onClick()
-        },
-        {
-            default: ()=> {
-                return '执行SQL'
-            }
-        })
+    return  h(NTooltip, {
+        placement:'bottom',
+        trigger:'hover'
+    }, {
+        default: () => h( 'span', null, '支持mysql建表'),
+        trigger: () => h(NButton, {type: 'info',onClick: () => onClick()},'执行sql'),
+    })
 }
-/*    return  h(NTooltip,
-        {
-            placement:'bottom',
-            trigger:'hover'
-            },
-         ()=>
-             [
-                h(NButton,null,'悬浮'),
-                h('span',null,'I wish they all could be California girls')
-             ]
-    )
-}
-*/
