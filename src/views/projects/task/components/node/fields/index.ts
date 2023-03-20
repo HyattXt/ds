@@ -62,3 +62,5 @@ export { useConditions } from './use-conditions'
 export { useDependent } from './use-dependent'
 export { useEmr } from './use-emr'
 export { useZeppelin } from './use-zeppelin'
+export { useCreateTable } from './use-create-table'
+

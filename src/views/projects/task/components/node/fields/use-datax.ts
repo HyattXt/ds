@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ref, onMounted, watch } from 'vue'
+import {ref, onMounted, watch, computed} from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useCustomParams, useDatasource } from '.'
+import {useCreateTable, useCustomParams, useDatasource} from '.'
 import type { IJsonItem } from '../types'
 
 export function useDataX(model: { [field: string]: any }): IJsonItem[] {
@@ -104,6 +104,10 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
   const otherStatementSpan = ref(22)
   const jobSpeedSpan = ref(12)
   const customParameterSpan = ref(0)
+  const autoCreSpanMiddle = computed(() => (model.autoCreate ? 12 : 0))
+  const autoCreSpanShort = computed(() => (model.autoCreate ? 5 : 0))
+  const autoCreSpanLong = computed(() => (model.autoCreate ? 24 : 0))
+
 
   const initConstants = () => {
     if (model.customConfig) {
@@ -146,6 +150,19 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       typeField: 'dsType',
       sourceField: 'dataSource',
       span: datasourceSpan
+    }),
+    {
+      type: 'switch',
+      field: 'autoCreate',
+      name: '自动建表'
+    },
+    ...useCreateTable(model, {
+      tableField: 'tableName',
+      sqlField: 'tableSql',
+      createField: 'createTable',
+      spanMiddle: autoCreSpanMiddle,
+      spanShort: autoCreSpanShort,
+      spanLong: autoCreSpanLong
     }),
     {
       type: 'editor',

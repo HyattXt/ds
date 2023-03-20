@@ -30,6 +30,8 @@ type IType =
   | 'multi-input'
   | 'custom'
   | 'multi-condition'
+  | 'create-sql'
+  | 'execute-sql'
 
 interface IOption {
   [key: string]: any

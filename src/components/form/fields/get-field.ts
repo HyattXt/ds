@@ -31,7 +31,9 @@ const TYPES = [
   'tree-select',
   'multi-input',
   'custom',
-  'multi-condition'
+  'multi-condition',
+  'create-sql',
+  'execute-sql'
 ]
 
 const getField = (
