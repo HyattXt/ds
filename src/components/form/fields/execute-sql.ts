@@ -33,11 +33,12 @@ export function renderExecuteSql( item: IJsonItem, fields: { [field: string]: an
         sqlStr: ''
     })
 
-    function onClick() {
+    function execute() {
         let getSql = SecondDevCreateUrl+'/createTable/excuteSql'
-        formValue.value.id = fields.dataSource
+        formValue.value.id = fields.dataTarget
         formValue.value.sqlStr = fields.tableSql
-        axios
+            console.log(formValue.value)
+            axios
             .post(getSql, formValue.value)
             .then(function (response) {
                 console.log(response)
@@ -51,7 +52,11 @@ export function renderExecuteSql( item: IJsonItem, fields: { [field: string]: an
             .catch(function (error) {
                 message.error(error)
             })
+    }
 
+    function onClick(){
+        console.log(fields.dataTarget)
+        if(typeof(fields.dataTarget) == 'undefined'){message.error('请选择目标源')}else execute()
     }
 
     return  h(NButton, {
@@ -65,4 +70,16 @@ export function renderExecuteSql( item: IJsonItem, fields: { [field: string]: an
             }
         })
 }
-
+/*    return  h(NTooltip,
+        {
+            placement:'bottom',
+            trigger:'hover'
+            },
+         ()=>
+             [
+                h(NButton,null,'悬浮'),
+                h('span',null,'I wish they all could be California girls')
+             ]
+    )
+}
+*/

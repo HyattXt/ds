@@ -33,7 +33,7 @@ export function renderCreateSql( item: IJsonItem, fields: { [field: string]: any
         tableName: ''
     })
 
-    function onClick() {
+    function execute() {
         let getSql = SecondDevCreateUrl+'/createTable/getCreateSql'
         formValue.value.id = fields.dataSource
         formValue.value.type = parseInt(fields.dsType.replace('MYSQL',0).replace('ORACLE',5))
@@ -53,6 +53,10 @@ export function renderCreateSql( item: IJsonItem, fields: { [field: string]: any
             message.error(error)
         })
 
+    }
+    function onClick(){
+        console.log(fields.dataSource)
+        if(typeof(fields.dataSource) == 'undefined'){message.error('请选择来源库')}else execute()
     }
 
   return  h(NButton, {
