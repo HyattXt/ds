@@ -31,6 +31,7 @@ export function useCreateTable(
     tableField?: string
     sqlField?: string,
     createField?: string,
+    tips?: Ref | string,
     spanShort?: Ref | number
     spanMiddle?: Ref | number
     spanLong?: Ref | number
@@ -52,14 +53,10 @@ export function useCreateTable(
     model[params.sqlField] = model[params.tableField] + '的建表语句'
     console.log('调试------')
   }
-  const onChange = (val) => {
-    console.log('调试------', val)
-    console.log(model[params.tableField])
-    // model[params.sqlField] = model[params.tableField] + '的建表语句'的建表语句
-    console.log('调试------')
-  }
-  onMounted(async () => {
 
+  onMounted(async () => {
+    console.log(model[params.tips])
+    console.log(params.tips)
   })
   return [
     {
@@ -67,7 +64,7 @@ export function useCreateTable(
       field: params.tableField,
       span: params.spanMiddle || 12,
       props: {
-        placeholder: '表名'
+        placeholder: params.tips
       },
       validate: {
         trigger: ['input', 'blur'],

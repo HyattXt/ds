@@ -107,6 +107,7 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
   const autoCreSpanMiddle = computed(() => (model.autoCreate ? 12 : 0))
   const autoCreSpanShort = computed(() => (model.autoCreate ? 5 : 0))
   const autoCreSpanLong = computed(() => (model.autoCreate ? 24 : 0))
+  const tips = computed(() => (model.dsType=='MYSQL' ? '表名' : '库名.表名'))
 
 
   const initConstants = () => {
@@ -160,6 +161,7 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       tableField: 'tableName',
       sqlField: 'tableSql',
       createField: 'createTable',
+      tips: tips,
       spanMiddle: autoCreSpanMiddle,
       spanShort: autoCreSpanShort,
       spanLong: autoCreSpanLong
