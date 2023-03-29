@@ -2,7 +2,7 @@
   <n-grid x-gap="12" :cols="4">
     <n-gi span="1">
       <n-card title="配置数据源" size="small">
-        <Step></Step>
+        <Step @nextStep2_1="nextStep2_1"></Step>
       </n-card>
     </n-gi>
     <n-gi span="3">
@@ -52,7 +52,10 @@ import { onMounted, ref} from 'vue'
     : import.meta.env.VITE_APP_PROD_API_URL
   const formValue = ref({
     codeValue: '',
-    apiSample: ''
+    apiSample: '',
+    apiDatasourceId: '',
+    apiDatasourceTable: '',
+    apiDatasourceType: ''
   })
 
   const rules = {
@@ -74,7 +77,7 @@ import { onMounted, ref} from 'vue'
       .post(url, params)
       .then(function (response) {
         console.log(response.data)
-        formValue.value.codeValue = response.data.obj.apiScript
+        formValue.value.codeValue = response.data.obj.apiScript.substring(response.data.obj.apiScript.indexOf("HD688296")+8)
         kvValue.value = Object.entries(
           JSON.parse(JSON.parse(response.data.obj.apiSample).requestBody)
         ).map(([key, value]) => ({
@@ -90,7 +93,12 @@ import { onMounted, ref} from 'vue'
   function prevStep() {
     emit('prevStep')
   }
-
+  function nextStep2_1(value) {
+    formValue.value.apiDatasourceId = value.source
+    formValue.value.apiDatasourceType = value.sourceType
+    formValue.value.apiDatasourceTable = value.table
+    console.log('传值')
+  }
   function formSubmit() {
     loading.value = true
     let list = kvValue.value

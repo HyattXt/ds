@@ -2,7 +2,7 @@
   <n-grid x-gap="12" :cols="4">
     <n-gi span="1">
       <n-card title="配置数据源" size="small">
-        <Step></Step>
+        <Step @nextStep2_1="nextStep2_1"></Step>
       </n-card>
     </n-gi>
     <n-gi span="3">
@@ -46,7 +46,10 @@
   const kvValue = ref([])
   const formValue = ref({
     codeValue: '',
-    requestBody: ''
+    requestBody: '',
+    apiDatasourceId: '',
+    apiDatasourceTable: '',
+    apiDatasourceType: ''
   })
 
   const rules = {
@@ -62,7 +65,11 @@
   function prevStep() {
     emit('prevStep')
   }
-
+  function nextStep2_1(value) {
+    formValue.value.apiDatasourceId = value.source
+    formValue.value.apiDatasourceType = value.sourceType
+    formValue.value.apiDatasourceTable = value.table
+  }
   function formSubmit() {
     loading.value = true
     let list = kvValue.value

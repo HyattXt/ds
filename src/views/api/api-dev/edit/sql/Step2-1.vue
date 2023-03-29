@@ -5,14 +5,18 @@
         <n-select
           v-model:value="formValue.sourceType"
           size="small"
-          :options="[{ label: 'MYSQL', value: 'MYSQL' }]"
+          :options="[{ label: 'MYSQL', value: 0 },{ label: 'ORACLE', value: 5 },{ label: 'SQLSERVER', value: 6 }]"
         />
       </n-form-item>
       <n-form-item label="数据源" path="source">
         <n-select
           v-model:value="formValue.source"
+          label-field="name"
+          value-field="id"
           size="small"
-          :options="[{ label: 'API服务', value: 'API服务' }]"
+          filterable
+          :options="sList"
+          @click="queryDataSource"
         />
       </n-form-item>
       <n-form-item label="数据表" path="table">
@@ -32,7 +36,7 @@
           size="small"
           :single-line="false"
           :columns="[
-            { title: '字段名称', key: 'COLUMN_NAME' },
+            { title: '字段名称', key: 'TABLE_NAME' },
             { title: '字段类型', key: 'COLUMN_TYPE' }
           ]"
           :data="colList"
@@ -44,15 +48,18 @@
 </template>
 
 <script lang="ts" setup>
-import { ref} from 'vue'
+import {onMounted, ref} from 'vue'
   import { useMessage } from 'naive-ui'
   import axios from 'axios'
+import {useRoute} from "vue-router";
 
-  const emit = defineEmits(['nextStep'])
+  const emit = defineEmits(['nextStep2_1'])
 
   const form1Ref = ref(null)
+  const route = useRoute()
   const message = useMessage()
   const tList = ref([])
+  const sList = ref([])
   const colList = ref([])
   const SecondDevApiUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_API_URL
@@ -64,24 +71,61 @@ import { ref} from 'vue'
     table: ''
   })
 
-  function queryTab() {
-    const url = SecondDevApiUrl+'/interface/getTables'
+  onMounted(() => {
+    let url = SecondDevApiUrl+'/interface/getInterfaceInfoById'
+    let params = { apiId: '' }
+    params.apiId = route.query.apiId
+    console.log(params)
+    axios
+        .post(url, params)
+        .then(function (response) {
+          console.log(response.data)
+          formValue.value.sourceType = response.data.obj.apiDatasourceType
+          queryDataSource()
+          formValue.value.source = response.data.obj.apiDatasourceId
+          queryTab()
+          formValue.value.table = response.data.obj.apiDatasourceTable
+          console.log("初始值")
+          console.log(formValue.value)
+          queryCol(formValue.value.table)
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+  })
+  function queryDataSource() {
+    const url = SecondDevApiUrl+'/apiService/getDataSource?type='+formValue.value.sourceType
 
     axios.get(url).then(function (response) {
+      console.log(response)
+      sList.value = response.data.data
+    })
+  }
+
+  function queryTab() {
+    const url = SecondDevApiUrl+'/apiService/getTables'
+    let params = {
+      type : formValue.value.sourceType,
+      id : formValue.value.source
+    }
+    axios.post(url,params).then(function (response) {
       console.log(response)
       tList.value = response.data.data
     })
   }
 
   function queryCol(table: string) {
-    const url = SecondDevApiUrl+'/interface/getColumnsByTable'
+    const url = SecondDevApiUrl+'/apiService/getColumnsByTable'
     const params = {
+      type : formValue.value.sourceType,
+      id : formValue.value.source,
       tableName: table
     }
     axios.post(url, params).then(function (response) {
       console.log(response)
       colList.value = response.data.data
     })
+    emit('nextStep2_1', formValue.value)
   }
 </script>
 

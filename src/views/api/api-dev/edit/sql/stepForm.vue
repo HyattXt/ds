@@ -51,7 +51,10 @@ import {defineComponent, provide, ref, onMounted} from 'vue'
     apiFrequency: null,
     apiTimeout: null,
     apiScript: '',
-    apiSample: ''
+    apiSample: '',
+    apiDatasourceId: '',
+    apiDatasourceTable: '',
+    apiDatasourceType: ''
   })
 
   function nextStep1(value) {
@@ -63,8 +66,11 @@ import {defineComponent, provide, ref, onMounted} from 'vue'
   }
 
   function nextStep2(value) {
-    params.value.apiScript = value.codeValue
+    params.value.apiScript = value.apiDatasourceId+"HD688296"+value.codeValue
     params.value.apiSample = value.apiSample
+    params.value.apiDatasourceId = value.apiDatasourceId
+    params.value.apiDatasourceTable = value.apiDatasourceTable
+    params.value.apiDatasourceType = value.apiDatasourceType
     console.log(params)
     if (currentTab.value < 4) {
       currentTab.value += 1
