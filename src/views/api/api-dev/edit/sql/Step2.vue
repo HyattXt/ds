@@ -97,7 +97,6 @@ import { onMounted, ref} from 'vue'
     formValue.value.apiDatasourceId = value.source
     formValue.value.apiDatasourceType = value.sourceType
     formValue.value.apiDatasourceTable = value.table
-    console.log('传值')
   }
   function formSubmit() {
     loading.value = true

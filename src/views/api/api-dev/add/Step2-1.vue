@@ -1,11 +1,13 @@
 <template>
   <n-scrollbar style="max-height: 300px">
-    <n-form :model="formValue" label-placement="top">
+    <n-form :model="formValue" label-placement="top" :rules="rules" ref="form2Ref">
       <n-form-item label="数据源类型" path="sourceType">
         <n-select
           v-model:value="formValue.sourceType"
           size="small"
+          placeholder="请选择"
           :options="[{ label: 'MYSQL', value: 0 },{ label: 'ORACLE', value: 5 },{ label: 'SQLSERVER', value: 6 }]"
+          @update:value="queryDataSource"
         />
       </n-form-item>
       <n-form-item label="数据源" path="source">
@@ -16,7 +18,7 @@
             size="small"
             filterable
             :options="sList"
-            @click="queryDataSource"
+            @update:value="submitValue"
         />
       </n-form-item>
       <n-form-item label="数据表" path="table">
@@ -54,7 +56,7 @@ import { ref} from 'vue'
 
   const emit = defineEmits(['nextStep2_1'])
 
-  const form1Ref = ref(null)
+  const form2Ref: any = ref(null)
   const message = useMessage()
   const tList = ref([])
   const sList = ref([])
@@ -63,16 +65,31 @@ import { ref} from 'vue'
     ? import.meta.env.VITE_APP_DEV_API_URL
     : import.meta.env.VITE_APP_PROD_API_URL
 
-const formValue = ref({
+  const formValue = ref({
     sourceType: '',
     source: '',
     table: ''
   })
 
-  function queryDataSource() {
-    const url = SecondDevApiUrl+'/apiService/getDataSource?type='+formValue.value.sourceType
+  const rules = {
+      sourceType: {
+          required: true,
+          message: '请选择数据源类型',
+          trigger: 'blur',
+          type: 'number'
+      },
+      source: {
+          required: true,
+          message: '请选择数据源',
+          trigger: 'blur',
+          type: 'number'
+      }
+  }
 
-    axios.get(url).then(function (response) {
+  function queryDataSource() {
+      formValue.value.source = ''
+      const url = SecondDevApiUrl+'/apiService/getDataSource?type='+formValue.value.sourceType
+      axios.get(url).then(function (response) {
       console.log(response)
       sList.value = response.data.data
     })
@@ -101,6 +118,10 @@ const formValue = ref({
       console.log(response)
       colList.value = response.data.data
     })
+      submitValue()
+  }
+
+  function submitValue(){
     emit('nextStep2_1', formValue.value)
   }
 </script>

@@ -71,14 +71,17 @@
     formValue.value.apiDatasourceTable = value.table
   }
   function formSubmit() {
-    loading.value = true
-    let list = kvValue.value
-    let requestBody: any = {}
-    for (let i = 0; i < list.length; i++) {
-      requestBody[list[i].key] = list[i].value
-    }
-    formValue.value.requestBody = JSON.stringify(requestBody, null, 2)
-    console.log(requestBody)
-    emit('nextStep', formValue.value)
+      if(formValue.value.apiDatasourceId === ''){message.error('请先选择数据源!')}
+      else{
+        loading.value = true
+        let list = kvValue.value
+        let requestBody: any = {}
+        for (let i = 0; i < list.length; i++) {
+          requestBody[list[i].key] = list[i].value
+        }
+        formValue.value.requestBody = JSON.stringify(requestBody, null, 2)
+        console.log(requestBody)
+        emit('nextStep', formValue.value)
+      }
   }
 </script>

@@ -1,11 +1,12 @@
 <template>
   <n-scrollbar style="max-height: 300px">
-    <n-form :model="formValue" label-placement="top">
+    <n-form :model="formValue" label-placement="top" :rules="rules" ref="form2Ref">
       <n-form-item label="数据源类型" path="sourceType">
         <n-select
           v-model:value="formValue.sourceType"
           size="small"
           :options="[{ label: 'MYSQL', value: 0 },{ label: 'ORACLE', value: 5 },{ label: 'SQLSERVER', value: 6 }]"
+          @update:value="queryDataSource"
         />
       </n-form-item>
       <n-form-item label="数据源" path="source">
@@ -16,7 +17,7 @@
           size="small"
           filterable
           :options="sList"
-          @click="queryDataSource"
+          @update:value="submitValue"
         />
       </n-form-item>
       <n-form-item label="数据表" path="table">
@@ -55,7 +56,7 @@ import {useRoute} from "vue-router";
 
   const emit = defineEmits(['nextStep2_1'])
 
-  const form1Ref = ref(null)
+  const form2Ref = ref(null)
   const route = useRoute()
   const message = useMessage()
   const tList = ref([])
@@ -70,6 +71,21 @@ import {useRoute} from "vue-router";
     source: '',
     table: ''
   })
+
+  const rules = {
+      sourceType: {
+          required: true,
+          message: '请选择数据源类型',
+          trigger: 'blur',
+          type: 'number'
+      },
+      source: {
+          required: true,
+          message: '请选择数据源',
+          trigger: 'blur',
+          type: 'number'
+      }
+  }
 
   onMounted(() => {
     let url = SecondDevApiUrl+'/interface/getInterfaceInfoById'
@@ -94,6 +110,7 @@ import {useRoute} from "vue-router";
         })
   })
   function queryDataSource() {
+    formValue.value.source = ''
     const url = SecondDevApiUrl+'/apiService/getDataSource?type='+formValue.value.sourceType
 
     axios.get(url).then(function (response) {
@@ -125,8 +142,12 @@ import {useRoute} from "vue-router";
       console.log(response)
       colList.value = response.data.data
     })
-    emit('nextStep2_1', formValue.value)
+      submitValue()
   }
+
+function submitValue(){
+    emit('nextStep2_1', formValue.value)
+}
 </script>
 
 <style scoped>
