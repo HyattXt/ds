@@ -30,7 +30,7 @@ specifiers:
   lodash: ^4.17.21
   moment: ^2.29.4
   monaco-editor: ^0.33.0
-  naive-ui: ^2.30.8
+  naive-ui: ^2.34.3
   nprogress: ^0.2.0
   pinia: ^2.0.14
   pinia-plugin-persistedstate: ^1.6.1
@@ -65,7 +65,7 @@ dependencies:
   lodash: 4.17.21
   moment: 2.29.4
   monaco-editor: 0.33.0
-  naive-ui: 2.32.1_vue@3.2.38
+  naive-ui: 2.34.3_vue@3.2.38
   nprogress: 0.2.0
   pinia: 2.0.14_pj7ch6rmow6odq73xb5hfvge3q
   pinia-plugin-persistedstate: 1.6.3_pinia@2.0.14
@@ -766,6 +766,10 @@ packages:
   /@types/json5/0.0.29:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
     dev: true
+
+  /@types/katex/0.14.0:
+    resolution: {integrity: sha512-+2FW2CcT0K3P+JMR8YG846bmDwplKUTsWgT2ENwdQ1UdVfRk3GQrh6Mi4sTopy30gI8Uau5CEqHTDZ6YvWIUPA==}
+    dev: false
 
   /@types/lodash-es/4.17.6:
     resolution: {integrity: sha512-R+zTeVUKDdfoRxpAryaQNRKk3105Rrgx2CFRClIgRGaqDTdjsm8h6IYA8ir584W3ePzkZfst5xIgDwYrlh9HLg==}
@@ -2148,6 +2152,11 @@ packages:
     resolution: {integrity: sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==}
     dev: true
 
+  /graceful-fs/4.2.11:
+    resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
+    dev: true
+    optional: true
+
   /grapheme-splitter/1.0.4:
     resolution: {integrity: sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==}
     dev: true
@@ -2385,11 +2394,11 @@ packages:
       tslib: 2.3.0
     optionalDependencies:
       errno: 0.1.8
-      graceful-fs: 4.2.10
+      graceful-fs: 4.2.11
       image-size: 0.5.5
       make-dir: 2.1.0
       mime: 1.6.0
-      needle: 3.1.0
+      needle: 3.2.0
       source-map: 0.6.1
     transitivePeerDependencies:
       - supports-color
@@ -2557,13 +2566,14 @@ packages:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
     dev: true
 
-  /naive-ui/2.32.1_vue@3.2.38:
-    resolution: {integrity: sha512-4zRHAn9d273qKWHs2ZQ+9xZmGTfxhL/CI1tj8bJkE313zjwyGRaiPbCeh3hQgrNdZWiRXdqmA442EVKHizGWeg==}
+  /naive-ui/2.34.3_vue@3.2.38:
+    resolution: {integrity: sha512-fUMr0dzb/iGsOTWgoblPVobY5X5dihQ1eam5dA+H74oyLYAvgX4pL96xQFPBLIYqvyRFBAsN85kHN5pLqdtpxA==}
     peerDependencies:
       vue: ^3.0.0
     dependencies:
       '@css-render/plugin-bem': 0.15.10_css-render@0.15.10
       '@css-render/vue3-ssr': 0.15.10_vue@3.2.38
+      '@types/katex': 0.14.0
       '@types/lodash': 4.14.182
       '@types/lodash-es': 4.17.6
       async-validator: 4.1.1
@@ -2591,8 +2601,8 @@ packages:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
 
-  /needle/3.1.0:
-    resolution: {integrity: sha512-gCE9weDhjVGCRqS8dwDR/D3GTAeyXLXuqp7I8EzH6DllZGXSUyxuqqLh+YX9rMAWaaTFyVAg6rHGL25dqvczKw==}
+  /needle/3.2.0:
+    resolution: {integrity: sha512-oUvzXnyLiVyVGoianLijF9O/RecZUf7TkBfimjGrLM4eQhXyeJwM6GeAWccwfQ9aa4gMCZKqhAOuLaMIcQxajQ==}
     engines: {node: '>= 4.4.x'}
     hasBin: true
     requiresBuild: true

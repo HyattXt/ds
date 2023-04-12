@@ -23,7 +23,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "monaco-editor": "^0.33.0",
-    "naive-ui": "^2.30.8",
+    "naive-ui": "^2.34.3",
     "nprogress": "^0.2.0",
     "pinia": "^2.0.14",
     "pinia-plugin-persistedstate": "^1.6.1",

@@ -113,15 +113,15 @@ export default defineComponent({
           theme.darkTheme ? Styles['dark'] : Styles['light']
         ]}
       >
-        {!isLoading.value && (
-          <Dag
-            definition={definition.value}
-            onRefresh={refresh}
-            projectCode={projectCode}
-            onSave={save}
-            readonly={readonly.value}
-          />
-        )}
+            {!isLoading.value && (
+                <Dag
+                    definition={definition.value}
+                    onRefresh={refresh}
+                    projectCode={projectCode}
+                    onSave={save}
+                    readonly={readonly.value}
+                />
+            )}
       </div>
     )
   }
