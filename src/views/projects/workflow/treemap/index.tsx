@@ -28,8 +28,12 @@ export default defineComponent({
         const pattern = ref('');
         const expandedKeys = ref([]);
         const theme = useThemeStore()
-        const projectCode =ref(8166609622112)
-        const code = ref(8166777162720)
+        const projectCode =ref()
+        const code = ref()
+        const refresh = ref()
+        const useRefresh = () => {
+            refresh.value.refresh()
+        }
 
         function packHandle() {
             if (expandedKeys.value.length) {
@@ -44,8 +48,9 @@ export default defineComponent({
         }
 
         function click(keys: never[]){
-            //code = keys[0]
-            self.location.href="/projects/8166609622112/workflow/definitions/8166777162720"
+            code.value = keys[0]
+            projectCode.value = 8166609622112
+            //self.location.href="/projects/8166609622112/workflow/definitions/8166777162720"
             console.log(keys[0])
         }
 
@@ -146,10 +151,10 @@ export default defineComponent({
                             </n-card>
                         </n-gi>
                         <n-gi span="5">
-                            <Detail
+                            {code.value==8166777162720 ? (<Detail
                                 projectCode={projectCode.value}
                                 code={code.value}
-                            />
+                            />):(<div/>)}
                         </n-gi>
                     </n-grid>
                 </div>

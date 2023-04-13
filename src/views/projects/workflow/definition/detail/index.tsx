@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {defineComponent, onMounted, PropType, ref, unref} from 'vue'
+import {defineComponent, onBeforeUpdate, onMounted, onUpdated, PropType, ref, unref} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useThemeStore } from '@/store/theme/theme'
 import { useMessage} from 'naive-ui'
@@ -54,7 +54,7 @@ interface SaveData {
 export default defineComponent({
   name: 'WorkflowDefinitionDetails',
   props,
-  setup() {
+  setup(props, context) {
     const theme = useThemeStore()
     const route = useRoute()
     const router = useRouter()
@@ -62,16 +62,17 @@ export default defineComponent({
     const { t } = useI18n()
     //const projectCode = Number(route.params.projectCode)
     //const code = Number(route.params.code)
-    const projectCode = ref(props.projectCode)
-    const code = ref(props.code)
-
+    //const projectCode = ref(props.projectCode)
+    //const code = ref(props.code)
+    //const projectCode = ref(8166609622112)
+    //const code = ref(8166777162720)
     const definition = ref<WorkflowDefinition>()
     const readonly = ref(false)
     const isLoading = ref(true)
 
     const refresh = () => {
       isLoading.value = true
-      queryProcessDefinitionByCode(code, projectCode).then((res: any) => {
+      queryProcessDefinitionByCode(props.code, props.projectCode).then((res: any) => {
         readonly.value = res.processDefinition.releaseState === 'ONLINE'
         definition.value = res
         isLoading.value = false
@@ -106,17 +107,19 @@ export default defineComponent({
           timeout: saveForm.timeoutFlag ? saveForm.timeout : 0,
           releaseState: saveForm.release ? 'ONLINE' : 'OFFLINE'
         },
-        code,
-        projectCode
+        props.code,
+        props.projectCode
       ).then((ignored: any) => {
         message.success(t('project.dag.success'))
-        router.push({ path: `/projects/${projectCode}/workflow-definition` })
+        router.push({ path: `/projects/${props.projectCode}/workflow-definition` })
       })
     }
 
     onMounted(() => {
       console.log("code:"+props.code+",projectCode:"+props.projectCode)
-      if (!code || !projectCode) return
+      console.log("初始化dag")
+
+      if (!props.code || !props.projectCode) return
       refresh()
     })
 
@@ -131,7 +134,7 @@ export default defineComponent({
             <Dag
                 definition={definition.value}
                 onRefresh={refresh}
-                projectCode={projectCode.value}
+                projectCode={props.projectCode}
                 onSave={save}
                 readonly={readonly.value}
             />
