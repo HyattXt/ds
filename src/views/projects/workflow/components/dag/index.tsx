@@ -209,11 +209,11 @@ export default defineComponent({
     const onSave = (saveForm: any) => {
       const edges = graph.value?.getEdges() || []
       const nodes = graph.value?.getNodes() || []
-      if (!nodes.length) {
+      /*if (!nodes.length) {
         window.$message.error(t('project.dag.node_not_created'))
         saveModelToggle(false)
         return
-      }
+      }*/
       const connects = getConnects(
         nodes,
         edges,
