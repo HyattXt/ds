@@ -26,6 +26,7 @@ import 'echarts/theme/macarons'
 import 'echarts/theme/dark-bold'
 import './assets/styles/default.scss'
 import naive from 'naive-ui'
+import axios from 'axios'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -33,10 +34,17 @@ const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 
 app.config.globalProperties.echarts = echarts
-app.config.globalProperties.SecondDevApiUrl =
-    import.meta.env.MODE === 'development' ? import.meta.env.VITE_APP_DEV_API_URL : import.meta.env.VITE_APP_PROD_API_URL
-app.config.globalProperties.SecondDevAssetsUrl =
-    import.meta.env.MODE === 'development' ? import.meta.env.VITE_APP_DEV_ASSETS_URL : import.meta.env.VITE_APP_PROD_ASSETS_URL
+axios.interceptors.request.use(config => {
+    // 为请求头添加x-access-token字段为服务端返回的token
+    // @ts-ignore
+    config.headers['X-Content-Type-Options'] = 'nosniff'
+    // @ts-ignore
+    config.headers['X-XSS-Protection'] = '1'
+    // @ts-ignore
+    config.headers['Content-Security-Policy'] = "default-src 'self'; script-src 'self'; frame-ancestors 'self'"
+    // return config是固定用法 必须有返回值
+    return config
+})
 
 app.use(naive)
 app.use(router)
