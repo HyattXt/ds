@@ -17,22 +17,20 @@
 
 import {defineComponent, ref, unref} from 'vue'
 import { TreeOption } from 'naive-ui'
-import Create from '../workflow/definition/create'
-import Detail from '../workflow/definition/detail'
+import Detail from '../definition/detail'
 import {AlignLeftOutlined, SearchOutlined} from '@vicons/antd';
-import Styles from "@/views/projects/treemap/index.module.scss";
+import Styles from "@/views/projects/workflow/treemap/index.module.scss";
 import {useThemeStore} from "@/store/theme/theme";
-import styles from "@/views/projects/task/definition/index.module.scss";
 
 export default defineComponent({
     name: 'WorkflowTreeMap',
     setup() {
-        const treeItemTitle = ref('');
         const pattern = ref('');
-        const drawerTitle = ref('');
-        const createDrawerRef = ref();
         const expandedKeys = ref([]);
         const theme = useThemeStore()
+        const projectCode =ref(8166609622112)
+        const code = ref(8166777162720)
+
         function packHandle() {
             if (expandedKeys.value.length) {
                 expandedKeys.value = [];
@@ -43,6 +41,12 @@ export default defineComponent({
 
         function onExpandedKeys(keys: never[]) {
             expandedKeys.value = keys;
+        }
+
+        function click(keys: never[]){
+            //code = keys[0]
+            self.location.href="/projects/8166609622112/workflow/definitions/8166777162720"
+            console.log(keys[0])
         }
 
         const data: TreeOption[] = [
@@ -71,72 +75,6 @@ export default defineComponent({
             {
                 label: '1',
                 key: '1',
-                children: [
-                    {
-                        label: '1-0',
-                        key: '1-0',
-                        children: [
-                            { label: '1-0-0', key: '1-0-0' },
-                            { label: '1-0-1', key: '1-0-1' }
-                        ]
-                    },
-                    {
-                        label: '1-1',
-                        key: '1-1',
-                        children: [
-                            { label: 'a', key: 'a' },
-                            { label: '1-1-1', key: '1-1-1' }
-                        ]
-                    }
-                ]
-            },
-            {
-                label: '1',
-                key: '1',
-                children: [
-                    {
-                        label: '1-0',
-                        key: '1-0',
-                        children: [
-                            { label: '1-0-0', key: '1-0-0' },
-                            { label: '1-0-1', key: '1-0-1' }
-                        ]
-                    },
-                    {
-                        label: '1-1',
-                        key: '1-1',
-                        children: [
-                            { label: 'a', key: 'a' },
-                            { label: '1-1-1', key: '1-1-1' }
-                        ]
-                    }
-                ]
-            },
-            {
-                label: '3',
-                key: '3',
-                children: [
-                    {
-                        label: '1-0',
-                        key: '1-0',
-                        children: [
-                            { label: '1-0-0', key: '1-0-0' },
-                            { label: '1-0-1', key: '1-0-1' }
-                        ]
-                    },
-                    {
-                        label: '1-1',
-                        key: '1-1',
-                        children: [
-                            { label: 'a', key: 'a' },
-                            { label: '1-1-1', key: '1-1-1' }
-                        ]
-                    }
-                ]
-            },
-            {
-                label: '4',
-                key: '4',
                 children: [
                     {
                         label: '1-0',
@@ -184,7 +122,6 @@ export default defineComponent({
                                 <n-input
                                     type="text"
                                     v-model:value={pattern.value}
-                                    //v-model={[pattern.value, 'value']}
                                     placeholder="输入菜单名称搜索"
                                     v-slots={{
                                         suffix: () => (
@@ -200,17 +137,19 @@ export default defineComponent({
                                     show-irrelevant-nodes={false}
                                     expand-on-click={true}
                                     virtual-scroll={true}
-                                    //Styles={"height: 640px"}
                                     pattern={pattern.value}
                                     data={data}
                                     expandedKeys={expandedKeys}
                                     onUpdate:expanded-keys={onExpandedKeys}
-
+                                    onUpdate:selected-keys={click}
                                 />
                             </n-card>
                         </n-gi>
                         <n-gi span="5">
-                            <Create/>
+                            <Detail
+                                projectCode={projectCode.value}
+                                code={code.value}
+                            />
                         </n-gi>
                     </n-grid>
                 </div>

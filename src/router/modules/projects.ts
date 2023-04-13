@@ -57,7 +57,8 @@ export default {
       path: '/projects/:projectCode/workflow/relation',
       name: 'workflow-relation',
       //component: components['projects-workflow-relation'],
-      component: components['projects-treemap'],
+      //component: components['projects-treemap'],
+      component: components['projects-workflow-treemap'],
       meta: {
         title: '工作流关系',
         activeMenu: 'projects',
@@ -68,7 +69,6 @@ export default {
     {
       path: '/projects/:projectCode/workflow-definition',
       name: 'workflow-definition-list',
-      //component: () => import('@/views/projects/treemap/index.vue'),
       component: components['projects-workflow-definition'],
       meta: {
         title: '工作流定义',

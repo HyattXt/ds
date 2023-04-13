@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-import { defineComponent, onMounted, ref } from 'vue'
+import {defineComponent, onMounted, PropType, ref, unref} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useThemeStore } from '@/store/theme/theme'
-import { useMessage } from 'naive-ui'
+import { useMessage} from 'naive-ui'
 import { useI18n } from 'vue-i18n'
 import Dag from '../../components/dag'
 import {
@@ -30,10 +30,20 @@ import {
   SaveForm,
   TaskDefinition,
   Connect,
-  Location
+  Location, WorkflowInstance
 } from '../../components/dag/types'
 import Styles from './index.module.scss'
 
+const props = {
+  code: {
+    type: Number as PropType<number>,
+    default: 0
+  },
+  projectCode: {
+    type: Number as PropType<number>,
+    default: 0
+  }
+}
 interface SaveData {
   saveForm: SaveForm
   taskDefinitions: TaskDefinition[]
@@ -43,14 +53,17 @@ interface SaveData {
 
 export default defineComponent({
   name: 'WorkflowDefinitionDetails',
+  props,
   setup() {
     const theme = useThemeStore()
     const route = useRoute()
     const router = useRouter()
     const message = useMessage()
     const { t } = useI18n()
-    const projectCode = Number(route.params.projectCode)
-    const code = Number(route.params.code)
+    //const projectCode = Number(route.params.projectCode)
+    //const code = Number(route.params.code)
+    const projectCode = ref(props.projectCode)
+    const code = ref(props.code)
 
     const definition = ref<WorkflowDefinition>()
     const readonly = ref(false)
@@ -102,6 +115,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
+      console.log("code:"+props.code+",projectCode:"+props.projectCode)
       if (!code || !projectCode) return
       refresh()
     })
@@ -113,15 +127,15 @@ export default defineComponent({
           theme.darkTheme ? Styles['dark'] : Styles['light']
         ]}
       >
-            {!isLoading.value && (
-                <Dag
-                    definition={definition.value}
-                    onRefresh={refresh}
-                    projectCode={projectCode}
-                    onSave={save}
-                    readonly={readonly.value}
-                />
-            )}
+        {!isLoading.value && (
+            <Dag
+                definition={definition.value}
+                onRefresh={refresh}
+                projectCode={projectCode.value}
+                onSave={save}
+                readonly={readonly.value}
+            />
+        )}
       </div>
     )
   }
