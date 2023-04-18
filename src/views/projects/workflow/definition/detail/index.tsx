@@ -42,6 +42,10 @@ const props = {
   projectCode: {
     type: Number as PropType<number>,
     default: 0
+  },
+  parentId: {
+    type: Number as PropType<number>,
+    default: 0
   }
 }
 interface SaveData {
@@ -60,24 +64,20 @@ export default defineComponent({
     const router = useRouter()
     const message = useMessage()
     const { t } = useI18n()
-    //const projectCode = Number(route.params.projectCode)
-    //const code = Number(route.params.code)
-    //const projectCode = ref(props.projectCode)
-    //const code = ref(props.code)
-    //const projectCode = ref(8166609622112)
-    //const code = ref(8166777162720)
     const definition = ref<WorkflowDefinition>()
     const readonly = ref(false)
     const isLoading = ref(true)
 
-    const refresh = () => {
+    const refresh = (code: number, projectCode: number) => {
       isLoading.value = true
-      queryProcessDefinitionByCode(props.code, props.projectCode).then((res: any) => {
+      queryProcessDefinitionByCode(code, projectCode).then((res: any) => {
         readonly.value = res.processDefinition.releaseState === 'ONLINE'
         definition.value = res
         isLoading.value = false
       })
     }
+
+    context.expose({ refresh })
 
     const save = ({
       taskDefinitions,
@@ -96,6 +96,9 @@ export default defineComponent({
 
       updateProcessDefinition(
         {
+          parentId: props.parentId,
+          projectCode: props.projectCode,
+          type: 2,
           taskDefinitionJson: JSON.stringify(taskDefinitions),
           taskRelationJson: JSON.stringify(connects),
           locations: JSON.stringify(locations),
@@ -115,13 +118,13 @@ export default defineComponent({
       })
     }
 
-    onMounted(() => {
+    /*onMounted(() => {
       console.log("code:"+props.code+",projectCode:"+props.projectCode)
       console.log("初始化dag")
 
       if (!props.code || !props.projectCode) return
       refresh()
-    })
+    })*/
 
     return () => (
       <div

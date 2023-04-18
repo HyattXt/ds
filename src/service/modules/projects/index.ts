@@ -16,7 +16,7 @@
  */
 
 import { axios } from '@/service/service'
-import { ListReq, ProjectsReq, UserIdReq, UpdateProjectsReq } from './types'
+import {ListReq, ProjectsReq, UserIdReq, UpdateProjectsReq, TreeMenuReq, TreeMenuCreate} from './types'
 
 export function queryProjectListPaging(params: ListReq): any {
   return axios({
@@ -83,5 +83,29 @@ export function deleteProject(code: number): any {
   return axios({
     url: `/projects/${code}`,
     method: 'delete'
+  })
+}
+
+export function queryTreeMenu(data: TreeMenuReq): any {
+  return axios({
+    url: '/tree/getTreeAll',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    transformRequest: (params) => JSON.stringify(params)
+  })
+}
+
+export function createTreeMenu(data: TreeMenuCreate): any {
+  return axios({
+    url: '/tree/insert',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    transformRequest: (params) => JSON.stringify(params)
   })
 }

@@ -57,11 +57,31 @@ interface ProjectRes {
   start: number
 }
 
+interface TreeMenuReq {
+  projectCode: number
+}
+
+interface TreeMenuList {
+  titleName: string,
+  taskCode: string,
+  children: []
+}
+
+interface TreeMenuCreate {
+  parentId: number,
+  titleName: string,
+  type: number
+  projectCode:string
+}
+
 export {
   ListReq,
   ProjectsReq,
   UserIdReq,
   UpdateProjectsReq,
   ProjectRes,
-  ProjectList
+  ProjectList,
+  TreeMenuReq,
+  TreeMenuList,
+  TreeMenuCreate
 }

@@ -29,6 +29,16 @@ $bgLight: #ffffff;
   display: block;
 }
 
+.workflowModal {
+  width: 600px;
+  height: 250px;
+}
+
+.menuModal {
+  width: 600px;
+  height: 250px;
+}
+
 .dark {
   border: solid 1px $borderDark;
   background-color: $bgDark;

@@ -15,31 +15,107 @@
 * limitations under the License.
 */
 
-import {defineComponent, ref, unref} from 'vue'
-import { TreeOption } from 'naive-ui'
+import {defineComponent, onMounted, ref, unref} from 'vue'
+import {TreeOption, useMessage} from 'naive-ui'
 import Detail from '../definition/detail'
-import {AlignLeftOutlined, SearchOutlined} from '@vicons/antd';
+import {AlignLeftOutlined, DownOutlined, SearchOutlined} from '@vicons/antd';
 import Styles from "@/views/projects/workflow/treemap/index.module.scss";
 import {useThemeStore} from "@/store/theme/theme";
+import {useRoute} from "vue-router";
+import {useTreemap} from "@/views/projects/workflow/treemap/use-treemap";
+import { createProcessDefinition } from '@/service/modules/process-definition'
+import {useI18n} from "vue-i18n";
 
 export default defineComponent({
     name: 'WorkflowTreeMap',
     setup() {
+        const message = useMessage()
+        const { t } = useI18n()
+        const { variables, getTreeMenu, submitMenuModal } = useTreemap()
+        const route = useRoute()
         const pattern = ref('');
         const expandedKeys = ref([]);
         const theme = useThemeStore()
-        const projectCode =ref()
-        const code = ref()
-        const refresh = ref()
-        const useRefresh = () => {
-            refresh.value.refresh()
+        const parentId = ref()
+        const projectCode = Number(route.params.projectCode)
+        const linkage = ref({
+            code: 0,
+            type: 0,
+            parentId: 0
+        })
+        const workflowModel = ref({
+            parentId: 1,
+            type: 2,
+            projectCode: projectCode,
+            name: ''
+        })
+        const tsxRef = ref()
+        const menuModal = ref(false)
+        const workflowModal = ref(false)
+        const addMenuOptions = ref([
+            {
+                label: '添加菜单',
+                key: 'menu'
+            },
+            {
+                label: '添加工作流',
+                key: 'workflow'
+            },
+        ]);
+
+        const rules = {
+            model:{
+                titleName: {
+                    required: true,
+                    message: '请输入名称',
+                    trigger: 'blur'
+                }
+            },
+            value:{
+                name:{
+                    required: true,
+                    message: '请输入名称',
+                    trigger: 'blur'
+                }
+            }
+        }
+
+        onMounted(() => {
+            getTreeMenu(projectCode)
+            // @ts-ignore
+            variables.model.projectCode = projectCode
+        })
+
+        function createMenu() {
+            submitMenuModal().then(r => {
+                message.success("创建成功")
+                getTreeMenu(projectCode)
+                }
+            )
+            menuModal.value = false
+        }
+
+        function createWorkFlow(){
+            createProcessDefinition(
+                {
+                    parentId: workflowModel.value.parentId,
+                    projectCode: workflowModel.value.projectCode,
+                    type: workflowModel.value.type,
+                    name: workflowModel.value.name,
+                },
+                projectCode
+            ).then((ignored: any) => {
+                message.success(t('project.dag.success'))
+                workflowModal.value = false
+                getTreeMenu(projectCode)
+            })
         }
 
         function packHandle() {
             if (expandedKeys.value.length) {
                 expandedKeys.value = [];
             } else {
-                expandedKeys.value = unref(data).map((item: any) => item.key as string) as [];
+                expandedKeys.value = unref(variables.treeData).map((item: any) => item.key as string) as [];
             }
         }
 
@@ -47,59 +123,29 @@ export default defineComponent({
             expandedKeys.value = keys;
         }
 
-        function click(keys: never[]){
-            code.value = keys[0]
-            projectCode.value = 8166609622112
-            //self.location.href="/projects/8166609622112/workflow/definitions/8166777162720"
-            console.log(keys[0])
+        function ifShowModal(key: string){
+            variables.model.titleName = ''
+            key == 'menu' ? menuModal.value = true : workflowModal.value = true;
         }
 
-        const data: TreeOption[] = [
-            {
-                label: '0',
-                key: '0',
-                children: [
-                    {
-                        label: '0-0',
-                        key: '0-0',
-                        children: [
-                            { label: 'GIS', key: '8166777162720' },
-                            { label: '0-0-1', key: '0-0-1' }
-                        ]
-                    },
-                    {
-                        label: '0-1',
-                        key: '0-1',
-                        children: [
-                            { label: '0-1-0', key: '0-1-0' },
-                            { label: '0-1-1', key: '0-1-1' }
-                        ]
+        const menu = ({ option }: { option: TreeOption }) => {
+            return {
+                onContextmenu() {
+                    console.log("右击")
+                },
+                ondblclick() {
+                    //双击事件
+                    linkage.value.type = 0
+                    linkage.value.code = option.taskCode as number
+                    linkage.value.type = option.type as number
+                    linkage.value.parentId = option.parentId as number
+                    console.log(option.taskCode)
+                    console.log("双击")
+                    tsxRef.value.refresh(linkage.value.code, projectCode)
+                    console.log("双击完毕")
                     }
-                ]
-            },
-            {
-                label: '1',
-                key: '1',
-                children: [
-                    {
-                        label: '1-0',
-                        key: '1-0',
-                        children: [
-                            { label: '1-0-0', key: '1-0-0' },
-                            { label: '1-0-1', key: '1-0-1' }
-                        ]
-                    },
-                    {
-                        label: '1-1',
-                        key: '1-1',
-                        children: [
-                            { label: 'a', key: 'a' },
-                            { label: '1-1-1', key: '1-1-1' }
-                        ]
-                    }
-                ]
-            }
-        ]
+                }
+        }
 
         return () =>
             (
@@ -113,14 +159,30 @@ export default defineComponent({
                             <n-card
                                 v-slots={{
                                     header: () => (
-                                        <n-button type="info" ghost icon-placement="left" onClick={packHandle}>
-                                            全部{expandedKeys.value.length ? '收起' : '展开'}
-                                            <div>
-                                                <n-icon size="14">
-                                                    <AlignLeftOutlined/>
-                                                </n-icon>
-                                            </div>
-                                        </n-button>
+                                        <div>
+                                            <n-grid x-gap="2" cols="2">
+                                                <n-gi span="1">
+                                                    <n-button type="info" ghost icon-placement="left" onClick={packHandle}>
+                                                    {expandedKeys.value.length ? '收起' : '展开'}
+                                                    <div>
+                                                        <n-icon size="14">
+                                                            <AlignLeftOutlined/>
+                                                        </n-icon>
+                                                    </div>
+                                                    </n-button>
+                                                </n-gi>
+                                                <n-gi span="1">
+                                                    <n-dropdown trigger="click" options={addMenuOptions.value} onSelect={ifShowModal}>
+                                                        <n-button type="info" ghost icon-placement="right">
+                                                            新建
+                                                            <n-icon size="14">
+                                                                <DownOutlined/>
+                                                            </n-icon>
+                                                        </n-button>
+                                                    </n-dropdown>
+                                                </n-gi>
+                                            </n-grid>
+                                        </div>
                                     )
                                 }}
                             >
@@ -140,23 +202,95 @@ export default defineComponent({
                                     class={Styles.container}
                                     block-line
                                     show-irrelevant-nodes={false}
-                                    expand-on-click={true}
-                                    virtual-scroll={true}
                                     pattern={pattern.value}
-                                    data={data}
-                                    expandedKeys={expandedKeys}
+                                    data={variables.treeData}
+                                    key-field="taskCode"
+                                    label-field="titleName"
+                                    children-field="children"
                                     onUpdate:expanded-keys={onExpandedKeys}
-                                    onUpdate:selected-keys={click}
+                                    node-props={menu}
                                 />
                             </n-card>
                         </n-gi>
                         <n-gi span="5">
-                            {code.value==8166777162720 ? (<Detail
-                                projectCode={projectCode.value}
-                                code={code.value}
-                            />):(<div/>)}
+                            <Detail
+                               ref={tsxRef}
+                               projectCode={projectCode}
+                               code={linkage.value.code}
+                               parentId={linkage.value.parentId}
+                            />
                         </n-gi>
                     </n-grid>
+                    <n-modal
+                        v-model:show={menuModal.value}
+                        class={Styles.menuModal}
+                    >
+                        <n-card title="新建文件夹" size="huge">
+                            <n-form
+                                label-placement="left"
+                                label-width="auto"
+                                rules={rules}
+                                model={variables}
+                            >
+                                <n-form-item label="文件夹名称" path="model.titleName">
+                                    <n-input
+                                        type="text"
+                                        v-model:value={variables.model.titleName}
+                                        placeholder="输入文件夹名称"
+                                    />
+                                </n-form-item>
+                                <n-form-item label="目标文件夹" path="inputValue">
+                                    <n-tree-select
+                                        options={variables.treeData}
+                                        key-field="id"
+                                        label-field="titleName"
+                                        v-model:value={variables.model.parentId}
+                                        default-value={1}
+                                        filterable
+                                    />
+                                </n-form-item>
+                            </n-form>
+                            <n-space justify="end">
+                                <n-button type="info" onClick={createMenu} >确定</n-button>
+                            </n-space>
+                        </n-card>
+                    </n-modal>
+                    <n-modal
+                        v-model:show={workflowModal.value}
+                        class={Styles.workflowModal}
+                    >
+                        <n-card title="新建工作流" size="huge">
+                            <n-space vertical>
+                            <n-form
+                                label-placement="left"
+                                label-width="auto"
+                                rules={rules}
+                                model={workflowModel}
+                            >
+                                <n-form-item label="工作流名称" path="value.name">
+                                    <n-input
+                                        type="text"
+                                        v-model:value={workflowModel.value.name}
+                                        placeholder="输入工作流名称"
+                                    />
+                                </n-form-item>
+                                <n-form-item label="目标文件夹" path="value.parentId">
+                                    <n-tree-select
+                                        options={variables.treeData}
+                                        key-field="id"
+                                        label-field="titleName"
+                                        v-model:value={workflowModel.value.parentId}
+                                        default-value={1}
+                                        filterable
+                                    />
+                                </n-form-item>
+                            </n-form>
+                            </n-space>
+                            <n-space justify="end">
+                                <n-button type="info" onClick={createWorkFlow} >确定</n-button>
+                            </n-space>
+                        </n-card>
+                    </n-modal>
                 </div>
             )
     }
