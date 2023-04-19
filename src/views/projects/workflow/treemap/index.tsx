@@ -18,7 +18,7 @@
 import {defineComponent, onMounted, ref, unref, h} from 'vue'
 import {NIcon, TreeOption, useMessage} from 'naive-ui'
 import Detail from '../definition/detail'
-import {AlignLeftOutlined, DownOutlined, FolderTwotone, SearchOutlined} from '@vicons/antd';
+import {AlignLeftOutlined, DownOutlined, FolderTwotone, SearchOutlined, ApartmentOutlined, ConsoleSqlOutlined} from '@vicons/antd';
 import Styles from "@/views/projects/workflow/treemap/index.module.scss";
 import {useThemeStore} from "@/store/theme/theme";
 import {useRoute} from "vue-router";
@@ -146,7 +146,15 @@ export default defineComponent({
                 }
         }
 
-        const menuIcon = () => h(NIcon, null, { default: () => h(FolderTwotone) })
+        const menuIcon = ({ option }: { option: TreeOption }) => {
+             switch (option.type){
+                 case 1 : return h(NIcon, {color: "#0099FF"}, { default: () => h(FolderTwotone) })
+                 case 2 : return h(NIcon, {color: "#0099FF"}, { default: () => h(ApartmentOutlined) })
+                 default: switch (option.taskType){
+                     case "SQL" : return h(NIcon, null, { default: () => h(ConsoleSqlOutlined) })
+                 }
+            }
+        }
 
 
         return () =>
