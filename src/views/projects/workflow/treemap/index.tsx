@@ -15,10 +15,10 @@
 * limitations under the License.
 */
 
-import {defineComponent, onMounted, ref, unref} from 'vue'
-import {TreeOption, useMessage} from 'naive-ui'
+import {defineComponent, onMounted, ref, unref, h} from 'vue'
+import {NIcon, TreeOption, useMessage} from 'naive-ui'
 import Detail from '../definition/detail'
-import {AlignLeftOutlined, DownOutlined, SearchOutlined} from '@vicons/antd';
+import {AlignLeftOutlined, DownOutlined, FolderTwotone, SearchOutlined} from '@vicons/antd';
 import Styles from "@/views/projects/workflow/treemap/index.module.scss";
 import {useThemeStore} from "@/store/theme/theme";
 import {useRoute} from "vue-router";
@@ -36,7 +36,6 @@ export default defineComponent({
         const pattern = ref('');
         const expandedKeys = ref([]);
         const theme = useThemeStore()
-        const parentId = ref()
         const projectCode = Number(route.params.projectCode)
         const linkage = ref({
             code: 0,
@@ -147,6 +146,9 @@ export default defineComponent({
                 }
         }
 
+        const menuIcon = () => h(NIcon, null, { default: () => h(FolderTwotone) })
+
+
         return () =>
             (
                 <div
@@ -209,6 +211,7 @@ export default defineComponent({
                                     children-field="children"
                                     onUpdate:expanded-keys={onExpandedKeys}
                                     node-props={menu}
+                                    render-prefix={menuIcon}
                                 />
                             </n-card>
                         </n-gi>
