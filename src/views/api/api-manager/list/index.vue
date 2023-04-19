@@ -457,6 +457,7 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
           }
           let date = new Date(parseInt(basicInfo.value.apiGmtTime))
           basicInfo.value.apiGmtTime = moment(date).format('YYYY-MM-DD HH:mm:ss')
+          basicInfo.value.apiScript = basicInfo.value.apiScript.substring(basicInfo.value.apiScript.indexOf("HD688296")+8)
         })
       }
 
