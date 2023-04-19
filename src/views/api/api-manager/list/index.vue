@@ -451,13 +451,14 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
           basicInfo.value = response.data.obj
           if (basicInfo.value.apiFlag === 1) {
             basicInfo.value.apiFlag = '接口开发'
+            basicInfo.value.apiScript = basicInfo.value.apiScript.replace(/.*HD688296/,"")
+          }
           }
           if (basicInfo.value.apiFlag === 2) {
             basicInfo.value.apiFlag = '接口注册'
           }
           let date = new Date(parseInt(basicInfo.value.apiGmtTime))
           basicInfo.value.apiGmtTime = moment(date).format('YYYY-MM-DD HH:mm:ss')
-          basicInfo.value.apiScript = basicInfo.value.apiScript.substring(basicInfo.value.apiScript.indexOf("HD688296")+8)
         })
       }
 
