@@ -43,7 +43,11 @@ const Navbar = defineComponent({
     userDropdownOptions: {
       type: Array as PropType<any>,
       default: []
-    }
+    },
+    iconOptions: {
+      type: Array as PropType<any>,
+      default: []
+    },
   },
   setup() {
     const route = useRoute()
@@ -65,10 +69,11 @@ const Navbar = defineComponent({
     return { handleMenuClick, menuKey }
   },
   render() {
+    console.log(this.iconOptions);
     return (
       <div class={styles.container}>
         <Logo />
-        <div class={styles.nav}>
+        <div class={styles.nav} >
           <NMenu
             value={this.menuKey}
             mode='horizontal'
@@ -76,11 +81,21 @@ const Navbar = defineComponent({
             onUpdateValue={this.handleMenuClick}
           />
         </div>
-        <div class={styles.settings}>
+
+        <div class={styles.settings} >
+          <NMenu
+            // collapsed="collapsed"
+            // icon-size="6"
+            // root-indent='12'
+            value={this.menuKey}
+            mode='horizontal'
+            options={this.iconOptions}
+            onUpdateValue={this.handleMenuClick}
+          />
           <Theme />
           <User userDropdownOptions={this.userDropdownOptions} />
         </div>
-      </div>
+      </div >
     )
   }
 })

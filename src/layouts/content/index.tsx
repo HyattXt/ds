@@ -38,6 +38,7 @@ const Content = defineComponent({
       state,
       changeMenuOption,
       changeHeaderMenuOptions,
+      changeIconMenuOptions,
       changeUserDropdown
     } = useDataList()
     const sideKeyRef = ref()
@@ -46,6 +47,7 @@ const Content = defineComponent({
       locale.value = localesStore.getLocales
       changeMenuOption(state)
       changeHeaderMenuOptions(state)
+      changeIconMenuOptions(state)
       getSideMenu(state)
       changeUserDropdown(state)
     })
@@ -61,6 +63,7 @@ const Content = defineComponent({
     watch(useI18n().locale, () => {
       changeMenuOption(state)
       changeHeaderMenuOptions(state)
+      changeIconMenuOptions(state)
       getSideMenu(state)
       changeUserDropdown(state)
     })
@@ -85,9 +88,9 @@ const Content = defineComponent({
           ) as string
           sideKeyRef.value = currentSide.includes(':projectCode')
             ? currentSide.replace(
-                ':projectCode',
-                route.params.projectCode as string
-              )
+              ':projectCode',
+              route.params.projectCode as string
+            )
             : currentSide
         }
       },
@@ -100,7 +103,12 @@ const Content = defineComponent({
       sideKeyRef
     }
   },
+
+
   render() {
+
+    console.log(this.iconMenuOptions)
+
     return (
       <NLayout style='height: 100%'>
         <NLayoutHeader style='height: 65px'>
@@ -110,7 +118,9 @@ const Content = defineComponent({
             localesOptions={this.localesOptions}
             timezoneOptions={this.timezoneOptions}
             userDropdownOptions={this.userDropdownOptions}
+            iconOptions={this.iconMenuOptions}
           />
+
         </NLayoutHeader>
         <NLayout has-sider position='absolute' style='top: 65px'>
           {this.isShowSide && (
