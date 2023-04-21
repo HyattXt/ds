@@ -52,7 +52,7 @@ import {
   BarChartOutlined,
   BoxPlotOutlined
 } from '@vicons/antd'
-import { useRoute } from 'vue-router'
+import { useRoute, RouterLink } from 'vue-router'
 import { useUserStore } from '@/store/user/user'
 import { timezoneList } from '@/common/timezone'
 import type { UserInfoRes } from '@/service/modules/users/types'
@@ -348,7 +348,7 @@ export function useDataList() {
           }
         ]
       },
-      
+
       {
         label: () => h(NEllipsis, null, { default: () => t('menu.rest') }),
         key: 'rest',
@@ -379,7 +379,26 @@ export function useDataList() {
     state.iconMenuOptions = state.menuOptions.filter(item => item.key === 'line_test' || item.key === 'security' || item.key === 'data-quality' || item.key === 'task-group-manage' || item.key === 'resource' || item.key === 'datasource').map(
       (item: { label: string; key: string; icon: any, children: any }) => {
         return {
-          label: '',
+          // label: () =>
+          //   h(
+          //     'a',
+          //     {
+          //       href: '/' + item.key,
+          //       target: '_self',
+          //       rel: 'subsection'
+          //     },
+          //     ''
+          //   ),
+          label: () =>
+            h(
+              RouterLink,
+              {
+                to: {
+                  name: item.key,
+                }
+              },
+              ''
+            ),
           key: item.key,
           icon: item.icon,
           children: [
