@@ -394,7 +394,7 @@ export function useDataList() {
               RouterLink,
               {
                 to: {
-                  name: item.key,
+                  path: '/' + item.key,
                 }
               },
               ''
