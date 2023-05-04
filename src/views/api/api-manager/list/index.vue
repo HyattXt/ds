@@ -453,7 +453,6 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
             basicInfo.value.apiFlag = '接口开发'
             basicInfo.value.apiScript = basicInfo.value.apiScript.replace(/.*HD688296/,"")
           }
-          }
           if (basicInfo.value.apiFlag === 2) {
             basicInfo.value.apiFlag = '接口注册'
           }
