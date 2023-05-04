@@ -20,13 +20,21 @@ $borderLight: rgb(239, 239, 245);
 $bgDark: rgb(24, 24, 28);
 $bgLight: #ffffff;
 
+.tree {
+  width: 100%;
+  position: relative;
+  overflow: auto;
+}
+
+.scroll {
+  height: calc(100vh - 230px);
+}
+
 .container {
   width: 100%;
-  padding: 20px;
-  box-sizing: border-box;
   height: calc(100vh - 230px);
-  overflow: hidden;
-  display: block;
+  overflow: auto;
+  white-space: nowrap
 }
 
 .workflowModal {
@@ -37,6 +45,11 @@ $bgLight: #ffffff;
 .menuModal {
   width: 600px;
   height: 250px;
+}
+
+.reName {
+  width: 600px;
+  height: 200px;
 }
 
 .dark {
