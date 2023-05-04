@@ -330,7 +330,7 @@ export function useDataList() {
           }
         ]
       },
-      {
+      /*{
         label: () => h(NEllipsis, null, { default: () => t('menu.data_assets') }),
         key: 'data-assets',
         icon: renderIcon(PieChartOutlined),
@@ -358,7 +358,7 @@ export function useDataList() {
             icon: renderIcon(BarsOutlined)
           }
         ]
-      }
+      }*/
     ]
   }
 
