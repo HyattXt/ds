@@ -91,7 +91,7 @@ const Modal = defineComponent({
     return (
       <NModal
         v-model={[this.show, 'show']}
-        class={styles.container}
+        class={this.title == t('project.node.current_node_settings') ? styles.taskContainer : styles.container}
         mask-closable={false}
         auto-focus={this.autoFocus}
       >

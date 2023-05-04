@@ -64,6 +64,8 @@ interface TreeMenuReq {
 interface TreeMenuList {
   titleName: string,
   taskCode: string,
+  id: number,
+  parentId: number,
   children: []
 }
 
@@ -72,6 +74,30 @@ interface TreeMenuCreate {
   titleName: string,
   type: number
   projectCode:string
+}
+
+interface TreeMenuRename {
+  id: number,
+  name: string
+}
+
+interface WorkflowRename {
+  taskCode: number,
+  name: string
+}
+
+interface FolderMove {
+  parentId: number,
+  id: number
+}
+
+interface WorkflowMove {
+  taskCode: number,
+  parentId: number
+}
+
+interface FolderDel {
+  id: number
 }
 
 export {
@@ -83,5 +109,10 @@ export {
   ProjectList,
   TreeMenuReq,
   TreeMenuList,
-  TreeMenuCreate
+  TreeMenuCreate,
+  TreeMenuRename,
+  WorkflowRename,
+  FolderMove,
+  WorkflowMove,
+  FolderDel
 }
