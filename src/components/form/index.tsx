@@ -19,6 +19,7 @@ import { defineComponent, PropType, toRefs, h, unref } from 'vue'
 import { NSpin, NGrid, NForm, NFormItemGi } from 'naive-ui'
 import { useForm } from './use-form'
 import type { GridProps, IMeta } from './types'
+import { ElTabPane, ElTabs } from "element-plus";
 
 const props = {
   meta: {
@@ -50,6 +51,17 @@ const Form = defineComponent({
     const { elements = [], ...restFormProps } = meta
     return (
       <NSpin show={loading}>
+        <ElTabs type="card" tabPosition="right">
+          <ElTabPane name="oasis" label="Oasis">
+            Wonderwall
+          </ElTabPane>
+          <ElTabPane name="the beatles" label="the Beatles">
+            Hey Jude
+          </ElTabPane>
+          <ElTabPane name="jay chou" label="周杰伦">
+            七里香
+          </ElTabPane>
+        </ElTabs>
         <NForm {...restFormProps} ref='formRef'>
           <NGrid {...layout}>
             {elements.map((element) => {
