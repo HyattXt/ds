@@ -136,7 +136,7 @@ const NodeDetailModal = defineComponent({
     const onConfirm = async () => {
       logLoadingRef.value = false
       await detailRef.value.value.validate()
-      if(detailRef.value.value.getValues().leftList.length === 0) { message.error('字段必须选择映射关系') }
+      if(!!detailRef.value.value.getValues().leftList && detailRef.value.value.getValues().leftList.length === 0) { message.error('字段必须选择映射关系') }
       else {
         emit('submit', { data: detailRef.value.value.getValues() })
       }
@@ -194,7 +194,7 @@ const NodeDetailModal = defineComponent({
           show: !props.taskInstance,
           icon: renderIcon(PlaySquareOutlined),
           action: () => {
-            if(detailRef.value.value.getValues().leftList.length === 0){ message.error('字段必须选择映射关系') }
+            if(!!detailRef.value.value.getValues().leftList && detailRef.value.value.getValues().leftList.length === 0){ message.error('字段必须选择映射关系') }
               else {
             onSaveBeforeRun().then(r => {
               setTimeout(()=>startTaskInstance(!!props.processCode ? props.processCode : Number(route.query.code), props.projectCode, {taskDefinitionCode: detailRef.value.value.getValues().code}),1000)
