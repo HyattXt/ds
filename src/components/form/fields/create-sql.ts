@@ -29,15 +29,15 @@ export function renderCreateSql( item: IJsonItem, fields: { [field: string]: any
         : import.meta.env.VITE_APP_PROD_API_URL
     const formValue = ref({
         id: '',
-        type: null,
+        type: 0,
         tableName: ''
     })
 
     function execute() {
-        let getSql = SecondDevCreateUrl+'/createTable/getCreateSql'
+        let getSql = SecondDevCreateUrl+'/HDataApi/createTable/getCreateSql'
         formValue.value.id = fields.dataSource
         formValue.value.type = parseInt(fields.dsType.replace('MYSQL',0).replace('ORACLE',5))
-        formValue.value.tableName = fields.tableName
+        formValue.value.tableName = fields.dsType=='ORACLE' || fields.dsType=='SQLSERVER' ? fields.sourceDatabase+'.'+fields.sourceTable : fields.sourceTable
         axios
         .post(getSql, formValue.value)
         .then(function (response) {
@@ -56,7 +56,13 @@ export function renderCreateSql( item: IJsonItem, fields: { [field: string]: any
     }
     function onClick(){
         console.log(fields.dataSource)
-        if(typeof(fields.dataSource) == 'undefined'){message.error('请选择来源库')}else execute()
+        if(typeof(fields.dataSource) == 'undefined') {
+            message.error('请选择来源库')
+        }
+        else if(!fields.sourceTable){
+            message.error('请输入来源表')
+        }
+          else  execute()
     }
 
   return  h(NButton, {

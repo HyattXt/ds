@@ -23,10 +23,8 @@ export function useMenuClick() {
   const router: Router = useRouter()
 
   const handleMenuClick = (key: string, unused: MenuOption) => {
-    // console.log(key, item)
     router.push({ path: `${key}` })
   }
-
   return {
     handleMenuClick
   }

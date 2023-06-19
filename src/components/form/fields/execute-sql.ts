@@ -34,7 +34,7 @@ export function renderExecuteSql( item: IJsonItem, fields: { [field: string]: an
     })
 
     function execute() {
-        let getSql = SecondDevCreateUrl+'/createTable/excuteSql'
+        let getSql = SecondDevCreateUrl+'/HDataApi/createTable/excuteSql'
         formValue.value.id = fields.dataTarget
         formValue.value.sqlStr = fields.tableSql
             console.log(formValue.value)
@@ -64,6 +64,6 @@ export function renderExecuteSql( item: IJsonItem, fields: { [field: string]: an
         trigger:'hover'
     }, {
         default: () => h( 'span', null, '支持mysql建表'),
-        trigger: () => h(NButton, {type: 'info',onClick: () => onClick()},'执行sql'),
+        trigger: () => h(NButton, {type: 'info',onClick: () => onClick()},'执行SQL'),
     })
 }

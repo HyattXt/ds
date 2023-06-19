@@ -28,6 +28,9 @@ import type {
   WorkflowDefinition,
   EditWorkflowDefinition
 } from './types'
+import {queryProcessDefinitionByCode} from "@/service/modules/process-definition";
+import {useRoute} from "vue-router";
+import {queryTaskDefinitionByCode} from "@/service/modules/task-definition";
 
 
 interface Options {
@@ -41,6 +44,7 @@ interface Options {
  * @returns
  */
 export function useTaskEdit(options: Options) {
+  const route = useRoute()
   const { graph, definition } = options
   const {
     addNode,
@@ -66,18 +70,30 @@ export function useTaskEdit(options: Options) {
     name: ''
   })
   const taskModalVisible = ref(false)
+  const initModalVisible = ref(false)
 
   /**
    * Append a new task
    */
   function appendTask(code: number, type: TaskType, coordinate: Coordinate) {
-    addNode(code + '', type, '', 'YES', coordinate)
+    openInitTaskModal({ code, taskType: type, name: '' })
+    /*addNode(code + '', type, 'xxx', 'YES', coordinate)
     processDefinition.value.taskDefinitionList.push({
       code,
       taskType: type,
-      name: ''
+      name: '',
+      description: ''
+    })*/
+  }
+
+  function initTaskData(code: number, type: TaskType, coordinate: Coordinate, name: string, description: string) {
+    addNode(code + '', type, name, 'YES', coordinate)
+    processDefinition.value.taskDefinitionList.push({
+      code,
+      taskType: type,
+      name: name,
+      description: description
     })
-    openTaskModal({ code, taskType: type, name: '' })
   }
 
   /**
@@ -140,20 +156,49 @@ export function useTaskEdit(options: Options) {
     taskModalVisible.value = true
   }
 
+  function openInitTaskModal(task: NodeData) {
+    currTask.value = task
+    initModalVisible.value = true
+  }
+
+  function initTaskConfirm() {
+    initModalVisible.value = false
+  }
+
+  /**
+   * The cancel event in initTask config modal
+   */
+  function initTaskCancel() {
+    initModalVisible.value = false
+  }
+
   /**
    * Edit task
    * @param {number} code
    */
   function editTask(code: number) {
-    const definition = processDefinition.value.taskDefinitionList.find(
-      (t) => t.code === code
-    )
-    if (definition) {
-      currTask.value = definition
-    }
-    updatePreTasks(getSources(String(code)), code)
-    updatePostTasks(code)
-    taskModalVisible.value = true
+    /*queryTaskDefinitionByCode(code, Number(route.params.projectCode)).then((res: any) => {
+      currTask.value = res
+      updatePreTasks(getSources(String(code)), code)
+      updatePostTasks(code)
+      taskModalVisible.value = true
+    })*/
+    //queryProcessDefinitionByCode(processDefinition.value.processDefinition.code, Number(route.params.projectCode)).then((res: any) => {
+    queryTaskDefinitionByCode(code, Number(route.params.projectCode)).then((res: any) => {
+      let versionId = res.id
+      console.log(res.id)
+      const definition = processDefinition.value.taskDefinitionList.find(
+          (t) => t.code === code
+      )
+      if (definition) {
+        currTask.value = definition
+        currTask.value.id = versionId
+      }
+      updatePreTasks(getSources(String(code)), code)
+      updatePostTasks(code)
+      taskModalVisible.value = true
+    })
+
   }
 
   /**
@@ -257,10 +302,14 @@ export function useTaskEdit(options: Options) {
   return {
     currTask,
     taskModalVisible,
+    initModalVisible,
     processDefinition,
     taskConfirm,
+    initTaskConfirm,
     taskCancel,
+    initTaskCancel,
     appendTask,
+    initTaskData,
     editTask,
     copyTask,
     removeTasks

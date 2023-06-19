@@ -28,6 +28,7 @@ specifiers:
   eslint-plugin-vue: ^9.2.0
   highlight.js: ^11.6.0
   js-cookie: ^3.0.1
+  jsplumb: ^2.15.6
   lodash: ^4.17.21
   moment: ^2.29.4
   monaco-editor: ^0.33.0
@@ -64,6 +65,7 @@ dependencies:
   element-plus: 2.3.4_vue@3.2.38
   highlight.js: 11.6.0
   js-cookie: 3.0.1
+  jsplumb: 2.15.6
   lodash: 4.17.21
   moment: 2.29.4
   monaco-editor: 0.33.0
@@ -2473,6 +2475,10 @@ packages:
     optionalDependencies:
       graceful-fs: 4.2.11
     dev: true
+
+  /jsplumb/2.15.6:
+    resolution: {integrity: sha512-sIpbpz5eMVM+vV+MQzFCidlaa1RsknrQs6LOTKYDjYUDdTAi2AN2bFi94TxB33TifcIsRNV1jebcaxg0tCoPzg==}
+    dev: false
 
   /klona/2.0.5:
     resolution: {integrity: sha512-pJiBpiXMbt7dkzXe8Ghj/u4FfXOOa98fPW+bihOJ4SjnoijweJrNThJfd3ifXpXhREjpoF2mZVH1GfS9LV3kHQ==}

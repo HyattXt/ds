@@ -84,7 +84,7 @@ export default defineComponent({
 
     const createDefinition = () => {
       router.push({
-        path: `/projects/${projectCode}/workflow/definitions/create`
+        path: `/projects/${projectCode}/workflow/relation`
       })
     }
 

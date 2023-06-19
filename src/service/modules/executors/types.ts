@@ -49,6 +49,10 @@ interface ProcessDefinitionCodeReq {
   processDefinitionCode: number
 }
 
+interface startTaskInstance {
+  taskDefinitionCode: number
+}
+
 interface ProcessInstanceReq extends ProcessDefinitionCodeReq {
   failureStrategy: 'END' | 'CONTINUE'
   processInstancePriority: 'HIGHEST' | 'HIGH' | 'MEDIUM' | 'LOW' | 'LOWEST'
@@ -71,5 +75,6 @@ export {
   ExecuteReq,
   ProjectCodeReq,
   ProcessDefinitionCodeReq,
-  ProcessInstanceReq
+  ProcessInstanceReq,
+  startTaskInstance
 }

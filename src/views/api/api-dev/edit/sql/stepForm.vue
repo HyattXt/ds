@@ -79,7 +79,7 @@ import {defineComponent, provide, ref, onMounted} from 'vue'
 
   function nextStep3() {
     return new Promise((resolve) => {
-      const urlUpdate = SecondDevApiUrl+'/interface/update'
+      const urlUpdate = SecondDevApiUrl+'/HDataApi/interface/update'
       axios
         .post(urlUpdate, params.value)
         .then(function (response) {

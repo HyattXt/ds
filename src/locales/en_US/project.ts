@@ -498,6 +498,8 @@ export default {
     datax_target_datasource_type: 'Target Datasource Types',
     datax_target_database: 'Target Database',
     datax_target_table: 'Target Table',
+    datax_source_table: 'Source Table',
+    datax_source_database: 'Source Database',
     datax_target_table_tips: 'Please enter the name of the target table',
     datax_target_database_pre_sql: 'Pre SQL Statement',
     datax_target_database_post_sql: 'Post SQL Statement',

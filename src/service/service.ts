@@ -41,8 +41,8 @@ const handleError = (res: AxiosResponse<any, any>) => {
 const baseRequestConfig: AxiosRequestConfig = {
   baseURL:
     import.meta.env.MODE === 'development'
-      ? '/dolphinscheduler'
-      : import.meta.env.VITE_APP_PROD_WEB_URL + '/dolphinscheduler',
+      ? '/HData'
+      : import.meta.env.VITE_APP_PROD_WEB_URL + '/HData',
   timeout: 15000,
   headers: {"X-Content-Type-Options" : "nosniff",
             "X-XSS-Protection" : "1",

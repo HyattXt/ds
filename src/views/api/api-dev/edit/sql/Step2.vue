@@ -69,7 +69,7 @@ import { onMounted, ref} from 'vue'
   const emit = defineEmits(['prevStep', 'nextStep'])
 
   onMounted(() => {
-    let url = SecondDevApiUrl+'/interface/getInterfaceInfoById'
+    let url = SecondDevApiUrl+'/HDataApi/interface/getInterfaceInfoById'
     let params = { apiId: '' }
     params.apiId = route.query.apiId
     console.log(params)

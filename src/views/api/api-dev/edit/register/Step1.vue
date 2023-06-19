@@ -132,7 +132,7 @@ import { onMounted, ref} from 'vue'
   function formSubmit() {
     form1Ref.value.validate((errors: any) => {
       if (!errors) {
-        let insUrl = SecondDevApiUrl+'/interface/update'
+        let insUrl = SecondDevApiUrl+'/HDataApi/interface/update'
         let sample = {
           requestHeader: [],
           requestBody: {},
@@ -179,7 +179,7 @@ import { onMounted, ref} from 'vue'
   }
 
   onMounted(() => {
-    let url = SecondDevApiUrl+'/interface/getInterfaceInfoById'
+    let url = SecondDevApiUrl+'/HDataApi/interface/getInterfaceInfoById'
     let params = { apiId: '' }
     params.apiId = route.query.apiId
     console.log(params)

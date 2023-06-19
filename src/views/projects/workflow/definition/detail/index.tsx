@@ -110,7 +110,7 @@ export default defineComponent({
           timeout: saveForm.timeoutFlag ? saveForm.timeout : 0,
           releaseState: saveForm.release ? 'ONLINE' : 'OFFLINE'
         },
-        props.code,
+        !!props.code ? props.code : Number(route.query.code),
         props.projectCode
       ).then((ignored: any) => {
         message.success(t('project.dag.success'))
@@ -138,6 +138,7 @@ export default defineComponent({
                 definition={definition.value}
                 onRefresh={refresh}
                 projectCode={props.projectCode}
+                processCode={props.code}
                 onSave={save}
                 readonly={readonly.value}
             />

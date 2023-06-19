@@ -32,6 +32,8 @@ type IType =
   | 'multi-condition'
   | 'create-sql'
   | 'execute-sql'
+  | 'column-jsplumb'
+  | 'button'
 
 interface IOption {
   [key: string]: any
@@ -53,7 +55,7 @@ interface IMeta extends Omit<FormProps, 'model'> {
 }
 
 interface IJsonItemParams {
-  field: string
+  field?: string
   name?: string
   props?: any
   title?: string

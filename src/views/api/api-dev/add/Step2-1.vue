@@ -88,7 +88,7 @@ import { ref} from 'vue'
 
   function queryDataSource() {
       formValue.value.source = ''
-      const url = SecondDevApiUrl+'/apiService/getDataSource?type='+formValue.value.sourceType
+      const url = SecondDevApiUrl+'/HDataApi/apiService/getDataSource?type='+formValue.value.sourceType
       axios.get(url).then(function (response) {
       console.log(response)
       sList.value = response.data.data
@@ -96,7 +96,7 @@ import { ref} from 'vue'
   }
 
   function queryTab() {
-    const url = SecondDevApiUrl+'/apiService/getTables'
+    const url = SecondDevApiUrl+'/HDataApi/apiService/getTables'
     let params = {
       type : formValue.value.sourceType,
       id : formValue.value.source
@@ -108,7 +108,7 @@ import { ref} from 'vue'
   }
 
   function queryCol(table: string) {
-    const url = SecondDevApiUrl+'/apiService/getColumnsByTable'
+    const url = SecondDevApiUrl+'/HDataApi/apiService/getColumnsByTable'
     const params = {
       type : formValue.value.sourceType,
       id : formValue.value.source,

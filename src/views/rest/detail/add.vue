@@ -229,7 +229,7 @@ const httpInsertUrl = import.meta.env.MODE === 'development'
 
 let validatePath = (rule: any, value: any, callback: any) => {
   return new Promise<void>((resolve, reject) => {
-    let url = httpInsertUrl+'/httpHandle/getHttpDataByTaskName'
+    let url = httpInsertUrl+'/HDataApi/httpHandle/getHttpDataByTaskName'
     let body = { taskName: value }
     console.log(body)
     //0存在，1不存在
@@ -316,7 +316,7 @@ const dataTokenTypeOptions = ref([
 ])
 
 function formSubmit() {
-  let insUrl = httpInsertUrl+'/httpHandle/insertHttpData'
+  let insUrl = httpInsertUrl+'/HDataApi/httpHandle/insertHttpData'
 
   for(let i=0;i<dataKeyTmp.value.length; i++){
     formValue.value.dataKey[dataKeyTmp.value[i].value]=dataKeyTmp.value[i].key
@@ -361,7 +361,7 @@ function formSubmit() {
 
 
 function queryDataSource() {
-  let queryUrl = httpInsertUrl+'/httpHandle/getDataSource?type=0'
+  let queryUrl = httpInsertUrl+'/HDataApi/httpHandle/getDataSource?type=0'
 
   axios.get(queryUrl).then(function (response) {
     console.log(response)

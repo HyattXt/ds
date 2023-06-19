@@ -59,7 +59,10 @@ export function useTask(projectCode: number) {
   const onToggleShow = (show: boolean) => {
     task.taskShow = show
   }
+
+  //任务定义里的创建任务
   const onTaskSave = async (data: INodeData) => {
+    console.log(data)
     if (task.taskSaving) return
     task.taskSaving = true
     try {
@@ -86,6 +89,7 @@ export function useTask(projectCode: number) {
     }
   }
 
+//任务定义的编辑
   const onEditTask = async (row: IRecord, readonly: boolean) => {
     const result = await queryTaskDefinitionByCode(row.taskCode, projectCode)
     task.taskData = { ...result, processName: row.processDefinitionCode }

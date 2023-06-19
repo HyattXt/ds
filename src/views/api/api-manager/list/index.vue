@@ -319,8 +319,8 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
   ) {
     return new Promise((resolve) => {
       const url = import.meta.env.MODE === 'development'
-          ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/getList'
-          : import.meta.env.VITE_APP_PROD_API_URL+'/interface/getList'
+          ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getList'
+          : import.meta.env.VITE_APP_PROD_API_URL+'/HDataApi/interface/getList'
       const params = {
         pageNum: page,
       'pageSize': pageSize,
@@ -395,11 +395,11 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
 
       function queryUser() {
         const listUrl = import.meta.env.MODE === 'development'
-            ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/getUser'
-            : import.meta.env.VITE_APP_PROD_API_URL+'/interface/getUser'
+            ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getUser'
+            : import.meta.env.VITE_APP_PROD_API_URL+'/HDataApi/interface/getUser'
         const authListUrl = import.meta.env.MODE === 'development'
-            ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/getAuthorizeInfo'
-            : import.meta.env.VITE_APP_PROD_API_URL+'/interface/getAuthorizeInfo'
+            ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getAuthorizeInfo'
+            : import.meta.env.VITE_APP_PROD_API_URL+'/HDataApi/interface/getAuthorizeInfo'
         axios.get(listUrl).then(function (response) {
           console.log(response)
           userList.value = response.data.data
@@ -440,8 +440,8 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
 
       function queryBasic(apiId) {
         const url = import.meta.env.MODE === 'development'
-            ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/getInterfaceInfoById'
-            : import.meta.env.VITE_APP_PROD_API_URL+'/interface/getInterfaceInfoById'
+            ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getInterfaceInfoById'
+            : import.meta.env.VITE_APP_PROD_API_URL+'/HDataApi/interface/getInterfaceInfoById'
         let basicPar = {
           apiId: drawId.value
         }
@@ -452,6 +452,7 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
           if (basicInfo.value.apiFlag === 1) {
             basicInfo.value.apiFlag = '接口开发'
             basicInfo.value.apiScript = basicInfo.value.apiScript.replace(/.*HD688296/,"")
+            basicInfo.value.apiPath = basicInfo.value.apiPath.replace('/api/','/HDataApi/api/')
           }
           if (basicInfo.value.apiFlag === 2) {
             basicInfo.value.apiFlag = '接口注册'
@@ -508,8 +509,8 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
 
       function subAuth() {
         let subUrl = import.meta.env.MODE === 'development'
-            ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/insertAuthorizeInfo'
-            : import.meta.env.VITE_APP_PROD_API_URL+'/interface/insertAuthorizeInfo'
+            ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/insertAuthorizeInfo'
+            : import.meta.env.VITE_APP_PROD_API_URL+'/HDataApi/interface/insertAuthorizeInfo'
         let requestBody = {
           apiId: drawId.value,
         'authorizeId': apiAuthorizer.value
@@ -541,8 +542,8 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
               if (row.apiStatus === '待发布') {
                 if (row.apiFlag === '接口开发') {
                   let urlPub = import.meta.env.MODE === 'development'
-                      ? import.meta.env.VITE_APP_DEV_API_URL+`/interface-ui/api/publish?id=${row.apiId}`
-                      : import.meta.env.VITE_APP_PROD_API_URL+`/interface-ui/api/publish?id=${row.apiId}`
+                      ? import.meta.env.VITE_APP_DEV_API_URL+`/HDataApi/interface-ui/api/publish?id=${row.apiId}`
+                      : import.meta.env.VITE_APP_PROD_API_URL+`/HDataApi/interface-ui/api/publish?id=${row.apiId}`
                   let pubPar = {
                     id: ''
                   }
@@ -560,8 +561,8 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
                     })
                 } else {
                   let urlPub = import.meta.env.MODE === 'development'
-                      ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/update'
-                      : import.meta.env.VITE_APP_PROD_API_URL+'/interface/update'
+                      ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/update'
+                      : import.meta.env.VITE_APP_PROD_API_URL+'/HDataApi/interface/update'
                   let pubPar = {
                     apiId: '',
                     apiStatus: 1
@@ -581,8 +582,8 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
                 }
               } else {
                 let urlPub = import.meta.env.MODE === 'development'
-                    ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/update'
-                    : import.meta.env.VITE_APP_PROD_API_URL+'/interface/update'
+                    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/update'
+                    : import.meta.env.VITE_APP_PROD_API_URL+'/HDataApi/interface/update'
                 let pubPar = {
                   apiId: '',
                   apiStatus: 0

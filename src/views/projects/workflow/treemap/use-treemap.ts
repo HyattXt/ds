@@ -32,6 +32,7 @@ export function useTreemap() {
       treeData:[],
       folderData:[],
       saving: false,
+      loading: true,
       taskCode: 1,
       model:{
           parentId: 1,
@@ -66,6 +67,7 @@ export function useTreemap() {
       }).then((res: TreeMenuList) => {
           // @ts-ignore
           variables.treeData = res
+          variables.loading = false
       })
   }
 

@@ -131,7 +131,7 @@ import { onMounted, ref} from 'vue'
   }
 
   onMounted(() => {
-    let url = SecondDevApiUrl+'/interface/getInterfaceInfoById'
+    let url = SecondDevApiUrl+'/HDataApi/interface/getInterfaceInfoById'
     let params = { apiId: '' }
     params.apiId = route.query.apiId
     console.log(params)

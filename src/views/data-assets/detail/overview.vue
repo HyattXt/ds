@@ -31,8 +31,8 @@ const message = useMessage()
 
 onMounted(() => {
   const url = import.meta.env.MODE === 'development'
-      ? import.meta.env.VITE_APP_DEV_ASSETS_URL+'/lineage/getTableDataByTableName'
-      : import.meta.env.VITE_APP_PROD_ASSETS_URL+'/lineage/getTableDataByTableName'
+      ? import.meta.env.VITE_APP_DEV_ASSETS_URL+'/HDataApi/interface_lineage/getTableDataByTableName'
+      : import.meta.env.VITE_APP_PROD_ASSETS_URL+'/HDataApi/interface_lineage/getTableDataByTableName'
   let params ={
     tableName: route.query.tableName
   }

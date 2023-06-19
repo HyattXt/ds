@@ -17,7 +17,7 @@
 
 import { defineComponent, PropType, renderSlot, Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { NModal, NCard, NButton, NSpace } from 'naive-ui'
+import {NModal, NCard, NButton, NSpace, NDrawer} from 'naive-ui'
 import ButtonLink from '@/components/button-link'
 import styles from './index.module.scss'
 import type { LinkOption } from '@/components/modal/types'
@@ -64,6 +64,10 @@ const props = {
   headerLinks: {
     type: Object as PropType<Ref<Array<LinkOption>>>,
     default: [] as LinkOption[]
+  },
+  disRun: {
+    type: Boolean as PropType<boolean>,
+    default: false
   }
 }
 
@@ -91,7 +95,7 @@ const Modal = defineComponent({
     return (
       <NModal
         v-model={[this.show, 'show']}
-        class={this.title == t('project.node.current_node_settings') ? styles.taskContainer : styles.container}
+        class={this.title == t('project.node.current_node_settings')||this.title == t('project.task.current_task_settings') ? styles.taskContainer : styles.container}
         mask-closable={false}
         auto-focus={this.autoFocus}
       >
@@ -111,7 +115,7 @@ const Modal = defineComponent({
                       return (
                         <ButtonLink
                           onClick={item.action}
-                          disabled={item.disabled}
+                          disabled={item.text == '运行' ? this.disRun: item.disabled }
                         >
                           {{
                             default: () => item.text,

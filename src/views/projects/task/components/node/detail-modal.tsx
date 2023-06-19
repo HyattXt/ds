@@ -24,7 +24,7 @@ import {
   provide,
   computed,
   h,
-  Ref
+  Ref, onMounted, watchEffect
 } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Modal from '@/components/modal'
@@ -33,12 +33,25 @@ import { formatModel } from './format-data'
 import {
   HistoryOutlined,
   ProfileOutlined,
-  QuestionCircleTwotone,
-  BranchesOutlined
+  PlaySquareOutlined,
+  BranchesOutlined,
+  MenuUnfoldOutlined
 } from '@vicons/antd'
-import { NIcon } from 'naive-ui'
+import {
+  LogInst,
+  NCard,
+  NDrawer,
+  NDrawerContent,
+  NIcon,
+  NLog,
+  NModal,
+  NTable,
+  NTabPane,
+  NTabs,
+  useMessage
+} from 'naive-ui'
 import { TASK_TYPES_MAP } from '../../constants/task-type'
-import { Router, useRouter } from 'vue-router'
+import {Router, useRoute, useRouter} from 'vue-router'
 import { querySubProcessInstanceByTaskCode } from '@/service/modules/process-instances'
 import { useTaskNodeStore } from '@/store/project/task-node'
 import type {
@@ -48,6 +61,10 @@ import type {
   IWorkflowTaskInstance,
   WorkflowInstance
 } from './types'
+import {startTaskInstance} from "@/service/modules/executors";
+import styles from "./index.module.scss";
+import {getSqlLog, queryLog, startImmediateLog} from "@/service/modules/log";
+import {useAsyncState} from "@vueuse/core";
 
 const props = {
   show: {
@@ -59,6 +76,11 @@ const props = {
     default: { code: 0, taskType: 'SHELL', name: '' }
   },
   projectCode: {
+    type: Number as PropType<number>,
+    required: true,
+    default: 0
+  },
+  processCode: {
     type: Number as PropType<number>,
     required: true,
     default: 0
@@ -89,23 +111,43 @@ const props = {
 const NodeDetailModal = defineComponent({
   name: 'NodeDetailModal',
   props,
-  emits: ['cancel', 'submit', 'viewLog'],
+  emits: ['cancel', 'submit', 'viewLog', 'saveBeforeRun'],
   setup(props, { emit }) {
     const { t, locale } = useI18n()
     const router: Router = useRouter()
     const taskStore = useTaskNodeStore()
+    const route = useRoute()
+    const logInstRef = ref<LogInst | null>(null)
+    const message = useMessage()
 
     const renderIcon = (icon: any) => {
       return () => h(NIcon, null, { default: () => h(icon) })
     }
     const detailRef = ref()
+    const showDialog = ref(false)
+    const logMessage =ref('')
+    const showSql = ref(false)
+    const skipLineNum = ref(0)
+    const limit = ref(1000)
+    const logLoadingRef = ref(false)
+    const dataInfo = ref([])
+    const diaPx =ref(251)
 
     const onConfirm = async () => {
+      logLoadingRef.value = false
       await detailRef.value.value.validate()
-      emit('submit', { data: detailRef.value.value.getValues() })
+      if(detailRef.value.value.getValues().leftList.length === 0) { message.error('字段必须选择映射关系') }
+      else {
+        emit('submit', { data: detailRef.value.value.getValues() })
+      }
     }
     const onCancel = () => {
+      logLoadingRef.value = false
       emit('cancel')
+    }
+    const onSaveBeforeRun = async () => {
+      await detailRef.value.value.validate()
+      if(!props.readonly) emit('saveBeforeRun', { data: detailRef.value.value.getValues() })
     }
 
     const headerLinks = ref([] as any)
@@ -116,23 +158,68 @@ const NodeDetailModal = defineComponent({
       }
     }
 
+    const getLogs = (row: any) => {
+      const { state } = useAsyncState(
+          queryLog({
+            taskInstanceId: Number(row.id),
+            limit: limit.value,
+            skipLineNum: skipLineNum.value
+          }).then((res: any) => {
+            if (!'35679'.includes(res.state)) {
+              if(res?.message){
+              logMessage.value += res.message
+              limit.value += 100
+              skipLineNum.value += res.lineNum
+              }
+              setTimeout(()=>getLogs(row),3000)
+            } else {
+              logMessage.value += res.message
+              logLoadingRef.value = false
+              if(detailRef.value.value.getValues().sqlType == '0')
+              {showSql.value = true
+               getSqlLog(!!props.processCode ? props.processCode : Number(route.query.code), props.projectCode, {instanceId: row.id})
+                    .then((res: any) => {dataInfo.value = JSON.parse(res)})}
+            }
+          }),
+          {}
+      )
+
+      return state
+    }
+
     const initHeaderLinks = (processInstance: any, taskType?: ITaskType) => {
       headerLinks.value = [
         {
-          text: t('project.node.instructions'),
-          show: !!(taskType && !TASK_TYPES_MAP[taskType]?.helperLinkDisable),
+          text: '运行',
+          show: !props.taskInstance,
+          icon: renderIcon(PlaySquareOutlined),
           action: () => {
-            let linkedTaskType = taskType?.toLowerCase().replace('_', '-')
-            if (taskType === 'PROCEDURE') linkedTaskType = 'stored-procedure'
-            const helpUrl =
-              'https://dolphinscheduler.apache.org/' +
-              locale.value.toLowerCase().replace('_', '-') +
-              '/docs/latest/user_doc/guide/task/' +
-              linkedTaskType +
-              '.html'
-            window.open(helpUrl)
-          },
-          icon: renderIcon(QuestionCircleTwotone)
+            if(detailRef.value.value.getValues().leftList.length === 0){ message.error('字段必须选择映射关系') }
+              else {
+            onSaveBeforeRun().then(r => {
+              setTimeout(()=>startTaskInstance(!!props.processCode ? props.processCode : Number(route.query.code), props.projectCode, {taskDefinitionCode: detailRef.value.value.getValues().code}),1000)
+              showDialog.value = true
+              showSql.value = false
+              logMessage.value = ''
+              logLoadingRef.value = true
+              limit.value = 1000
+              skipLineNum.value = 0
+              setTimeout(()=>
+                startImmediateLog(!!props.processCode ? props.processCode : Number(route.query.code), props.projectCode, {taskCode: detailRef.value.value.getValues().code})
+                    .then((res: any) => {
+                      getLogs(res)
+                    }),5000)
+              })
+            }
+          }
+        },
+        {
+          text: '任务属性',
+          show: !!(taskType && !TASK_TYPES_MAP[taskType]?.helperLinkDisable),
+          icon: renderIcon(MenuUnfoldOutlined),
+          action: () => {
+            detailRef.value.value.showDra()
+          }
         },
         {
           text: t('project.node.view_history'),
@@ -190,6 +277,10 @@ const NodeDetailModal = defineComponent({
       initHeaderLinks(props.processInstance, props.data.taskType)
     }
 
+    const resize = (height: number)=>{
+      diaPx.value = height
+    }
+
     provide(
       'data',
       computed(() => ({
@@ -212,8 +303,20 @@ const NodeDetailModal = defineComponent({
       }
     )
 
+    onMounted(() => {
+      watchEffect(() => {
+        if (logMessage.value) {
+          nextTick(() => {
+            logInstRef.value?.scrollTo({ position: 'bottom', slient: true })
+          })
+        }
+      })
+    })
+
     return () => (
+      <div class={styles.taskContainer}>
       <Modal
+        id={"drawer-target"}
         show={props.show}
         title={
           props.from === 1
@@ -225,13 +328,79 @@ const NodeDetailModal = defineComponent({
         confirmDisabled={props.readonly}
         onCancel={onCancel}
         headerLinks={headerLinks}
+        disRun={logLoadingRef.value}
       >
         <Detail
           ref={detailRef}
           onTaskTypeChange={onTaskTypeChange}
           key={props.data.taskType}
         />
+        <NDrawer
+            id={'ttD'}
+            v-model:show={showDialog.value}
+            placement={'bottom'}
+            mask-closable={false}
+            show-mask={false}
+            resizable
+            onUpdateHeight={resize}
+            to={"#drawer-target"}
+        >
+          <NDrawerContent
+              header-style={{ padding: '2px' }}
+              body-content-style={{ padding: '0px' }}
+              closable
+          >
+            <NTabs
+                type={"card"}
+                animated
+                //closable
+                tab-style={"min-width: 70px"}
+                default-value={"信息"}
+            >
+              <NTabPane
+                  name={"信息"}
+                  tab={"信息"}
+              >
+                <NLog
+                    ref={logInstRef}
+                    rows={Math.trunc((diaPx.value-76)/17.5)}
+                    log={logMessage.value}
+                    loading={logLoadingRef.value}
+                    //style={{ height: isFullscreen ? 'calc(100vh - 140px)' : '525px' }}
+                />
+
+              </NTabPane>
+              {showSql.value&&(<NTabPane
+                  //v-for={"panel in panels"}
+                  name={"结果"}
+                  tab={"结果"}
+              >
+                <div class={styles.dialog} style={{height: (diaPx.value-80+'px')}}>
+                  <NTable single-line={false} style="margin-top: 10px">
+                  <thead>
+                  <tr>
+                    {Object.entries(dataInfo.value[0]).map(([key, value]) => (
+                        <th class="tableWidth">{key}</th>
+                    ))}
+                  </tr>
+                  </thead>
+                    <tbody>
+                    {dataInfo.value.map((item) => (
+                        <tr>
+                          {Object.values(item).map((value) => (
+                              <td class="tableWidth">{value}</td>
+                          ))}
+                        </tr>
+                    ))}
+                    </tbody>
+                  </NTable>
+                </div>
+              </NTabPane>)}
+            </NTabs>
+          </NDrawerContent>
+        </NDrawer>
       </Modal>
+      </div>
     )
   }
 })

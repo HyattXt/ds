@@ -75,7 +75,7 @@
 
   let validatePath = (rule: any, value: any, callback: any) => {
     return new Promise<void>((resolve, reject) => {
-      let url = SecondDevApiUrl+'/interface/getApiPath'
+      let url = SecondDevApiUrl+'/HDataApi/interface/getApiPath'
       let body = { apiPath: value }
       console.log(body)
       //0存在，1不存在

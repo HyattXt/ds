@@ -45,6 +45,7 @@ export function useDataX({
     delayTime: 0,
     timeout: 30,
     customConfig: false,
+    executeMode : '0',
     dsType: 'MYSQL',
     dtType: 'MYSQL',
     preStatements: [],

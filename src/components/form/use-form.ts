@@ -25,7 +25,6 @@ export function useForm() {
   const validate = async (...args: []) => {
     await state.formRef.validate(...args)
   }
-
   const resetValues = (initialValues: { [field: string]: any }) => {
     const modelKeys = Object.keys(state.formRef.model)
     for (const key of modelKeys) {

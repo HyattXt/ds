@@ -280,12 +280,20 @@ interface ITaskParams {
     dependTaskList?: IDependTask[]
   }
   customConfig?: number
+  executeMode?: string
   json?: string
   dsType?: string
   dataSource?: number
   dtType?: string
   dataTarget?: number
+  sourceTable?: string
+  sourceDatabase?: string
+  targetDatabase?: string
   targetTable?: string
+  leftList?: string
+  rightList?: string
+  leftData?: string
+  rightData?: string
   jobSpeedByte?: number
   jobSpeedRecord?: number
   xms?: number

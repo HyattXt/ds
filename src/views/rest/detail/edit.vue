@@ -291,7 +291,7 @@ const dataTokenTypeOptions = ref([
 ])
 
 function formSubmit() {
-  let insUrl = httpInsertUrl+'/httpHandle/updateHttpData'
+  let insUrl = httpInsertUrl+'/HDataApi/httpHandle/updateHttpData'
 
   for(let i=0;i<dataKeyTmp.value.length; i++){
     formValue.value.dataKey[dataKeyTmp.value[i].value]=dataKeyTmp.value[i].key
@@ -335,7 +335,7 @@ function formSubmit() {
 }
 
 function queryDataSource() {
-  let queryUrl = httpInsertUrl+'/httpHandle/getDataSource?type=0'
+  let queryUrl = httpInsertUrl+'/HDataApi/httpHandle/getDataSource?type=0'
 
   axios.get(queryUrl).then(function (response) {
     console.log(response)
@@ -344,7 +344,7 @@ function queryDataSource() {
 }
 
 onMounted(() => {
-  let url = httpInsertUrl+'/httpHandle/getHttpDataById'
+  let url = httpInsertUrl+'/HDataApi/httpHandle/getHttpDataById'
   let params = { id: '' }
   params.id = route.query.id
   formValue.value.id = route.query.id

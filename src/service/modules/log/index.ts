@@ -16,7 +16,7 @@
  */
 
 import { axios } from '@/service/service'
-import { IdReq, LogReq } from './types'
+import {IdReq, immediateLog, LogReq} from './types'
 
 export function queryLog(params: LogReq): any {
   return axios({
@@ -31,5 +31,29 @@ export function downloadTaskLog(params: IdReq): any {
     url: '/log/download-log',
     method: 'get',
     params
+  })
+}
+
+export function startImmediateLog(
+    code: number,
+    projectCode: number,
+    data: immediateLog,
+): any {
+  return axios({
+    url: `/projects/${projectCode}/process-definition/${code}/logInfo`,
+    method: 'post',
+    data
+  })
+}
+
+export function getSqlLog(
+    code: number,
+    projectCode: number,
+    data: IdReq,
+): any {
+  return axios({
+    url: `/projects/${projectCode}/process-definition/${code}/getDataInfo`,
+    method: 'post',
+    data
   })
 }

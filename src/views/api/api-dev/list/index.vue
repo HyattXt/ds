@@ -303,8 +303,8 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
   ) {
     return new Promise((resolve) => {
       const url = import.meta.env.MODE === 'development'
-          ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/getList'
-          : import.meta.env.VITE_APP_PROD_API_URL+'/interface/getList'
+          ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getList'
+          : import.meta.env.VITE_APP_PROD_API_URL+'/HDataApi/interface/getList'
       const params = {
         pageNum: page,
         pageSize: pageSize,
@@ -434,8 +434,8 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
           {
             del(row) {
               let urlDel = import.meta.env.MODE === 'development'
-                  ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/deleteByApiId'
-                  : import.meta.env.VITE_APP_PROD_API_URL+'/interface/deleteByApiId'
+                  ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/deleteByApiId'
+                  : import.meta.env.VITE_APP_PROD_API_URL+'/HDataApi/interface/deleteByApiId'
               let delPar = {
                 apiId: ''
               }
@@ -667,8 +667,8 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
             }
           } else {
             let sqlUrl = import.meta.env.MODE === 'development'
-                ? import.meta.env.VITE_APP_DEV_API_URL+'/interface-ui/api/perform?id=' + drawId.value
-                : import.meta.env.VITE_APP_PROD_API_URL+'/interface-ui/api/perform?id=' + drawId.value
+                ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface-ui/api/perform?id=' + drawId.value
+                : import.meta.env.VITE_APP_PROD_API_URL+'/HDataApi/interface-ui/api/perform?id=' + drawId.value
             let sqlBody = {
               id: drawId.value,
               select: 'POST',

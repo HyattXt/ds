@@ -108,6 +108,8 @@ export default defineComponent({
             getTreeFolder(projectCode)
             // @ts-ignore
             variables.model.projectCode = projectCode
+            console.log(route.query.code)
+            if( typeof(route.query.code) != 'undefined' )tsxRef.value.refresh(route.query.code, projectCode)
         })
 
         function createMenu() {
@@ -304,7 +306,7 @@ export default defineComponent({
                                 key: 'renameWorkflow',
                                 disable: false
                             },
-                            {
+                            /*{
                                 label: '复制',
                                 key: 'copyWorkflow',
                                 disable: false
@@ -313,7 +315,7 @@ export default defineComponent({
                                 label: '导出',
                                 key: 'exportWorkflow',
                                 disable: false
-                            },
+                            },*/
                             {
                                 label: '移动',
                                 key: 'removeWorkflow',
@@ -328,7 +330,7 @@ export default defineComponent({
                     }
                     if(option.type == null){
                         dropdownOption.value = [
-                            {
+                            /*{
                                 label: '运行',
                                 key: 'run',
                                 disable: false
@@ -347,7 +349,7 @@ export default defineComponent({
                                 label: '删除',
                                 key: 'deleteTask',
                                 disable: true
-                            },
+                            },*/
                         ];
                     }
                     nextTick().then(() => {
@@ -362,8 +364,8 @@ export default defineComponent({
                     linkage.value.code = option.taskCode as number
                     linkage.value.type = option.type as number
                     linkage.value.parentId = option.parentId as number
-                    if(option.type == 2) tsxRef.value.refresh(linkage.value.code, projectCode)
-                    if(option.type == null) message.info("打开任务节点还在开发")
+                    if(option.type == 2) {tsxRef.value.refresh(linkage.value.code, projectCode) }
+                    if(option.type == null) {}//message.info("打开任务节点还在开发")
                     }
                 }
         }
@@ -374,7 +376,7 @@ export default defineComponent({
                  case 2 : return h(<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><g data-name="矩形 256" stroke="#0099FF" fill="none"><rect width="24" height="24" rx="4" stroke="none"/><rect x=".5" y=".5" width="23" height="23" rx="3.5"/></g><path data-name="路径 735" d="M19.008 16.948a.2.2 0 01-.057.145.2.2 0 01-.142.061h-3.6a.2.2 0 01-.2-.2v-2.61a.2.2 0 01.057-.147.2.2 0 01.145-.059h3.59a.2.2 0 01.143.056.2.2 0 01.062.142v2.614zm-8.835-8.916a.2.2 0 01-.14-.058.2.2 0 01-.058-.142V5.215a.2.2 0 01.057-.146.2.2 0 01.142-.061h3.623a.2.2 0 01.141.061.2.2 0 01.055.145v2.618a.2.2 0 01-.053.142.194.194 0 01-.137.062h-3.63zm-1.39 6.09a.2.2 0 01.143.056.2.2 0 01.061.143v2.624a.223.223 0 01-.2.23H5.209a.224.224 0 01-.2-.23v-2.613a.2.2 0 01.056-.145.2.2 0 01.141-.062h3.577zm8.732-1.01v-2.604h-4.949V9.065h1.307c.675 0 1.129-.309 1.129-.992V5.216A1.136 1.136 0 0013.873 4H9.994c-.675 0-1.018.532-1.018 1.216v2.857c0 .683.344.992 1.018.992h1.412v1.443H6.48v2.608H4.988c-.673 0-.987.286-.987.967v2.867c0 .682.314 1.05.987 1.05h4.029c.675 0 .976-.369.976-1.051v-2.866c0-.683-.3-.967-.976-.967H7.5v-1.692h8.993v1.692h-1.6c-.674 0-.868.286-.868.967v2.867c0 .682.194 1.05.868 1.05h4.1A.916.916 0 0020 16.949v-2.866c0-.683-.331-.967-1.007-.967h-1.478z" fill="#0099FF"/></svg>)
                  default: {
                      // @ts-ignore
-                     let url= '/images/task-icons/'+option.taskType.toLocaleLowerCase()+'_hover.png'
+                     let url= '/HData/ui/images/task-icons/'+option.taskType.toLocaleLowerCase()+'_hover.png'
                      return h(<img src={url} width="24" height="24"/>)
                  }
             }
@@ -456,6 +458,7 @@ export default defineComponent({
                                     }}
                                 />
                                 <div class={Styles.container}>
+                                    <n-spin show={variables.loading}>
                                     <n-tree
                                         block-line
                                         show-irrelevant-nodes={false}
@@ -469,6 +472,7 @@ export default defineComponent({
                                         node-props={menu}
                                         render-prefix={menuIcon}
                                     />
+                                    </n-spin>
                                 </div>
                                 <n-dropdown
                                     placement="bottom-start"

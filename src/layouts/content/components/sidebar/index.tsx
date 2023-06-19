@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import { defineComponent, ref, PropType } from 'vue'
-import { NLayoutSider, NMenu } from 'naive-ui'
+import {defineComponent, ref, PropType, onMounted, unref, watch} from 'vue'
+import {MenuOption, NLayoutSider, NMenu} from 'naive-ui'
 import { useMenuClick } from './use-menuClick'
 
 const Sidebar = defineComponent({
@@ -31,7 +31,7 @@ const Sidebar = defineComponent({
       default: ''
     }
   },
-  setup() {
+  setup(props) {
     const collapsedRef = ref(false)
     const defaultExpandedKeys = [
       'workflow',
@@ -44,7 +44,12 @@ const Sidebar = defineComponent({
 
     const { handleMenuClick } = useMenuClick()
 
-    return { collapsedRef, defaultExpandedKeys, handleMenuClick }
+    const handleMenuClickHide = (key: string, unused: MenuOption)=> {
+      handleMenuClick(key,unused)
+      if(key.includes('/workflow/relation')){collapsedRef.value = true}
+    }
+
+    return { collapsedRef, defaultExpandedKeys, handleMenuClick, handleMenuClickHide }
   },
   render() {
     return (
@@ -62,7 +67,7 @@ const Sidebar = defineComponent({
           value={this.sideKey}
           options={this.sideMenuOptions}
           defaultExpandedKeys={this.defaultExpandedKeys}
-          onUpdateValue={this.handleMenuClick}
+          onUpdateValue={this.handleMenuClickHide}
         />
       </NLayoutSider>
     )

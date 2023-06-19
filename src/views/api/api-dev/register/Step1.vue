@@ -114,8 +114,8 @@ import { ref} from 'vue'
 
   let validatePath = (rule: any, value: any, callback: any) => {
     return new Promise<void>((resolve, reject) => {
-      let url = SecondDevApiUrl+'/interface/getApiPath'
-      let body = { apiPath: '/proxy' + value }
+      let url = SecondDevApiUrl+'/HDataApi/interface/getApiPath'
+      let body = { apiPath: '/HDataApi/proxy' + value }
       console.log(body)
       //0存在，1不存在
       axios
@@ -183,7 +183,7 @@ import { ref} from 'vue'
   function formSubmit() {
     form1Ref.value.validate((errors: any) => {
       if (!errors) {
-        let insUrl = SecondDevApiUrl+'/interface/insert'
+        let insUrl = SecondDevApiUrl+'/HDataApi/interface/insert'
         let sample = {
           requestHeader: [],
           requestBody: {},
@@ -204,7 +204,7 @@ import { ref} from 'vue'
           requestBody[bodyList[i].key] = bodyList[i].value
         }
         console.log(requestHeader)
-        formValue.value.apiPath = '/proxy' + formValue.value.apiPath
+        formValue.value.apiPath = '/HDataApi/proxy' + formValue.value.apiPath
         sample.requestHeader = requestHeader
         sample.requestBody = requestBody
         formValue.value.apiSample = JSON.stringify(sample, null, 2)
@@ -216,7 +216,7 @@ import { ref} from 'vue'
             message.info('注册成功！')
             isDisable.value = true
             formValue.value.apiPath = formValue.value.apiPath.replace(
-              '/proxy',
+              '/HDataApi/proxy',
               ''
             )
             emit('nextStep')

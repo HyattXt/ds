@@ -88,7 +88,7 @@ import {useRoute} from "vue-router";
   }
 
   onMounted(() => {
-    let url = SecondDevApiUrl+'/interface/getInterfaceInfoById'
+    let url = SecondDevApiUrl+'/HDataApi/interface/getInterfaceInfoById'
     let params = { apiId: '' }
     params.apiId = route.query.apiId
     console.log(params)
@@ -111,7 +111,7 @@ import {useRoute} from "vue-router";
   })
   function queryDataSource() {
     formValue.value.source = ''
-    const url = SecondDevApiUrl+'/apiService/getDataSource?type='+formValue.value.sourceType
+    const url = SecondDevApiUrl+'/HDataApi/apiService/getDataSource?type='+formValue.value.sourceType
 
     axios.get(url).then(function (response) {
       console.log(response)
@@ -120,7 +120,7 @@ import {useRoute} from "vue-router";
   }
 
   function queryTab() {
-    const url = SecondDevApiUrl+'/apiService/getTables'
+    const url = SecondDevApiUrl+'/HDataApi/apiService/getTables'
     let params = {
       type : formValue.value.sourceType,
       id : formValue.value.source
@@ -132,7 +132,7 @@ import {useRoute} from "vue-router";
   }
 
   function queryCol(table: string) {
-    const url = SecondDevApiUrl+'/apiService/getColumnsByTable'
+    const url = SecondDevApiUrl+'/HDataApi/apiService/getColumnsByTable'
     const params = {
       type : formValue.value.sourceType,
       id : formValue.value.source,

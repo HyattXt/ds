@@ -99,8 +99,8 @@ export function useTable() {
                   {
                     onClick: () =>
                       void router.push({
-                        name: 'workflow-definition-detail',
-                        params: { code: row.code }
+                        name: 'workflow-relation',
+                        query: { code: row.code }
                       })
                   },
                   {
@@ -210,8 +210,8 @@ export function useTable() {
   const editWorkflow = (row: any) => {
     variables.row = row
     router.push({
-      name: 'workflow-definition-detail',
-      params: { code: row.code }
+      name: 'workflow-relation',
+      query: { code: row.code }
     })
   }
 
