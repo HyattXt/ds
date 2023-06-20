@@ -67,7 +67,6 @@ const Navbar = defineComponent({
   render() {
     return (
       <div class={styles.container}>
-        <Logo />
         <div class={styles.nav}>
           <NMenu
             value={this.menuKey}

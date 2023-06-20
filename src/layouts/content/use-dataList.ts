@@ -313,7 +313,7 @@ export function useDataList() {
                 }
               ]
       },
-      {
+      /*{
         label: () => h(NEllipsis, null, { default: () => t('menu.api') }),
         key: 'service',
         icon: renderIcon(ApiOutlined),
@@ -330,7 +330,7 @@ export function useDataList() {
           }
         ]
       },
-      /*{
+      {
         label: () => h(NEllipsis, null, { default: () => t('menu.data_assets') }),
         key: 'data-assets',
         icon: renderIcon(PieChartOutlined),
