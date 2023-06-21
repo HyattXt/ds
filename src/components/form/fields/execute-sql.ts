@@ -27,7 +27,7 @@ export function renderExecuteSql( item: IJsonItem, fields: { [field: string]: an
     const message = useMessage()
     const SecondDevCreateUrl = import.meta.env.MODE === 'development'
         ? import.meta.env.VITE_APP_DEV_API_URL
-        : import.meta.env.VITE_APP_PROD_API_URL
+        : window.webConfig.VITE_APP_PROD_API_URL
     const formValue = ref({
         id: '',
         sqlStr: ''

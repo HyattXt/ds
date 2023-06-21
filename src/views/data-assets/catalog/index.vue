@@ -128,7 +128,7 @@ const columns = ({ play }) => {
     return new Promise((resolve) => {
       const url = import.meta.env.MODE === 'development'
           ? import.meta.env.VITE_APP_DEV_ASSETS_URL+'/HDataApi/interface_lineage/getSqlLineageListByParams'
-          : import.meta.env.VITE_APP_PROD_ASSETS_URL+'/HDataApi/interface_lineage/getSqlLineageListByParams'
+          : window.webConfig.VITE_APP_PROD_ASSETS_URL+'/HDataApi/interface_lineage/getSqlLineageListByParams'
       const params = {
         'pageNum': page,
         'pageSize': pageSize,
@@ -204,7 +204,7 @@ const columns = ({ play }) => {
       function handleMetadata() {
         let url = import.meta.env.MODE === 'development'
             ? import.meta.env.VITE_APP_DEV_ASSETS_URL+'/HDataApi/interface_lineage/sqlLineageExcute'
-            : import.meta.env.VITE_APP_PROD_ASSETS_URL+'/HDataApi/interface_lineage/sqlLineageExcute'
+            : window.webConfig.VITE_APP_PROD_ASSETS_URL+'/HDataApi/interface_lineage/sqlLineageExcute'
         axios
             .get(url)
             .then(function (response) {

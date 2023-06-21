@@ -164,7 +164,7 @@ function query(
   return new Promise((resolve) => {
     const url = import.meta.env.MODE === 'development'
         ? import.meta.env.VITE_APP_DEV_REST_URL+'/HDataApi/httpHandle/getHttpDataListByParams'
-        : import.meta.env.VITE_APP_PROD_REST_URL+'/HDataApi/httpHandle/getHttpDataListByParams'
+        : window.webConfig.VITE_APP_PROD_REST_URL+'/HDataApi/httpHandle/getHttpDataListByParams'
     const params = {
       'pageNum': page,
       'pageSize': pageSize,
@@ -220,7 +220,7 @@ export default defineComponent({
               del(row) {
                 let urlDel = import.meta.env.MODE === 'development'
                     ? import.meta.env.VITE_APP_DEV_REST_URL+'/HDataApi/httpHandle/deleteHttpDataById'
-                    : import.meta.env.VITE_APP_PROD_REST_URL+'/HDataApi/httpHandle/deleteHttpDataById'
+                    : window.webConfig.VITE_APP_PROD_REST_URL+'/HDataApi/httpHandle/deleteHttpDataById'
                 let delPar = {
                   id: null
                 }

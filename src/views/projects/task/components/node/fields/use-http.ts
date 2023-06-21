@@ -46,7 +46,7 @@ export function useHttp(model: { [field: string]: any }): IJsonItem[] {
   const restOptions = ref([] as { label: string; value: number }[])
   const restUrl = import.meta.env.MODE === 'development'
       ? import.meta.env.VITE_APP_DEV_REST_URL
-      : import.meta.env.VITE_APP_PROD_REST_URL
+      : window.webConfig.VITE_APP_PROD_REST_URL
 
   function queryRestSourceList() {
     let restOptionUrl = restUrl+'/HDataApi/httpHandle/getHttpDataListByParams'

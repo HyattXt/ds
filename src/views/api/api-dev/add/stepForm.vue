@@ -42,7 +42,7 @@ import {useMessage} from "naive-ui";
   const currentStatus = ref('process')
   const SecondDevApiUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_API_URL
-    : import.meta.env.VITE_APP_PROD_API_URL
+    : window.webConfig.VITE_APP_PROD_API_URL
   const params = ref({
     id: -1,
     apiName: '',

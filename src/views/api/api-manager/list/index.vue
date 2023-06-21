@@ -320,7 +320,7 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
     return new Promise((resolve) => {
       const url = import.meta.env.MODE === 'development'
           ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getList'
-          : import.meta.env.VITE_APP_PROD_API_URL+'/HDataApi/interface/getList'
+          : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getList'
       const params = {
         pageNum: page,
       'pageSize': pageSize,
@@ -364,7 +364,7 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
     setup() {
       const ip = ref(import.meta.env.MODE === 'development'
           ? import.meta.env.VITE_APP_DEV_API_URL
-          : import.meta.env.VITE_APP_PROD_API_URL)
+          : window.webConfig.VITE_APP_PROD_API_URL)
       const dataRef = ref([])
       const loadingRef = ref(true)
       const active = ref(false)
@@ -396,10 +396,10 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
       function queryUser() {
         const listUrl = import.meta.env.MODE === 'development'
             ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getUser'
-            : import.meta.env.VITE_APP_PROD_API_URL+'/HDataApi/interface/getUser'
+            : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getUser'
         const authListUrl = import.meta.env.MODE === 'development'
             ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getAuthorizeInfo'
-            : import.meta.env.VITE_APP_PROD_API_URL+'/HDataApi/interface/getAuthorizeInfo'
+            : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getAuthorizeInfo'
         axios.get(listUrl).then(function (response) {
           console.log(response)
           userList.value = response.data.data
@@ -441,7 +441,7 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
       function queryBasic(apiId) {
         const url = import.meta.env.MODE === 'development'
             ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getInterfaceInfoById'
-            : import.meta.env.VITE_APP_PROD_API_URL+'/HDataApi/interface/getInterfaceInfoById'
+            : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getInterfaceInfoById'
         let basicPar = {
           apiId: drawId.value
         }
@@ -510,7 +510,7 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
       function subAuth() {
         let subUrl = import.meta.env.MODE === 'development'
             ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/insertAuthorizeInfo'
-            : import.meta.env.VITE_APP_PROD_API_URL+'/HDataApi/interface/insertAuthorizeInfo'
+            : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/insertAuthorizeInfo'
         let requestBody = {
           apiId: drawId.value,
         'authorizeId': apiAuthorizer.value
@@ -543,7 +543,7 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
                 if (row.apiFlag === '接口开发') {
                   let urlPub = import.meta.env.MODE === 'development'
                       ? import.meta.env.VITE_APP_DEV_API_URL+`/HDataApi/interface-ui/api/publish?id=${row.apiId}`
-                      : import.meta.env.VITE_APP_PROD_API_URL+`/HDataApi/interface-ui/api/publish?id=${row.apiId}`
+                      : window.webConfig.VITE_APP_PROD_API_URL+`/HDataApi/interface-ui/api/publish?id=${row.apiId}`
                   let pubPar = {
                     id: ''
                   }
@@ -562,7 +562,7 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
                 } else {
                   let urlPub = import.meta.env.MODE === 'development'
                       ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/update'
-                      : import.meta.env.VITE_APP_PROD_API_URL+'/HDataApi/interface/update'
+                      : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/update'
                   let pubPar = {
                     apiId: '',
                     apiStatus: 1
@@ -583,7 +583,7 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
               } else {
                 let urlPub = import.meta.env.MODE === 'development'
                     ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/update'
-                    : import.meta.env.VITE_APP_PROD_API_URL+'/HDataApi/interface/update'
+                    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/update'
                 let pubPar = {
                   apiId: '',
                   apiStatus: 0

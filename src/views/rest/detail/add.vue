@@ -225,7 +225,7 @@ const listSource = ref([])
 const router = useRouter()
 const httpInsertUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_REST_URL
-    : import.meta.env.VITE_APP_PROD_REST_URL
+    : window.webConfig.VITE_APP_PROD_REST_URL
 
 let validatePath = (rule: any, value: any, callback: any) => {
   return new Promise<void>((resolve, reject) => {

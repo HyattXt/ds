@@ -75,7 +75,7 @@ import { onMounted, ref} from 'vue'
   const message = useMessage()
   const SecondDevApiUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_API_URL
-    : import.meta.env.VITE_APP_PROD_API_URL
+    : window.webConfig.VITE_APP_PROD_API_URL
   const formValue = ref({
     apiId: '',
     apiName: '',

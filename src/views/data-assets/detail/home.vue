@@ -66,7 +66,7 @@ onMounted(() => {
   dbType.value = route.query.dbType
   iframeSrc.value = import.meta.env.MODE === 'development'
       ? import.meta.env.VITE_APP_DEV_BLOOD_URL+'/?e='+route.query.tableName
-      : import.meta.env.VITE_APP_PROD_BLOOD_URL+'/?e='+route.query.tableName
+      : window.webConfig.VITE_APP_PROD_BLOOD_URL+'/?e='+route.query.tableName
 })
 </script>
 

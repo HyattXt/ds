@@ -335,7 +335,7 @@ export function useDataList() {
         label: () => h(NEllipsis, null, { default: () => t('menu.data_assets') }),
         key: 'data-assets',
         icon: renderIcon(PieChartOutlined),
-        children: [
+        children: !!window.webConfig.VITE_APP_PROD_ASSETS_HOME_URL ? [
           {
             label: t('menu.assets_overview'),
             key: '/data-assets/assets-overview',
@@ -346,7 +346,14 @@ export function useDataList() {
             key: '/data-assets/assets-catalog',
             icon: renderIcon(BarsOutlined)
           }
+        ]:[
+          {
+            label: t('menu.assets_catalog'),
+            key: '/data-assets/assets-catalog',
+            icon: renderIcon(BarsOutlined)
+          }
         ]
+
       },
 
       {

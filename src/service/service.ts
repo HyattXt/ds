@@ -42,7 +42,7 @@ const baseRequestConfig: AxiosRequestConfig = {
   baseURL:
     import.meta.env.MODE === 'development'
       ? '/HData'
-      : import.meta.env.VITE_APP_PROD_WEB_URL + '/HData',
+      : window.webConfig.VITE_APP_PROD_WEB_URL + '/HData',
   timeout: 15000,
   headers: {"X-Content-Type-Options" : "nosniff",
             "X-XSS-Protection" : "1",

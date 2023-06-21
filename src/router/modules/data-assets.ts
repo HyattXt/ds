@@ -27,17 +27,17 @@ export default {
   path: '/data-assets',
   name: 'data-assets',
   meta: { title: 'data-assets' },
-  redirect: { name: 'assets-overview' },
+  redirect: { name: !!window.webConfig.VITE_APP_PROD_ASSETS_HOME_URL ? 'assets-overview': 'assets-catalog' },
   component: () => import('@/layouts/content'),
   children: [
-    {
+     {
       path: '/data-assets/assets-overview',
       name: 'assets-overview',
       component: () => import('@/views/iframe/index.vue'),
       meta: {
         title: '资产总览-assets-overview',
         activeMenu: 'data-assets',
-        frameSrc: 'http://192.168.100.68:1124/webroot/decision/view/form?viewlet=%25E5%2585%2583%25E6%2595%25B0%25E6%258D%25AE%25E7%25AE%25A1%25E7%2590%2586%252F%25E7%2595%258C%25E9%259D%25A2%252F%25E6%2595%25B0%25E6%258D%25AE%25E5%259C%25B0%25E5%259B%25BE_%25E5%25AE%259A%25E5%2588%25B6%25E7%2589%2588_V2.frm',
+        frameSrc: window.webConfig.VITE_APP_PROD_ASSETS_HOME_URL,
         showSide: true,
         auth: []
       }

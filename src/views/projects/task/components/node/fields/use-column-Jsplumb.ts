@@ -37,7 +37,7 @@ export function useColumnJsplumb(
     const jsplumb = jsPlumb.jsPlumb
     const SecondDevQueryUrl = import.meta.env.MODE === 'development'
         ? import.meta.env.VITE_APP_DEV_API_URL
-        : import.meta.env.VITE_APP_PROD_API_URL
+        : window.webConfig.VITE_APP_PROD_API_URL
     let plumbins = null // 缓存实例化的jsplumb对象
     let connection = []
     let connectionList = [] //手动维护一个关系
