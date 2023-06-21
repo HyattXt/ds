@@ -30,7 +30,7 @@ export function renderColumnJsplumb( item: IJsonItem, fields: { [field: string]:
                 h('div', { class: styles.top }, '来源表字段'),
                 h('ul', { class: styles.bottom }, [
                     field.map((item, index) =>
-                        h('li', { key: index }, item.label)
+                        h('li', { key: index, title: item.label }, item.label)
                     )
                 ])
             ]),
@@ -48,7 +48,7 @@ export function renderColumnJsplumb( item: IJsonItem, fields: { [field: string]:
                 h('div', { class: styles.top }, '写入表字段'),
                 h('ul', { class: styles.bottom, id: 'rightBottom'  }, [
                     fieldRight.map((item, index) =>
-                        h('li', { key: index, id: item.id, name: 'target'  }, item.label)
+                        h('li', { key: index, id: item.id, name: 'target', title: item.label  }, item.label)
                     )
                 ])
             ]),

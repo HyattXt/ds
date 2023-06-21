@@ -113,6 +113,10 @@
     li {
       list-style: none;
       display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 20ch; /* 20个中文字符长度或者20个英文字母长度，ch是CSS3的单位，表示数字0的宽度 */
       margin-top: 1vw;
       width: 100%;
       cursor: pointer;
@@ -121,7 +125,6 @@
       //border: 1px #000000 solid;
       border-bottom: 1px dashed #111;
       text-decoration: none;
-
     }
   }
 }
