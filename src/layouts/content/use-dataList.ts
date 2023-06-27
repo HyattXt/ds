@@ -314,7 +314,7 @@ export function useDataList() {
               }
             ]
       },
-      {
+      window.webConfig.SHOW_API ? {
         label: () => h(NEllipsis, null, { default: () => t('menu.api') }),
         key: 'service',
         icon: renderIcon(ApiOutlined),
@@ -330,8 +330,8 @@ export function useDataList() {
             icon: renderIcon(BarsOutlined)
           }
         ]
-      },
-      {
+      }:{},
+      window.webConfig.SHOW_DATA_ASSETS ? {
         label: () => h(NEllipsis, null, { default: () => t('menu.data_assets') }),
         key: 'data-assets',
         icon: renderIcon(PieChartOutlined),
@@ -354,9 +354,9 @@ export function useDataList() {
           }
         ]
 
-      },
+      }:{},
 
-      {
+      window.webConfig.SHOW_REST ? {
         label: () => h(NEllipsis, null, { default: () => t('menu.rest') }),
         key: 'rest',
         icon: renderIcon(BoxPlotOutlined),
@@ -367,7 +367,7 @@ export function useDataList() {
             icon: renderIcon(BarsOutlined)
           }
         ]
-      }
+      }:{}
     ]
   }
 

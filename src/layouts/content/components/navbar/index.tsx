@@ -66,13 +66,13 @@ const Navbar = defineComponent({
       }
     )
 
-    return { handleMenuClick, menuKey }
+    return { handleMenuClick, menuKey  }
   },
   render() {
     console.log(this.iconOptions);
     return (
       <div class={styles.container}>
-        <Logo />
+        {window.webConfig.SHOW_LOGO ? <Logo /> :<div/>}
         <div class={styles.nav} >
           <NMenu
             value={this.menuKey}
