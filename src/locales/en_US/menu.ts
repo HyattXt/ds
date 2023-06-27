@@ -17,7 +17,7 @@
 
 export default {
   home: 'Home',
-  project: 'Project',
+  project: 'Data Development',
   resources: 'Resources',
   datasource: 'Datasource',
   monitor: 'Monitor',

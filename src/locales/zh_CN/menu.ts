@@ -17,7 +17,7 @@
 
 export default {
   home: '首页',
-  project: '项目管理',
+  project: '数据开发',
   resources: '资源中心',
   datasource: '数据源中心',
   monitor: '监控中心',
