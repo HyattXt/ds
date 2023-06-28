@@ -30,7 +30,7 @@ import type {
 } from './types'
 import {queryProcessDefinitionByCode} from "@/service/modules/process-definition";
 import {useRoute} from "vue-router";
-import {queryTaskDefinitionByCode} from "@/service/modules/task-definition";
+import {queryTaskDefinitionByCode, saveInit} from "@/service/modules/task-definition";
 
 
 interface Options {
@@ -100,6 +100,8 @@ export function useTaskEdit(options: Options) {
    * Copy a task
    */
   function copyTask(
+    projectCode: number,
+    processCode: number,
     name: string,
     code: number,
     targetCode: number,
@@ -117,8 +119,18 @@ export function useTaskEdit(options: Options) {
       code,
       name
     } as NodeData
+    console.log(newDefinition)
 
     processDefinition.value.taskDefinitionList.push(newDefinition)
+
+    let data = {
+      processDefinitionCode: processCode,
+      upstreamCodes: '',
+      taskDefinitionJsonObj: JSON.stringify(newDefinition),
+      locations: JSON.stringify(coordinate)
+    }
+
+    saveInit(projectCode, data)
   }
 
   /**

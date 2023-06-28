@@ -64,9 +64,9 @@ interface ProcessDefinitionReq {
   globalParams?: string
   timeout?: number
   //tree acquired
-  parentId: number
-  type: number
-  projectCode: number
+  parentId?: number
+  type?: number
+  projectCode?: number
 }
 
 interface TargetCodeReq {

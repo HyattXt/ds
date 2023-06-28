@@ -416,6 +416,7 @@ export default defineComponent({
           visible={nodeVariables.menuVisible}
           left={nodeVariables.pageX}
           top={nodeVariables.pageY}
+          processCode={props.processCode}
           onHide={menuHide}
           onStart={menuStart}
           onEdit={editTask}

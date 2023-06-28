@@ -53,6 +53,10 @@ const props = {
   top: {
     type: Number as PropType<number>,
     default: 0
+  },
+  processCode: {
+    type: Number as PropType<number>,
+    default: 0
   }
 }
 
@@ -92,9 +96,9 @@ export default defineComponent({
 
       genTaskCodeList(genNums, projectCode).then((res) => {
         const [code] = res
-        ctx.emit('copyTask', taskName, code, targetCode, type, flag, {
-          x: props.left + 100,
-          y: props.top + 100
+        ctx.emit('copyTask',projectCode, !!props.processCode ? props.processCode : Number(route.query.code), taskName, code, targetCode, type, flag, {
+          x: props.left + 10,
+          y: props.top + 10
         })
       })
     }
