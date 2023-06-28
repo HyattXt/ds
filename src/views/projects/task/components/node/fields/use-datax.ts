@@ -289,6 +289,7 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
         }
       })
     }
+    console.log(model.json)
   }
 
   onMounted(() => {
@@ -333,7 +334,7 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
   )
 
   watch(
-      () => [model.leftList, model.rightList, model.postStatements, model.preStatements, model.jobSpeedByte, model.jobSpeedRecord, sourceConnect.value, targetConnect.value],
+      () => [model.leftList, model.rightList, sourceConnect.value, targetConnect.value],
       () => {
         saveJson()
       }
@@ -401,7 +402,8 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       name: t('project.node.datax_target_table'),
       span: targetTableSpan,
       props: {
-        placeholder: t('project.node.datax_target_table_tips')
+        placeholder: t('project.node.datax_target_table_tips'),
+        onBlur: saveJson
       },
       validate: {
         trigger: ['input', 'blur'],
@@ -495,7 +497,8 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       props: {
         placeholder: t('project.node.datax_non_query_sql_tips'),
         type: 'textarea',
-        autosize: { minRows: 1 }
+        autosize: { minRows: 1 },
+        onBlur: saveJson
       }
     },
     {
@@ -506,7 +509,8 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       props: {
         placeholder: t('project.node.datax_non_query_sql_tips'),
         type: 'textarea',
-        autosize: { minRows: 1 }
+        autosize: { minRows: 1 },
+        onBlur: saveJson
       }
     },
     {
@@ -515,7 +519,10 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       name: t('project.node.datax_job_speed_byte'),
       span: jobSpeedSpan,
       options: jobSpeedByteOptions,
-      value: 0
+      value: 0,
+      props: {
+        onBlur: saveJson
+      }
     },
     {
       type: 'select',
@@ -523,7 +530,10 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       name: t('project.node.datax_job_speed_record'),
       span: jobSpeedSpan,
       options: jobSpeedRecordOptions,
-      value: 1000
+      value: 1000,
+      props: {
+        onBlur: saveJson
+      }
     },
     {
       type: 'custom-parameters',
