@@ -171,7 +171,7 @@ export function useColumnJsplumb(
                 Connector: ["Straight",
                     {
                         curviness: 70,
-                        stub: [40, 60],
+                        //stub: [40, 60],
                         gap: 8,
                         cornerRadius: 5,
                         alwaysRespectStubs: true,
@@ -317,7 +317,7 @@ export function useColumnJsplumb(
         leftData.value.forEach((item, index) => {
             let obj = {};
             obj.source = item.id;
-            let target = rightData.value.filter(ritem => ritem.label == item.label);
+            let target = rightData.value.filter(ritem => ritem.label.toLowerCase() == item.label.toLowerCase());
             if (target.length > 0) {
                 obj.target = target[0].id;
                 //initNode(obj.source, "source");
