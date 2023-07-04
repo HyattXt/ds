@@ -23,7 +23,7 @@ export function useShell(model: { [field: string]: any }): IJsonItem[] {
   const { t } = useI18n()
 
   onMounted(() => {
-    model.rawScript = !!model.rawScript ? model.rawScript: 'sh /opt/miniconda3/src/pred.sh 表名 时间字段 值字段'
+    model.rawScript = !!model.rawScript ? model.rawScript: 'sh /opt/package/python3/model/arima.sh 表名 时间字段 值字段'
   })
 
   return [
