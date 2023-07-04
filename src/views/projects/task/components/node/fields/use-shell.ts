@@ -17,9 +17,14 @@
 import { useI18n } from 'vue-i18n'
 import { useCustomParams, useResources } from '.'
 import type { IJsonItem } from '../types'
+import {onMounted} from "vue";
 
 export function useShell(model: { [field: string]: any }): IJsonItem[] {
   const { t } = useI18n()
+
+  onMounted(() => {
+    model.rawScript = !!model.rawScript ? model.rawScript: 'sh /opt/miniconda3/src/pred.sh 表名 时间字段 值字段'
+  })
 
   return [
     {

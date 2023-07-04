@@ -37,7 +37,7 @@ export type TaskType =
 
 export const TASK_TYPES_MAP = {
   SHELL: {
-    alias: 'SHELL'
+    alias: 'ARIMA'
   },
   SUB_PROCESS: {
     alias: 'SUB_PROCESS'
