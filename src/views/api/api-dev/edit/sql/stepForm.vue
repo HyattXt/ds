@@ -54,7 +54,8 @@ import {defineComponent, provide, ref, onMounted} from 'vue'
     apiSample: '',
     apiDatasourceId: '',
     apiDatasourceTable: '',
-    apiDatasourceType: ''
+    apiDatasourceType: '',
+    apiTreeId: ''
   })
 
   function nextStep1(value) {

@@ -24,6 +24,17 @@
         placeholder="以/开头"
       />
     </n-form-item>
+    <n-form-item label="API目录" path="apiMenu">
+      <n-tree-select
+          v-model:value="formValue.apiTreeId"
+          default-value="1"
+          :options="folderData"
+          key-field="id"
+          label-field="titleName"
+          children-field="children"
+          placeholder="请选择API目录"
+      />
+    </n-form-item>
     <n-form-item label="请求方式" path="apiMethod">
       <n-select
         v-model:value="formValue.apiMethod"
@@ -85,11 +96,15 @@ import { onMounted, ref} from 'vue'
   const isDisable = ref(false)
   const kvValue = ref([])
   const bodyValue = ref([])
+  const folderData = ref([])
   const emit = defineEmits(['nextStep'])
   const route = useRoute()
   const SecondDevApiUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_API_URL
     : window.webConfig.VITE_APP_PROD_API_URL
+  const getApiTreeUrl = import.meta.env.MODE === 'development'
+    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getApiTreeFloder'
+    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getApiTreeFloder'
   const formValue = ref({
     apiName: '',
     apiPath: '',
@@ -98,7 +113,8 @@ import { onMounted, ref} from 'vue'
     comment: '',
     apiIpaddr: '',
     apiFlag: 2,
-    apiSample: ''
+    apiSample: '',
+    apiTreeId: ''
   })
 
   const rules = {
@@ -178,7 +194,14 @@ import { onMounted, ref} from 'vue'
     })
   }
 
+function getTreeFolder ()  {
+  axios.get(getApiTreeUrl).then((res) => {
+    folderData.value = res.data.data
+  })
+}
+
   onMounted(() => {
+    getTreeFolder()
     let url = SecondDevApiUrl+'/HDataApi/interface/getInterfaceInfoById'
     let params = { apiId: '' }
     params.apiId = route.query.apiId

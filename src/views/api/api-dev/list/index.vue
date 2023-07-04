@@ -82,16 +82,34 @@
       </n-space>
     </n-card>
     <n-card>
-      <n-data-table
-        ref="table"
-        remote
-        :columns="columns"
-        :data="data"
-        :loading="loading"
-        :pagination="pagination"
-        :row-key="rowKey"
-        @update:page="handlePageChange"
-      />
+      <n-grid x-gap="2" :cols="6">
+        <n-gi span="1">
+        <n-card size="small" class="container">
+        <n-tree
+            block-line
+            show-irrelevant-nodes
+            :data="folderData"
+            key-field="id"
+            label-field="titleName"
+            children-field="children"
+            :render-prefix="menuIcon"
+            :nodeProps="nodeProps"
+        />
+        </n-card>
+        </n-gi>
+        <n-gi span="5">
+        <n-data-table
+          ref="table"
+          remote
+          :columns="columns"
+          :data="data"
+          :loading="loading"
+          :pagination="pagination"
+          :row-key="rowKey"
+          @update:page="handlePageChange"
+        />
+        </n-gi>
+     </n-grid>
     </n-card>
   </n-space>
   <n-drawer v-model:show="active" :width="602">
@@ -130,26 +148,72 @@
       </n-card>
     </n-drawer-content>
   </n-drawer>
+  <n-dropdown
+      placement="bottom-start"
+      trigger="manual"
+      :x="xRef"
+      :y="yRef"
+      :options="dropdownOption"
+      :show="showDropdownRef"
+      :on-clickoutside="onClickOutside"
+      :on-select="handleSelect"
+      :render-option="dropdownConfirm"
+  />
+  <n-modal
+      v-model:show="showAddRef"
+      class="menuModal"
+  >
+    <n-card title="新建文件夹" size="huge">
+      <n-form
+          ref="formRef"
+          label-placement="left"
+          label-width="auto"
+          :rules="rules"
+          :model="variables"
+      >
+        <n-form-item label="文件夹名称" path="model.titleName">
+          <n-input
+              type="text"
+              v-model:value="titleName"
+              placeholder="输入文件夹名称"
+          />
+        </n-form-item>
+        <n-form-item label="目标文件夹" path="inputValue">
+          <n-tree-select
+              :options="folderData"
+              key-field="id"
+              label-field="titleName"
+              v-model:value="selectedMenu"
+              filterable
+          />
+        </n-form-item>
+      </n-form>
+      <n-space justify="end">
+        <n-button type="info" :on-click="createMenu" >确定</n-button>
+      </n-space>
+    </n-card>
+  </n-modal>
 </template>
 
 <script>
-import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from 'vue'
+import {defineComponent, ref, reactive, onMounted, h, nextTick} from 'vue'
   import { useRouter } from 'vue-router'
   import axios from 'axios'
-  import {
-    DeleteOutlined,
-    EditOutlined,
-    SearchOutlined,
-    CodeOutlined
-  } from '@vicons/antd'
-  import {
-    NButton,
-    NSpace,
-    useMessage,
-    NPopconfirm,
-    NTooltip,
-    NIcon
-  } from 'naive-ui'
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+  CodeOutlined,
+  BoxPlotOutlined
+} from '@vicons/antd'
+import {
+  NButton,
+  NSpace,
+  useMessage,
+  NPopconfirm,
+  NTooltip,
+  NIcon
+} from 'naive-ui'
   import hljs from 'highlight.js/lib/core'
   import javascript from 'highlight.js/lib/languages/javascript'
   import moment from 'moment'
@@ -299,7 +363,8 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
     apiName = '',
     apiFlag = '',
     apiStatus = '',
-    apiPath = ''
+    apiPath = '',
+    apiTreeId= 1
   ) {
     return new Promise((resolve) => {
       const url = import.meta.env.MODE === 'development'
@@ -312,6 +377,7 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
         apiFlag: apiFlag,
         apiStatus: apiStatus,
         apiPath: apiPath,
+        apiTreeId: apiTreeId,
         order: 'api_create_time',
         sort: 'desc'
       }
@@ -357,6 +423,23 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
       const drawMethod = ref('')
       const paramList = ref([])
       const code = ref('')
+      const folderData = ref([])
+      const showDropdownRef = ref(false)
+      const showAddRef = ref(false)
+      const xRef = ref(0)
+      const yRef = ref(0)
+      const dropdownOption = ref([{label: '添加', key: '添加'},{label: '删除', key: '删除'}])
+      const selectedMenu = ref(1)
+      const titleName = ref('')
+      const getApiTreeUrl = import.meta.env.MODE === 'development'
+          ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getApiTree'
+          : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getApiTree'
+      const addApiTreeUrl = import.meta.env.MODE === 'development'
+          ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/insertApiTree'
+          : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/insertApiTree'
+      const delApiTreeUrl = import.meta.env.MODE === 'development'
+          ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/deleteApiTree'
+          : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/deleteApiTree'
       const router = useRouter()
       const activate = (row) => {
         code.value = ''
@@ -374,11 +457,111 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
             value
           })
         )
-        console.log(paramList.value)
-        console.log(drawTitle)
-        console.log(drawParam.value)
       }
       const message = useMessage()
+
+      function getTreeFolder ()  {
+        axios.get(getApiTreeUrl).then((res) => {
+          folderData.value = res.data.data
+        })
+      }
+
+      function menuIcon({ option }) {
+        switch (option.type) {
+          case 1 : return  h(NIcon, {
+            color: '#1890ff'
+          }, [
+            h('svg', {
+              xmlns: 'http://www.w3.org/2000/svg',
+              viewBox: '0 0 1260 1024',
+              width: ' 19.688',
+              height: '16'
+            }, [
+              h('path', {
+                d: 'M1171.561 157.538H601.797L570.814 61.44A88.222 88.222 0 00486.794 0H88.747A88.747 88.747 0 000 88.747v846.506A88.747 88.747 0 0088.747 1024H1171.56a88.747 88.747 0 0088.747-88.747V246.285a88.747 88.747 0 00-88.747-88.747zm-1082.814 0V88.747h398.047l22.055 68.791z'
+              })
+            ])
+          ])
+          case 2 : return h(NIcon, {color: '#1890ff'}, { default: () => h(BoxPlotOutlined) })
+        }
+      }
+
+      function nodeProps ({option}) {
+        return {
+          onClick() {
+            paginationReactive.apiTreeId = option.id
+            refresh(1)
+          },
+          onContextmenu (e)  {
+            e.preventDefault()
+            selectedMenu.value = option.id
+            if(option.children.length !== 0) {
+              dropdownOption.value = [{label: '添加', key: '添加'},{label: '删除', key: '删除', disabled: true}]
+            }else {
+              dropdownOption.value = [{label: '添加', key: '添加'},{label: '删除', key: '删除'}]
+            }
+            console.log(option)
+            nextTick().then(() => {
+              showDropdownRef.value = true
+              xRef.value = e.clientX
+              yRef.value = e.clientY
+            })
+          }
+        };
+      }
+
+      function  onClickOutside () {
+        showDropdownRef.value = false
+      }
+      function handleSelect (key, option) {
+        if(option.key !== '删除') {
+          showDropdownRef.value = false
+          showAddRef.value = true
+        }
+      }
+
+      const dropdownConfirm = ({ node, option }) => {
+        if (option.key !== '删除' || option.disabled ) {
+          return node
+        }else{
+          return h(
+              NPopconfirm,
+              {
+                onPositiveClick: () => {
+                    delMenu(selectedMenu.value)
+                }},
+              {
+                trigger: () => [node],
+                default: () => '确定'+option.label+'?'
+              }
+          )
+        }
+      }
+
+      function delMenu(id) {
+        let params ={
+          id: id,
+        }
+        axios.post(delApiTreeUrl, params).then((res) => {
+          message.info(res.data.info)
+          showDropdownRef.value = false
+          getTreeFolder()
+        })
+      }
+
+      function createMenu() {
+        let params ={
+          parentId: selectedMenu.value,
+          titleName: titleName.value,
+          type:1
+        }
+        axios.post(addApiTreeUrl, params).then((res) => {
+          message.info(res.data.info)
+          showAddRef.value = false
+          getTreeFolder()
+        })
+        showDropdownRef.value = false
+      }
 
       function refresh(currentPage) {
         query(
@@ -387,7 +570,8 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
           paginationReactive.apiName,
           paginationReactive.apiFlag,
           paginationReactive.apiStatus,
-          paginationReactive.apiPath
+          paginationReactive.apiPath,
+          paginationReactive.apiTreeId
         ).then((data) => {
           dataRef.value = data.data
           dataRef.value.apiCreateTime = dataRef.value.forEach((item) => {
@@ -473,19 +657,22 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
         apiFlag: null,
         apiStatus: null,
         apiPath: '',
+        apiTreeId: '',
         prefix({ itemCount }) {
           return `共${itemCount}条`
         }
       })
 
       onMounted(() => {
+        getTreeFolder()
         query(
           paginationReactive.page,
           paginationReactive.pageSize,
           paginationReactive.apiName,
           paginationReactive.apiFlag,
           paginationReactive.apiStatus,
-          paginationReactive.apiPath
+          paginationReactive.apiPath,
+          paginationReactive.apiTreeId,
         ).then((data) => {
           dataRef.value = data.data
           dataRef.value.apiCreateTime = dataRef.value.forEach((item) => {
@@ -526,6 +713,20 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
       return {
         data: dataRef,
         columns: columnsRef,
+        folderData,
+        menuIcon,
+        nodeProps,
+        showDropdownRef,
+        xRef,
+        yRef,
+        dropdownOption,
+        onClickOutside,
+        handleSelect,
+        dropdownConfirm,
+        selectedMenu,
+        showAddRef,
+        titleName,
+        createMenu,
         pagination: paginationReactive,
         loading: loadingRef,
         SearchOutlined,
@@ -585,7 +786,8 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
               paginationReactive.apiName,
               paginationReactive.apiFlag,
               paginationReactive.apiStatus,
-              paginationReactive.apiPath
+              paginationReactive.apiPath,
+              paginationReactive.apiTreeId
             ).then((data) => {
               dataRef.value = data.data
               dataRef.value.apiCreateTime = dataRef.value.forEach((item) => {
@@ -706,4 +908,34 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
   .n-gradient-text {
     color: #555555;
   }
+  .container {
+    width: 100%;
+    height: calc(100vh - 230px);
+    overflow: auto;
+    white-space: nowrap
+  }
+
+  .container::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width : 10px;  /*高宽分别对应横竖滚动条的尺寸*/
+    height: 5px;
+  }
+  .container::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 10px;
+    box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+    background   : #b9b9b9;
+  }
+  .container::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+    box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background   : #ededed;
+  }
+
+  .menuModal {
+    width: 600px;
+    height: 250px;
+  }
+
 </style>

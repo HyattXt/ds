@@ -16,6 +16,17 @@
         placeholder="请输入路径 /api/开头"
       />
     </n-form-item>
+    <n-form-item label="API目录" path="apiMenu">
+      <n-tree-select
+          v-model:value="formValue.apiTreeId"
+          default-value="1"
+          :options="folderData"
+          key-field="id"
+          label-field="titleName"
+          children-field="children"
+          placeholder="请选择API目录"
+      />
+    </n-form-item>
     <n-form-item label="请求方式" path="select">
       <n-select
         v-model:value="formValue.select"
@@ -63,15 +74,20 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref } from 'vue'
+import {onMounted, ref} from 'vue'
   import { useMessage } from 'naive-ui'
   import axios from 'axios'
+  import {queryTreeFolder} from "@/service/modules/projects";
   const emit = defineEmits(['nextStep'])
   const form1Ref: any = ref(null)
+  const folderData = ref([])
   const message = useMessage()
   const SecondDevApiUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_API_URL
     : window.webConfig.VITE_APP_PROD_API_URL
+  const getApiTreeUrl = import.meta.env.MODE === 'development'
+      ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getApiTreeFloder'
+      : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getApiTreeFloder'
 
   let validatePath = (rule: any, value: any, callback: any) => {
     return new Promise<void>((resolve, reject) => {
@@ -104,7 +120,8 @@
     select: null,
     comment: '',
     sourceType: null,
-    source: null
+    source: null,
+    apiTreeId: 1
   })
 
   const rules = {
@@ -184,6 +201,16 @@
       }
     })
   }
+
+function getTreeFolder ()  {
+  axios.get(getApiTreeUrl).then((res) => {
+    folderData.value = res.data.data
+  })
+}
+
+onMounted(() => {
+  getTreeFolder()
+})
 </script>
 
 <style scoped>

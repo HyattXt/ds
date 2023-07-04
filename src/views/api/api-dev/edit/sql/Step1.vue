@@ -17,6 +17,17 @@
         placeholder="请输入路径 /api/开头"
       />
     </n-form-item>
+    <n-form-item label="API目录" path="apiMenu">
+      <n-tree-select
+          v-model:value="formValue.apiTreeId"
+          default-value="1"
+          :options="folderData"
+          key-field="id"
+          label-field="titleName"
+          children-field="children"
+          placeholder="请选择API目录"
+      />
+    </n-form-item>
     <n-form-item label="请求方式" path="apiMethod">
       <n-select
         v-model:value="formValue.apiMethod"
@@ -72,10 +83,14 @@ import { onMounted, ref} from 'vue'
   const route = useRoute()
   const emit = defineEmits(['nextStep'])
   const form1Ref: any = ref(null)
+  const folderData = ref([])
   const message = useMessage()
   const SecondDevApiUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_API_URL
     : window.webConfig.VITE_APP_PROD_API_URL
+  const getApiTreeUrl = import.meta.env.MODE === 'development'
+    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getApiTreeFloder'
+    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getApiTreeFloder'
   const formValue = ref({
     apiId: '',
     apiName: '',
@@ -84,7 +99,8 @@ import { onMounted, ref} from 'vue'
     apiFrequency: '',
     apiTimeout: '',
     apiMethod: 'POST',
-    apiComment: ''
+    apiComment: '',
+    apiTreeId: 1
   })
 
   const rules = {
@@ -131,6 +147,7 @@ import { onMounted, ref} from 'vue'
   }
 
   onMounted(() => {
+    getTreeFolder()
     let url = SecondDevApiUrl+'/HDataApi/interface/getInterfaceInfoById'
     let params = { apiId: '' }
     params.apiId = route.query.apiId
@@ -146,6 +163,7 @@ import { onMounted, ref} from 'vue'
         formValue.value.apiCreator = response.data.obj.apiCreator
         formValue.value.apiTimeout = response.data.obj.apiTimeout
         formValue.value.apiComment = response.data.obj.apiComment
+        formValue.value.apiTreeId = response.data.obj.apiTreeId
       })
       .catch(function (error) {
         console.log(error)
@@ -161,6 +179,13 @@ import { onMounted, ref} from 'vue'
       }
     })
   }
+
+  function getTreeFolder ()  {
+    axios.get(getApiTreeUrl).then((res) => {
+      folderData.value = res.data.data
+    })
+  }
+
 </script>
 
 <style scoped>

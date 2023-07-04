@@ -3,9 +3,19 @@
     <n-card size="small">
       <n-space justify="end" style="height: 40px">
         <n-form ref="formRef" :model="pagination">
-          <n-grid :cols="26" :x-gap="12">
+          <n-grid :cols="22" :x-gap="12">
+            <n-form-item-gi :span="4" :show-label="false">
+              <n-tree-select
+                  v-model:value="pagination.apiTreeId"
+                  :options="folderData"
+                  key-field="id"
+                  label-field="titleName"
+                  children-field="children"
+                  placeholder="API目录"
+              />
+            </n-form-item-gi>
             <n-form-item-gi
-              :span="6"
+              :span="4"
               :show-label="false"
               path="pagination.apiName"
             >
@@ -15,7 +25,7 @@
                 placeholder="名称"
               />
             </n-form-item-gi>
-            <n-form-item-gi :span="6" :show-label="false">
+            <n-form-item-gi :span="4" :show-label="false">
               <n-select
                 size="small"
                 v-model:value="pagination.apiFlag"
@@ -24,7 +34,7 @@
                 placeholder="API类型"
               />
             </n-form-item-gi>
-            <n-form-item-gi :span="6" :show-label="false">
+            <n-form-item-gi :span="4" :show-label="false">
               <n-select
                 size="small"
                 v-model:value="pagination.apiStatus"
@@ -33,7 +43,7 @@
                 placeholder="API状态"
               />
             </n-form-item-gi>
-            <n-form-item-gi :span="6" :show-label="false">
+            <n-form-item-gi :span="4" :show-label="false">
               <n-input
                 size="small"
                 v-model:value="pagination.apiPath"
@@ -164,6 +174,7 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
   import hljs from 'highlight.js/lib/core'
   import javascript from 'highlight.js/lib/languages/javascript'
   import moment from 'moment'
+import {queryTreeFolder} from "@/service/modules/projects";
 
   hljs.registerLanguage('javascript', javascript)
 
@@ -315,7 +326,8 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
     apiName = '',
     apiFlag = '',
     apiStatus = '',
-    apiPath = ''
+    apiPath = '',
+    apiTreeId = ''
   ) {
     return new Promise((resolve) => {
       const url = import.meta.env.MODE === 'development'
@@ -328,6 +340,7 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
       'apiFlag': apiFlag,
       'apiStatus': apiStatus,
       'apiPath': apiPath,
+      'apiTreeId': apiTreeId,
         order: 'api_create_time',
       'sort': 'desc'
       }
@@ -365,6 +378,9 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
       const ip = ref(import.meta.env.MODE === 'development'
           ? import.meta.env.VITE_APP_DEV_API_URL
           : window.webConfig.VITE_APP_PROD_API_URL)
+      const getApiTreeUrl = import.meta.env.MODE === 'development'
+          ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getApiTreeFloder'
+          : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getApiTreeFloder'
       const dataRef = ref([])
       const loadingRef = ref(true)
       const active = ref(false)
@@ -375,6 +391,7 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
       const apiAuthorizer = ref([])
       const apiAuthorizerName = ref('')
       const basicInfo = ref({})
+      const folderData = ref([])
       const activate = (row) => {
         active.value = true
         drawTitle.value = row.apiName
@@ -469,7 +486,8 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
           paginationReactive.apiName,
           paginationReactive.apiFlag,
           paginationReactive.apiStatus,
-          paginationReactive.apiPath
+          paginationReactive.apiPath,
+          paginationReactive.apiTreeId
         ).then((data) => {
           dataRef.value = data.data
           dataRef.value.apiCreateTime = dataRef.value.forEach((item) => {
@@ -618,19 +636,28 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
         apiFlag: null,
         apiStatus: null,
         apiPath: '',
+        apiTreeId: '',
         prefix({ itemCount }) {
           return `共${itemCount}条`
         }
       })
 
+      function getTreeFolder ()  {
+        axios.get(getApiTreeUrl).then((res) => {
+          folderData.value = res.data.data
+        })
+      }
+
       onMounted(() => {
+        getTreeFolder()
         query(
           paginationReactive.page,
           paginationReactive.pageSize,
           paginationReactive.apiName,
           paginationReactive.apiFlag,
           paginationReactive.apiStatus,
-          paginationReactive.apiPath
+          paginationReactive.apiPath,
+          paginationReactive.apiTreeId
         ).then((data) => {
           dataRef.value = data.data
           dataRef.value.apiCreateTime = dataRef.value.forEach((item) => {
@@ -675,6 +702,7 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
         loading: loadingRef,
         ip,
         SearchOutlined,
+        folderData,
         showModal,
         active,
         activate,
@@ -718,7 +746,8 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
               paginationReactive.apiName,
               paginationReactive.apiFlag,
               paginationReactive.apiStatus,
-              paginationReactive.apiPath
+              paginationReactive.apiPath,
+              paginationReactive.apiTreeId
             ).then((data) => {
               dataRef.value = data.data
               dataRef.value.apiCreateTime = dataRef.value.forEach((item) => {

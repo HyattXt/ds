@@ -67,7 +67,8 @@ import {useMessage} from "naive-ui";
     apiTimeout: null,
     apiDatasourceId: '',
     apiDatasourceTable: '',
-    apiDatasourceType: ''
+    apiDatasourceType: '',
+    apiTreeId: 1
   })
 
   function nextStep1(value: any) {
@@ -78,6 +79,7 @@ import {useMessage} from "naive-ui";
     params2.value.apiCreator = value.apiCreator
     params2.value.apiFrequency = value.apiFrequency
     params2.value.apiTimeout = value.apiTimeout
+    params2.value.apiTreeId = value.apiTreeId
     console.log(params)
     console.log(params2)
     if (currentTab.value < 4) {
