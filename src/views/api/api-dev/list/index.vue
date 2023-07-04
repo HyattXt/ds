@@ -165,16 +165,16 @@
   >
     <n-card title="新建文件夹" size="huge">
       <n-form
-          ref="formRef"
+          ref="formRef2"
           label-placement="left"
           label-width="auto"
           :rules="rules"
-          :model="variables"
+          :model="formValue"
       >
-        <n-form-item label="文件夹名称" path="model.titleName">
+        <n-form-item label="文件夹名称" path="titleName">
           <n-input
               type="text"
-              v-model:value="titleName"
+              v-model:value="formValue.titleName"
               placeholder="输入文件夹名称"
           />
         </n-form-item>
@@ -412,6 +412,7 @@ import {
 
   export default defineComponent({
     setup() {
+      const formRef2 = ref(null)
       const dataRef = ref([])
       const loadingRef = ref(true)
       const active = ref(false)
@@ -430,7 +431,7 @@ import {
       const yRef = ref(0)
       const dropdownOption = ref([{label: '添加', key: '添加'},{label: '删除', key: '删除'}])
       const selectedMenu = ref(1)
-      const titleName = ref('')
+      const formValue = ref({ titleName: '' })
       const getApiTreeUrl = import.meta.env.MODE === 'development'
           ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getApiTree'
           : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getApiTree'
@@ -441,6 +442,15 @@ import {
           ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/deleteApiTree'
           : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/deleteApiTree'
       const router = useRouter()
+
+      const rules = {
+          titleName: {
+            required: true,
+            message: '请输入名称',
+            trigger: 'blur'
+        }
+      }
+
       const activate = (row) => {
         code.value = ''
         active.value = true
@@ -550,17 +560,24 @@ import {
       }
 
       function createMenu() {
-        let params ={
-          parentId: selectedMenu.value,
-          titleName: titleName.value,
-          type:1
-        }
-        axios.post(addApiTreeUrl, params).then((res) => {
-          message.info(res.data.info)
-          showAddRef.value = false
-          getTreeFolder()
+        formRef2.value.validate((errors) => {
+          if (!errors) {
+            let params ={
+              parentId: selectedMenu.value,
+              titleName: formValue.value.titleName,
+              type:1
+            }
+            axios.post(addApiTreeUrl, params).then((res) => {
+              message.info(res.data.info)
+              showAddRef.value = false
+              getTreeFolder()
+            })
+            showDropdownRef.value = false
+          } else {
+            message.error('验证失败，请填写完整信息')
+          }
         })
-        showDropdownRef.value = false
+
       }
 
       function refresh(currentPage) {
@@ -725,8 +742,10 @@ import {
         dropdownConfirm,
         selectedMenu,
         showAddRef,
-        titleName,
+        formValue,
+        formRef2,
         createMenu,
+        rules,
         pagination: paginationReactive,
         loading: loadingRef,
         SearchOutlined,
