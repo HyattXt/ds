@@ -1,5 +1,8 @@
 <template>
   <n-card :title=tableName size="large">
+    <template #header-extra>
+      <n-button @click="goBack">返回</n-button>
+    </template>
     <n-descriptions label-placement="left" >
       <n-descriptions-item label="描述" label-style="color:grey">
         {{ tableComment }}
@@ -49,7 +52,7 @@
 import basic from './basic.vue'
 import overview from './overview.vue'
 import { onMounted, ref} from "vue";
-import {useRoute} from "vue-router";
+import { useRoute, useRouter} from "vue-router";
 import axios from "axios";
 import {useMessage} from "naive-ui";
 
@@ -59,6 +62,11 @@ const iframeSrc = ref("")
 const tableName = ref("")
 const tableComment = ref("")
 const dbType = ref("")
+const router = useRouter()
+
+function goBack(){
+  router.go(-1)
+}
 
 onMounted(() => {
   tableName.value = route.query.tableName
