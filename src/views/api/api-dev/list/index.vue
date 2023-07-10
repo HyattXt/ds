@@ -943,7 +943,8 @@ a {
 }
 .container {
   width: 100%;
-  height: calc(100vh - 230px);
+  min-height: calc(100vh - 230px);
+  height: 100%;
   overflow: auto;
   white-space: nowrap
 }
