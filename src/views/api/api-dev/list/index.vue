@@ -180,7 +180,7 @@
         </n-form-item>
         <n-form-item label="目标文件夹" path="inputValue">
           <n-tree-select
-              :options="folderData"
+              :options="treeFolder"
               key-field="id"
               label-field="titleName"
               v-model:value="selectedMenu"
@@ -425,6 +425,7 @@ export default defineComponent({
     const paramList = ref([])
     const code = ref('')
     const folderData = ref([])
+    const treeFolder = ref([])
     const showDropdownRef = ref(false)
     const showAddRef = ref(false)
     const xRef = ref(0)
@@ -441,6 +442,9 @@ export default defineComponent({
     const delApiTreeUrl = import.meta.env.MODE === 'development'
         ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/deleteApiTree'
         : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/deleteApiTree'
+    const getApiFolderUrl = import.meta.env.MODE === 'development'
+        ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getApiTreeFloder'
+        : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getApiTreeFloder'
     const router = useRouter()
 
     const rules = {
@@ -473,6 +477,12 @@ export default defineComponent({
     function getTreeFolder ()  {
       axios.get(getApiTreeUrl).then((res) => {
         folderData.value = res.data.data
+      })
+    }
+
+    function getApiFolder ()  {
+      axios.get(getApiFolderUrl).then((res) => {
+        treeFolder.value = res.data.data
       })
     }
 
@@ -556,6 +566,7 @@ export default defineComponent({
         message.info(res.data.info)
         showDropdownRef.value = false
         getTreeFolder()
+        getApiFolder()
       })
     }
 
@@ -571,6 +582,7 @@ export default defineComponent({
             message.info(res.data.info)
             showAddRef.value = false
             getTreeFolder()
+            getApiFolder()
           })
           showDropdownRef.value = false
         } else {
@@ -682,6 +694,7 @@ export default defineComponent({
 
     onMounted(() => {
       getTreeFolder()
+      getApiFolder()
       query(
           paginationReactive.page,
           paginationReactive.pageSize,
