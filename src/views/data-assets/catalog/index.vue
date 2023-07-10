@@ -36,16 +36,33 @@
       </n-space>
     </n-card>
     <n-card>
-      <n-data-table
-        ref="table"
-        remote
-        :columns="columns"
-        :data="data"
-        :loading="loading"
-        :pagination="pagination"
-        :row-key="rowKey"
-        @update:page="handlePageChange"
-      />
+      <n-grid x-gap="2" :cols="6">
+        <n-gi span="1">
+          <n-card size="small" class="container">
+            <n-tree
+                block-line
+                show-irrelevant-nodes
+                :data="treeFolder"
+                key-field="id"
+                label-field="titleName"
+                children-field="children"
+                :render-prefix="menuIcon"
+            />
+          </n-card>
+        </n-gi>
+        <n-gi span="5">
+          <n-data-table
+            ref="table"
+            remote
+            :columns="columns"
+            :data="data"
+            :loading="loading"
+            :pagination="pagination"
+            :row-key="rowKey"
+            @update:page="handlePageChange"
+          />
+        </n-gi>
+      </n-grid>
     </n-card>
   </n-space>
 </template>
@@ -54,6 +71,7 @@
 import {defineComponent, ref, reactive, onMounted, h} from 'vue'
 import axios from 'axios'
 import {
+  BoxPlotOutlined,
   ProfileOutlined,
   SearchOutlined
 } from '@vicons/antd'
@@ -178,6 +196,10 @@ const columns = ({ play }) => {
       const loadingRef = ref(true)
       const loadingMeta = ref(false)
       const message = useMessage()
+      const treeFolder = ref([])
+      const getApiFolderUrl = import.meta.env.MODE === 'development'
+          ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getApiTreeFloder'
+          : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getApiTreeFloder'
       const columnsRef = ref(
           columns(
               {
@@ -219,7 +241,35 @@ const columns = ({ play }) => {
               message.error('采集数据失败，请咨询管理员')
             })
       }
+
+      function getApiFolder ()  {
+        axios.get(getApiFolderUrl).then((res) => {
+          treeFolder.value = res.data.data
+        })
+      }
+
+      function menuIcon({ option }) {
+        switch (option.type) {
+          case 1 : return  h(NIcon, {
+            color: '#1890ff'
+          }, [
+            h('svg', {
+              xmlns: 'http://www.w3.org/2000/svg',
+              viewBox: '0 0 1260 1024',
+              width: ' 19.688',
+              height: '16'
+            }, [
+              h('path', {
+                d: 'M1171.561 157.538H601.797L570.814 61.44A88.222 88.222 0 00486.794 0H88.747A88.747 88.747 0 000 88.747v846.506A88.747 88.747 0 0088.747 1024H1171.56a88.747 88.747 0 0088.747-88.747V246.285a88.747 88.747 0 00-88.747-88.747zm-1082.814 0V88.747h398.047l22.055 68.791z'
+              })
+            ])
+          ])
+          case 2 : return h(NIcon, {color: '#1890ff'}, { default: () => h(BoxPlotOutlined) })
+        }
+      }
+
       onMounted(() => {
+        getApiFolder()
         query(
           paginationReactive.page,
           paginationReactive.pageSize,
@@ -239,6 +289,9 @@ const columns = ({ play }) => {
         loadingMeta,
         columns: columnsRef,
         SearchOutlined,
+        getApiFolder,
+        menuIcon,
+        treeFolder,
         handleMetadata,
         rowKey(rowData) {
           return rowData.colName
@@ -267,5 +320,31 @@ const columns = ({ play }) => {
 <style scoped>
   a {
     text-decoration: none;
+  }
+
+  .container {
+    width: 100%;
+    min-height: calc(100vh - 230px);
+    height: 100%;
+    overflow: auto;
+    white-space: nowrap
+  }
+
+  .container::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width : 10px;  /*高宽分别对应横竖滚动条的尺寸*/
+    height: 5px;
+  }
+  .container::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 10px;
+    box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+    background   : #b9b9b9;
+  }
+  .container::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+    box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background   : #ededed;
   }
 </style>
