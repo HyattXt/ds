@@ -744,6 +744,7 @@ export default defineComponent({
       data: dataRef,
       columns: columnsRef,
       folderData,
+      treeFolder,
       menuIcon,
       nodeProps,
       showDropdownRef,
