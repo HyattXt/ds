@@ -64,5 +64,9 @@ export default {
   assets_catalog: '资产目录',
   rest: '接口管理',
   rest_dev: '接口注册',
-  rest_manager: '接口管理'
+  rest_manager: '接口管理',
+  devops: '运维总览',
+  devops_overview: '运维总览',
+  devops_task: '任务管理',
+
 }

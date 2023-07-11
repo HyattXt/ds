@@ -314,6 +314,34 @@ export function useDataList() {
               }
             ]
       },
+
+      {
+        label: () => h(NEllipsis, null, { default: () => t('menu.devops') }),
+        key: 'devops',
+        icon: renderIcon(BoxPlotOutlined),
+        children: [
+          {
+            label: t('menu.devops_overview'),
+            key: '/devops/devops_overview',
+            icon: renderIcon(BarsOutlined)
+          },
+          {
+            label: t('menu.devops_task'),
+            key: 'devops_task',
+            icon: renderIcon(SettingOutlined),
+            children: [
+              {
+                label: t('menu.workflow_instance'),
+                key: `/devops/${projectCode}/workflow/instances`
+              },
+              {
+                label: t('menu.task_instance'),
+                key: `/devops/${projectCode}/task/instances`
+              }
+            ]
+          }
+        ]
+      },
       window.webConfig.SHOW_API ? {
         label: () => h(NEllipsis, null, { default: () => t('menu.api') }),
         key: 'service',
@@ -330,7 +358,7 @@ export function useDataList() {
             icon: renderIcon(BarsOutlined)
           }
         ]
-      }:{},
+      } : {},
       window.webConfig.SHOW_DATA_ASSETS ? {
         label: () => h(NEllipsis, null, { default: () => t('menu.data_assets') }),
         key: 'data-assets',
@@ -346,7 +374,7 @@ export function useDataList() {
             key: '/data-assets/assets-catalog',
             icon: renderIcon(BarsOutlined)
           }
-        ]:[
+        ] : [
           {
             label: t('menu.assets_catalog'),
             key: '/data-assets/assets-catalog',
@@ -354,7 +382,7 @@ export function useDataList() {
           }
         ]
 
-      }:{},
+      } : {},
 
       window.webConfig.SHOW_REST ? {
         label: () => h(NEllipsis, null, { default: () => t('menu.rest') }),
@@ -367,7 +395,7 @@ export function useDataList() {
             icon: renderIcon(BarsOutlined)
           }
         ]
-      }:{}
+      } : {}
     ]
   }
 
