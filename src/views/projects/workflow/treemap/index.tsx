@@ -493,7 +493,7 @@ export default defineComponent({
                             <Detail
                                ref={tsxRef}
                                projectCode={projectCode}
-                               code={linkage.value.code}
+                               code={Number(linkage.value.code)}
                                parentId={linkage.value.parentId}
                             />
                             </div>
