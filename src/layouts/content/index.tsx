@@ -16,7 +16,7 @@
  */
 
 import { defineComponent, onMounted, watch, toRefs, ref } from 'vue'
-import { NLayout, NLayoutContent, NLayoutHeader, useMessage } from 'naive-ui'
+import { NLayout, NSelect, NLayoutContent, NLayoutHeader, useMessage } from 'naive-ui'
 import NavBar from './components/navbar'
 import SideBar from './components/sidebar'
 import { useDataList } from './use-dataList'
@@ -43,6 +43,7 @@ const Content = defineComponent({
     } = useDataList()
     const sideKeyRef = ref()
 
+
     onMounted(() => {
       locale.value = localesStore.getLocales
       changeMenuOption(state)
@@ -58,6 +59,33 @@ const Content = defineComponent({
         state.menuOptions.filter((menu: { key: string }) => menu.key === key)[0]
           ?.children || state.menuOptions
       state.isShowSide = route.meta.showSide
+      let projectCode = route.params.projectCode
+      console.log(route.params.projectCode)
+
+
+      if ((typeof route.params.projectCode) == 'undefined') {
+        projectCode = routeStore.getLastRoute.split('/')[2];
+      }
+      state.sideMenuOptions.forEach(rot => {
+        console.log('route')
+        console.log(route)
+        if (rot.label === "任务管理") {
+          rot.children.forEach(ch => {
+            console.log(ch)
+            if (ch.label === '任务实例') {
+              ch.key = `/devops/${projectCode}/task/instances`
+            }
+            if (ch.label === "工作流实例") {
+              ch.key = `/devops/${projectCode}/workflow/instances`
+            }
+            console.log(ch)
+
+          });
+        }
+        if (rot.label === "运维总览") {
+          rot.key = `/devops/devops_overview/${projectCode}`
+        }
+      })
     }
 
     watch(useI18n().locale, () => {
@@ -69,7 +97,10 @@ const Content = defineComponent({
     })
 
     watch(
-      () => route.path,
+      () => ({
+        path: route.path,
+        // query: route.params
+      }),
       () => {
         if (route.path !== '/login') {
           routeStore.setLastRoute(route.path)
@@ -78,6 +109,7 @@ const Content = defineComponent({
           if (route.matched[1].path === '/projects/:projectCode') {
             changeMenuOption(state)
           }
+
 
           getSideMenu(state)
 
@@ -100,14 +132,15 @@ const Content = defineComponent({
     return {
       ...toRefs(state),
       changeMenuOption,
-      sideKeyRef
+      sideKeyRef,
+
     }
   },
 
 
   render() {
 
-    console.log(this.iconMenuOptions)
+    //console.log(this.ProjSelect)
 
     return (
       <NLayout style='height: 100%'>
@@ -119,10 +152,15 @@ const Content = defineComponent({
             timezoneOptions={this.timezoneOptions}
             userDropdownOptions={this.userDropdownOptions}
             iconOptions={this.iconMenuOptions}
+
+
           />
 
         </NLayoutHeader>
+
+
         <NLayout has-sider position='absolute' style='top: 65px'>
+
           {this.isShowSide && (
             <SideBar
               sideMenuOptions={this.sideMenuOptions}
