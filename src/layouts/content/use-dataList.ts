@@ -122,10 +122,10 @@ export function useDataList() {
                 label: t('menu.workflow_definition'),
                 key: `/projects/${projectCode}/workflow-definition`
               },
-              {
+              /*{
                 label: t('menu.workflow_instance'),
                 key: `/projects/${projectCode}/workflow/instances`
-              }
+              }*/
             ]
           },
           {
@@ -137,10 +137,10 @@ export function useDataList() {
                 label: t('menu.task_definition'),
                 key: `/projects/${projectCode}/task/definitions`
               },
-              {
+              /*{
                 label: t('menu.task_instance'),
                 key: `/projects/${projectCode}/task/instances`
-              }
+              }*/
             ]
           }
         ]
