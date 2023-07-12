@@ -400,7 +400,7 @@ export function useDataList() {
   }
 
   const changeHeaderMenuOptions = (state: any) => {
-    state.headerMenuOptions = state.menuOptions.filter(x => x.key !== 'line_test' && x.key !== 'security' && x.key !== 'data-quality' && x.key !== 'task-group-manage' && x.key !== 'resource' && x.key !== 'datasource' && x.key !== 'rest').map(
+    state.headerMenuOptions = state.menuOptions.filter(x => x.key !== 'security' && x.key !== 'data-quality'  && x.key !== 'resource' && x.key !== 'datasource' && x.key !== 'rest' && x.key !== 'monitor').map(
       (item: { label: string; key: string; icon: any }) => {
         return {
           label: item.label,
@@ -411,7 +411,7 @@ export function useDataList() {
     )
   }
   const changeIconMenuOptions = (state: any) => {
-    state.iconMenuOptions = state.menuOptions.filter(item => item.key === 'line_test' || item.key === 'security' || item.key === 'data-quality' || item.key === 'task-group-manage' || item.key === 'resource' || item.key === 'datasource' || item.key === 'rest').map(
+    state.iconMenuOptions = state.menuOptions.filter(item => item.key === 'security' || item.key === 'data-quality' || item.key === 'resource' || item.key === 'datasource' || item.key === 'rest' || item.key === 'monitor').map(
       (item: { label: string; key: string; icon: any, children: any }) => {
         return {
           // label: () =>
