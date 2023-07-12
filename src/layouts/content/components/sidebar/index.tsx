@@ -39,7 +39,8 @@ const Sidebar = defineComponent({
       'udf-manage',
       'service-manage',
       'statistical-manage',
-      'task-group-manage'
+      'task-group-manage',
+      'devops_task'
     ]
 
     const { handleMenuClick } = useMenuClick()
