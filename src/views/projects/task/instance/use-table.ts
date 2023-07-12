@@ -57,7 +57,10 @@ export function useTable() {
     processInstanceId: ref(processInstanceId ? processInstanceId : null),
     host: ref(null),
     stateType: ref(null),
-    datePickerRange: ref(null),
+    datePickerRange: ref(
+        [new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 6 * 24 * 60 * 60 * 1000,
+               new Date(new Date().setHours(0, 0, 0, 0)).getTime() + 24 * 60 * 60 * 1000]
+    ),
     executorName: ref(null),
     processInstanceName: ref(null),
     totalPage: ref(1),
