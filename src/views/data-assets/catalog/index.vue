@@ -47,6 +47,7 @@
                 label-field="titleName"
                 children-field="children"
                 :render-prefix="menuIcon"
+                :nodeProps="nodeProps"
             />
           </n-card>
         </n-gi>
@@ -71,9 +72,10 @@
 import {defineComponent, ref, reactive, onMounted, h} from 'vue'
 import axios from 'axios'
 import {
-  BoxPlotOutlined,
+  ApartmentOutlined,
   ProfileOutlined,
-  SearchOutlined
+  SearchOutlined,
+  TableOutlined
 } from '@vicons/antd'
 import {NButton, NIcon, NSpace, NTooltip, useMessage} from "naive-ui";
 import {useRouter} from "vue-router";
@@ -141,7 +143,8 @@ const columns = ({ play }) => {
   function query(
     page,
     pageSize = 10,
-    sqlLineageName = ''
+    sqlLineageName = '',
+    apiTreeId = 1
   ) {
     return new Promise((resolve) => {
       const url = import.meta.env.MODE === 'development'
@@ -150,7 +153,8 @@ const columns = ({ play }) => {
       const params = {
         'pageNum': page,
         'pageSize': pageSize,
-        'sqlLineageName': sqlLineageName
+        'sqlLineageName': sqlLineageName,
+        'apiTreeId': apiTreeId
       }
 
       axios
@@ -198,8 +202,8 @@ const columns = ({ play }) => {
       const message = useMessage()
       const treeFolder = ref([])
       const getApiFolderUrl = import.meta.env.MODE === 'development'
-          ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getApiTreeFloder'
-          : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getApiTreeFloder'
+          ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface_lineage/getTreeAll'
+          : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface_lineage/getTreeAll'
       const columnsRef = ref(
           columns(
               {
@@ -218,10 +222,30 @@ const columns = ({ play }) => {
         pageCount: 1,
         pageSize: 10,
         sqlLineageName: '',
+        apiTreeId: 1,
         prefix({ itemCount }) {
           return `共${itemCount}条`
         }
       })
+
+      function nodeProps ({option}) {
+        return {
+          onClick() {
+            paginationReactive.apiTreeId = option.id
+            query(
+                paginationReactive.page,
+                paginationReactive.pageSize,
+                paginationReactive.sqlLineageName,
+                paginationReactive.apiTreeId
+            ).then((data) => {
+              dataRef.value = data.data
+              paginationReactive.pageCount = data.pageCount
+              paginationReactive.itemCount = data.total
+              loadingRef.value = false
+            })
+          }
+        }
+      }
 
       function handleMetadata() {
         let url = import.meta.env.MODE === 'development'
@@ -243,7 +267,8 @@ const columns = ({ play }) => {
       }
 
       function getApiFolder ()  {
-        axios.get(getApiFolderUrl).then((res) => {
+        let params ={}
+        axios.post(getApiFolderUrl,params).then((res) => {
           treeFolder.value = res.data.data
         })
       }
@@ -264,7 +289,8 @@ const columns = ({ play }) => {
               })
             ])
           ])
-          case 2 : return h(NIcon, {color: '#1890ff'}, { default: () => h(BoxPlotOutlined) })
+          case 2 : return h(NIcon, {color: '#1890ff'}, { default: () => h(ApartmentOutlined) })
+          default : return h(NIcon, {color: '#1890ff'}, { default: () => h(TableOutlined) })
         }
       }
 
@@ -273,7 +299,8 @@ const columns = ({ play }) => {
         query(
           paginationReactive.page,
           paginationReactive.pageSize,
-          paginationReactive.sqlLineageName
+          paginationReactive.sqlLineageName,
+          paginationReactive.apiTreeId
         ).then((data) => {
           dataRef.value = data.data
           paginationReactive.pageCount = data.pageCount
@@ -289,9 +316,9 @@ const columns = ({ play }) => {
         loadingMeta,
         columns: columnsRef,
         SearchOutlined,
-        getApiFolder,
         menuIcon,
         treeFolder,
+        nodeProps,
         handleMetadata,
         rowKey(rowData) {
           return rowData.colName
@@ -302,7 +329,8 @@ const columns = ({ play }) => {
             query(
               currentPage,
               paginationReactive.pageSize,
-              paginationReactive.sqlLineageName
+              paginationReactive.sqlLineageName,
+              paginationReactive.apiTreeId
             ).then((data) => {
               dataRef.value = data.data
               paginationReactive.page = currentPage
