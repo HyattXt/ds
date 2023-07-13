@@ -280,6 +280,7 @@ interface ITaskParams {
     dependTaskList?: IDependTask[]
   }
   customConfig?: number
+  jsonConfig?: number
   executeMode?: string
   json?: string
   dsType?: string

@@ -251,6 +251,7 @@ export function formatParams(data: INodeData): {
       taskParams.postStatements = data.postStatements
       console.log(data)
     //} else {
+      taskParams.jsonConfig = data.jsonConfig
       taskParams.json = data.json
       data?.localParams?.map((param: ILocalParam) => {
         param.direct = 'IN'

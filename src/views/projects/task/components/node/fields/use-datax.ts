@@ -112,6 +112,7 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
   const sourceDatabaseSpan  = ref(0)
   const targetTableSpan = ref(12)
   const targetDatabaseSpan  = ref(0)
+  const tagSpan = ref (12)
   const autoCreate = computed(() => (model.executeMode==0 ? 24 : 0))
   const autoCreSpanMiddle = computed(() => (model.executeMode==0 && model.autoCreate ? 6 : 0))
   const autoCreSpanShort = computed(() => (model.executeMode==0 && model.autoCreate ? 2 : 0))
@@ -131,14 +132,18 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
   })
 
   const initConstants = () => {
-    /*if (model.customConfig) {
+    /*if (model.jsonConfig) {
       sqlEditorSpan.value = 0
-      jsonEditorSpan.value = 24
+      sourceTableSpan.value = 0
+      sourceDatabaseSpan.value = 0
+      targetTableSpan.value = 0
+      targetDatabaseSpan.value = 0
       datasourceSpan.value = 0
+      jsonEditorSpan.value = 24
       destinationDatasourceSpan.value = 0
       otherStatementSpan.value = 0
       jobSpeedSpan.value = 0
-      customParameterSpan.value = 24
+      customParameterSpan.value = 0
     } else {*/
       sqlEditorSpan.value = model.executeMode === '0' ? 0 : 24
       sourceTableSpan.value = model.executeMode=== '1' ? 0 : (model.dsType=='ORACLE' || model.dsType=='SQLSERVER'? 6: 12)
@@ -146,7 +151,7 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       targetTableSpan.value = model.dtType=='ORACLE' || model.dsType=='SQLSERVER'? 6: 12
       targetDatabaseSpan.value = model.dtType=='ORACLE' || model.dsType=='SQLSERVER'? 6: 0
       datasourceSpan.value = 6
-      jsonEditorSpan.value = 0
+      jsonEditorSpan.value = model.jsonConfig ? 24 : 0
       destinationDatasourceSpan.value = 6
       otherStatementSpan.value = 22
       jobSpeedSpan.value = 6
@@ -224,7 +229,7 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
             }
           }
         }
-      })}
+      },null,4)}
     else
     {
       model.json = JSON.stringify({
@@ -287,7 +292,7 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
             }
           }
         }
-      })
+      },null,4)
     }
     console.log(model.json)
   }
@@ -297,10 +302,22 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
   })
 
   watch(
-    () => [model.customConfig,model.executeMode],
+    () => [model.executeMode],
     () => {
       initConstants()
     }
+  )
+
+  watch(
+      () => [model.jsonConfig],
+      () => {
+        if(model.jsonConfig){
+          jsonEditorSpan.value = 24
+        }else {
+          jsonEditorSpan.value = 0
+          saveJson()
+        }
+      }
   )
 
   watch(
@@ -336,20 +353,15 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
   watch(
       () => [model.leftList, model.rightList, sourceConnect.value, targetConnect.value],
       () => {
-        saveJson()
+        if(!model.jsonConfig)saveJson()
       }
   )
 
   return [
-    /*{
-      type: 'switch',
-      field: 'customConfig',
-      name: t('project.node.datax_custom_template')
-    },*/
     {
       type: 'custom',
       field: 'custom-title-source',
-      span: 12,
+      span: tagSpan,
       widget: h(
           'div',
           { class: styles['field-title'] },
@@ -359,7 +371,7 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
     {
       type: 'custom',
       field: 'custom-title-target',
-      span: 12,
+      span: tagSpan,
       widget: h(
           'div',
           { class: styles['field-title'] },
@@ -389,7 +401,8 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       name: t('project.node.datax_target_database'),
       span: targetDatabaseSpan,
       props: {
-        placeholder: t('project.node.datax_target_database')
+        placeholder: t('project.node.datax_target_database'),
+        onBlur: saveJson
       },
       validate: {
         trigger: ['input', 'blur'],
@@ -416,7 +429,8 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       name: t('project.node.datax_source_database'),
       span: sourceDatabaseSpan,
       props: {
-        placeholder: t('project.node.datax_source_database')
+        placeholder: t('project.node.datax_source_database'),
+        onBlur: saveJson
       },
       validate: {
         trigger: ['input', 'blur'],
@@ -429,7 +443,8 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       name: t('project.node.datax_source_table'),
       span: sourceTableSpan,
       props: {
-        placeholder: t('project.node.datax_source_table')
+        placeholder: t('project.node.datax_source_table'),
+        onBlur: saveJson
       },
       validate: {
         trigger: ['input', 'blur'],
@@ -478,17 +493,6 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       leftDataList: 'leftData',
       rightDataList: 'rightData'
     }),
-    {
-      type: 'editor',
-      field: 'json',
-      name: t('project.node.datax_json_template'),
-      span: 0,
-      validate: {
-        trigger: ['input', 'trigger'],
-        required: true,
-        message: t('project.node.sql_empty_tips')
-      }
-    },
     {
       type: 'multi-input',
       field: 'preStatements',
@@ -593,6 +597,22 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       span: 6,
       options: memoryLimitOptions,
       value: 1
+    },
+    {
+      type: 'switch',
+      field: 'jsonConfig',
+      name: '脚本模式'
+    },
+    {
+      type: 'editor',
+      field: 'json',
+      name: t('project.node.datax_json_template'),
+      span: jsonEditorSpan,
+      validate: {
+        trigger: ['input', 'trigger'],
+        required: true,
+        message: t('project.node.sql_empty_tips')
+      }
     }
   ]
 }
