@@ -45,12 +45,7 @@ const Sidebar = defineComponent({
 
     const { handleMenuClick } = useMenuClick()
 
-    const handleMenuClickHide = (key: string, unused: MenuOption)=> {
-      handleMenuClick(key,unused)
-      if(key.includes('/workflow/relation')){collapsedRef.value = true}
-    }
-
-    return { collapsedRef, defaultExpandedKeys, handleMenuClick, handleMenuClickHide }
+    return { collapsedRef, defaultExpandedKeys, handleMenuClick }
   },
   render() {
     return (
@@ -68,7 +63,7 @@ const Sidebar = defineComponent({
           value={this.sideKey}
           options={this.sideMenuOptions}
           defaultExpandedKeys={this.defaultExpandedKeys}
-          onUpdateValue={this.handleMenuClickHide}
+          onUpdateValue={this.handleMenuClick}
         />
       </NLayoutSider>
     )
