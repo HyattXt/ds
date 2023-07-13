@@ -69,12 +69,12 @@ function goBack(){
 }
 
 onMounted(() => {
-  tableName.value = route.query.tableName
-  tableComment.value = route.query.tableComment
-  dbType.value = route.query.dbType
+  tableName.value = history.state.tableName
+  tableComment.value = history.state.tableComment
+  dbType.value = history.state.dbType
   iframeSrc.value = import.meta.env.MODE === 'development'
-      ? import.meta.env.VITE_APP_DEV_BLOOD_URL+'/?e='+route.query.tableName
-      : window.webConfig.VITE_APP_PROD_BLOOD_URL+'/?e='+route.query.tableName
+      ? import.meta.env.VITE_APP_DEV_BLOOD_URL+'/?e='+history.state.tableName
+      : window.webConfig.VITE_APP_PROD_BLOOD_URL+'/?e='+history.state.tableName
 })
 </script>
 

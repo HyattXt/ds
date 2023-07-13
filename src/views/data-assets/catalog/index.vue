@@ -79,6 +79,7 @@ import {
 } from '@vicons/antd'
 import {NButton, NIcon, NSpace, NTooltip, useMessage} from "naive-ui";
 import {useRouter} from "vue-router";
+import home from '../detail/home.vue'
 
 const columns = ({ play }) => {
     return [
@@ -209,8 +210,8 @@ const columns = ({ play }) => {
               {
                 play(row) {
                   router.push({
-                        path: '/data-assets/assets-detail',
-                        query: {tableName: row.sqlLineageName, tableComment: row.notes, dbType: row.dbType, fieldArray: row.fieldArray}
+                        name: 'assets-detail',
+                        state: {tableName: row.sqlLineageName, tableComment: row.notes, dbType: row.dbType, fieldArray: row.fieldArray}
                       }
                   )
                 }
