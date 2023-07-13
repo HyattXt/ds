@@ -119,27 +119,6 @@ export default defineComponent({
       <NSpace>
         <NTooltip trigger={'hover'}>
           {{
-            default: () => t('project.workflow.edit'),
-            trigger: () => (
-              <NButton
-                size='small'
-                type='info'
-                tag='div'
-                circle
-                onClick={this.handleEditWorkflow}
-                disabled={releaseState === 'ONLINE'}
-                class='btn-edit'
-                /* TODO: Edit workflow */
-              >
-                <NIcon>
-                  <FormOutlined />
-                </NIcon>
-              </NButton>
-            )
-          }}
-        </NTooltip>
-        <NTooltip trigger={'hover'}>
-          {{
             default: () => t('project.workflow.start'),
             trigger: () => (
               <NButton
@@ -205,24 +184,6 @@ export default defineComponent({
         </NTooltip>
         <NTooltip trigger={'hover'}>
           {{
-            default: () => t('project.workflow.copy_workflow'),
-            trigger: () => (
-              <NButton
-                size='small'
-                type='info'
-                tag='div'
-                circle
-                onClick={this.handleCopyWorkflow}
-              >
-                <NIcon>
-                  <CopyOutlined />
-                </NIcon>
-              </NButton>
-            )
-          }}
-        </NTooltip>
-        <NTooltip trigger={'hover'}>
-          {{
             default: () => t('project.workflow.cron_manage'),
             trigger: () => (
               <NButton
@@ -270,42 +231,6 @@ export default defineComponent({
                     )
                   }}
                 </NPopconfirm>
-              </NButton>
-            )
-          }}
-        </NTooltip>
-        <NTooltip trigger={'hover'}>
-          {{
-            default: () => t('project.workflow.tree_view'),
-            trigger: () => (
-              <NButton
-                size='small'
-                type='info'
-                tag='div'
-                circle
-                onClick={this.handleGotoWorkflowTree}
-              >
-                <NIcon>
-                  <ApartmentOutlined />
-                </NIcon>
-              </NButton>
-            )
-          }}
-        </NTooltip>
-        <NTooltip trigger={'hover'}>
-          {{
-            default: () => t('project.workflow.export'),
-            trigger: () => (
-              <NButton
-                size='small'
-                type='info'
-                tag='div'
-                circle
-                onClick={this.handleExportWorkflow}
-              >
-                <NIcon>
-                  <ExportOutlined />
-                </NIcon>
               </NButton>
             )
           }}
