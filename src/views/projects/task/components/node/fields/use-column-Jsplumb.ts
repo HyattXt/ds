@@ -64,7 +64,7 @@ export function useColumnJsplumb(
     const rightData = ref([])
 
     function execute() {
-        reset()
+        Disassociate()
         let getCol = SecondDevQueryUrl + '/HDataApi/apiService/getColumnsByTable'
         formTarget.value.id = model['dataTarget']
         formTarget.value.type = parseInt(model['dtType'].replace('MYSQL', 0).replace('ORACLE', 5).replace('SQLSERVER', 6))
@@ -278,10 +278,6 @@ export function useColumnJsplumb(
         plumbins.repaintEverything();
     }
 
-    function reset(){
-        plumbins.reset()
-    }
-
     function Disassociate() {
         let activities = plumbins.getConnections();
         activities.forEach((activeitem, index) => {
@@ -333,6 +329,10 @@ export function useColumnJsplumb(
         let connections = plumbins.getConnections();
         let readColumn = []
         let writerColumn = []
+        let sortData = model[params.leftDataList].map(item=>item.label)
+        connections.sort((a, b) => {
+            return sortData.indexOf(a.sourceId.replace('S' + model['dsType'] + model['dataSource'], '')) - sortData.indexOf(b.sourceId.replace('S' + model['dsType'] + model['dataSource'], ''));
+        });
         for (var i in connections) {
             // connections 是线数据数组
             //info[connections[i].sourceId] = connections[i].targetId;
