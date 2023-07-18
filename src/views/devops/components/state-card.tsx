@@ -189,13 +189,13 @@ const StateCard = defineComponent({
           ),
           'header-extra': () => (
             <NSpace>
-              项目名称：
+              <p style="display:none">项目名称：</p>
               <NSelect
                 size='small'
                 value={ProjFirst}
                 defaultValue={ProjFirst}
                 options={ProjSelect}
-                style="width:150px"
+                style="width:150px;display:none"
                 onUpdateValue={onUpdateProjPickerValue}
               />
               日期：

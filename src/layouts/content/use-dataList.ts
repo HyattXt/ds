@@ -331,6 +331,10 @@ export function useDataList() {
             icon: renderIcon(SettingOutlined),
             children: [
               {
+                label: t('menu.workflow_definition'),
+                key: `/devops/${projectCode}/workflow-definition`
+              },
+              {
                 label: t('menu.workflow_instance'),
                 key: `/devops/${projectCode}/workflow/instances`
               },
@@ -339,6 +343,28 @@ export function useDataList() {
                 key: `/devops/${projectCode}/task/instances`
               }
             ]
+          },
+          {
+            label: t('menu.devops_rest'),
+            //key: 'devops_task',
+            icon: renderIcon(BarsOutlined),
+            children: [
+              {
+                label: t('menu.api_manager'),
+                key: '/devops/service/api-manager',
+                //icon: renderIcon(BarsOutlined)
+              }
+              ,
+              {
+                label: t('menu.rest_manager'),
+                key: '/devops/rest/rest-manager',
+                //icon: renderIcon(BarsOutlined)
+              }]
+          },
+          {
+            label: t('menu.alarm_instance_manage'),
+            key: '/devops/security/alarm-instance-manage',
+            icon: renderIcon(InfoCircleOutlined)
           }
         ]
       },
@@ -400,7 +426,7 @@ export function useDataList() {
   }
 
   const changeHeaderMenuOptions = (state: any) => {
-    state.headerMenuOptions = state.menuOptions.filter(x => x.key !== 'security' && x.key !== 'data-quality'  && x.key !== 'resource' && x.key !== 'datasource' && x.key !== 'rest' && x.key !== 'monitor').map(
+    state.headerMenuOptions = state.menuOptions.filter(x => x.key !== 'security' && x.key !== 'data-quality' && x.key !== 'resource' && x.key !== 'datasource' && x.key !== 'rest' && x.key !== 'monitor').map(
       (item: { label: string; key: string; icon: any }) => {
         return {
           label: item.label,
