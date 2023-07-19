@@ -65,8 +65,10 @@ export default {
   rest: '接口管理',
   rest_dev: '接口注册',
   rest_manager: '接口管理',
-  devops: '运维总览',
-  devops_overview: '运维总览',
-  devops_task: '任务管理',
+  devops: '运维中心',
+  devops_overview: '运维概览',
+  devops_task: '离线运维',
+  devops_rest: '接口运维',
+  devops_api: 'API运维',
 
 }

@@ -180,30 +180,6 @@ export default {
         showSide: true,
         auth: []
       }
-    },
-
-    {
-      path: '/devops/:projectCode/task/instances',
-      name: 'devops_task-instance',
-      component: components['projects-task-instance'],
-      meta: {
-        title: '任务实例',
-        activeMenu: 'devops',
-        showSide: true,
-        auth: []
-      }
-    }
-    ,
-    {
-      path: '/devops/:projectCode/workflow/instances',
-      name: 'devops_workflow-instance-list',
-      component: components['projects-workflow-instance'],
-      meta: {
-        title: '工作流实例',
-        activeMenu: 'devops',
-        showSide: true,
-        auth: []
-      }
     }
   ]
 }

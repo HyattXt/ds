@@ -27,34 +27,7 @@ const IFrame = () => import('@/views/iframe/index.vue')
 const modules = import.meta.glob('/src/views/**/**.tsx')
 
 const components: { [key: string]: Component } = utils.mapping(modules)
-// const getProjData = () => {
 
-//     const { state } = useAsyncState(
-//         queryUnauthorizedProject({
-//             userId: 0
-//         }).then(function (res) {
-//             console.log(res);
-
-//             const table = res.map((item) => {
-//                 return {
-//                     label: item.name,
-//                     value: item.code,
-//                 }
-//             });
-//             const proj = table[0].value
-//             console.log(table);
-//             console.log(proj);
-
-//             return { table, proj }
-//         }),
-//         { table: [] }
-//     )
-
-//     return state
-// }
-//const { getProjData } = useTaskState()
-//let projectCode = getProjData()
-//console.log(projectCode)
 export default {
     path: '/devops',
     name: 'devops',
@@ -71,6 +44,74 @@ export default {
                 activeMenu: 'devops',
                 showSide: true,
                 auth: []
+            }
+
+        },
+        {
+            path: '/devops/:projectCode/task/instances',
+            name: 'devops_task-instance',
+            component: components['projects-task-instance'],
+            meta: {
+                title: '任务实例',
+                activeMenu: 'devops',
+                showSide: true,
+                auth: []
+            }
+        }
+        ,
+        {
+            path: '/devops/:projectCode/workflow/instances',
+            name: 'devops_workflow-instance-list',
+            component: components['projects-workflow-instance'],
+            meta: {
+                title: '工作流实例',
+                activeMenu: 'devops',
+                showSide: true,
+                auth: []
+            }
+        },
+        {
+            path: '/devops/:projectCode/workflow-definition',
+            name: 'devops_workflow-definition-list',
+            component: components['projects-workflow-definition'],
+            meta: {
+                title: '工作流管理',
+                activeMenu: 'devops',
+                showSide: true,
+                auth: []
+            }
+        },
+        {
+            path: '/devops/service/api-manager',
+            name: 'api-manager',
+            component: () => import('@/views/api/api-manager/list/index.vue'),
+            meta: {
+                title: '服务开发-api-manager',
+                activeMenu: 'devops',//service
+                showSide: true,
+                auth: []
+            }
+        },
+        {
+            path: '/devops/rest/rest-manager',
+            name: 'rest-manager',
+            component: () => import('@/views/rest/catalog/list.vue'),
+            meta: {
+                title: '接口管理-rest-manager',
+                activeMenu: 'devops', //rest
+                showSide: true,
+                auth: []
+            }
+        },
+        {
+            path: '/devops/security/alarm-instance-manage',
+            name: 'devops_alarm-instance-manage',
+            component: components['security-alarm-instance-manage'],
+            meta: {
+                title: '告警实例管理',
+                activeMenu: 'devops',
+                showSide: true,
+                auth: ['ADMIN_USER']
             }
         }
     ]
