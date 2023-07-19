@@ -17,7 +17,7 @@
 
 import {defineComponent, nextTick, onMounted, PropType, ref} from 'vue'
 import { NIcon, NButton, NDropdown} from 'naive-ui'
-import { DownOutlined, UserOutlined } from '@vicons/antd'
+import {DownOutlined, ProfileOutlined, UserOutlined} from '@vicons/antd'
 import { useDropDown } from './use-dropdown'
 import styles from './index.module.scss'
 import type { ProjectList } from '@/service/modules/projects/types'
@@ -60,6 +60,9 @@ const User = defineComponent({
             on-select={this.handleSelect}
         >
           <NButton text>
+            <NIcon class={styles.icon}>
+              <ProfileOutlined />
+            </NIcon>
             {this.chooseVal}
             <NIcon class={styles.icon}>
               <DownOutlined />
