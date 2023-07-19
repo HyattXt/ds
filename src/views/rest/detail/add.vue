@@ -179,7 +179,7 @@
       </n-form-item>
       <div style="margin-left: 400px">
         <n-space>
-          <router-link to="/rest/rest-manager">
+          <router-link to="/devops/rest/rest-manager">
             <n-button type="tertiary">返回</n-button>
           </router-link>
           <n-button type="primary" @click="formSubmit">确定</n-button>
@@ -348,7 +348,7 @@ function formSubmit() {
         setTimeout(() => {
           if (response.data.info === 'HTTP任务新增成功！') {
             router.push({
-              path: '/rest/rest-manager'
+              path: '/devops/rest/rest-manager'
             })
           }
         }, 1000)

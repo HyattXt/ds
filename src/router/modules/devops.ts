@@ -104,6 +104,28 @@ export default {
             }
         },
         {
+            path: '/devops/rest/rest-dev',
+            name: 'rest-dev',
+            component: () => import('@/views/rest/detail/add.vue'),
+            meta: {
+                title: '接口开发-rest-dev',
+                activeMenu: 'devops',
+                showSide: true,
+                auth: []
+            }
+        },
+        {
+            path: '/devops/rest/rest-edit',
+            name: 'rest-edit',
+            component: () => import('@/views/rest/detail/edit.vue'),
+            meta: {
+                title: '接口编辑-rest-edit',
+                activeMenu: 'devops',
+                showSide: true,
+                auth: []
+            }
+        },
+        {
             path: '/devops/security/alarm-instance-manage',
             name: 'devops_alarm-instance-manage',
             component: components['security-alarm-instance-manage'],

@@ -2,7 +2,7 @@
   <n-space vertical>
     <n-card size="small">
       <n-space justify="space-between" style="height: 40px">
-        <router-link to="/rest/rest-dev">
+        <router-link to="/devops/rest/rest-dev">
         <n-button type="primary" > 新建接口</n-button>
         </router-link>
         <n-form ref="formRef" :model="pagination">
