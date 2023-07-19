@@ -64,5 +64,6 @@ export default {
   assets_catalog: 'Assets Catalog',
   rest: 'Http manager',
   rest_dev: 'Http development',
-  rest_manager: 'Http manager'
+  rest_manager: 'Http manager',
+  project_manager: 'Project manager'
 }
