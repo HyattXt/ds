@@ -119,7 +119,6 @@ export function useTaskEdit(options: Options) {
       code,
       name
     } as NodeData
-    console.log(newDefinition)
 
     processDefinition.value.taskDefinitionList.push(newDefinition)
 
@@ -198,7 +197,6 @@ export function useTaskEdit(options: Options) {
     //queryProcessDefinitionByCode(processDefinition.value.processDefinition.code, Number(route.params.projectCode)).then((res: any) => {
     queryTaskDefinitionByCode(code, Number(route.params.projectCode)).then((res: any) => {
       let versionId = res.id
-      console.log(res.id)
       const definition = processDefinition.value.taskDefinitionList.find(
           (t) => t.code === code
       )

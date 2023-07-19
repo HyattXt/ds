@@ -108,7 +108,6 @@ export default defineComponent({
             getTreeFolder(projectCode)
             // @ts-ignore
             variables.model.projectCode = projectCode
-            console.log(route.query.code)
             if( typeof(route.query.code) != 'undefined' )tsxRef.value.refresh(route.query.code, projectCode)
         })
 
@@ -222,7 +221,6 @@ export default defineComponent({
                 // @ts-ignore
                 setId(unref(variables.treeData))
                 //expandedKeys.value = unref(variables.treeData).map((item: any) => item.id as string) as [];
-                console.log(expandedKeys.value)
             }
         }
         function setId(datas: []) { //遍历树  获取id数组
@@ -269,7 +267,6 @@ export default defineComponent({
                     showDropdownRef.value = false
                     variables.delFolderModel.id = variables.moveFolderModel.id = variables.model.parentId = workflowModel.value.parentId = variables.renameFolderModel.id = option.id as number
                     variables.moveWorkflowModel.taskCode = variables.taskCode = variables.renameWorkflowModel.taskCode = option.taskCode as number
-                    console.log(defaultFolder.value)
                     if(option.type == 1) {
                         dropdownOption.value =[
                             {

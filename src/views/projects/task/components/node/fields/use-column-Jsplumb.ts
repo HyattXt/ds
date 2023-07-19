@@ -329,10 +329,13 @@ export function useColumnJsplumb(
         let connections = plumbins.getConnections();
         let readColumn = []
         let writerColumn = []
-        let sortData = model[params.leftDataList].map(item=>item.label)
-        connections.sort((a, b) => {
+        if(!!model[params.leftDataList])
+        {
+            let sortData = model[params.leftDataList].map(item=>item.label)
+            connections.sort((a, b) => {
             return sortData.indexOf(a.sourceId.replace('S' + model['dsType'] + model['dataSource'], '')) - sortData.indexOf(b.sourceId.replace('S' + model['dsType'] + model['dataSource'], ''));
-        });
+            })
+        }
         for (var i in connections) {
             // connections 是线数据数组
             //info[connections[i].sourceId] = connections[i].targetId;

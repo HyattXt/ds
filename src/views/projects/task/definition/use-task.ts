@@ -62,7 +62,6 @@ export function useTask(projectCode: number) {
 
   //任务定义里的创建任务
   const onTaskSave = async (data: INodeData) => {
-    console.log(data)
     if (task.taskSaving) return
     task.taskSaving = true
     try {

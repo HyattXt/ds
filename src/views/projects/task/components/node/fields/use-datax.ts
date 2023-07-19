@@ -294,7 +294,6 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
         }
       },null,4)
     }
-    console.log(model.json)
   }
 
   onMounted(() => {
