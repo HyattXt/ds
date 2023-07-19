@@ -23,6 +23,7 @@ import Logo from '../logo'
 import Locales from '../locales'
 import Timezone from '../timezone'
 import User from '../user'
+import Project from '../project'
 import Theme from '../theme'
 
 const Navbar = defineComponent({
@@ -84,15 +85,13 @@ const Navbar = defineComponent({
 
         <div class={styles.settings} >
           <NMenu
-            // collapsed="collapsed"
-            // icon-size="6"
-            // root-indent='12'
             value={this.menuKey}
             mode='horizontal'
             options={this.iconOptions}
             onUpdateValue={this.handleMenuClick}
           />
           <Theme />
+          <Project/>
           <User userDropdownOptions={this.userDropdownOptions} />
         </div>
       </div >

@@ -142,8 +142,6 @@ const Content = defineComponent({
 
   render() {
 
-    //console.log(this.ProjSelect)
-
     return (
       <NLayout style='height: 100%'>
         <NLayoutHeader style='height: 65px'>
@@ -154,8 +152,6 @@ const Content = defineComponent({
             timezoneOptions={this.timezoneOptions}
             userDropdownOptions={this.userDropdownOptions}
             iconOptions={this.iconMenuOptions}
-
-
           />
 
         </NLayoutHeader>
