@@ -468,7 +468,7 @@ export function useDataList() {
                   path: '/' + item.key,
                 }
               },
-                h(NIcon, {size: 22}, { default: () => h(item.icon) })
+                h(NIcon, {size: 20}, { default: () => h(item.icon) })
             ),
           key: item.key,
           //icon: item.icon,
