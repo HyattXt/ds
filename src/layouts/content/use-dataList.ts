@@ -50,7 +50,8 @@ import {
   ApiOutlined,
   PieChartOutlined,
   BarChartOutlined,
-  BoxPlotOutlined
+  BoxPlotOutlined,
+  ProjectOutlined
 } from '@vicons/antd'
 import { useRoute, RouterLink } from 'vue-router'
 import { useUserStore } from '@/store/user/user'
@@ -344,7 +345,22 @@ export function useDataList() {
               }
             ]
           },
-          {
+          window.webConfig.SHOW_REST ? {
+            label: t('menu.devops_rest'),
+            key: 'devops_rest',
+            icon: renderIcon(BarsOutlined),
+            children: [
+              {
+                label: t('menu.api_manager'),
+                key: '/devops/service/api-manager',
+                //icon: renderIcon(BarsOutlined)
+              },
+              {
+                label: t('menu.rest_manager'),
+                key: '/devops/rest/rest-manager',
+                //icon: renderIcon(BarsOutlined)
+              }]
+          } : {
             label: t('menu.devops_rest'),
             //key: 'devops_task',
             icon: renderIcon(BarsOutlined),
@@ -352,12 +368,6 @@ export function useDataList() {
               {
                 label: t('menu.api_manager'),
                 key: '/devops/service/api-manager',
-                //icon: renderIcon(BarsOutlined)
-              }
-              ,
-              {
-                label: t('menu.rest_manager'),
-                key: '/devops/rest/rest-manager',
                 //icon: renderIcon(BarsOutlined)
               }]
           },
@@ -410,23 +420,23 @@ export function useDataList() {
 
       } : {},
 
-      window.webConfig.SHOW_REST ? {
-        label: () => h(NEllipsis, null, { default: () => t('menu.rest') }),
-        key: 'rest',
-        icon: renderIcon(BoxPlotOutlined),
+      {
+        label: () => h(NEllipsis, null, { default: () => t('menu.project_manager') }),
+        key: 'project',
+        icon: renderIcon(ProjectOutlined),
         children: [
           {
-            label: t('menu.rest_manager'),
-            key: '/rest/rest-manager',
-            icon: renderIcon(BarsOutlined)
+            label: t('menu.project_manager'),
+            key: '/project/project-manager',
+            icon: renderIcon(ProjectOutlined)
           }
         ]
-      } : {}
+      }
     ]
   }
 
   const changeHeaderMenuOptions = (state: any) => {
-    state.headerMenuOptions = state.menuOptions.filter(x => x.key !== 'security' && x.key !== 'data-quality' && x.key !== 'resource' && x.key !== 'datasource' && x.key !== 'rest' && x.key !== 'monitor').map(
+    state.headerMenuOptions = state.menuOptions.filter(x => x.key !== 'security' && x.key !== 'data-quality' && x.key !== 'resource' && x.key !== 'datasource' && x.key !== 'project' && x.key !== 'monitor').map(
       (item: { label: string; key: string; icon: any }) => {
         return {
           label: item.label,
@@ -437,7 +447,7 @@ export function useDataList() {
     )
   }
   const changeIconMenuOptions = (state: any) => {
-    state.iconMenuOptions = state.menuOptions.filter(item => item.key === 'security' || item.key === 'data-quality' || item.key === 'resource' || item.key === 'datasource' || item.key === 'rest' || item.key === 'monitor').map(
+    state.iconMenuOptions = state.menuOptions.filter(item => item.key === 'security' || item.key === 'data-quality' || item.key === 'resource' || item.key === 'datasource' || item.key === 'project' || item.key === 'monitor').map(
       (item: { label: string; key: string; icon: any, children: any }) => {
         return {
           // label: () =>
@@ -458,10 +468,10 @@ export function useDataList() {
                   path: '/' + item.key,
                 }
               },
-              ''
+                h(NIcon, {size: 22}, { default: () => h(item.icon) })
             ),
           key: item.key,
-          icon: item.icon,
+          //icon: item.icon,
           children: [
             {
               label: item.label,
