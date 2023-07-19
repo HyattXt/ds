@@ -48,6 +48,7 @@
                 children-field="children"
                 :render-prefix="menuIcon"
                 :nodeProps="nodeProps"
+                default-expand-all
             />
           </n-card>
         </n-gi>
@@ -58,9 +59,10 @@
             :columns="columns"
             :data="data"
             :loading="loading"
-            :pagination="pagination"
             :row-key="rowKey"
+            :pagination="pagination"
             @update:page="handlePageChange"
+            default-expand-all
           />
         </n-gi>
       </n-grid>
@@ -77,12 +79,30 @@ import {
   SearchOutlined,
   TableOutlined
 } from '@vicons/antd'
-import {NButton, NIcon, NSpace, NTooltip, useMessage} from "naive-ui";
+import {NButton, NIcon, NSpace, NTooltip,NDescriptions,NDescriptionsItem, useMessage} from "naive-ui";
 import {useRouter} from "vue-router";
-import home from '../detail/home.vue'
 
 const columns = ({ play }) => {
     return [
+      {
+        type: 'expand',
+        renderExpand: (rowData) => {
+          return h(NDescriptions, {labelPlacement: 'left'} , [
+            h(NDescriptionsItem,  { label: '数据行数', labelStyle: 'color:grey' } , {default: () => rowData.tableDataRow}),
+            h(NDescriptionsItem,  { label: '表大小', labelStyle: 'color:grey' } , {default: () => rowData.tableDataLength}),
+            h(NDescriptionsItem,  { label: '创建时间', labelStyle: 'color:grey' } , {default: () => rowData.tableCreateTime}),
+            h(NDescriptionsItem,  { label: '更新时间', labelStyle: 'color:grey' } , {default: () => rowData.tableUpdateTime})
+          ])
+
+        }
+      },
+      {
+        title: '#',
+        key: 'id',
+        render: (_, index) => {
+          return `${index + 1}`
+        }
+      },
       {
         title: '表名',
         key: 'sqlLineageName'
@@ -90,6 +110,10 @@ const columns = ({ play }) => {
       {
         title: '注释',
         key: 'notes'
+      },
+      {
+        title: '任务流',
+        key: 'taskName'
       },
       {
         title: '数据库',
@@ -141,59 +165,6 @@ const columns = ({ play }) => {
     totalNum: 0
   })
 
-  function query(
-    page,
-    pageSize = 10,
-    sqlLineageName = '',
-    apiTreeId = 1
-  ) {
-    return new Promise((resolve) => {
-      const url = import.meta.env.MODE === 'development'
-          ? import.meta.env.VITE_APP_DEV_ASSETS_URL+'/HDataApi/interface_lineage/getSqlLineageListByParams'
-          : window.webConfig.VITE_APP_PROD_ASSETS_URL+'/HDataApi/interface_lineage/getSqlLineageListByParams'
-      const params = {
-        'pageNum': page,
-        'pageSize': pageSize,
-        'sqlLineageName': sqlLineageName,
-        'apiTreeId': apiTreeId
-      }
-
-      axios
-        .post(url, params)
-        .then(function (response) {
-          console.log(response)
-          TableData.tableList = response.data.data
-          TableData.totalNum = response.data.totalNum
-          TableData.tableList.dbType = TableData.tableList.forEach((item) => {
-            if (item.dbType === '0') {
-              item.dbType = 'mysql'
-            }
-            if (item.dbType === '5') {
-              item.dbType = 'oracle'
-            }
-          })
-          console.log(TableData.tableList)
-          console.log(TableData.totalNum)
-          const copiedData = TableData.tableList.map((v) => v)
-          const total = TableData.totalNum
-          const pageCount = Math.ceil(total / pageSize)
-
-          setTimeout(
-            () =>
-              resolve({
-                pageCount,
-                data: copiedData,
-                total
-              }),
-            300
-          )
-        })
-        .catch(function (error) {
-          console.log(error)
-        })
-    })
-  }
-
   export default defineComponent({
     setup() {
       const dataRef = ref([])
@@ -229,21 +200,57 @@ const columns = ({ play }) => {
         }
       })
 
+      function query(
+          page,
+          pageSize = 10,
+          sqlLineageName = '',
+          apiTreeId = 1
+      ) {
+        const url = import.meta.env.MODE === 'development'
+            ? import.meta.env.VITE_APP_DEV_ASSETS_URL+'/HDataApi/interface_lineage/getSqlLineageListByParams'
+            : window.webConfig.VITE_APP_PROD_ASSETS_URL+'/HDataApi/interface_lineage/getSqlLineageListByParams'
+        const params = {
+          'pageNum': page,
+          'pageSize': pageSize,
+          'sqlLineageName': sqlLineageName,
+          'apiTreeId': apiTreeId
+        }
+
+        axios
+            .post(url, params)
+            .then(function (response) {
+              console.log(response)
+              TableData.tableList = response.data.data
+              TableData.totalNum = response.data.totalNum
+              TableData.tableList.forEach((item) => {
+                if (item.dbType === '0') {
+                  item.dbType = 'mysql'
+                }
+                if (item.dbType === '5') {
+                  item.dbType = 'oracle'
+                }
+              })
+              dataRef.value = TableData.tableList.map((v) => v)
+              paginationReactive.itemCount = TableData.totalNum
+              paginationReactive.pageCount = Math.ceil(TableData.totalNum / pageSize)
+              loadingRef.value = false
+            })
+            .catch(function (error) {
+              console.log(error)
+            })
+      }
+
       function nodeProps ({option}) {
         return {
           onClick() {
             paginationReactive.apiTreeId = option.id
+            paginationReactive.page = 1
             query(
                 paginationReactive.page,
                 paginationReactive.pageSize,
                 paginationReactive.sqlLineageName,
                 paginationReactive.apiTreeId
-            ).then((data) => {
-              dataRef.value = data.data
-              paginationReactive.pageCount = data.pageCount
-              paginationReactive.itemCount = data.total
-              loadingRef.value = false
-            })
+            )
           }
         }
       }
@@ -302,12 +309,7 @@ const columns = ({ play }) => {
           paginationReactive.pageSize,
           paginationReactive.sqlLineageName,
           paginationReactive.apiTreeId
-        ).then((data) => {
-          dataRef.value = data.data
-          paginationReactive.pageCount = data.pageCount
-          paginationReactive.itemCount = data.total
-          loadingRef.value = false
-        })
+        )
       })
 
       return {
@@ -322,7 +324,7 @@ const columns = ({ play }) => {
         nodeProps,
         handleMetadata,
         rowKey(rowData) {
-          return rowData.colName
+          return rowData.id
         },
         handlePageChange(currentPage) {
           if (!loadingRef.value) {
@@ -332,13 +334,8 @@ const columns = ({ play }) => {
               paginationReactive.pageSize,
               paginationReactive.sqlLineageName,
               paginationReactive.apiTreeId
-            ).then((data) => {
-              dataRef.value = data.data
-              paginationReactive.page = currentPage
-              paginationReactive.pageCount = data.pageCount
-              paginationReactive.itemCount = data.total
-              loadingRef.value = false
-            })
+            )
+            paginationReactive.page = currentPage
           }
         }
       }

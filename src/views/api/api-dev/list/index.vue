@@ -393,16 +393,11 @@ function query(
           const copiedData = TableData.apiList.map((v) => v)
           const total = TableData.totalNum
           const pageCount = Math.ceil(total / pageSize)
-
-          setTimeout(
-              () =>
-                  resolve({
-                    pageCount,
-                    data: copiedData,
-                    total
-                  }),
-              300
-          )
+          resolve({
+            pageCount,
+            data: copiedData,
+            total
+          })
         })
         .catch(function (error) {
           console.log(error)
