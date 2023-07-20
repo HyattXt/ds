@@ -28,7 +28,7 @@ export default {
   meta: {
     title: '项目管理'
   },
-  redirect: { name: 'projects-list' },
+  redirect: { name: 'projects-overview' },
   component: () => import('@/layouts/content'),
   children: [
     {

@@ -15,25 +15,22 @@
  * limitations under the License.
  */
 
-import { DropdownOption } from 'naive-ui'
-import { useProjectStore } from '@/store/route/project'
-import {Router, useRoute, useRouter} from "vue-router";
+import { defineStore } from 'pinia'
 
-export function useDropDown(chooseVal: any) {
-  const router: Router = useRouter()
-  const route = useRoute()
-  const ProjectStore = useProjectStore()
-
-  const handleSelect = (key: number, option: DropdownOption) => {
-    chooseVal.value = option.name
-    ProjectStore.setCurrentProject(key)
-    if(route.path.includes('projects')) {
-      router.push({ path: `/projects/${key}/workflow/relation` })
-    }else if(route.path.includes('devops')){
-      router.push({ path: `/devops/${key}/devops_overview` })
+export const useProjectStore = defineStore({
+  id: 'project',
+  state: () => ({
+    currentProject: 0
+  }),
+  persist: true,
+  getters: {
+    getCurrentProject(): number {
+      return this.currentProject
+    }
+  },
+  actions: {
+    setCurrentProject(currentProject: number): void {
+      this.currentProject = currentProject
     }
   }
-  return {
-    handleSelect
-  }
-}
+})

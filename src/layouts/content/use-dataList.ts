@@ -57,11 +57,13 @@ import { useRoute, RouterLink } from 'vue-router'
 import { useUserStore } from '@/store/user/user'
 import { timezoneList } from '@/common/timezone'
 import type { UserInfoRes } from '@/service/modules/users/types'
+import {useProjectStore} from "@/store/route/project";
 
 export function useDataList() {
   const { t } = useI18n()
   const route = useRoute()
   const userStore = useUserStore()
+  const ProjectStore = useProjectStore()
 
   const renderIcon = (icon: any) => {
     return () => h(NIcon, null, { default: () => h(icon) })
@@ -93,7 +95,9 @@ export function useDataList() {
   })
 
   const changeMenuOption = (state: any) => {
-    const projectCode = route.params.projectCode || ''
+    //const projectCode = route.params.projectCode || ''
+    const projectCode = ProjectStore.getCurrentProject
+    console.log(projectCode)
     state.menuOptions = [
       {
         label: () => h(NEllipsis, null, { default: () => t('menu.home') }),
@@ -323,7 +327,7 @@ export function useDataList() {
         children: [
           {
             label: t('menu.devops_overview'),
-            key: '/devops/devops_overview',
+            key: `/devops/${projectCode}/devops_overview`,
             icon: renderIcon(BarsOutlined)
           },
           {
