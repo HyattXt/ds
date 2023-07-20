@@ -61,7 +61,7 @@ export default {
   api_manager: 'API管理',
   data_assets: '数据资产',
   assets_overview: '资产总览',
-  assets_catalog: '资产目录',
+  assets_catalog: '全部数据',
   rest: '接口管理',
   rest_dev: '接口注册',
   rest_manager: '接口管理',

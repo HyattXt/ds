@@ -95,7 +95,6 @@ export function useDataList() {
   })
 
   const changeMenuOption = (state: any) => {
-    //const projectCode = route.params.projectCode || ''
     const projectCode = ProjectStore.getCurrentProject
     console.log(projectCode)
     state.menuOptions = [
@@ -109,11 +108,11 @@ export function useDataList() {
         key: 'projects',
         icon: renderIcon(ProfileOutlined),
         children: [
-          {
+          /*{
             label: t('menu.project_overview'),
             key: `/projects/${projectCode}`,
             icon: renderIcon(FundProjectionScreenOutlined)
-          },
+          },*/
           {
             label: t('menu.workflow'),
             key: 'workflow',
@@ -123,11 +122,11 @@ export function useDataList() {
                 label: t('menu.workflow_relation'),
                 key: `/projects/${projectCode}/workflow/relation`
               },
-              {
+              /*{
                 label: t('menu.workflow_definition'),
                 key: `/projects/${projectCode}/workflow-definition`
               },
-              /*{
+              {
                 label: t('menu.workflow_instance'),
                 key: `/projects/${projectCode}/workflow/instances`
               }*/
@@ -392,11 +391,11 @@ export function useDataList() {
             key: '/service/api-dev',
             icon: renderIcon(ApartmentOutlined)
           },
-          {
+          /*{
             label: t('menu.api_manager'),
             key: '/service/api-manager',
             icon: renderIcon(BarsOutlined)
-          }
+          }*/
         ]
       } : {},
       window.webConfig.SHOW_DATA_ASSETS ? {
