@@ -95,7 +95,6 @@ const Content = defineComponent({
             ? currentSide.replace(
               ':projectCode',
               route.params.projectCode as string
-              //ProjectStore.getCurrentProject as unknown as string
             )
             : currentSide
         }
