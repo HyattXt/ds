@@ -61,28 +61,6 @@ const Content = defineComponent({
         state.menuOptions.filter((menu: { key: string }) => menu.key === key)[0]
           ?.children || state.menuOptions
       state.isShowSide = route.meta.showSide
-      /*let projectCode = route.params.projectCode
-
-      if ((typeof route.params.projectCode) == 'undefined') {
-        projectCode = routeStore.getLastRoute.split('/')[2];
-      }
-      if (routeStore.getLastRoute.split('/')[3] == 'task' || routeStore.getLastRoute.split('/')[3] == 'workflow' || routeStore.getLastRoute.split('/')[3] == 'workflow-definition') {
-        state.sideMenuOptions.forEach(rot => {
-          if (rot.label === "任务管理") {
-            rot.children.forEach(ch => {
-              if (ch.label === '任务实例') {
-                ch.key = `/devops/${projectCode}/task/instances`
-              }
-              if (ch.label === "工作流实例") {
-                ch.key = `/devops/${projectCode}/workflow/instances`
-              }
-            });
-          }
-          if (rot.label === "运维概览") {
-            rot.key = `/devops/devops_overview/${projectCode}`
-          }
-        })
-      }*/
     }
 
     watch(useI18n().locale, () => {
@@ -98,10 +76,6 @@ const Content = defineComponent({
         path: route.path,
       }),
       () => {
-        console.log(ProjectStore)
-        console.log(route)
-        console.log(state)
-        console.log(route.matched)
         if (route.path !== '/login') {
           routeStore.setLastRoute(route.path)
           state.isShowSide = route.meta.showSide as boolean
