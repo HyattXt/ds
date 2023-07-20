@@ -385,11 +385,11 @@ function query(
     axios
         .post(url, params)
         .then(function (response) {
-          console.log(response)
+
           TableData.apiList = response.data.data
           TableData.totalNum = response.data.totalNum
-          console.log(TableData.apiList)
-          console.log(TableData.totalNum)
+
+
           const copiedData = TableData.apiList.map((v) => v)
           const total = TableData.totalNum
           const pageCount = Math.ceil(total / pageSize)
@@ -515,7 +515,7 @@ export default defineComponent({
           }else {
             dropdownOption.value = [{label: '添加', key: '添加'},{label: '删除', key: '删除'}]
           }
-          console.log(option)
+
           nextTick().then(() => {
             showDropdownRef.value = true
             xRef.value = e.clientX
@@ -649,7 +649,7 @@ export default defineComponent({
                 }
                 delPar.apiId = row.apiId
                 axios.post(urlDel, delPar).then(function (response) {
-                  console.log(response)
+
                   message.info(`成功删除 ${row.apiName}`)
                   refresh(paginationReactive.page)
                 })
@@ -866,12 +866,12 @@ export default defineComponent({
             let regUrl = import.meta.env.MODE === 'development'
                 ? import.meta.env.VITE_APP_DEV_API_URL+url.replace('/proxy', '/debug/proxy')
                 : window.webConfig.VITE_APP_PROD_API_URL+url.replace('/proxy', '/debug/proxy')
-            console.log(requestBody)
-            console.log(url)
+
+
             axios
                 .get(regUrl)
                 .then(function (response) {
-                  console.log(response)
+
                   code.value = JSON.stringify(response.data, null, 2)
                 })
                 .catch(function (error) {
@@ -882,12 +882,12 @@ export default defineComponent({
             let regUrl = import.meta.env.MODE === 'development'
                 ? import.meta.env.VITE_APP_DEV_API_URL+url.replace('/proxy', '/debug/proxy')
                 : window.webConfig.VITE_APP_PROD_API_URL+url.replace('/proxy', '/debug/proxy')
-            console.log(requestBody)
-            console.log(url)
+
+
             axios
                 .post(regUrl, requestBody)
                 .then(function (response) {
-                  console.log(response)
+
                   code.value = JSON.stringify(response.data, null, 2)
                 })
                 .catch(function (error) {
@@ -915,7 +915,7 @@ export default defineComponent({
           axios
               .post(sqlUrl, sqlBody)
               .then(function (response) {
-                console.log(response)
+
                 code.value = JSON.stringify(response.data, null, 2)
               })
               .catch(function (error) {

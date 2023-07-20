@@ -72,11 +72,11 @@ import { onMounted, ref} from 'vue'
     let url = SecondDevApiUrl+'/HDataApi/interface/getInterfaceInfoById'
     let params = { apiId: '' }
     params.apiId = route.query.apiId
-    console.log(params)
+
     axios
       .post(url, params)
       .then(function (response) {
-        console.log(response.data)
+
         formValue.value.codeValue = response.data.obj.apiScript.substring(response.data.obj.apiScript.indexOf("HD688296")+8)
         kvValue.value = Object.entries(
           JSON.parse(JSON.parse(response.data.obj.apiSample).requestBody)
@@ -111,10 +111,10 @@ import { onMounted, ref} from 'vue'
     for (let i = 0; i < list.length; i++) {
       requestBody[list[i].key] = list[i].value
     }
-    console.log(requestBody)
+
     sample.requestBody = JSON.stringify(requestBody, null, 2)
     formValue.value.apiSample = JSON.stringify(sample, null, 2)
-    console.log(formValue.value.apiSample)
+
     emit('nextStep', formValue.value)
   }
 </script>

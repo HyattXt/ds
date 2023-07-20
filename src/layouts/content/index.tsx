@@ -24,6 +24,7 @@ import { useLocalesStore } from '@/store/locales/locales'
 import { useRouteStore } from '@/store/route/route'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
+import {useProjectStore} from "@/store/route/project";
 
 const Content = defineComponent({
   name: 'DSContent',
@@ -34,6 +35,7 @@ const Content = defineComponent({
     const { locale } = useI18n()
     const localesStore = useLocalesStore()
     const routeStore = useRouteStore()
+    const ProjectStore = useProjectStore()
     const {
       state,
       changeMenuOption,
@@ -59,35 +61,28 @@ const Content = defineComponent({
         state.menuOptions.filter((menu: { key: string }) => menu.key === key)[0]
           ?.children || state.menuOptions
       state.isShowSide = route.meta.showSide
-      let projectCode = route.params.projectCode
-      console.log(route.params.projectCode)
-
+      /*let projectCode = route.params.projectCode
 
       if ((typeof route.params.projectCode) == 'undefined') {
         projectCode = routeStore.getLastRoute.split('/')[2];
       }
       if (routeStore.getLastRoute.split('/')[3] == 'task' || routeStore.getLastRoute.split('/')[3] == 'workflow' || routeStore.getLastRoute.split('/')[3] == 'workflow-definition') {
         state.sideMenuOptions.forEach(rot => {
-          //console.log('route')
-          //console.log(route)
           if (rot.label === "任务管理") {
             rot.children.forEach(ch => {
-              console.log(ch)
               if (ch.label === '任务实例') {
                 ch.key = `/devops/${projectCode}/task/instances`
               }
               if (ch.label === "工作流实例") {
                 ch.key = `/devops/${projectCode}/workflow/instances`
               }
-              console.log(ch)
-
             });
           }
           if (rot.label === "运维概览") {
             rot.key = `/devops/devops_overview/${projectCode}`
           }
         })
-      }
+      }*/
     }
 
     watch(useI18n().locale, () => {
@@ -101,12 +96,13 @@ const Content = defineComponent({
     watch(
       () => ({
         path: route.path,
-        // query: route.params
       }),
       () => {
+        console.log(ProjectStore)
+        console.log(route)
+        console.log(state)
         if (route.path !== '/login') {
           routeStore.setLastRoute(route.path)
-
           state.isShowSide = route.meta.showSide as boolean
           if (route.matched[1].path === '/projects/:projectCode') {
             changeMenuOption(state)
@@ -120,10 +116,12 @@ const Content = defineComponent({
               ? route.meta.activeSide
               : route.matched[1].path
           ) as string
+
           sideKeyRef.value = currentSide.includes(':projectCode')
             ? currentSide.replace(
               ':projectCode',
               route.params.projectCode as string
+              //ProjectStore.getCurrentProject as unknown as string
             )
             : currentSide
         }

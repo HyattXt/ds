@@ -80,10 +80,10 @@ const StateCard = defineComponent({
       loadingRef
     } = this
     const { columnsRef } = useTable()
-    console.log(tableData)
-    console.log(chartData)
-    console.log(tablecount[0])
-    console.log(ProjFirst)
+    
+    
+    
+    
 
     return (
 

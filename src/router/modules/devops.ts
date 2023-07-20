@@ -36,7 +36,7 @@ export default {
     component: () => import('@/layouts/content'),
     children: [
         {
-            path: 'devops_overview/:projectCode',
+            path: '/devops/:projectCode/devops_overview',
             name: 'devops_overview',
             component: components['devops'],
             meta: {

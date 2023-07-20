@@ -65,8 +65,8 @@ export default defineComponent({
     const route = useRoute()
     const router = useRouter()
 
-    console.log('-------------sss------')
-    console.log(route.params.projectCode)
+    
+    
     Proj.value = route.params.projectCode
     //route.path.split('/')[2]
     const {
@@ -102,33 +102,33 @@ export default defineComponent({
       //   path: `/devops/devops_overview`,
       //   query: { projectCode: val }
       // })
-      console.log('-------------sss------')
-      console.log(route.query.projectCode)
-      console.log(ProjSelect)
+      
+      
+      
 
       ProjName.value = ProjSelect.value.filter(item => item.value === val).label;
-      console.log(route.params)
-      console.log(route.query)
+      
+      
       // const key = route.meta.activeMenu
-      // console.log(key)
+      // 
 
       // state.sideMenuOptions =
       //   state.menuOptions.filter((menu: { key: string }) => menu.key === 'devops')[0]
       //     ?.children
       // state.isShowSide = route.meta.showSide
       // state.sideMenuOptions.forEach(rot => {
-      //   console.log('route')
-      //   console.log(route)
+      //   
+      //   
       //   if (rot.label === "任务") {
       //     rot.children.forEach(ch => {
-      //       console.log(ch)
+      //       
       //       if (ch.label === '任务实例') {
       //         ch.key = `/devops/${val}/task/instances`
       //       }
       //       if (ch.label === "工作流实例") {
       //         ch.key = `/devops/${val}/workflow/instances`
       //       }
-      //       console.log(ch)
+      //       
 
       //     });
       //   }
@@ -152,21 +152,21 @@ export default defineComponent({
       taskDataRef.value = getTaskData(dateRef.value, Proj.value) || taskDataRef.value
       taskDevRef.value = getTaskDev(dateRef.value, Proj.value) || taskDevRef.value
 
-      console.log(ProjSelect.value)
+      
       //router.push({ path: `/devops/${ProjSelect.value.proj}/devops_overview` })
 
     }
 
     //taskDevRef.value = getTaskDev(dateRef.value)
-    // console.log('项目名称：')
-    // console.log(ProjSelect.value)
+    // 
+    // 
     // const pp = typeof (ProjSelect.value.table)
-    // console.log('------1-')
-    // console.log(pp)
+    // 
+    // 
 
     // Proj.value = toRefs(ProjSelect).value
-    // console.log('------0-')
-    // console.log(Proj.value)
+    // 
+    // 
     // taskDataRef.value = getTaskData(dateRef.value, ProjSelect.value) || taskDataRef.value
 
     //ProjSelect.value = getProjData()
@@ -178,7 +178,7 @@ export default defineComponent({
     //   // 这里获取DOM的value是旧值
     //   await nextTick()
     //   // nextTick 后获取DOM的value是更新后的值
-    //   console.log('Now DOM is updated')
+    //   
     //   router.push({ path: `/devops/${ProjSelect.value.proj}/devops_overview` })
     // }
     const getProjData1 = async () => {
@@ -187,7 +187,7 @@ export default defineComponent({
         queryUnauthorizedProject({
           userId: 0
         }).then(function (res) {
-          console.log(res);
+          ;
 
           const table = res.map((item) => {
             return {
@@ -196,23 +196,15 @@ export default defineComponent({
             }
           });
           const proj = table[0].value
-          console.log(table);
-          console.log(proj);
-          console.log('typeof Proj')
-          console.log(route.params.projectCode)
           if (route.params.projectCode == '123') {
-            console.log('typeof Proj')
-            console.log(route)
-            console.log(Proj)
             const currentRoute = router.currentRoute.value; // 复制当前路由对象
-            console.log(currentRoute)
 
             // 修改参数
             currentRoute.params.projectCode = table[0].value;
 
             // 使用 router.replace() 替换当前路由
             router.replace(currentRoute);
-            console.log(currentRoute)
+            
 
             // router.push({
             //   path: `/devops/devops_overview?projectCode=${Proj.value}`,
@@ -223,13 +215,7 @@ export default defineComponent({
             ProjName.value = table[0].label
           }
           else {
-            console.log('ProjName.value1')
-            console.log(ProjName.value)
-            console.log(table)
             ProjName.value = table.filter(item => item.value.toString() === route.params.projectCode).map(item => item.label)[0]
-            console.log('ProjName.value1')
-            console.log(table.filter(item => item.value === route.params.projectCode).map(item => item.label))
-            console.log(ProjName.value)
           }
 
 
@@ -244,8 +230,8 @@ export default defineComponent({
 
       return state
     }
-    console.log('ProjName.value')
-    console.log(ProjName.value)
+    
+    
     getProjData1()
 
     onMounted(() => {
@@ -288,8 +274,8 @@ export default defineComponent({
       taskLoadingRef,
       processLoadingRef
     } = this
-    console.log('this.ProjSelect.value')
-    console.log(this.ProjName)
+    
+    
 
     return (
       <div>

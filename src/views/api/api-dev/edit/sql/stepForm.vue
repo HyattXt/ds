@@ -60,7 +60,7 @@ import {defineComponent, provide, ref, onMounted} from 'vue'
 
   function nextStep1(value) {
     params.value = value
-    console.log(params)
+
     if (currentTab.value < 4) {
       currentTab.value += 1
     }
@@ -72,7 +72,7 @@ import {defineComponent, provide, ref, onMounted} from 'vue'
     params.value.apiDatasourceId = value.apiDatasourceId
     params.value.apiDatasourceTable = value.apiDatasourceTable
     params.value.apiDatasourceType = value.apiDatasourceType
-    console.log(params)
+
     if (currentTab.value < 4) {
       currentTab.value += 1
     }
@@ -84,7 +84,7 @@ import {defineComponent, provide, ref, onMounted} from 'vue'
       axios
         .post(urlUpdate, params.value)
         .then(function (response) {
-          console.log(response)
+
           resolve({
             status: response.data.status
           })

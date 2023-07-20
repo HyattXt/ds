@@ -348,11 +348,11 @@ import {queryTreeFolder} from "@/service/modules/projects";
       axios
         .post(url, params)
         .then(function (response) {
-          console.log(response)
+
           TableData.apiList = response.data.data
           TableData.totalNum = response.data.totalNum
-          console.log(TableData.apiList)
-          console.log(TableData.totalNum)
+
+
           const copiedData = TableData.apiList.map((v) => v)
           const total = TableData.totalNum
           const pageCount = Math.ceil(total / pageSize)
@@ -392,7 +392,7 @@ import {queryTreeFolder} from "@/service/modules/projects";
         active.value = true
         drawTitle.value = row.apiName
         drawId.value = row.apiId
-        console.log(drawTitle)
+
         basicInfo.value = {}
         queryBasic(row.apiId)
         queryUser()
@@ -401,7 +401,7 @@ import {queryTreeFolder} from "@/service/modules/projects";
         showModal.value = true
         drawTitle.value = row.apiName
         drawId.value = row.apiId
-        console.log(drawTitle)
+
         queryUser()
       }
       const message = useMessage()
@@ -414,7 +414,7 @@ import {queryTreeFolder} from "@/service/modules/projects";
             ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getAuthorizeInfo'
             : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getAuthorizeInfo'
         axios.get(listUrl).then(function (response) {
-          console.log(response)
+
           userList.value = response.data.data
           userList.value = userList.value.map((item) => {
             let tempList = {}
@@ -422,16 +422,16 @@ import {queryTreeFolder} from "@/service/modules/projects";
             tempList.label = item.userName
             return tempList
           })
-          console.log(userList.value)
+
         })
         let authBody = {
         'apiId': ''
         }
         authBody.apiId = drawId.value
-        console.log(authBody)
+
         axios.post(authListUrl, authBody).then(function (response) {
-          console.log('response')
-          console.log(response)
+
+
           let list = response.data.data
           apiAuthorizer.value = list.map((item) => {
             let authList = ''
@@ -445,9 +445,9 @@ import {queryTreeFolder} from "@/service/modules/projects";
               return authList
             })
             .join(',')
-          console.log('apiAuthorizer')
-          console.log(apiAuthorizer.value)
-          console.log(apiAuthorizerName.value)
+
+
+
         })
       }
 
@@ -460,7 +460,7 @@ import {queryTreeFolder} from "@/service/modules/projects";
         }
         basicPar.apiId = apiId
         axios.post(url, basicPar).then(function (response) {
-          console.log(response)
+
           basicInfo.value = response.data.obj
           if (basicInfo.value.apiFlag === 1) {
             basicInfo.value.apiFlag = '接口开发'
@@ -534,14 +534,14 @@ import {queryTreeFolder} from "@/service/modules/projects";
           .then(function (response) {
             message.info('授权成功')
             showModal.value = false
-            console.log(response)
+
             refresh(paginationReactive.page)
           })
           .catch(function (error) {
             message.info('授权失败,请联系管理员')
             console.log(error)
           })
-        console.log(apiAuthorizer)
+
       }
 
       const columnsRef = ref(
@@ -565,7 +565,7 @@ import {queryTreeFolder} from "@/service/modules/projects";
                   axios
                     .post(urlPub, pubPar)
                     .then(function (response) {
-                      console.log(response)
+
                       message.info(`成功发布 ${row.apiName}`)
                       refresh(paginationReactive.page)
                     })
@@ -585,7 +585,7 @@ import {queryTreeFolder} from "@/service/modules/projects";
                   axios
                     .post(urlPub, pubPar)
                     .then(function (response) {
-                      console.log(response)
+
                       message.info(`成功发布 ${row.apiName}`)
                       refresh(paginationReactive.page)
                     })
@@ -606,7 +606,7 @@ import {queryTreeFolder} from "@/service/modules/projects";
                 axios
                   .post(urlPub, pubPar)
                   .then(function (response) {
-                    console.log(response)
+
                     message.info(`成功下线 ${row.apiName}`)
                     refresh(paginationReactive.page)
                   })

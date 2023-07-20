@@ -174,11 +174,11 @@ function query(
     axios
         .post(url, params)
         .then(function (response) {
-          console.log(response)
+
           TableData.tableList = response.data.data
           TableData.totalNum = response.data.totalNum
-          console.log(TableData.tableList)
-          console.log(TableData.totalNum)
+
+
           const copiedData = TableData.tableList.map((v) => v)
           const total = TableData.totalNum
           const pageCount = Math.ceil(total / pageSize)
@@ -226,7 +226,7 @@ export default defineComponent({
                 }
                 delPar.id = row.id
                 axios.post(urlDel, delPar).then(function (response) {
-                  console.log(response)
+
                   message.info(response.data.info)
                   refresh(paginationReactive.page)
                 })

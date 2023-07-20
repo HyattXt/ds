@@ -231,12 +231,12 @@ let validatePath = (rule: any, value: any, callback: any) => {
   return new Promise<void>((resolve, reject) => {
     let url = httpInsertUrl+'/HDataApi/httpHandle/getHttpDataByTaskName'
     let body = { taskName: value }
-    console.log(body)
+
     //0存在，1不存在
     axios
         .post(url, body)
         .then(function (response) {
-          console.log(response.data.status)
+
           if (response.data.status == 0) {
             reject(Error(response.data.info)) // reject with error message
           } else {
@@ -338,12 +338,12 @@ function formSubmit() {
     formValue.value.dynamicParameterStatus=1
   }
 
-  console.log(formValue)
+
 
   axios
       .post(insUrl, formValue.value)
       .then(function (response) {
-        console.log(response)
+
         message.info(response.data.info)
         setTimeout(() => {
           if (response.data.info === 'HTTP任务新增成功！') {
@@ -364,7 +364,7 @@ function queryDataSource() {
   let queryUrl = httpInsertUrl+'/HDataApi/httpHandle/getDataSource?type=0'
 
   axios.get(queryUrl).then(function (response) {
-    console.log(response)
+
     listSource.value = response.data.data
   })
 }

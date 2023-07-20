@@ -80,7 +80,7 @@
           requestBody[list[i].key] = list[i].value
         }
         formValue.value.requestBody = JSON.stringify(requestBody, null, 2)
-        console.log(requestBody)
+
         emit('nextStep', formValue.value)
       }
   }

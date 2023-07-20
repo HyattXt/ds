@@ -74,7 +74,7 @@ export function useColumnJsplumb(
             axios
                 .post(getCol, formTarget.value)
                 .then(async function (response) {
-                    console.log(response)
+
                     if (response.data.status == 0) {
                         message.error(response.data.error)
                     } else {
@@ -98,7 +98,7 @@ export function useColumnJsplumb(
                         axios
                             .post(getCol, formSource.value)
                             .then(function (response) {
-                                console.log(response)
+
                                 if (response.data.status == 0) {
                                     message.error(response.data.error)
                                 } else {
@@ -132,7 +132,7 @@ export function useColumnJsplumb(
                     } else {
                         formSql.value.sql = model['sql']
                         const res = await querySqlColum(formSql.value)
-                        console.log(res)
+                        
                         leftData.value = res.map((item: any) => {
                                 let res = {
                                     id: '',

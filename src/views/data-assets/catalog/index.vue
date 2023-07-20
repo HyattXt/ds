@@ -219,7 +219,7 @@ const columns = ({ play }) => {
         axios
             .post(url, params)
             .then(function (response) {
-              console.log(response)
+
               TableData.tableList = response.data.data
               TableData.totalNum = response.data.totalNum
               TableData.tableList.forEach((item) => {
@@ -262,7 +262,7 @@ const columns = ({ play }) => {
         axios
             .get(url)
             .then(function (response) {
-              console.log(response)
+
               loadingMeta.value = true
               message.info('采集中，请稍后查看')
               setTimeout(() => {

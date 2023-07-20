@@ -25,6 +25,7 @@ import Timezone from '../timezone'
 import User from '../user'
 import Project from '../project'
 import Theme from '../theme'
+import {useProjectStore} from "@/store/route/project";
 
 const Navbar = defineComponent({
   name: 'Navbar',
@@ -53,11 +54,19 @@ const Navbar = defineComponent({
   setup() {
     const route = useRoute()
     const router = useRouter()
+    const ProjectStore = useProjectStore()
 
     const menuKey = ref(route.meta.activeMenu as string)
 
     const handleMenuClick = (key: string) => {
-      router.push({ path: `/${key}` })
+      console.log(key)
+      if(key == 'projects'){
+        router.push({ path: `/projects/${ProjectStore.getCurrentProject}/workflow/relation` })
+      }else if(key == 'devops'){
+        router.push({ path: `/${key}/${ProjectStore.getCurrentProject}/devops_overview` })
+      }else{
+        router.push({ path: `/${key}`})
+      }
     }
 
     watch(

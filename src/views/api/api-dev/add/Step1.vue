@@ -93,12 +93,12 @@ import {onMounted, ref} from 'vue'
     return new Promise<void>((resolve, reject) => {
       let url = SecondDevApiUrl+'/HDataApi/interface/getApiPath'
       let body = { apiPath: value }
-      console.log(body)
+
       //0存在，1不存在
       axios
         .post(url, body)
         .then(function (response) {
-          console.log(response.data.status)
+
           if (response.data.status == 0) {
             reject(Error('该路径与已有路径重复')) // reject with error message
           } else {

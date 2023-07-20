@@ -80,8 +80,8 @@ import {useMessage} from "naive-ui";
     params2.value.apiFrequency = value.apiFrequency
     params2.value.apiTimeout = value.apiTimeout
     params2.value.apiTreeId = value.apiTreeId
-    console.log(params)
-    console.log(params2)
+
+
     if (currentTab.value < 4) {
       currentTab.value += 1
     }
@@ -93,7 +93,7 @@ import {useMessage} from "naive-ui";
     params2.value.apiDatasourceId = value.apiDatasourceId
     params2.value.apiDatasourceTable = value.apiDatasourceTable
     params2.value.apiDatasourceType = value.apiDatasourceType
-    console.log(params)
+
     if (currentTab.value < 4) {
       currentTab.value += 1
     }
@@ -107,7 +107,7 @@ import {useMessage} from "naive-ui";
       axios
         .post(url, params.value)
         .then(function (response) {
-          console.log(response)
+
           if (!response.data.success){message.error(response.data.message)}
           else {
             apiId = response.data.result
@@ -122,7 +122,7 @@ import {useMessage} from "naive-ui";
             axios
                 .post(urlUpdate, params2.value)
                 .then(function (response) {
-                  console.log(response)
+
                   resolve({
                     status: response.data.status
                   })

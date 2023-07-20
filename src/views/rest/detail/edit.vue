@@ -313,12 +313,12 @@ function formSubmit() {
     formValue.value.dynamicParameterStatus=1
   }
 
-  console.log(formValue)
+
 
   axios
       .post(insUrl, formValue.value)
       .then(function (response) {
-        console.log(response)
+
         message.info(response.data.info)
         setTimeout(() => {
           if (response.data.info === 'HTTP任务编辑成功！') {
@@ -338,7 +338,7 @@ function queryDataSource() {
   let queryUrl = httpInsertUrl+'/HDataApi/httpHandle/getDataSource?type=0'
 
   axios.get(queryUrl).then(function (response) {
-    console.log(response)
+
     listSource.value = response.data.data
   })
 }
@@ -349,11 +349,11 @@ onMounted(() => {
   params.id = route.query.id
   formValue.value.id = route.query.id
   queryDataSource()
-  console.log(params)
+
   axios
       .post(url, params)
       .then(function (response) {
-        console.log(response.data)
+
         formValue.value = response.data.obj
         if(response.data.obj.dynamicParameterStatus===2){
           ifDynamicParameter.value=false
@@ -380,7 +380,7 @@ onMounted(() => {
           key,
           value
         }))
-        console.log(dataParamTmp.value)
+
       })
       .catch(function (error) {
         console.log(error)

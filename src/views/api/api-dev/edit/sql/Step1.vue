@@ -151,11 +151,11 @@ import { onMounted, ref} from 'vue'
     let url = SecondDevApiUrl+'/HDataApi/interface/getInterfaceInfoById'
     let params = { apiId: '' }
     params.apiId = route.query.apiId
-    console.log(params)
+
     axios
       .post(url, params)
       .then(function (response) {
-        console.log(response.data)
+
         formValue.value.apiFrequency = response.data.obj.apiFrequency + ''
         formValue.value.apiId = response.data.obj.apiId
         formValue.value.apiName = response.data.obj.apiName

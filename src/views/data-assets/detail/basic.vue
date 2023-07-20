@@ -30,7 +30,7 @@ const route = useRoute()
 const message = useMessage()
 
 onMounted(() => {
-  console.log(history.state)
+
   fieldInfo.value = JSON.parse(history.state.fieldArray)
 })
 </script>

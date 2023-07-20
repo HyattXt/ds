@@ -133,12 +133,12 @@ import {queryTreeFolder} from "@/service/modules/projects";
     return new Promise<void>((resolve, reject) => {
       let url = SecondDevApiUrl+'/HDataApi/interface/getApiPath'
       let body = { apiPath: '/HDataApi/proxy' + value }
-      console.log(body)
+
       //0存在，1不存在
       axios
         .post(url, body)
         .then(function (response) {
-          console.log(response.data.status)
+
           if (response.data.status == 0) {
             reject(Error('该路径与已有路径重复')) // reject with error message
           } else {
@@ -220,16 +220,16 @@ import {queryTreeFolder} from "@/service/modules/projects";
         for (let i = 0; i < bodyList.length; i++) {
           requestBody[bodyList[i].key] = bodyList[i].value
         }
-        console.log(requestHeader)
+
         formValue.value.apiPath = '/HDataApi/proxy' + formValue.value.apiPath
         sample.requestHeader = requestHeader
         sample.requestBody = requestBody
         formValue.value.apiSample = JSON.stringify(sample, null, 2)
-        console.log(formValue.value)
+
         axios
           .post(insUrl, formValue.value)
           .then(function (response) {
-            console.log(response)
+
             message.info('注册成功！')
             isDisable.value = true
             formValue.value.apiPath = formValue.value.apiPath.replace(

@@ -40,7 +40,7 @@ onMounted(() => {
   axios
       .post(url,params)
       .then(function (response) {
-        console.log(response)
+
         dataInfo.value = response.data.data
       })
       .catch(function () {

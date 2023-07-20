@@ -91,18 +91,18 @@ import {useRoute} from "vue-router";
     let url = SecondDevApiUrl+'/HDataApi/interface/getInterfaceInfoById'
     let params = { apiId: '' }
     params.apiId = route.query.apiId
-    console.log(params)
+
     axios
         .post(url, params)
         .then(function (response) {
-          console.log(response.data)
+
           formValue.value.sourceType = response.data.obj.apiDatasourceType
           queryDataSource()
           formValue.value.source = response.data.obj.apiDatasourceId
           queryTab()
           formValue.value.table = response.data.obj.apiDatasourceTable
-          console.log("初始值")
-          console.log(formValue.value)
+
+
           queryCol(formValue.value.table)
         })
         .catch(function (error) {
@@ -114,7 +114,7 @@ import {useRoute} from "vue-router";
     const url = SecondDevApiUrl+'/HDataApi/apiService/getDataSource?type='+formValue.value.sourceType
 
     axios.get(url).then(function (response) {
-      console.log(response)
+
       sList.value = response.data.data
     })
   }
@@ -126,7 +126,7 @@ import {useRoute} from "vue-router";
       id : formValue.value.source
     }
     axios.post(url,params).then(function (response) {
-      console.log(response)
+
       tList.value = response.data.data
     })
   }
@@ -139,7 +139,7 @@ import {useRoute} from "vue-router";
       tableName: table
     }
     axios.post(url, params).then(function (response) {
-      console.log(response)
+
       colList.value = response.data.data
     })
       submitValue()

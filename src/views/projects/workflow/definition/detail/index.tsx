@@ -119,8 +119,8 @@ export default defineComponent({
     }
 
     /*onMounted(() => {
-      console.log("code:"+props.code+",projectCode:"+props.projectCode)
-      console.log("初始化dag")
+      
+      
 
       if (!props.code || !props.projectCode) return
       refresh()

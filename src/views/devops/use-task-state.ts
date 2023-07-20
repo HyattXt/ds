@@ -54,7 +54,6 @@ export function useTaskState() {
         }
         const tablecount = [tabledata]
 
-        console.log(tablecount)
         const chart = res.taskCountDtos.map((item) => {
           return {
             value: item.count,
@@ -72,19 +71,12 @@ export function useTaskState() {
   }
   const getTaskDev = (date: Array<any>, projectCode: any) => {
     // const ProjFirst = queryUnauthorizedProject({ userId: 0 })
-    console.log('projectCode')
-    console.log(projectCode)
-    console.log(!date ? '' : format(date[0], 'yyyy-MM-dd'))
     const { state } = useAsyncState(
       getStatisticsDataByProjectCodeAndDate({
         dayDate: !date ? '' : format(date[0], 'yyyy-MM-dd'),
         projectCode: projectCode
       }).then(function (res) {
-        console.log(res);
-        console.log(res.length);
-        console.log(res.length);
-
-
+        
         const table = [0, 0, 0, 0, 0, 0]
         if (res[0] != null) {
           let i = 0
@@ -119,18 +111,12 @@ export function useTaskState() {
       const projectCodeResponse = queryUnauthorizedProject({ userId: 0 });
       // const obtainedProjectCode = projectCodeResponse[0]['code'];
 
-      // console.log(obtainedProjectCode);
-      console.log(date);
-      console.log(!date ? '' : format(date[0], 'yyyy-MM-dd'));
+      // ;
 
       const res = getStatisticsDataByProjectCodeAndDate({
         dayDate: !date ? '' : format(date[0], 'yyyy-MM-dd'),
         projectCode: ''
       });
-
-      console.log(res);
-      console.log(res.length);
-      console.log(res.length);
 
       const table = [0, 0, 0, 0, 0, 0];
       if (res[0] != null) {
@@ -168,9 +154,6 @@ export function useTaskState() {
         dayDate: !date ? '' : format(date[0], 'yyyy-MM-dd'),
         projectCode: projectCode
       }).then(function (res) {
-        console.log(res);
-        console.log(date);
-        console.log(projectCode);
 
         const tabledata = {}
         tabledata['正在运行'] = [];
@@ -190,7 +173,7 @@ export function useTaskState() {
 
         }
 
-        console.log(tabledata);
+        ;
         const table = [tabledata]
 
         return { table }
@@ -206,7 +189,7 @@ export function useTaskState() {
       queryUnauthorizedProject({
         userId: 0
       }).then(function (res) {
-        console.log(res);
+        ;
 
         const table = res.map((item) => {
           return {
@@ -215,8 +198,6 @@ export function useTaskState() {
           }
         });
         const proj = table[0].value
-        console.log(table);
-        console.log(proj);
 
         return { table, proj }
       }),
@@ -227,9 +208,9 @@ export function useTaskState() {
   }
   // const getProjData = () => {
   //   const res = queryUnauthorizedProject({ userId: 0 });
-  //   console.log('--sd--');
-  //   console.log(res);
-  //   console.log(res.value);
+  //   ;
+  //   ;
+  //   ;
 
   //   const table = res.map((item) => {
   //     return {
@@ -238,7 +219,7 @@ export function useTaskState() {
   //     };
   //   });
   //   const proj = table[0].value
-  //   console.log(table);
+  //   ;
 
   //   return { table, proj };
   // };

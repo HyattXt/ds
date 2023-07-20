@@ -168,15 +168,15 @@ import { onMounted, ref} from 'vue'
         for (let i = 0; i < bodyList.length; i++) {
           requestBody[bodyList[i].key] = bodyList[i].value
         }
-        console.log(requestHeader)
+
         sample.requestHeader = requestHeader
         sample.requestBody = requestBody
         formValue.value.apiSample = JSON.stringify(sample, null, 2)
-        console.log(formValue.value)
+
         axios
           .post(insUrl, formValue.value)
           .then(function (response) {
-            console.log(response)
+
             message.info('修改成功！')
             isDisable.value = true
             formValue.value.apiPath = formValue.value.apiPath.replace(
@@ -205,11 +205,11 @@ function getTreeFolder ()  {
     let url = SecondDevApiUrl+'/HDataApi/interface/getInterfaceInfoById'
     let params = { apiId: '' }
     params.apiId = route.query.apiId
-    console.log(params)
+
     axios
       .post(url, params)
       .then(function (response) {
-        console.log(response.data)
+
         formValue.value = response.data.obj
         bodyValue.value = Object.entries(
           JSON.parse(JSON.parse(formValue.value.apiSample).requestBody)
