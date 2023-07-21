@@ -22,6 +22,7 @@ import { useI18n } from 'vue-i18n'
 import { countTaskState } from '@/service/modules/projects-analysis'
 import type { TaskStateRes } from '@/service/modules/projects-analysis/types'
 import { queryUnauthorizedProject, getDataByProjectCodeAndDate, getStatisticsDataByProjectCodeAndDate } from '@/service/modules/devops-analysis'
+import { parseTime, renderTableTime, tasksState } from '@/common/common'
 
 import type { StateData } from './types'
 import { reactive, ref } from 'vue'
@@ -73,10 +74,10 @@ export function useTaskState() {
     // const ProjFirst = queryUnauthorizedProject({ userId: 0 })
     const { state } = useAsyncState(
       getStatisticsDataByProjectCodeAndDate({
-        dayDate: !date ? '' : format(date[0], 'yyyy-MM-dd'),
+        dayDate: !date ? '' : format(parseTime(date[0][1]), 'yyyy-MM-dd'),
         projectCode: projectCode
       }).then(function (res) {
-        
+
         const table = [0, 0, 0, 0, 0, 0]
         if (res[0] != null) {
           let i = 0
@@ -105,53 +106,14 @@ export function useTaskState() {
 
     return state
   }
-  const getTaskDev2 = (date, projectCode) => {
-    try {
-      // 从另一个接口获取 projectCode
-      const projectCodeResponse = queryUnauthorizedProject({ userId: 0 });
-      // const obtainedProjectCode = projectCodeResponse[0]['code'];
 
-      // ;
-
-      const res = getStatisticsDataByProjectCodeAndDate({
-        dayDate: !date ? '' : format(date[0], 'yyyy-MM-dd'),
-        projectCode: ''
-      });
-
-      const table = [0, 0, 0, 0, 0, 0];
-      if (res[0] != null) {
-        let i = 0;
-        for (i = 0; i < res.length; i++) {
-          table[3] = res[i].running;
-          table[2] = res[i].fail;
-          table[4] = res[i].paused;
-          table[5] = res[i].stoped;
-          table[1] = res[i].succeed;
-          table[0] = res[i].running + res[i].fail + res[i].paused + res[i].stoped + res[i].succeed;
-        }
-      }
-
-      const header = [
-        { title: '实例总数', key: '实例总数' },
-        { title: '成功', key: '成功' },
-        { title: '失败', key: '失败' },
-        { title: '正在运行', key: '正在运行' },
-        { title: '暂停', key: '暂停' },
-        { title: '停止', key: '停止' }
-      ];
-
-      return { table, header };
-    } catch (error) {
-      console.error(error);
-      return { table: [], header: [] };
-    }
-  };
 
   const getTaskData = (date: Array<any>, projectCode: any) => {
-
+    console.log(date)
+    console.log(parseTime(date[1]))
     const { state } = useAsyncState(
       getDataByProjectCodeAndDate({
-        dayDate: !date ? '' : format(date[0], 'yyyy-MM-dd'),
+        dayDate: !date ? '' : format(parseTime(date[0][1]), 'yyyy-MM-dd'),
         projectCode: projectCode
       }).then(function (res) {
 

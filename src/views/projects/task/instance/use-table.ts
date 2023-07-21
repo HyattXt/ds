@@ -46,7 +46,26 @@ export function useTable() {
   const router: Router = useRouter()
   const projectCode = Number(route.params.projectCode)
   const processInstanceId = Number(route.params.processInstanceId)
+  const stateType = ref()
+  stateType.value = route.query.stateType
+  const datePickerRange = ref([]);
+  const timeRangeParam = route.query.timeRange;
 
+  // 如果 timeRange 参数存在，则进行拆分处理
+  if (timeRangeParam) {
+    const [startTime, endTime] = timeRangeParam.split(',');
+    console.log('is in timeRangeParam')
+    // 将拆分后的值存入 timeRangeArray
+    datePickerRange.value = [Number(startTime), Number(endTime)];
+  } else {
+    console.log('is  not in timeRangeParam')
+    datePickerRange.value = [new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 6 * 24 * 60 * 60 * 1000,
+    new Date(new Date().setHours(0, 0, 0, 0)).getTime() + 24 * 60 * 60 * 1000]
+
+  }
+  console.log('datePickerRange')
+
+  console.log(datePickerRange)
   const variables = reactive({
     columns: [],
     tableWidth: DefaultTableWidth,
@@ -56,11 +75,12 @@ export function useTable() {
     searchVal: ref(null),
     processInstanceId: ref(processInstanceId ? processInstanceId : null),
     host: ref(null),
-    stateType: ref(null),
-    datePickerRange: ref(
-        [new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 6 * 24 * 60 * 60 * 1000,
-               new Date(new Date().setHours(0, 0, 0, 0)).getTime() + 24 * 60 * 60 * 1000]
-    ),
+    stateType: stateType,
+    // datePickerRange: ref(
+    //   [new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 6 * 24 * 60 * 60 * 1000,
+    //   new Date(new Date().setHours(0, 0, 0, 0)).getTime() + 24 * 60 * 60 * 1000]
+    // ),
+    datePickerRange: datePickerRange,
     executorName: ref(null),
     processInstanceName: ref(null),
     totalPage: ref(1),
