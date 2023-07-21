@@ -20,17 +20,24 @@ import { defineStore } from 'pinia'
 export const useProjectStore = defineStore({
   id: 'project',
   state: () => ({
-    currentProject: 0
+    currentProject: 0,
+    currentProjectName: ''
   }),
   persist: true,
   getters: {
     getCurrentProject(): number {
       return this.currentProject
+    },
+    getCurrentProjectName(): string {
+      return this.currentProjectName
     }
   },
   actions: {
     setCurrentProject(currentProject: number): void {
       this.currentProject = currentProject
-    }
+    },
+    setCurrentProjectName(currentProjectName: string): void {
+      this.currentProjectName = currentProjectName
+    },
   }
 })

@@ -28,9 +28,8 @@ import { useProjectStore } from '@/store/route/project'
 const User = defineComponent({
   name: 'Project',
   setup() {
-    const chooseVal = ref('')
     const projectOptions = ref([])
-    const { handleSelect } = useDropDown(chooseVal)
+    const { handleSelect } = useDropDown()
     const ProjectStore = useProjectStore()
 
     const getProjectList = () => {
@@ -39,7 +38,7 @@ const User = defineComponent({
         pageSize: 100
       }
       queryProjectListPaging(params).then((res: ProjectRes) => {
-        chooseVal.value = res.totalList[0].name
+        ProjectStore.setCurrentProjectName(res.totalList[0].name)
         ProjectStore.setCurrentProject(res.totalList[0].code)
         // @ts-ignore
         projectOptions.value = res.totalList
@@ -49,7 +48,7 @@ const User = defineComponent({
     onMounted(() => {
       getProjectList()
     })
-    return { handleSelect, chooseVal, projectOptions }
+    return { handleSelect, projectOptions, ProjectStore }
   },
   render() {
     return (
@@ -69,7 +68,7 @@ const User = defineComponent({
                   <path d="M979.231 706.369l-84.509-49.008-59.985 34.632 69.778 40.467-392.9 226.842L119.484 732.9l69.93-40.377-59.951-34.613-84.915 49.03c-14.331 8.233-19.291 26.591-11.058 40.922 1.877 3.269 4.351 6.146 7.271 8.481l-0.208 0.328 456.015 263.283c4.571 2.647 9.766 4.047 15.023 4.046 5.418 0 10.741-1.463 15.342-4.202L979.521 758.5c14.323-8.301 19.227-26.708 10.931-41.033C987.756 712.812 983.857 708.963 979.231 706.369z"  p-id="1538"></path>
                 </svg>
             </NIcon>
-            {this.chooseVal}
+            {this.ProjectStore.getCurrentProjectName}
             <NIcon class={styles.icon}>
               <DownOutlined />
             </NIcon>

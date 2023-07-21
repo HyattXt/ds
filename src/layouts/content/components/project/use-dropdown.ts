@@ -19,13 +19,13 @@ import { DropdownOption } from 'naive-ui'
 import { useProjectStore } from '@/store/route/project'
 import {Router, useRoute, useRouter} from "vue-router";
 
-export function useDropDown(chooseVal: any) {
+export function useDropDown() {
   const router: Router = useRouter()
   const route = useRoute()
   const ProjectStore = useProjectStore()
 
   const handleSelect = (key: number, option: DropdownOption) => {
-    chooseVal.value = option.name
+    ProjectStore.setCurrentProjectName(option.name as string)
     ProjectStore.setCurrentProject(key)
     if(route.path.includes('projects')) {
       router.push({ path: `/projects/${key}/workflow/relation` })
