@@ -52,7 +52,11 @@ export default defineComponent({
     const timezoneStore = useTimezoneStore()
 
     const { t, locale } = useI18n()
-    const dateRef = ref([getTime(startOfToday()), Date.now()])
+    // const dateRef = ref([[getTime(startOfToday()), Date.now()]])
+    const dateRef = ref(
+      [[new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 6 * 24 * 60 * 60 * 1000,
+      new Date(new Date().setHours(0, 0, 0, 0)).getTime() + 24 * 60 * 60 * 1000]]
+    )
     const taskStateRef = ref()
     const processStateRef = ref()
     const taskDataRef = ref()
@@ -65,8 +69,8 @@ export default defineComponent({
     const route = useRoute()
     const router = useRouter()
 
-    
-    
+
+
     Proj.value = route.params.projectCode
     //route.path.split('/')[2]
     const {
@@ -81,6 +85,8 @@ export default defineComponent({
       taskStateRef.value = getTaskState(val)
     }
     const handleTaskData = (val: any) => {
+      console.log('val')
+      console.log(val)
       taskDataRef.value = getTaskData([val], Proj.value)
       taskDevRef.value = getTaskDev([val], Proj.value)
       dateRef.value = [val]
@@ -102,13 +108,13 @@ export default defineComponent({
       //   path: `/devops/devops_overview`,
       //   query: { projectCode: val }
       // })
-      
-      
-      
+
+
+
 
       ProjName.value = ProjSelect.value.filter(item => item.value === val).label;
-      
-      
+
+
       // const key = route.meta.activeMenu
       // 
 
@@ -152,7 +158,7 @@ export default defineComponent({
       taskDataRef.value = getTaskData(dateRef.value, Proj.value) || taskDataRef.value
       taskDevRef.value = getTaskDev(dateRef.value, Proj.value) || taskDevRef.value
 
-      
+
       //router.push({ path: `/devops/${ProjSelect.value.proj}/devops_overview` })
 
     }
@@ -173,14 +179,7 @@ export default defineComponent({
     taskDevRef.value = getTaskDev(dateRef.value, Proj.value)
     taskDataRef.value = getTaskData(dateRef.value, Proj.value) || taskDataRef.value
 
-    // async function newMessage() {
-    //   ProjSelect.value = await getProjData()
-    //   // 这里获取DOM的value是旧值
-    //   await nextTick()
-    //   // nextTick 后获取DOM的value是更新后的值
-    //   
-    //   router.push({ path: `/devops/${ProjSelect.value.proj}/devops_overview` })
-    // }
+
     const getProjData1 = async () => {
 
       const { state } = await useAsyncState(
@@ -204,7 +203,7 @@ export default defineComponent({
 
             // 使用 router.replace() 替换当前路由
             router.replace(currentRoute);
-            
+
 
             // router.push({
             //   path: `/devops/devops_overview?projectCode=${Proj.value}`,
@@ -230,8 +229,8 @@ export default defineComponent({
 
       return state
     }
-    
-    
+
+
     getProjData1()
 
     onMounted(() => {
@@ -274,8 +273,8 @@ export default defineComponent({
       taskLoadingRef,
       processLoadingRef
     } = this
-    
-    
+
+
 
     return (
       <div>

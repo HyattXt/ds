@@ -144,6 +144,7 @@ const TaskInstance = defineComponent({
       refreshLogs
     } = this
 
+
     return (
       <>
         <NCard>
