@@ -668,7 +668,6 @@ export default defineComponent({
                     query: { apiId: row.apiId }
                   })
                 }
-                message.info(`编辑 ${row.apiName}`)
               }
             }
         )
