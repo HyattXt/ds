@@ -31,8 +31,6 @@ import { getUserInfo } from "@/service/modules/users";
 import { useUserStore } from "@/store/user/user";
 import { useTimezoneStore } from "@/store/timezone/timezone";
 import { useRoute, useRouter } from 'vue-router'
-import { useDataList } from '@/layouts/content/use-dataList'
-import { createApp, nextTick } from 'vue'
 import { useAsyncState } from '@vueuse/core'
 import type { Component } from 'vue'
 import utils from '@/utils'
@@ -57,6 +55,44 @@ export default defineComponent({
       [[new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 6 * 24 * 60 * 60 * 1000,
       new Date(new Date().setHours(0, 0, 0, 0)).getTime() + 24 * 60 * 60 * 1000]]
     )
+    const RunSelect = ref([
+      {
+        label: '今天',
+        value: [
+          new Date(new Date().setHours(0, 0, 0, 0)).getTime(),
+          new Date(new Date().setHours(23, 59, 59, 999)).getTime()
+        ]
+      },
+      {
+        label: '昨天',
+        value: [
+          new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 1 * 24 * 60 * 60 * 1000,
+          new Date(new Date().setHours(23, 59, 59, 999)).getTime() - 1 * 24 * 60 * 60 * 1000
+        ]
+      },
+      {
+        label: '近7天',
+        value: [
+          new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 6 * 24 * 60 * 60 * 1000,
+          new Date(new Date().setHours(23, 59, 59, 999)).getTime()
+        ]
+      },
+      {
+        label: '近15天',
+        value: [
+          new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 14 * 24 * 60 * 60 * 1000,
+          new Date(new Date().setHours(23, 59, 59, 999)).getTime()
+        ]
+      },
+      {
+        label: '近30天',
+        value: [
+          new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 29 * 24 * 60 * 60 * 1000,
+          new Date(new Date().setHours(23, 59, 59, 999)).getTime()
+        ]
+      }
+    ]);
+
     const taskStateRef = ref()
     const processStateRef = ref()
     const taskDataRef = ref()
@@ -64,121 +100,81 @@ export default defineComponent({
     const Proj = ref()
     const ProjName = ref()
     const ProjSelect = ref()
-    const { getTaskState, taskVariables, getTaskData, getTaskDev, getProjData } = useTaskState()
+    const { getJobRunErrorTop10Data, getJobRuntimeTop10Data, getTaskStatisticsInfoData, getTaskState, taskVariables, getTaskData, getTaskDev, getProjData } = useTaskState()
     const { getProcessState, processVariables } = useProcessState()
     const route = useRoute()
     const router = useRouter()
+    const TaskPie = ref()
+    const RunTop10 = ref()
+    const RunErrorTop10 = ref()
 
-
-
+    RunTop10.value = getJobRuntimeTop10Data(
+      [new Date(new Date().setHours(0, 0, 0, 0)).getTime(),
+      new Date(new Date().setHours(23, 59, 59, 999)).getTime()]
+      , Proj.value
+    )
+    RunErrorTop10.value = getJobRunErrorTop10Data(
+      [new Date(new Date().setHours(0, 0, 0, 0)).getTime(),
+      new Date(new Date().setHours(23, 59, 59, 999)).getTime()]
+      , Proj.value
+    )
     Proj.value = route.params.projectCode
-    //route.path.split('/')[2]
-    const {
-      state,
-      changeMenuOption,
-      changeHeaderMenuOptions,
-      changeIconMenuOptions,
-      changeUserDropdown
-    } = useDataList()
+    const RunSelectCurrent = ref()
+    const RunErrorSelectCurrent = ref()
 
-    const handleTaskDate = (val: any) => {
-      taskStateRef.value = getTaskState(val)
+
+    const handleRunTop10Data = (val: any) => {
+      RunTop10.value = getJobRuntimeTop10Data(val, Proj.value)
+      RunSelectCurrent.value = RunSelect.value.filter(item => item.value[0] === val[0])[0].label;
+
+    }
+    const handleRunErrorTop10Data = (val: any) => {
+      RunErrorTop10.value = getJobRunErrorTop10Data(val, Proj.value)
+      RunErrorSelectCurrent.value = RunSelect.value.filter(item => item.value[0] === val[0])[0].label;
+
     }
     const handleTaskData = (val: any) => {
-      console.log('val')
-      console.log(val)
       taskDataRef.value = getTaskData([val], Proj.value)
       taskDevRef.value = getTaskDev([val], Proj.value)
+      TaskPie.value = getTaskStatisticsInfoData([val], Proj.value)
+
       dateRef.value = [val]
     }
     const handleProjData = (val: any) => {
       taskDataRef.value = getTaskData(dateRef.value, val)
       taskDevRef.value = getTaskDev(dateRef.value, val)
-      Proj.value = val
+      TaskPie.value = getTaskStatisticsInfoData(dateRef.value, val)
 
+      Proj.value = val
       const currentRoute = router.currentRoute.value; // 复制当前路由对象
 
       // 修改参数
       currentRoute.params.projectCode = val;
-
       // 使用 router.replace() 替换当前路由
       router.replace(currentRoute);
-
-      // router.replace({
-      //   path: `/devops/devops_overview`,
-      //   query: { projectCode: val }
-      // })
-
-
-
-
       ProjName.value = ProjSelect.value.filter(item => item.value === val).label;
 
-
-      // const key = route.meta.activeMenu
-      // 
-
-      // state.sideMenuOptions =
-      //   state.menuOptions.filter((menu: { key: string }) => menu.key === 'devops')[0]
-      //     ?.children
-      // state.isShowSide = route.meta.showSide
-      // state.sideMenuOptions.forEach(rot => {
-      //   
-      //   
-      //   if (rot.label === "任务") {
-      //     rot.children.forEach(ch => {
-      //       
-      //       if (ch.label === '任务实例') {
-      //         ch.key = `/devops/${val}/task/instances`
-      //       }
-      //       if (ch.label === "工作流实例") {
-      //         ch.key = `/devops/${val}/workflow/instances`
-      //       }
-      //       
-
-      //     });
-      //   }
-      //   // if (rot.label === "运维总览") {
-      //   //   rot.key = `/devops/devops_overview`
-      //   // }
-      // })
     }
-    const handleProcessDate = (val: any) => {
-      processStateRef.value = getProcessState(val)
-    }
-
-
 
     const initData = () => {
 
 
       taskStateRef.value = getTaskState(dateRef.value) || taskStateRef.value
-      processStateRef.value =
-        getProcessState(dateRef.value) || processStateRef.value
+
       taskDataRef.value = getTaskData(dateRef.value, Proj.value) || taskDataRef.value
       taskDevRef.value = getTaskDev(dateRef.value, Proj.value) || taskDevRef.value
 
-
-      //router.push({ path: `/devops/${ProjSelect.value.proj}/devops_overview` })
+      TaskPie.value = getTaskStatisticsInfoData(dateRef.value, Proj.value)
+      console.log('TaskPie')
+      console.log(TaskPie)
 
     }
 
-    //taskDevRef.value = getTaskDev(dateRef.value)
-    // 
-    // 
-    // const pp = typeof (ProjSelect.value.table)
-    // 
-    // 
 
-    // Proj.value = toRefs(ProjSelect).value
-    // 
-    // 
-    // taskDataRef.value = getTaskData(dateRef.value, ProjSelect.value) || taskDataRef.value
-
-    //ProjSelect.value = getProjData()
     taskDevRef.value = getTaskDev(dateRef.value, Proj.value)
     taskDataRef.value = getTaskData(dateRef.value, Proj.value) || taskDataRef.value
 
+    TaskPie.value = getTaskStatisticsInfoData(dateRef.value, Proj.value)
 
     const getProjData1 = async () => {
 
@@ -197,31 +193,17 @@ export default defineComponent({
           const proj = table[0].value
           if (route.params.projectCode == '123') {
             const currentRoute = router.currentRoute.value; // 复制当前路由对象
-
             // 修改参数
             currentRoute.params.projectCode = table[0].value;
-
             // 使用 router.replace() 替换当前路由
             router.replace(currentRoute);
-
-
-            // router.push({
-            //   path: `/devops/devops_overview?projectCode=${Proj.value}`,
-            //   // query: { projectCode: Proj.value }
-
-            // })
             Proj.value = table[0].value;
             ProjName.value = table[0].label
           }
           else {
             ProjName.value = table.filter(item => item.value.toString() === route.params.projectCode).map(item => item.label)[0]
           }
-
-
           ProjSelect.value = table
-          //Proj.value = table[0].value
-
-          // initData()
           return { table, Proj }
         }),
         { table: [] }
@@ -247,16 +229,22 @@ export default defineComponent({
     return {
       t,
       dateRef,
-      handleTaskDate,
       handleTaskData,
-      handleProcessDate,
       handleProjData,
+      handleRunTop10Data,
+      handleRunErrorTop10Data,
       taskStateRef,
       processStateRef,
       taskDataRef,
       taskDevRef,
       ProjSelect,
       ProjName,
+      RunSelectCurrent,
+      RunSelect,
+      RunErrorSelectCurrent,
+      TaskPie,
+      RunTop10,
+      RunErrorTop10,
       ...toRefs(taskVariables),
       ...toRefs(processVariables)
     }
@@ -266,12 +254,13 @@ export default defineComponent({
       t,
       dateRef,
       taskDevRef,
-      handleTaskDate,
       handleTaskData,
-      handleProcessDate,
       handleProjData,
+      handleRunTop10Data,
+      handleRunErrorTop10Data,
       taskLoadingRef,
-      processLoadingRef
+      processLoadingRef,
+      TaskPie
     } = this
 
 
@@ -288,8 +277,16 @@ export default defineComponent({
               tablecount={this.taskDevRef?.value.table}
               ProjSelect={this.ProjSelect}
               ProjFirst={this.ProjName}
+              RunSelectCurrent={this.RunSelectCurrent}
+              RunSelect={this.RunSelect}
+              RunErrorSelectCurrent={this.RunErrorSelectCurrent}
+              TaskPieData={this.TaskPie?.value}
+              RunTop10Data={this.RunTop10?.value.table}
+              RunErrorTop10Data={this.RunErrorTop10?.value.table}
               onUpdateDatePickerValue={handleTaskData}
               onUpdateProjPickerValue={handleProjData}
+              onUpdateRunTop10DatePickerValue={handleRunTop10Data}
+              onUpdateRunErrorTop10DatePickerValue={handleRunErrorTop10Data}
 
               loadingRef={taskLoadingRef}
             />

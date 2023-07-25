@@ -21,7 +21,7 @@ import { toLower } from 'lodash'
 import { useI18n } from 'vue-i18n'
 import { countTaskState } from '@/service/modules/projects-analysis'
 import type { TaskStateRes } from '@/service/modules/projects-analysis/types'
-import { queryUnauthorizedProject, getDataByProjectCodeAndDate, getStatisticsDataByProjectCodeAndDate } from '@/service/modules/devops-analysis'
+import { getJobRunErrorTop10, getJobRuntimeTop10, getTaskStatisticsInfo, queryUnauthorizedProject, getDataByProjectCodeAndDate, getStatisticsDataByProjectCodeAndDate } from '@/service/modules/devops-analysis'
 import { parseTime, renderTableTime, tasksState } from '@/common/common'
 
 import type { StateData } from './types'
@@ -74,7 +74,8 @@ export function useTaskState() {
     // const ProjFirst = queryUnauthorizedProject({ userId: 0 })
     const { state } = useAsyncState(
       getStatisticsDataByProjectCodeAndDate({
-        dayDate: !date ? '' : format(parseTime(date[0][1]), 'yyyy-MM-dd'),
+        startTime: !date ? '' : format(date[0][0], 'yyyy-MM-dd HH:mm:ss'),
+        endTime: !date ? '' : format(date[0][1], 'yyyy-MM-dd HH:mm:ss'),
         projectCode: projectCode
       }).then(function (res) {
 
@@ -110,10 +111,10 @@ export function useTaskState() {
 
   const getTaskData = (date: Array<any>, projectCode: any) => {
     console.log(date)
-    console.log(parseTime(date[1]))
     const { state } = useAsyncState(
       getDataByProjectCodeAndDate({
-        dayDate: !date ? '' : format(parseTime(date[0][1]), 'yyyy-MM-dd'),
+        startTime: !date ? '' : format(date[0][0], 'yyyy-MM-dd HH:mm:ss'),
+        endTime: !date ? '' : format(date[0][1], 'yyyy-MM-dd HH:mm:ss'),
         projectCode: projectCode
       }).then(function (res) {
 
@@ -133,9 +134,7 @@ export function useTaskState() {
           tabledata['成功'].push(res[i].succeed);
           tabledata['时间'].push(res[i].dayTime);
 
-        }
-
-        ;
+        };
         const table = [tabledata]
 
         return { table }
@@ -151,7 +150,6 @@ export function useTaskState() {
       queryUnauthorizedProject({
         userId: 0
       }).then(function (res) {
-        ;
 
         const table = res.map((item) => {
           return {
@@ -168,24 +166,88 @@ export function useTaskState() {
 
     return state
   }
-  // const getProjData = () => {
-  //   const res = queryUnauthorizedProject({ userId: 0 });
-  //   ;
-  //   ;
-  //   ;
+  //获取运维总览的饼图状态统计数据
+  const getTaskStatisticsInfoData = (date: Array<any>, projectCode: any) => {
+    if (taskVariables.taskLoadingRef) return
+    taskVariables.taskLoadingRef = true
+    const { state } = useAsyncState(
+      getTaskStatisticsInfo({
+        startTime: !date ? '' : format(date[0][0], 'yyyy-MM-dd HH:mm:ss'),
+        endTime: !date ? '' : format(date[0][1], 'yyyy-MM-dd HH:mm:ss'),
+        projectCode: projectCode
+      }
+      )
+        .then(function (res) {
+          const table = res.map((item) => {
+            return {
+              value: item.taskNum,
+              name: item.taskType,
+              ratio: item.ratio,
+              taskTotalNum: item.taskTotalNum
+            }
+          })
 
-  //   const table = res.map((item) => {
-  //     return {
-  //       label: item.name,
-  //       value: item.code,
-  //     };
-  //   });
-  //   const proj = table[0].value
-  //   ;
+          const chart = res.map((item) => {
+            return {
+              value: item.taskNum,
+              name: item.taskType
+            }
+          })
+          taskVariables.taskLoadingRef = false
 
-  //   return { table, proj };
-  // };
+          return { table, chart }
+        }),
+      { table: [], chart: [] }
+    )
 
+    return state
+  }
+  //作业运行时长排行TOP10
+  const getJobRuntimeTop10Data = (date: Array<any>, projectCode: any) => {
+    const { state } = useAsyncState(
+      getJobRuntimeTop10({
+        startTime: !date ? '' : format(date[0], 'yyyy-MM-dd HH:mm:ss'),
+        endTime: !date ? '' : format(date[1], 'yyyy-MM-dd HH:mm:ss'),
+        projectCode: projectCode
+      }).then(function (res) {
+        const table = res.map((item, index) => {
+          return {
+            排名: index,
+            任务名名称: item.taskName,
+            工作流名称: item.processName,
+            任务代码: item.taskCode,
+            最大运行时长: item.taskRunTime
+          }
+        });
+        return { table }
+      }),
+      { table: [] }
+    )
 
-  return { getTaskState, taskVariables, getTaskData, getTaskDev, getProjData }
+    return state
+  }
+  const getJobRunErrorTop10Data = (date: Array<any>, projectCode: any) => {
+    const { state } = useAsyncState(
+      getJobRunErrorTop10({
+        startTime: !date ? '' : format(date[0], 'yyyy-MM-dd HH:mm:ss'),
+        endTime: !date ? '' : format(date[1], 'yyyy-MM-dd HH:mm:ss'),
+        projectCode: projectCode
+      }).then(function (res) {
+        const table = res.map((item, index) => {
+          return {
+            排名: index,
+            任务名: item.taskName,
+            业务流程: item.NAME,
+            出错次数: item.taskError,
+          }
+        });
+        return { table }
+      }),
+      { table: [] }
+    )
+
+    return state
+  }
+
+  return { getTaskState, taskVariables, getTaskData, getTaskDev, getProjData, getTaskStatisticsInfoData, getJobRuntimeTop10Data, getJobRunErrorTop10Data }
 }

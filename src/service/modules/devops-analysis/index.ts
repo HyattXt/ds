@@ -16,7 +16,7 @@
  */
 
 import { axios } from '@/service/service'
-import { CodeReq, StateReq } from './types'
+import { CodeReq, StateReq, DateReq } from './types'
 
 export function countCommandState(): any {
   return axios({
@@ -75,6 +75,33 @@ export function getStatisticsDataByProjectCodeAndDate(params: DateReq): any {
   return axios({
     url: '/taskInstanceStatistics/getStatisticsDataByProjectCodeAndDate',
     method: 'post',
+    data: JSON.stringify(params),
+    headers: { 'Content-Type': 'application/json' },
+    dataType: 'json'
+  })
+}
+export function getTaskStatisticsInfo(params): any {
+  return axios({
+    url: '/taskInstanceStatistics/getTaskStatisticsInfo',
+    method: 'POST',
+    data: JSON.stringify(params),
+    headers: { 'Content-Type': 'application/json' },
+    dataType: 'json'
+  })
+}
+export function getJobRuntimeTop10(params): any {
+  return axios({
+    url: '/taskInstanceStatistics/getJobRuntimeTop10',
+    method: 'POST',
+    data: JSON.stringify(params),
+    headers: { 'Content-Type': 'application/json' },
+    dataType: 'json'
+  })
+}
+export function getJobRunErrorTop10(params): any {
+  return axios({
+    url: '/taskInstanceStatistics/getJobRunErrorTop10',
+    method: 'POST',
     data: JSON.stringify(params),
     headers: { 'Content-Type': 'application/json' },
     dataType: 'json'

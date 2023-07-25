@@ -15,10 +15,12 @@
  * limitations under the License.
  */
 
-import { defineComponent, PropType } from 'vue'
+import { defineComponent, PropType, onMounted, h } from 'vue'
 import { useTable } from '../use-table'
-import { NDataTable, NCard, NDatePicker, NGrid, NGi, NSpace, NSelect, NTag } from 'naive-ui'
+import { NProgress, NDataTable, NDatePicker, NGrid, NGi, NSpace, NSelect, NTag } from 'naive-ui'
 import ChartLineBox from '@/components/chart/modules/ChartLineBox'
+import TaskPie from '@/components/chart/modules/TaskPie'
+
 import Card from '@/components/card'
 import type { StateTableData, StateChartData } from '../types'
 import { useRouter, useRoute } from 'vue-router';
@@ -50,16 +52,25 @@ const props = {
   },
   ProjFirst: {
   },
+  RunSelectCurrent: {
+  },
+  RunSelect: {},
+  RunErrorSelectCurrent: {},
   loadingRef: {
     type: Boolean as PropType<boolean>,
     default: false
-  }
+  },
+  TaskPieData: {
+  },
+  RunTop10Data: {
+  },
+  RunErrorTop10Data: {}
 }
 
 const StateCard = defineComponent({
   name: 'StateCard',
   props,
-  emits: ['updateDatePickerValue', 'updateProjPickerValue'],
+  emits: ['updateDatePickerValue', 'updateProjPickerValue', 'UpdateRunTop10DatePickerValue', 'UpdateRunErrorTop10DatePickerValue'],
   setup(props, ctx) {
     const onUpdateDatePickerValue = (dateP: any) => {
       ctx.emit('updateDatePickerValue', dateP)
@@ -67,13 +78,24 @@ const StateCard = defineComponent({
     const onUpdateProjPickerValue = (val: any) => {
       ctx.emit('updateProjPickerValue', val)
     }
+    const onUpdateRunTop10DatePickerValue = (top10: any) => {
+      ctx.emit('UpdateRunTop10DatePickerValue', top10)
+    }
+    const onUpdateRunErrorTop10DatePickerValue = (top10: any) => {
+      ctx.emit('UpdateRunErrorTop10DatePickerValue', top10)
+    }
     const { t } = useI18n()
     const datePickerRange = ref(
       [new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 6 * 24 * 60 * 60 * 1000,
       new Date(new Date().setHours(0, 0, 0, 0)).getTime() + 24 * 60 * 60 * 1000]
     )
-    return { onUpdateDatePickerValue, onUpdateProjPickerValue, t, datePickerRange }
+
+
+    // 在组件挂载时动态生成组件
+
+    return { onUpdateDatePickerValue, onUpdateProjPickerValue, onUpdateRunTop10DatePickerValue, onUpdateRunErrorTop10DatePickerValue, t, datePickerRange }
   },
+
   render() {
     const {
       t,
@@ -83,16 +105,21 @@ const StateCard = defineComponent({
       tablecount,
       ProjSelect,
       ProjFirst,
+      RunSelectCurrent,
+      RunSelect,
+      RunErrorSelectCurrent,
+      TaskPieData,
+      RunTop10Data,
+      RunErrorTop10Data,
       onUpdateDatePickerValue,
       onUpdateProjPickerValue,
+      onUpdateRunTop10DatePickerValue,
+      onUpdateRunErrorTop10DatePickerValue,
       loadingRef,
       datePickerRange
     } = this
     const { columnsRef } = useTable()
-    console.log(tableData)
-    console.log(chartData)
-    console.log(tablecount[0])
-    console.log(ProjFirst)
+
     const route = useRoute()
     const ALL = `/devops/${route.params.projectCode}/task/instances?timeRange=${this.datePickerRange}`
     const SUCCESS = `/devops/${route.params.projectCode}/task/instances?stateType=SUCCESS&timeRange=${this.datePickerRange}`
@@ -100,11 +127,47 @@ const StateCard = defineComponent({
     const RUNNING_EXECUTION = `/devops/${route.params.projectCode}/task/instances?stateType=RUNNING_EXECUTION&timeRange=${this.datePickerRange}`
     const STOP = `/devops/${route.params.projectCode}/task/instances?stateType=STOP&timeRange=${this.datePickerRange}`
     const PAUSE = `/devops/${route.params.projectCode}/task/instances?stateType=PAUSE&timeRange=${this.datePickerRange}`
+    const colors = [
+      '#6e40aa', '#c83dac', '#ff5375', '#ff8c38', '#c9d33a',
+      '#79f659', '#28ea8d', '#1eb8d0', '#cab2d6', '#6a3d9a',
+      '#E6FF33', '#33FFC7', '#FFC733', '#33C7FF', '#C733FF',
+      '#FF3357', '#33FF33', '#33FFC7', '#FF33C7', '#33C7FF',
+      '#C73333', '#33C733', '#FF57E6', '#E6FF57', '#57E6FF'
+    ];
+    const nprogressElements = TaskPieData.table
+      .filter(item => item.ratio !== 0)
+      .map((item, index) => {
+        const formattedRatio = item.ratio.toFixed(1); // Ensure two decimal places
+        const displayRatio = formattedRatio.length < 4 ? `${formattedRatio}% | ${item.value}` : `${formattedRatio}% | ${item.value}`;
+        const displayNull = ' '
+        return h('div', { key: index, style: { display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', margin: '1px 0' } }, [
+          h('div', { style: { width: '10px', height: '10px', borderRadius: '50%', background: colors[index], marginRight: '10px' } }), // Colored dot
+          h('p', { style: { width: "25%", marginRight: '5px', textAlign: 'left' } }, { default: () => item.name }), // Left-align 'item.name'
+          h(NProgress, { percentage: item.ratio, height: 15 }, { default: () => displayNull }), // Use the formatted and concatenated ratio
+          h('p', { style: { width: "20%", marginRight: '5px', textAlign: 'left' } }, { default: () => displayRatio }), // Left-align 'item.name'
 
+        ]);
+      });
+
+
+    const RunSelectHeader = ref([
+      { title: '排名', key: '排名' },
+      { title: '任务名名称', key: '任务名名称' },
+      { title: '工作流名称', key: '工作流名称' },
+      { title: '任务代码', key: '任务代码' },
+      { title: '最大运行时长', key: '最大运行时长' }
+    ]);
+
+    const RunErrorSelectHeader = ref([
+      { title: '排名', key: '排名' },
+      { title: '任务名', key: '任务名' },
+      { title: '业务流程', key: '业务流程' },
+      { title: '出错次数', key: '出错次数' },
+    ]);
 
     return (
 
-      <Card title={' '} style={{ height: '80vh' }}>
+      <Card title={' '} style={{}}>
         {{
           default: () => (
 
@@ -169,7 +232,8 @@ const StateCard = defineComponent({
                         // striped
                         size={'medium'}
                       >
-                        <svg width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" focusable="false" class=""><title>Icon / YunxingzhongSolid</title><desc>Created with Sketch.</desc><g id="Icon-/-YunxingzhongSolid" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g id="yunxingzhongSolid" fill-rule="nonzero"><circle id="Oval" fill="#349EFF" cx="10" cy="10" r="10"></circle><path d="M7.195,15.44 C6.82817224,15.453163 6.49780925,15.2194806 6.38805739,14.8692087 C6.27830553,14.5189368 6.41625012,14.138518 6.725,13.94 L11.95,10.29 L6.725,6.625 C6.41625012,6.42648204 6.27830553,6.04606321 6.38805739,5.69579131 C6.49780925,5.34551942 6.82817224,5.11183697 7.195,5.125 C7.36115694,5.12480267 7.52340475,5.17539607 7.66,5.27 L13.83,9.6 C13.9998567,9.71836877 14.1179412,9.89728465 14.16,10.1 C14.162438,10.1382946 14.162438,10.1767054 14.16,10.215 L14.16,10.27 L14.005,10.295 L14.155,10.325 C14.1571024,10.3616365 14.1571024,10.3983635 14.155,10.435 C14.1144079,10.6383219 13.995991,10.8177414 13.825,10.935 L7.66,15.29 C7.52506413,15.3885088 7.3620643,15.4410894 7.195,15.44 Z" id="Path" fill="#FFFFFF"></path></g></g></svg>                      正在运行
+                        <svg width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" focusable="false" class=""><title>Icon / YunxingzhongSolid</title><desc>Created with Sketch.</desc><g id="Icon-/-YunxingzhongSolid" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g id="yunxingzhongSolid" fill-rule="nonzero"><circle id="Oval" fill="#349EFF" cx="10" cy="10" r="10"></circle><path d="M7.195,15.44 C6.82817224,15.453163 6.49780925,15.2194806 6.38805739,14.8692087 C6.27830553,14.5189368 6.41625012,14.138518 6.725,13.94 L11.95,10.29 L6.725,6.625 C6.41625012,6.42648204 6.27830553,6.04606321 6.38805739,5.69579131 C6.49780925,5.34551942 6.82817224,5.11183697 7.195,5.125 C7.36115694,5.12480267 7.52340475,5.17539607 7.66,5.27 L13.83,9.6 C13.9998567,9.71836877 14.1179412,9.89728465 14.16,10.1 C14.162438,10.1382946 14.162438,10.1767054 14.16,10.215 L14.16,10.27 L14.005,10.295 L14.155,10.325 C14.1571024,10.3616365 14.1571024,10.3983635 14.155,10.435 C14.1144079,10.6383219 13.995991,10.8177414 13.825,10.935 L7.66,15.29 C7.52506413,15.3885088 7.3620643,15.4410894 7.195,15.44 Z" id="Path" fill="#FFFFFF"></path></g></g></svg>
+                        正在运行
                         <div>{tablecount[3]}</div >
                       </Card>
                     </router-link>
@@ -183,7 +247,8 @@ const StateCard = defineComponent({
                         // striped
                         size={'medium'}
                       >
-                        <span role="img" class="anticon" style="font-size: 14px;"><svg width="1em" height="1em" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true" focusable="false" class=""><title>tingzhiSolid</title><g id="\u9875\u9762-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g id="1-\u53D1\u5E03\u8FD0\u7EF4-\u8FD0\u7EF4\u4E2D\u5FC3-\u8FD0\u7EF4\u6982\u89C8-\u79BB\u7EBF\u5F00\u53D1" transform="translate(-1244.000000, -242.000000)" fill-rule="nonzero"><g id="\u7F16\u7EC4-20" transform="translate(224.000000, 160.000000)"><g id="Group23" transform="translate(1004.000000, 64.000000)"><g id="GroupCopy2" transform="translate(16.000000, 16.000000)"><g id="tingzhiSolid" transform="translate(0.000000, 2.000000)"><circle id="Oval" fill="#BB85B3" cx="7" cy="7" r="7"></circle><rect id="Rectangle" fill="#FFFFFF" x="3.5" y="6.475" width="7" height="1.05" rx="0.525"></rect></g></g></g></g></g></g></svg></span>                      暂停
+                        <span role="img" class="anticon" style="font-size: 14px;"><svg width="1em" height="1em" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true" focusable="false" class=""><title>tingzhiSolid</title><g id="\u9875\u9762-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g id="1-\u53D1\u5E03\u8FD0\u7EF4-\u8FD0\u7EF4\u4E2D\u5FC3-\u8FD0\u7EF4\u6982\u89C8-\u79BB\u7EBF\u5F00\u53D1" transform="translate(-1244.000000, -242.000000)" fill-rule="nonzero"><g id="\u7F16\u7EC4-20" transform="translate(224.000000, 160.000000)"><g id="Group23" transform="translate(1004.000000, 64.000000)"><g id="GroupCopy2" transform="translate(16.000000, 16.000000)"><g id="tingzhiSolid" transform="translate(0.000000, 2.000000)"><circle id="Oval" fill="#BB85B3" cx="7" cy="7" r="7"></circle><rect id="Rectangle" fill="#FFFFFF" x="3.5" y="6.475" width="7" height="1.05" rx="0.525"></rect></g></g></g></g></g></g></svg></span>
+                        暂停
                         <div>{tablecount[4]}</div >
                       </Card>
                     </router-link>
@@ -213,8 +278,74 @@ const StateCard = defineComponent({
                   {chartData.length > 0 && <ChartLineBox data={chartData} />}
                 </Card>
               </NGi>
+              <NGi >
+                <Card title={'实例类别占比'} style={{ height: '70vh' }}>
 
-            </NGrid>
+                  <NSpace style={{ display: "flex", gap: "10px", flexWrap: "nowrap" }} >
+                    <Card style={{ height: '65vh', width: '40vw', border: 'none' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
+                        {TaskPieData.chart.length > 0 && <TaskPie data={TaskPieData.chart} taskTotalNum={TaskPieData.table[0].taskTotalNum} colors={colors} />}
+                      </div>
+                    </Card>
+
+
+                    <Card style={{ height: '65vh', width: '40vw', border: 'none', display: 'flex', flexDirection: 'column', justifyContent: 'center', flexGrow: 1 }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
+                        {nprogressElements}
+                      </div>
+                    </Card>
+                  </NSpace>
+                </Card>
+
+              </NGi>
+              <NGi >
+
+                <NSpace justify='space-between' style={{ display: "flex", gap: "10px", flexWrap: "nowrap" }} >
+                  <Card style={{ height: '60vh', width: '50vw' }}>
+                    <NSpace justify='space-between' style={{ height: '40px' }}>
+                      <p style="font-size:16px;">作业运行时长排行TOP10</p>
+                      <NSelect
+                        size='small'
+                        value={RunSelectCurrent}
+                        defaultValue='今天'
+                        options={RunSelect}
+                        style="width:150px;border: none; outline: none;"
+                        onUpdateValue={onUpdateRunTop10DatePickerValue}
+                      />
+                    </NSpace>
+                    <NDataTable
+                      columns={RunSelectHeader.value}
+                      data={RunTop10Data}
+                      size='small'
+                    />
+
+                  </Card>
+
+
+                  <Card style={{ height: '60vh', width: '30vw' }}>
+                    <NSpace justify='space-between' style={{ height: '40px' }}>
+                      <p style="font-size:16px;">作业运行出错排行TOP10</p>
+                      <NSelect
+                        size='small'
+                        value={RunErrorSelectCurrent}
+                        defaultValue='今天'
+                        options={RunSelect}
+                        style="width:150px;border: none; outline: none;"
+                        onUpdateValue={onUpdateRunErrorTop10DatePickerValue}
+                      />
+                    </NSpace>
+                    <NDataTable
+                      columns={RunErrorSelectHeader.value}
+                      data={RunErrorTop10Data}
+                      size='small'
+                    />
+
+                  </Card>
+                </NSpace>
+
+              </NGi>
+            </NGrid >
+
 
           ),
           'header-extra': () => (

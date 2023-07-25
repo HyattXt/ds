@@ -60,7 +60,7 @@ const PieChart = defineComponent({
         right: 20,
         top: 50,
       },
-      color: ['#7F91BE', '#5FBFA7', '#E28C88', '#BC7FBD', '#D49835'],       //设置区分（每条线是什么颜色，和 legend 一一对应）
+      color: ['#30CE78', '#FF5D40', '#349EFF', '#BB85B3', '#FFB834'],       //设置区分（每条线是什么颜色，和 legend 一一对应）
       xAxis: {                //设置x轴
         type: 'category',
         boundaryGap: false,     //坐标轴两边不留白
@@ -109,7 +109,7 @@ const PieChart = defineComponent({
           type: 'line',               // 类型为折线图
           // smooth: false,
           lineStyle: {                // 线条样式 => 必须使用normal属性
-            color: '#7F91BE',
+            color: '#30CE78',
           },
         },
         {
@@ -118,25 +118,7 @@ const PieChart = defineComponent({
           data: props.data[0].失败,
           type: 'line',
           lineStyle: {
-            color: '#5FBFA7',
-          },
-        },
-        {
-          name: '停止',
-          showSymbol: false,
-          data: props.data[0].停止,
-          type: 'line',
-          lineStyle: {
-            color: '#E28C88',
-          },
-        },
-        {
-          name: '暂停',
-          showSymbol: false,
-          data: props.data[0].暂停,
-          type: 'line',
-          lineStyle: {
-            color: '#BC7FBD',
+            color: '#FF5D40',
           },
         },
         {
@@ -145,7 +127,25 @@ const PieChart = defineComponent({
           data: props.data[0].正在运行,
           type: 'line',
           lineStyle: {
-            color: '#D49835',
+            color: '#349EFF',
+          },
+        },
+        {
+          name: '暂停',
+          showSymbol: false,
+          data: props.data[0].暂停,
+          type: 'line',
+          lineStyle: {
+            color: '#BB85B3',
+          },
+        },
+        {
+          name: '停止',
+          showSymbol: false,
+          data: props.data[0].停止,
+          type: 'line',
+          lineStyle: {
+            color: '#FFB834',
           },
         }
       ],
