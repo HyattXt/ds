@@ -79,7 +79,7 @@ import {
   SearchOutlined,
   TableOutlined
 } from '@vicons/antd'
-import {NButton, NIcon, NSpace, NTooltip,NDescriptions,NDescriptionsItem, useMessage} from "naive-ui";
+import {NButton, NIcon, NSpace, NTooltip, NDescriptions, NDescriptionsItem, useMessage, NCard, NGrid, NGi} from "naive-ui";
 import {useRouter} from "vue-router";
 
 const columns = ({ play }) => {
@@ -87,13 +87,18 @@ const columns = ({ play }) => {
       {
         type: 'expand',
         renderExpand: (rowData) => {
-          return h(NDescriptions, {labelPlacement: 'left'} , [
-            h(NDescriptionsItem,  { label: '数据行数', labelStyle: 'color:grey' } , {default: () => rowData.tableDataRow}),
-            h(NDescriptionsItem,  { label: '表大小', labelStyle: 'color:grey' } , {default: () => rowData.tableDataLength}),
-            h(NDescriptionsItem,  { label: '创建时间', labelStyle: 'color:grey' } , {default: () => rowData.tableCreateTime}),
-            h(NDescriptionsItem,  { label: '更新时间', labelStyle: 'color:grey' } , {default: () => rowData.tableUpdateTime})
+          return h(NGrid,{cols:16},[
+              h(NGi,{span:1},null),
+              h(NGi,{span:15},
+                h(NDescriptions, { labelPlacement: 'left', size: "small"} , [
+                  h(NDescriptionsItem,  { label: '数据行数', labelStyle: 'color:grey; font-size:13px', contentStyle: 'font-size:13px' } , {default: () => rowData.tableDataRow}),
+                  h(NDescriptionsItem,  { label: '表大小', labelStyle: 'color:grey; font-size:13px', contentStyle: 'font-size:13px' } , {default: () => rowData.tableDataLength}),
+                  h(NDescriptionsItem,  { label: '创建时间', labelStyle: 'color:grey; font-size:13px', contentStyle: 'font-size:13px' } , {default: () => rowData.tableCreateTime}),
+                  h(NDescriptionsItem,  { label: '更新时间', labelStyle: 'color:grey; font-size:13px', contentStyle: 'font-size:13px' } , {default: () => rowData.tableUpdateTime})
           ])
-
+             )
+              ]
+          )
         }
       },
       {

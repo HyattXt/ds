@@ -40,10 +40,12 @@ import {
 import type { Router } from 'vue-router'
 import type { ProjectRes } from '@/service/modules/projects/types'
 import { DeleteOutlined, EditOutlined } from '@vicons/antd'
+import {useProjectStore} from "@/store/route/project";
 
 export function useTable() {
   const { t } = useI18n()
   const router: Router = useRouter()
+  const ProjectStore = useProjectStore()
 
   const handleEdit = (row: any) => {
     variables.showModalRef = true
@@ -82,7 +84,9 @@ export function useTable() {
             ButtonLink,
             {
               onClick: () => {
-                router.push({ path: `/projects/${row.code}` })
+                ProjectStore.setCurrentProject(Number(row.code))
+                ProjectStore.setCurrentProjectName(row.name)
+                router.push({ path: `/projects/${row.code}/workflow/relation` })
               }
             },
             {
