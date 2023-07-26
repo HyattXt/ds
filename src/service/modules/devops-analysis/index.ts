@@ -107,3 +107,12 @@ export function getJobRunErrorTop10(params): any {
     dataType: 'json'
   })
 }
+export function getInterfaceTop10(params): any {
+  return axios({
+    url: '/taskInstanceStatistics/getInterfaceTop10',
+    method: 'POST',
+    data: JSON.stringify(params),
+    headers: { 'Content-Type': 'application/json' },
+    dataType: 'json'
+  })
+}

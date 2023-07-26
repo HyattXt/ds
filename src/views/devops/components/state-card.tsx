@@ -17,9 +17,11 @@
 
 import { defineComponent, PropType, onMounted, h } from 'vue'
 import { useTable } from '../use-table'
-import { NProgress, NDataTable, NDatePicker, NGrid, NGi, NSpace, NSelect, NTag } from 'naive-ui'
+import { NLayout, NProgress, NDataTable, NDatePicker, NGrid, NGi, NSpace, NSelect, NTag } from 'naive-ui'
 import ChartLineBox from '@/components/chart/modules/ChartLineBox'
 import TaskPie from '@/components/chart/modules/TaskPie'
+import PieChart from '@/components/chart/modules/Pie'
+
 
 import Card from '@/components/card'
 import type { StateTableData, StateChartData } from '../types'
@@ -56,6 +58,7 @@ const props = {
   },
   RunSelect: {},
   RunErrorSelectCurrent: {},
+  ApiSelectCurrent: {},
   loadingRef: {
     type: Boolean as PropType<boolean>,
     default: false
@@ -64,13 +67,14 @@ const props = {
   },
   RunTop10Data: {
   },
-  RunErrorTop10Data: {}
+  RunErrorTop10Data: {},
+  ApiTop10Data: {}
 }
 
 const StateCard = defineComponent({
   name: 'StateCard',
   props,
-  emits: ['updateDatePickerValue', 'updateProjPickerValue', 'UpdateRunTop10DatePickerValue', 'UpdateRunErrorTop10DatePickerValue'],
+  emits: ['updateDatePickerValue', 'updateProjPickerValue', 'UpdateRunTop10DatePickerValue', 'UpdateRunErrorTop10DatePickerValue', 'UpdategetInterfaceTop10Data'],
   setup(props, ctx) {
     const onUpdateDatePickerValue = (dateP: any) => {
       ctx.emit('updateDatePickerValue', dateP)
@@ -84,6 +88,10 @@ const StateCard = defineComponent({
     const onUpdateRunErrorTop10DatePickerValue = (top10: any) => {
       ctx.emit('UpdateRunErrorTop10DatePickerValue', top10)
     }
+    const onUpdategetInterfaceTop10Data = (top10: any) => {
+      ctx.emit('UpdategetInterfaceTop10Data', top10)
+    }
+
     const { t } = useI18n()
     const datePickerRange = ref(
       [new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 6 * 24 * 60 * 60 * 1000,
@@ -93,7 +101,7 @@ const StateCard = defineComponent({
 
     // 在组件挂载时动态生成组件
 
-    return { onUpdateDatePickerValue, onUpdateProjPickerValue, onUpdateRunTop10DatePickerValue, onUpdateRunErrorTop10DatePickerValue, t, datePickerRange }
+    return { onUpdateDatePickerValue, onUpdateProjPickerValue, onUpdateRunTop10DatePickerValue, onUpdateRunErrorTop10DatePickerValue, onUpdategetInterfaceTop10Data, t, datePickerRange }
   },
 
   render() {
@@ -108,13 +116,16 @@ const StateCard = defineComponent({
       RunSelectCurrent,
       RunSelect,
       RunErrorSelectCurrent,
+      ApiSelectCurrent,
       TaskPieData,
       RunTop10Data,
       RunErrorTop10Data,
+      ApiTop10Data,
       onUpdateDatePickerValue,
       onUpdateProjPickerValue,
       onUpdateRunTop10DatePickerValue,
       onUpdateRunErrorTop10DatePickerValue,
+      onUpdategetInterfaceTop10Data,
       loadingRef,
       datePickerRange
     } = this
@@ -165,13 +176,19 @@ const StateCard = defineComponent({
       { title: '出错次数', key: '出错次数' },
     ]);
 
+    const ApiTop10DataHeader = ref([
+      { title: '排名', key: '排名' },
+      { title: '接口地址', key: '接口地址' },
+      { title: '接口类型', key: '接口类型' },
+      { title: '接口访问次数', key: '接口访问次数' },
+    ]);
     return (
 
-      <Card title={' '} style={{}}>
+      <Card title={' '} style={{ minHeight: '1820px' }}>
         {{
           default: () => (
 
-            <NGrid x-gap={12} cols={1}>
+            <NGrid x-gap={12} cols={1} >
               <NGi>
                 <Card title={'任务状态统计'} style={{ height: '20vh' }}>
 
@@ -271,10 +288,8 @@ const StateCard = defineComponent({
                   </NSpace>
                 </Card>
               </NGi>
-
-
               <NGi >
-                <Card title={'实例运行时段分布'} style={{ height: '60vh' }}>
+                <Card title={'实例运行时段分布'} style={{ height: '60vh', flexWrap: "nowrap" }}>
                   {chartData.length > 0 && <ChartLineBox data={chartData} />}
                 </Card>
               </NGi>
@@ -300,7 +315,7 @@ const StateCard = defineComponent({
               </NGi>
               <NGi >
 
-                <NSpace justify='space-between' style={{ display: "flex", gap: "10px", flexWrap: "nowrap" }} >
+                <NSpace justify='space-between' style={{ display: "flex", gap: "5px", flexWrap: "nowrap" }} >
                   <Card style={{ height: '60vh', width: '50vw' }}>
                     <NSpace justify='space-between' style={{ height: '40px' }}>
                       <p style="font-size:16px;">作业运行时长排行TOP10</p>
@@ -322,7 +337,7 @@ const StateCard = defineComponent({
                   </Card>
 
 
-                  <Card style={{ height: '60vh', width: '30vw' }}>
+                  <Card style={{ height: '60vh', width: '35vw' }}>
                     <NSpace justify='space-between' style={{ height: '40px' }}>
                       <p style="font-size:16px;">作业运行出错排行TOP10</p>
                       <NSelect
@@ -343,6 +358,27 @@ const StateCard = defineComponent({
                   </Card>
                 </NSpace>
 
+              </NGi>
+              <NGi >
+                <Card style={{ height: '60vh' }}>
+                  <NSpace justify='space-between' style={{ height: '40px' }}>
+                    <p style="font-size:16px;">API调用次数TOP10</p>
+                    <NSelect
+                      size='small'
+                      value={ApiSelectCurrent}
+                      defaultValue='今天'
+                      options={RunSelect}
+                      style="width:150px;border: none; outline: none;"
+                      onUpdateValue={onUpdategetInterfaceTop10Data}
+                    />
+                  </NSpace>
+                  <NDataTable
+                    columns={ApiTop10DataHeader.value}
+                    data={ApiTop10Data}
+                    size='small'
+                  />
+
+                </Card>
               </NGi>
             </NGrid >
 

@@ -100,14 +100,14 @@ export default defineComponent({
     const Proj = ref()
     const ProjName = ref()
     const ProjSelect = ref()
-    const { getJobRunErrorTop10Data, getJobRuntimeTop10Data, getTaskStatisticsInfoData, getTaskState, taskVariables, getTaskData, getTaskDev, getProjData } = useTaskState()
+    const { getInterfaceTop10Data, getJobRunErrorTop10Data, getJobRuntimeTop10Data, getTaskStatisticsInfoData, getTaskState, taskVariables, getTaskData, getTaskDev, getProjData } = useTaskState()
     const { getProcessState, processVariables } = useProcessState()
     const route = useRoute()
     const router = useRouter()
     const TaskPie = ref()
     const RunTop10 = ref()
     const RunErrorTop10 = ref()
-
+    const ApiTop10 = ref()
     RunTop10.value = getJobRuntimeTop10Data(
       [new Date(new Date().setHours(0, 0, 0, 0)).getTime(),
       new Date(new Date().setHours(23, 59, 59, 999)).getTime()]
@@ -118,10 +118,16 @@ export default defineComponent({
       new Date(new Date().setHours(23, 59, 59, 999)).getTime()]
       , Proj.value
     )
+    ApiTop10.value = getInterfaceTop10Data(
+      [new Date(new Date().setHours(0, 0, 0, 0)).getTime(),
+      new Date(new Date().setHours(23, 59, 59, 999)).getTime()]
+      , Proj.value
+    )
+
     Proj.value = route.params.projectCode
     const RunSelectCurrent = ref()
     const RunErrorSelectCurrent = ref()
-
+    const ApiSelectCurrent = ref()
 
     const handleRunTop10Data = (val: any) => {
       RunTop10.value = getJobRuntimeTop10Data(val, Proj.value)
@@ -131,8 +137,12 @@ export default defineComponent({
     const handleRunErrorTop10Data = (val: any) => {
       RunErrorTop10.value = getJobRunErrorTop10Data(val, Proj.value)
       RunErrorSelectCurrent.value = RunSelect.value.filter(item => item.value[0] === val[0])[0].label;
-
     }
+    const handlegetInterfaceTop10Data = (val: any) => {
+      RunErrorTop10.value = getInterfaceTop10Data(val, Proj.value)
+      ApiSelectCurrent.value = RunSelect.value.filter(item => item.value[0] === val[0])[0].label;
+    }
+
     const handleTaskData = (val: any) => {
       taskDataRef.value = getTaskData([val], Proj.value)
       taskDevRef.value = getTaskDev([val], Proj.value)
@@ -233,6 +243,7 @@ export default defineComponent({
       handleProjData,
       handleRunTop10Data,
       handleRunErrorTop10Data,
+      handlegetInterfaceTop10Data,
       taskStateRef,
       processStateRef,
       taskDataRef,
@@ -242,9 +253,11 @@ export default defineComponent({
       RunSelectCurrent,
       RunSelect,
       RunErrorSelectCurrent,
+      ApiSelectCurrent,
       TaskPie,
       RunTop10,
       RunErrorTop10,
+      ApiTop10,
       ...toRefs(taskVariables),
       ...toRefs(processVariables)
     }
@@ -258,6 +271,7 @@ export default defineComponent({
       handleProjData,
       handleRunTop10Data,
       handleRunErrorTop10Data,
+      handlegetInterfaceTop10Data,
       taskLoadingRef,
       processLoadingRef,
       TaskPie
@@ -280,14 +294,16 @@ export default defineComponent({
               RunSelectCurrent={this.RunSelectCurrent}
               RunSelect={this.RunSelect}
               RunErrorSelectCurrent={this.RunErrorSelectCurrent}
+              ApiSelectCurrent={this.ApiSelectCurrent}
               TaskPieData={this.TaskPie?.value}
               RunTop10Data={this.RunTop10?.value.table}
               RunErrorTop10Data={this.RunErrorTop10?.value.table}
+              ApiTop10Data={this.ApiTop10?.value.table}
               onUpdateDatePickerValue={handleTaskData}
               onUpdateProjPickerValue={handleProjData}
               onUpdateRunTop10DatePickerValue={handleRunTop10Data}
               onUpdateRunErrorTop10DatePickerValue={handleRunErrorTop10Data}
-
+              onUpdategetInterfaceTop10Data={handlegetInterfaceTop10Data}
               loadingRef={taskLoadingRef}
             />
           </NGi>

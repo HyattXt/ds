@@ -21,7 +21,7 @@ import { toLower } from 'lodash'
 import { useI18n } from 'vue-i18n'
 import { countTaskState } from '@/service/modules/projects-analysis'
 import type { TaskStateRes } from '@/service/modules/projects-analysis/types'
-import { getJobRunErrorTop10, getJobRuntimeTop10, getTaskStatisticsInfo, queryUnauthorizedProject, getDataByProjectCodeAndDate, getStatisticsDataByProjectCodeAndDate } from '@/service/modules/devops-analysis'
+import { getInterfaceTop10, getJobRunErrorTop10, getJobRuntimeTop10, getTaskStatisticsInfo, queryUnauthorizedProject, getDataByProjectCodeAndDate, getStatisticsDataByProjectCodeAndDate } from '@/service/modules/devops-analysis'
 import { parseTime, renderTableTime, tasksState } from '@/common/common'
 
 import type { StateData } from './types'
@@ -248,6 +248,27 @@ export function useTaskState() {
 
     return state
   }
+  const getInterfaceTop10Data = (date: Array<any>, projectCode: any) => {
+    const { state } = useAsyncState(
+      getInterfaceTop10({
+        startTime: !date ? '' : format(date[0], 'yyyy-MM-dd HH:mm:ss'),
+        endTime: !date ? '' : format(date[1], 'yyyy-MM-dd HH:mm:ss'),
+        projectCode: projectCode
+      }).then(function (res) {
+        const table = res.map((item, index) => {
+          return {
+            排名: index,
+            接口地址: item.interfaceUrl,
+            接口类型: item.interfaceUrlType,
+            接口访问次数: item.interfaceNum,
+          }
+        });
+        return { table }
+      }),
+      { table: [] }
+    )
 
-  return { getTaskState, taskVariables, getTaskData, getTaskDev, getProjData, getTaskStatisticsInfoData, getJobRuntimeTop10Data, getJobRunErrorTop10Data }
+    return state
+  }
+  return { getTaskState, taskVariables, getTaskData, getTaskDev, getProjData, getTaskStatisticsInfoData, getJobRuntimeTop10Data, getJobRunErrorTop10Data, getInterfaceTop10Data }
 }
