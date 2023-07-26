@@ -79,7 +79,6 @@ const Navbar = defineComponent({
     return { handleMenuClick, menuKey  }
   },
   render() {
-    console.log(this.iconOptions);
     return (
       <div class={styles.container}>
         {window.webConfig.SHOW_LOGO ? <Logo /> :<div/>}
