@@ -62,6 +62,7 @@ export default {
   data_assets: 'Data Assets',
   assets_overview: 'Assets Overview',
   assets_catalog: 'Assets Catalog',
+  assets_query: 'Assets Query',
   rest: 'Http manager',
   rest_dev: 'Http development',
   rest_manager: 'Http manager',

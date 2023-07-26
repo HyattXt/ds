@@ -47,8 +47,20 @@ export default {
       name: 'assets-catalog',
       component: () => import('@/views/data-assets/catalog/index.vue'),
       meta: {
-        title: '资产目录-assets-catalog',
+        title: '全部数据-assets-catalog',
         activeMenu: 'data-assets',
+        showSide: true,
+        auth: []
+      }
+    },
+    {
+      path: '/data-assets/assets-query',
+      name: 'assets-query',
+      component: () => import('@/views/iframe/index.vue'),
+      meta: {
+        title: '数据探查-assets-query',
+        activeMenu: 'data-assets',
+        frameSrc: window.webConfig.VITE_APP_PROD_ASSETS_QUERY_URL,
         showSide: true,
         auth: []
       }
