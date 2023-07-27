@@ -63,7 +63,7 @@ import { ref} from 'vue'
   const colList = ref([])
   const SecondDevApiUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_API_URL
-    : import.meta.env.VITE_APP_PROD_API_URL
+    : window.webConfig.VITE_APP_PROD_API_URL
 
   const formValue = ref({
     sourceType: '',
@@ -88,34 +88,34 @@ import { ref} from 'vue'
 
   function queryDataSource() {
       formValue.value.source = ''
-      const url = SecondDevApiUrl+'/apiService/getDataSource?type='+formValue.value.sourceType
+      const url = SecondDevApiUrl+'/HDataApi/apiService/getDataSource?type='+formValue.value.sourceType
       axios.get(url).then(function (response) {
-      console.log(response)
+
       sList.value = response.data.data
     })
   }
 
   function queryTab() {
-    const url = SecondDevApiUrl+'/apiService/getTables'
+    const url = SecondDevApiUrl+'/HDataApi/apiService/getTables'
     let params = {
       type : formValue.value.sourceType,
       id : formValue.value.source
     }
     axios.post(url,params).then(function (response) {
-      console.log(response)
+
       tList.value = response.data.data
     })
   }
 
   function queryCol(table: string) {
-    const url = SecondDevApiUrl+'/apiService/getColumnsByTable'
+    const url = SecondDevApiUrl+'/HDataApi/apiService/getColumnsByTable'
     const params = {
       type : formValue.value.sourceType,
       id : formValue.value.source,
       tableName: table
     }
     axios.post(url, params).then(function (response) {
-      console.log(response)
+
       colList.value = response.data.data
     })
       submitValue()

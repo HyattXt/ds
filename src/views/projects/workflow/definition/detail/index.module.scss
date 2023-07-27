@@ -29,6 +29,15 @@ $bgLight: #ffffff;
   display: block;
 }
 
+.tree {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  height: calc(100vh - 280px);
+  overflow: hidden;
+  display: block;
+}
+
 .dark {
   border: solid 1px $borderDark;
   background-color: $bgDark;

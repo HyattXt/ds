@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-import { defineComponent, onMounted, ref } from 'vue'
+import {defineComponent, onBeforeUpdate, onMounted, onUpdated, PropType, ref, unref} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useThemeStore } from '@/store/theme/theme'
-import { useMessage } from 'naive-ui'
+import { useMessage} from 'naive-ui'
 import { useI18n } from 'vue-i18n'
 import Dag from '../../components/dag'
 import {
@@ -30,10 +30,24 @@ import {
   SaveForm,
   TaskDefinition,
   Connect,
-  Location
+  Location, WorkflowInstance
 } from '../../components/dag/types'
 import Styles from './index.module.scss'
 
+const props = {
+  code: {
+    type: Number as PropType<number>,
+    default: 0
+  },
+  projectCode: {
+    type: Number as PropType<number>,
+    default: 0
+  },
+  parentId: {
+    type: Number as PropType<number>,
+    default: 0
+  }
+}
 interface SaveData {
   saveForm: SaveForm
   taskDefinitions: TaskDefinition[]
@@ -43,20 +57,18 @@ interface SaveData {
 
 export default defineComponent({
   name: 'WorkflowDefinitionDetails',
-  setup() {
+  props,
+  setup(props, context) {
     const theme = useThemeStore()
     const route = useRoute()
     const router = useRouter()
     const message = useMessage()
     const { t } = useI18n()
-    const projectCode = Number(route.params.projectCode)
-    const code = Number(route.params.code)
-
     const definition = ref<WorkflowDefinition>()
     const readonly = ref(false)
     const isLoading = ref(true)
 
-    const refresh = () => {
+    const refresh = (code: number, projectCode: number) => {
       isLoading.value = true
       queryProcessDefinitionByCode(code, projectCode).then((res: any) => {
         readonly.value = res.processDefinition.releaseState === 'ONLINE'
@@ -64,6 +76,8 @@ export default defineComponent({
         isLoading.value = false
       })
     }
+
+    context.expose({ refresh })
 
     const save = ({
       taskDefinitions,
@@ -82,6 +96,9 @@ export default defineComponent({
 
       updateProcessDefinition(
         {
+          parentId: props.parentId,
+          projectCode: props.projectCode,
+          type: 2,
           taskDefinitionJson: JSON.stringify(taskDefinitions),
           taskRelationJson: JSON.stringify(connects),
           locations: JSON.stringify(locations),
@@ -93,18 +110,21 @@ export default defineComponent({
           timeout: saveForm.timeoutFlag ? saveForm.timeout : 0,
           releaseState: saveForm.release ? 'ONLINE' : 'OFFLINE'
         },
-        code,
-        projectCode
+        !!props.code ? props.code : Number(route.query.code),
+        props.projectCode
       ).then((ignored: any) => {
         message.success(t('project.dag.success'))
-        router.push({ path: `/projects/${projectCode}/workflow-definition` })
+        router.push({ path: `/projects/${props.projectCode}/workflow-definition` })
       })
     }
 
-    onMounted(() => {
-      if (!code || !projectCode) return
+    /*onMounted(() => {
+      
+      
+
+      if (!props.code || !props.projectCode) return
       refresh()
-    })
+    })*/
 
     return () => (
       <div
@@ -114,13 +134,14 @@ export default defineComponent({
         ]}
       >
         {!isLoading.value && (
-          <Dag
-            definition={definition.value}
-            onRefresh={refresh}
-            projectCode={projectCode}
-            onSave={save}
-            readonly={readonly.value}
-          />
+            <Dag
+                definition={definition.value}
+                onRefresh={refresh}
+                projectCode={props.projectCode}
+                processCode={props.code}
+                onSave={save}
+                readonly={readonly.value}
+            />
         )}
       </div>
     )

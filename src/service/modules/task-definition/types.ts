@@ -45,6 +45,10 @@ interface TaskDefinitionJsonObjReq {
   taskDefinitionJsonObj: string
 }
 
+interface SqlColumnJsonObjReq {
+  sql: string
+}
+
 interface ReleaseStateReq {
   releaseState: 'OFFLINE' | 'ONLINE'
 }
@@ -128,6 +132,13 @@ interface ISingleSaveReq {
   taskDefinitionJsonObj: string
 }
 
+interface IInitSaveReq {
+  processDefinitionCode?: number
+  upstreamCodes: string
+  taskDefinitionJsonObj: string
+  locations: string
+}
+
 export {
   PageReq,
   ListReq,
@@ -136,11 +147,13 @@ export {
   TaskDefinitionJsonReq,
   CodeReq,
   TaskDefinitionJsonObjReq,
+  SqlColumnJsonObjReq,
   ReleaseStateReq,
   VersionReq,
   TaskDefinitionItem,
   TaskDefinitionRes,
   TaskDefinitionVersionItem,
   TaskDefinitionVersionRes,
-  ISingleSaveReq
+  ISingleSaveReq,
+  IInitSaveReq
 }

@@ -6,7 +6,7 @@
     <n-table :single-line="false" style="margin-top: 10px">
       <thead>
       <tr>
-        <th class="tableWidth" v-for="(value,key) in dataInfo[0]">{{ key.replace(route.query.tableName+'.','') }}</th>
+        <th class="tableWidth" v-for="(value,key) in dataInfo[0]">{{ key.replace(tableName+'.','') }}</th>
       </tr>
       </thead>
       <tbody>
@@ -28,18 +28,19 @@ import {useMessage} from "naive-ui";
 const dataInfo =ref([])
 const route = useRoute()
 const message = useMessage()
+const tableName = ref(history.state.tableName)
 
 onMounted(() => {
   const url = import.meta.env.MODE === 'development'
-      ? import.meta.env.VITE_APP_DEV_ASSETS_URL+'/lineage/getTableDataByTableName'
-      : import.meta.env.VITE_APP_PROD_ASSETS_URL+'/lineage/getTableDataByTableName'
+      ? import.meta.env.VITE_APP_DEV_ASSETS_URL+'/HDataApi/interface_lineage/getTableDataByTableName'
+      : window.webConfig.VITE_APP_PROD_ASSETS_URL+'/HDataApi/interface_lineage/getTableDataByTableName'
   let params ={
-    tableName: route.query.tableName
+    tableName: history.state.tableName
   }
   axios
       .post(url,params)
       .then(function (response) {
-        console.log(response)
+
         dataInfo.value = response.data.data
       })
       .catch(function () {

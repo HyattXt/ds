@@ -16,7 +16,17 @@
  */
 
 import { axios } from '@/service/service'
-import { ListReq, ProjectsReq, UserIdReq, UpdateProjectsReq } from './types'
+import {
+  ListReq,
+  ProjectsReq,
+  UserIdReq,
+  UpdateProjectsReq,
+  TreeMenuReq,
+  TreeMenuCreate,
+  TreeMenuRename,
+  WorkflowRename,
+  FolderMove, FolderDel, WorkflowMove
+} from './types'
 
 export function queryProjectListPaging(params: ListReq): any {
   return axios({
@@ -83,5 +93,85 @@ export function deleteProject(code: number): any {
   return axios({
     url: `/projects/${code}`,
     method: 'delete'
+  })
+}
+
+export function queryTreeMenu(data: TreeMenuReq): any {
+  return axios({
+    url: '/tree/getTreeAll',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    transformRequest: (params) => JSON.stringify(params)
+  })
+}
+
+export function queryTreeFolder(data: TreeMenuReq): any {
+  return axios({
+    url: '/tree/getTreeFloder',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    transformRequest: (params) => JSON.stringify(params)
+  })
+}
+
+export function createTreeMenu(data: TreeMenuCreate): any {
+  return axios({
+    url: '/tree/insert',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    transformRequest: (params) => JSON.stringify(params)
+  })
+}
+
+export function renameTreeMenu(code: number,data: TreeMenuRename): any {
+  return axios({
+    url: `/projects/${code}/process-definition/folderRename`,
+    method: 'post',
+    data
+  })
+}
+
+export function renameWorkflow(code: number,data: WorkflowRename): any {
+  return axios({
+    url: `/projects/${code}/process-definition/rename`,
+    method: 'post',
+    data
+  })
+}
+
+export function moveFolder(code: number,data: FolderMove): any {
+  return axios({
+    url: `/projects/${code}/process-definition/folderMove`,
+    method: 'post',
+    data
+  })
+}
+
+export function moveWorkflow(code: number,data: WorkflowMove): any {
+  return axios({
+    url: `/projects/${code}/process-definition/move`,
+    method: 'post',
+    data
+  })
+}
+
+export function delFolder(data: FolderDel): any {
+  return axios({
+    url: `/tree/delete`,
+    method: 'delete',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    transformRequest: (params) => JSON.stringify(params)
   })
 }

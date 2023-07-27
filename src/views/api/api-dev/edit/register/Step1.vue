@@ -24,6 +24,17 @@
         placeholder="以/开头"
       />
     </n-form-item>
+    <n-form-item label="API目录" path="apiMenu">
+      <n-tree-select
+          v-model:value="formValue.apiTreeId"
+          default-value="1"
+          :options="folderData"
+          key-field="id"
+          label-field="titleName"
+          children-field="children"
+          placeholder="请选择API目录"
+      />
+    </n-form-item>
     <n-form-item label="请求方式" path="apiMethod">
       <n-select
         v-model:value="formValue.apiMethod"
@@ -85,11 +96,15 @@ import { onMounted, ref} from 'vue'
   const isDisable = ref(false)
   const kvValue = ref([])
   const bodyValue = ref([])
+  const folderData = ref([])
   const emit = defineEmits(['nextStep'])
   const route = useRoute()
   const SecondDevApiUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_API_URL
-    : import.meta.env.VITE_APP_PROD_API_URL
+    : window.webConfig.VITE_APP_PROD_API_URL
+  const getApiTreeUrl = import.meta.env.MODE === 'development'
+    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getApiTreeFloder'
+    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getApiTreeFloder'
   const formValue = ref({
     apiName: '',
     apiPath: '',
@@ -98,7 +113,8 @@ import { onMounted, ref} from 'vue'
     comment: '',
     apiIpaddr: '',
     apiFlag: 2,
-    apiSample: ''
+    apiSample: '',
+    apiTreeId: ''
   })
 
   const rules = {
@@ -132,7 +148,7 @@ import { onMounted, ref} from 'vue'
   function formSubmit() {
     form1Ref.value.validate((errors: any) => {
       if (!errors) {
-        let insUrl = SecondDevApiUrl+'/interface/update'
+        let insUrl = SecondDevApiUrl+'/HDataApi/interface/update'
         let sample = {
           requestHeader: [],
           requestBody: {},
@@ -152,15 +168,15 @@ import { onMounted, ref} from 'vue'
         for (let i = 0; i < bodyList.length; i++) {
           requestBody[bodyList[i].key] = bodyList[i].value
         }
-        console.log(requestHeader)
+
         sample.requestHeader = requestHeader
         sample.requestBody = requestBody
         formValue.value.apiSample = JSON.stringify(sample, null, 2)
-        console.log(formValue.value)
+
         axios
           .post(insUrl, formValue.value)
           .then(function (response) {
-            console.log(response)
+
             message.info('修改成功！')
             isDisable.value = true
             formValue.value.apiPath = formValue.value.apiPath.replace(
@@ -178,15 +194,22 @@ import { onMounted, ref} from 'vue'
     })
   }
 
+function getTreeFolder ()  {
+  axios.get(getApiTreeUrl).then((res) => {
+    folderData.value = res.data.data
+  })
+}
+
   onMounted(() => {
-    let url = SecondDevApiUrl+'/interface/getInterfaceInfoById'
+    getTreeFolder()
+    let url = SecondDevApiUrl+'/HDataApi/interface/getInterfaceInfoById'
     let params = { apiId: '' }
     params.apiId = route.query.apiId
-    console.log(params)
+
     axios
       .post(url, params)
       .then(function (response) {
-        console.log(response.data)
+
         formValue.value = response.data.obj
         bodyValue.value = Object.entries(
           JSON.parse(JSON.parse(formValue.value.apiSample).requestBody)

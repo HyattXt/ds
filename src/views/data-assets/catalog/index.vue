@@ -36,16 +36,36 @@
       </n-space>
     </n-card>
     <n-card>
-      <n-data-table
-        ref="table"
-        remote
-        :columns="columns"
-        :data="data"
-        :loading="loading"
-        :pagination="pagination"
-        :row-key="rowKey"
-        @update:page="handlePageChange"
-      />
+      <n-grid x-gap="2" :cols="6">
+        <n-gi span="1">
+          <n-card size="small" class="container">
+            <n-tree
+                block-line
+                show-irrelevant-nodes
+                :data="treeFolder"
+                key-field="id"
+                label-field="titleName"
+                children-field="children"
+                :render-prefix="menuIcon"
+                :nodeProps="nodeProps"
+                default-expand-all
+            />
+          </n-card>
+        </n-gi>
+        <n-gi span="5">
+          <n-data-table
+            ref="table"
+            remote
+            :columns="columns"
+            :data="data"
+            :loading="loading"
+            :row-key="rowKey"
+            :pagination="pagination"
+            @update:page="handlePageChange"
+            default-expand-all
+          />
+        </n-gi>
+      </n-grid>
     </n-card>
   </n-space>
 </template>
@@ -54,14 +74,40 @@
 import {defineComponent, ref, reactive, onMounted, h} from 'vue'
 import axios from 'axios'
 import {
+  ApartmentOutlined,
   ProfileOutlined,
-  SearchOutlined
+  SearchOutlined,
+  TableOutlined
 } from '@vicons/antd'
-import {NButton, NIcon, NSpace, NTooltip, useMessage} from "naive-ui";
+import {NButton, NIcon, NSpace, NTooltip, NDescriptions, NDescriptionsItem, useMessage, NCard, NGrid, NGi} from "naive-ui";
 import {useRouter} from "vue-router";
 
 const columns = ({ play }) => {
     return [
+      {
+        type: 'expand',
+        renderExpand: (rowData) => {
+          return h(NGrid,{cols:16},[
+              h(NGi,{span:1},null),
+              h(NGi,{span:15},
+                h(NDescriptions, { labelPlacement: 'left', size: "small"} , [
+                  h(NDescriptionsItem,  { label: '数据行数', labelStyle: 'color:grey; font-size:13px', contentStyle: 'font-size:13px' } , {default: () => rowData.tableDataRow}),
+                  h(NDescriptionsItem,  { label: '表大小', labelStyle: 'color:grey; font-size:13px', contentStyle: 'font-size:13px' } , {default: () => rowData.tableDataLength}),
+                  h(NDescriptionsItem,  { label: '创建时间', labelStyle: 'color:grey; font-size:13px', contentStyle: 'font-size:13px' } , {default: () => rowData.tableCreateTime}),
+                  h(NDescriptionsItem,  { label: '更新时间', labelStyle: 'color:grey; font-size:13px', contentStyle: 'font-size:13px' } , {default: () => rowData.tableUpdateTime})
+          ])
+             )
+              ]
+          )
+        }
+      },
+      {
+        title: '#',
+        key: 'id',
+        render: (_, index) => {
+          return `${index + 1}`
+        }
+      },
       {
         title: '表名',
         key: 'sqlLineageName'
@@ -69,6 +115,10 @@ const columns = ({ play }) => {
       {
         title: '注释',
         key: 'notes'
+      },
+      {
+        title: '任务流',
+        key: 'taskName'
       },
       {
         title: '数据库',
@@ -120,57 +170,6 @@ const columns = ({ play }) => {
     totalNum: 0
   })
 
-  function query(
-    page,
-    pageSize = 10,
-    sqlLineageName = ''
-  ) {
-    return new Promise((resolve) => {
-      const url = import.meta.env.MODE === 'development'
-          ? import.meta.env.VITE_APP_DEV_ASSETS_URL+'/lineage/getSqlLineageListByParams'
-          : import.meta.env.VITE_APP_PROD_ASSETS_URL+'/lineage/getSqlLineageListByParams'
-      const params = {
-        'pageNum': page,
-        'pageSize': pageSize,
-        'sqlLineageName': sqlLineageName
-      }
-
-      axios
-        .post(url, params)
-        .then(function (response) {
-          console.log(response)
-          TableData.tableList = response.data.data
-          TableData.totalNum = response.data.totalNum
-          TableData.tableList.dbType = TableData.tableList.forEach((item) => {
-            if (item.dbType === '0') {
-              item.dbType = 'mysql'
-            }
-            if (item.dbType === '5') {
-              item.dbType = 'oracle'
-            }
-          })
-          console.log(TableData.tableList)
-          console.log(TableData.totalNum)
-          const copiedData = TableData.tableList.map((v) => v)
-          const total = TableData.totalNum
-          const pageCount = Math.ceil(total / pageSize)
-
-          setTimeout(
-            () =>
-              resolve({
-                pageCount,
-                data: copiedData,
-                total
-              }),
-            300
-          )
-        })
-        .catch(function (error) {
-          console.log(error)
-        })
-    })
-  }
-
   export default defineComponent({
     setup() {
       const dataRef = ref([])
@@ -178,13 +177,17 @@ const columns = ({ play }) => {
       const loadingRef = ref(true)
       const loadingMeta = ref(false)
       const message = useMessage()
+      const treeFolder = ref([])
+      const getApiFolderUrl = import.meta.env.MODE === 'development'
+          ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface_lineage/getTreeAll'
+          : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface_lineage/getTreeAll'
       const columnsRef = ref(
           columns(
               {
                 play(row) {
                   router.push({
-                        path: '/data-assets/assets-detail',
-                        query: {tableName: row.sqlLineageName, tableComment: row.notes, dbType: row.dbType, fieldArray: row.fieldArray}
+                        name: 'assets-detail',
+                        state: {tableName: row.sqlLineageName, tableComment: row.notes, dbType: row.dbType, fieldArray: row.fieldArray}
                       }
                   )
                 }
@@ -196,19 +199,75 @@ const columns = ({ play }) => {
         pageCount: 1,
         pageSize: 10,
         sqlLineageName: '',
+        apiTreeId: 1,
         prefix({ itemCount }) {
           return `共${itemCount}条`
         }
       })
 
+      function query(
+          page,
+          pageSize = 10,
+          sqlLineageName = '',
+          apiTreeId = 1
+      ) {
+        const url = import.meta.env.MODE === 'development'
+            ? import.meta.env.VITE_APP_DEV_ASSETS_URL+'/HDataApi/interface_lineage/getSqlLineageListByParams'
+            : window.webConfig.VITE_APP_PROD_ASSETS_URL+'/HDataApi/interface_lineage/getSqlLineageListByParams'
+        const params = {
+          'pageNum': page,
+          'pageSize': pageSize,
+          'sqlLineageName': sqlLineageName,
+          'apiTreeId': apiTreeId
+        }
+
+        axios
+            .post(url, params)
+            .then(function (response) {
+
+              TableData.tableList = response.data.data
+              TableData.totalNum = response.data.totalNum
+              TableData.tableList.forEach((item) => {
+                if (item.dbType === '0') {
+                  item.dbType = 'mysql'
+                }
+                if (item.dbType === '5') {
+                  item.dbType = 'oracle'
+                }
+              })
+              dataRef.value = TableData.tableList.map((v) => v)
+              paginationReactive.itemCount = TableData.totalNum
+              paginationReactive.pageCount = Math.ceil(TableData.totalNum / pageSize)
+              loadingRef.value = false
+            })
+            .catch(function (error) {
+              console.log(error)
+            })
+      }
+
+      function nodeProps ({option}) {
+        return {
+          onClick() {
+            paginationReactive.apiTreeId = option.id
+            paginationReactive.page = 1
+            query(
+                paginationReactive.page,
+                paginationReactive.pageSize,
+                paginationReactive.sqlLineageName,
+                paginationReactive.apiTreeId
+            )
+          }
+        }
+      }
+
       function handleMetadata() {
         let url = import.meta.env.MODE === 'development'
-            ? import.meta.env.VITE_APP_DEV_ASSETS_URL+'/lineage/sqlLineageExcute'
-            : import.meta.env.VITE_APP_PROD_ASSETS_URL+'/lineage/sqlLineageExcute'
+            ? import.meta.env.VITE_APP_DEV_ASSETS_URL+'/HDataApi/interface_lineage/sqlLineageExcute'
+            : window.webConfig.VITE_APP_PROD_ASSETS_URL+'/HDataApi/interface_lineage/sqlLineageExcute'
         axios
             .get(url)
             .then(function (response) {
-              console.log(response)
+
               loadingMeta.value = true
               message.info('采集中，请稍后查看')
               setTimeout(() => {
@@ -219,17 +278,43 @@ const columns = ({ play }) => {
               message.error('采集数据失败，请咨询管理员')
             })
       }
+
+      function getApiFolder ()  {
+        let params ={}
+        axios.post(getApiFolderUrl,params).then((res) => {
+          treeFolder.value = res.data.data
+        })
+      }
+
+      function menuIcon({ option }) {
+        switch (option.type) {
+          case 1 : return  h(NIcon, {
+            color: '#1890ff'
+          }, [
+            h('svg', {
+              xmlns: 'http://www.w3.org/2000/svg',
+              viewBox: '0 0 1260 1024',
+              width: ' 19.688',
+              height: '16'
+            }, [
+              h('path', {
+                d: 'M1171.561 157.538H601.797L570.814 61.44A88.222 88.222 0 00486.794 0H88.747A88.747 88.747 0 000 88.747v846.506A88.747 88.747 0 0088.747 1024H1171.56a88.747 88.747 0 0088.747-88.747V246.285a88.747 88.747 0 00-88.747-88.747zm-1082.814 0V88.747h398.047l22.055 68.791z'
+              })
+            ])
+          ])
+          case 2 : return h(NIcon, {color: '#1890ff'}, { default: () => h(ApartmentOutlined) })
+          default : return h(NIcon, {color: '#1890ff'}, { default: () => h(TableOutlined) })
+        }
+      }
+
       onMounted(() => {
+        getApiFolder()
         query(
           paginationReactive.page,
           paginationReactive.pageSize,
-          paginationReactive.sqlLineageName
-        ).then((data) => {
-          dataRef.value = data.data
-          paginationReactive.pageCount = data.pageCount
-          paginationReactive.itemCount = data.total
-          loadingRef.value = false
-        })
+          paginationReactive.sqlLineageName,
+          paginationReactive.apiTreeId
+        )
       })
 
       return {
@@ -239,9 +324,12 @@ const columns = ({ play }) => {
         loadingMeta,
         columns: columnsRef,
         SearchOutlined,
+        menuIcon,
+        treeFolder,
+        nodeProps,
         handleMetadata,
         rowKey(rowData) {
-          return rowData.colName
+          return rowData.id
         },
         handlePageChange(currentPage) {
           if (!loadingRef.value) {
@@ -249,14 +337,10 @@ const columns = ({ play }) => {
             query(
               currentPage,
               paginationReactive.pageSize,
-              paginationReactive.sqlLineageName
-            ).then((data) => {
-              dataRef.value = data.data
-              paginationReactive.page = currentPage
-              paginationReactive.pageCount = data.pageCount
-              paginationReactive.itemCount = data.total
-              loadingRef.value = false
-            })
+              paginationReactive.sqlLineageName,
+              paginationReactive.apiTreeId
+            )
+            paginationReactive.page = currentPage
           }
         }
       }
@@ -267,5 +351,31 @@ const columns = ({ play }) => {
 <style scoped>
   a {
     text-decoration: none;
+  }
+
+  .container {
+    width: 100%;
+    min-height: calc(100vh - 230px);
+    height: 100%;
+    overflow: auto;
+    white-space: nowrap
+  }
+
+  .container::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width : 10px;  /*高宽分别对应横竖滚动条的尺寸*/
+    height: 5px;
+  }
+  .container::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 10px;
+    box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+    background   : #b9b9b9;
+  }
+  .container::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+    box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background   : #ededed;
   }
 </style>

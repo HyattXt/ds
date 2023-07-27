@@ -1,0 +1,170 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.drawer {
+    margin-top: 56px;
+    height: 85vh
+}
+
+::-webkit-scrollbar {
+  width: 0.2vw;
+  background-color: rgba(192, 192, 192, 0);
+}
+
+.diy_overlay {
+  width: 3vw;
+  background-color: red;
+  height: 3vw;
+}
+
+// #plumbContent {
+//   position: relative;
+// }
+.content {
+  display: flex;
+  justify-content: space-around;
+  user-select: none;
+  padding: 1vw;
+  position: relative;
+  overflow: scroll;
+  // height: 28vw;
+}
+
+.right,
+  // .left {
+  //   // padding-right: 1vw;
+  //   color: #000000;
+  //   width: 10%;
+  //   //position: relative;
+  //   text-align: center;
+
+  //   .top {
+  //     border: none;
+  //     font-size: 0.8vw;
+  //     font-weight: 600;
+  //     color: #000000;
+  //   }
+
+  //   .bottom {
+  //     //position: relative;
+  //     height: 25vw;
+  //     overflow-y: scroll;
+  //     padding-right: 2vw;
+  //     border: 1px #000000 solid;
+  //     //margin: 0 auto;
+  //     width: 80%;
+  //     margin-top: 0.5vw;
+
+  //     li {
+  //       list-style: none;
+  //       display: inline-block;
+  //       margin-top: 1vw;
+  //       width: 100%;
+  //       cursor: pointer;
+  //       min-width: 5vw;
+  //       text-align: center;
+  //       border: 1px #000000 solid;
+  //     }
+  //   }
+  // }
+
+.cols {
+  // padding-right: 1vw;
+  color: #000000;
+  width: 25%;
+  //position: relative;
+  text-align: center;
+
+  //margin-left:1px;
+  .top {
+    border: none;
+    width: 180px;
+    font-size: 0.8vw;
+    font-weight: 600;
+    color: #000000;
+    padding-left: 2vw;
+  }
+
+  .bottom {
+    //position: relative;
+    //height: 5vw;
+    //overflow-y: scroll;
+    padding-right: 2vw;
+    //border: 1px #000000 solid;
+    //margin: 0 auto;
+
+    //width: 80%;
+    margin-top: 0.5vw;
+
+    li {
+      list-style: none;
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 20ch; /* 20个中文字符长度或者20个英文字母长度，ch是CSS3的单位，表示数字0的宽度 */
+      margin-top: 1vw;
+      width: 100%;
+      cursor: pointer;
+      min-width: 5vw;
+      text-align: center;
+      //border: 1px #000000 solid;
+      border-bottom: 1px dashed #111;
+      text-decoration: none;
+    }
+  }
+}
+
+// .right {
+//   width: 10%;
+
+//   .bottom {
+//     li {
+//       color: #000000;
+//       border: 1px #000000 solid;
+//       padding: 1vw 0;
+
+//       div {
+//         border: 1px #000000 solid;
+//         border-radius: 3px;
+//         display: inline-block;
+//         margin-left: 0.5vw;
+//         padding: 0 0.2vw;
+//       }
+//     }
+//   }
+// }
+
+.endpointLabel {
+  color: red;
+  font-size: 0.5vw;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.button {
+  background-color: rgb(24, 144, 255);
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 5px;
+  margin: 4px 2px;
+  cursor: pointer;
+}

@@ -30,5 +30,10 @@
     display: flex;
     flex: 1;
     justify-content: flex-end;
+
+    :global(.n-menu .n-submenu .n-menu-item-content) {
+      height: var(--n-item-height);
+      padding: 0 10px;
+    }
   }
 }

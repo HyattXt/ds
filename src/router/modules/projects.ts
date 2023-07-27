@@ -28,7 +28,7 @@ export default {
   meta: {
     title: '项目管理'
   },
-  redirect: { name: 'projects-list' },
+  redirect: { name: 'projects-overview' },
   component: () => import('@/layouts/content'),
   children: [
     {
@@ -56,9 +56,10 @@ export default {
     {
       path: '/projects/:projectCode/workflow/relation',
       name: 'workflow-relation',
-      component: components['projects-workflow-relation'],
+      //component: components['projects-workflow-relation'],
+      component: components['projects-workflow-treemap'],
       meta: {
-        title: '工作流关系',
+        title: '工作流定义',
         activeMenu: 'projects',
         showSide: true,
         auth: []
@@ -69,7 +70,7 @@ export default {
       name: 'workflow-definition-list',
       component: components['projects-workflow-definition'],
       meta: {
-        title: '工作流定义',
+        title: '工作流管理',
         activeMenu: 'projects',
         showSide: true,
         auth: []

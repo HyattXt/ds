@@ -56,7 +56,6 @@ export const TASK_TYPES_MAP = {
   },
   MR: {
     alias: 'MapReduce',
-    helperLinkDisable: true
   },
   PYTHON: {
     alias: 'PYTHON'
@@ -75,28 +74,23 @@ export const TASK_TYPES_MAP = {
   },
   SQOOP: {
     alias: 'SQOOP',
-    helperLinkDisable: true
   },
   CONDITIONS: {
     alias: 'CONDITIONS'
   },
   DATA_QUALITY: {
     alias: 'DATA_QUALITY',
-    helperLinkDisable: true
   },
   SWITCH: {
     alias: 'SWITCH'
   },
   SEATUNNEL: {
     alias: 'SeaTunnel',
-    helperLinkDisable: true
   },
   EMR: {
     alias: 'AmazonEMR',
-    helperLinkDisable: true
   },
   ZEPPELIN: {
     alias: 'ZEPPELIN',
-    helperLinkDisable: true
   }
 } as { [key in TaskType]: { alias: string; helperLinkDisable?: boolean } }

@@ -46,10 +46,10 @@ export function useHttp(model: { [field: string]: any }): IJsonItem[] {
   const restOptions = ref([] as { label: string; value: number }[])
   const restUrl = import.meta.env.MODE === 'development'
       ? import.meta.env.VITE_APP_DEV_REST_URL
-      : import.meta.env.VITE_APP_PROD_REST_URL
+      : window.webConfig.VITE_APP_PROD_REST_URL
 
   function queryRestSourceList() {
-    let restOptionUrl = restUrl+'/httpHandle/getHttpDataListByParams'
+    let restOptionUrl = restUrl+'/HDataApi/httpHandle/getHttpDataListByParams'
     const params = {
       'pageNum': 1,
       'pageSize': 100,
@@ -79,7 +79,7 @@ export function useHttp(model: { [field: string]: any }): IJsonItem[] {
       type: 'input',
       field: 'url',
       name: t('project.node.http_url'),
-      value: 'http://localhost:8187/httpHandle/schedulerHttpDataHandle',
+      value: 'http://localhost:8187/HDataApi/httpHandle/schedulerHttpDataHandle',
       props: {
         placeholder: t('project.node.http_url_tips')
       },

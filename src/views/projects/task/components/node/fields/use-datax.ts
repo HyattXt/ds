@@ -14,10 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {ref, onMounted, watch, computed} from 'vue'
+import {ref, onMounted, watch, computed, h, onBeforeUnmount, onUpdated} from 'vue'
 import { useI18n } from 'vue-i18n'
-import {useCreateTable, useCustomParams, useDatasource} from '.'
+import {useCreateTable, useCustomParams, useDatasource, useColumnJsplumb} from '.'
 import type { IJsonItem } from '../types'
+import styles from "@/views/projects/task/components/node/index.module.scss";
+import {cloneDeep, lowerCase} from "lodash";
+import {queryTaskConnect} from "@/service/modules/task-definition";
 
 export function useDataX(model: { [field: string]: any }): IJsonItem[] {
   const { t } = useI18n()
@@ -97,36 +100,199 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
     }
   ]
 
-  const sqlEditorSpan = ref(24)
+  const sqlEditorSpan = ref(0)
   const jsonEditorSpan = ref(0)
-  const datasourceSpan = ref(12)
+  const datasourceSpan = ref(6)
   const destinationDatasourceSpan = ref(8)
   const otherStatementSpan = ref(22)
-  const jobSpeedSpan = ref(12)
+  const jobSpeedSpan = ref(6)
   const customParameterSpan = ref(0)
-  const autoCreSpanMiddle = computed(() => (model.autoCreate ? 12 : 0))
-  const autoCreSpanShort = computed(() => (model.autoCreate ? 5 : 0))
-  const autoCreSpanLong = computed(() => (model.autoCreate ? 24 : 0))
+  const executeModeSpan = ref(12)
+  const sourceTableSpan = ref(12)
+  const sourceDatabaseSpan  = ref(0)
+  const targetTableSpan = ref(12)
+  const targetDatabaseSpan  = ref(0)
+  const tagSpan = ref (12)
+  const autoCreate = computed(() => (model.executeMode==0 ? 24 : 0))
+  const autoCreSpanMiddle = computed(() => (model.executeMode==0 && model.autoCreate ? 6 : 0))
+  const autoCreSpanShort = computed(() => (model.executeMode==0 && model.autoCreate ? 2 : 0))
+  const autoCreSpanLong = computed(() => (model.executeMode==0 && model.autoCreate ? 24 : 0))
   const tips = computed(() => (model.dsType=='MYSQL' ? '表名' : '库名.表名'))
-
+  const sourceConnect = ref({
+    jdbcUrl: '',
+    password: '',
+    user: '',
+    database: ''
+  })
+  const targetConnect = ref({
+    jdbcUrl: '',
+    password: '',
+    user: '',
+    database: ''
+  })
 
   const initConstants = () => {
-    if (model.customConfig) {
+    /*if (model.jsonConfig) {
       sqlEditorSpan.value = 0
-      jsonEditorSpan.value = 24
+      sourceTableSpan.value = 0
+      sourceDatabaseSpan.value = 0
+      targetTableSpan.value = 0
+      targetDatabaseSpan.value = 0
       datasourceSpan.value = 0
+      jsonEditorSpan.value = 24
       destinationDatasourceSpan.value = 0
       otherStatementSpan.value = 0
       jobSpeedSpan.value = 0
-      customParameterSpan.value = 24
-    } else {
-      sqlEditorSpan.value = 24
-      jsonEditorSpan.value = 0
-      datasourceSpan.value = 12
-      destinationDatasourceSpan.value = 8
-      otherStatementSpan.value = 22
-      jobSpeedSpan.value = 12
       customParameterSpan.value = 0
+    } else {*/
+      sqlEditorSpan.value = model.executeMode === '0' ? 0 : 24
+      sourceTableSpan.value = model.executeMode=== '1' ? 0 : (model.dsType=='ORACLE' || model.dsType=='SQLSERVER'? 6: 12)
+      sourceDatabaseSpan.value = model.executeMode === '0' && (model.dsType=='ORACLE' || model.dsType=='SQLSERVER') ? 6 : 0
+      targetTableSpan.value = model.dtType=='ORACLE' || model.dsType=='SQLSERVER'? 6: 12
+      targetDatabaseSpan.value = model.dtType=='ORACLE' || model.dsType=='SQLSERVER'? 6: 0
+      datasourceSpan.value = 6
+      jsonEditorSpan.value = model.jsonConfig ? 24 : 0
+      destinationDatasourceSpan.value = 6
+      otherStatementSpan.value = 22
+      jobSpeedSpan.value = 6
+      customParameterSpan.value = 0
+    //}
+  }
+
+  const getConnect = (id: number, type: string)=>{
+    queryTaskConnect(id).then(
+        (res: any) => {
+          if(type=='dataSource'){ sourceConnect.value = res } else { targetConnect.value = res }
+        }
+    )
+  }
+
+  const saveJson = () =>{
+    if(model.executeMode == '0'){
+      model.json = JSON.stringify({
+        "job": {
+          "content": [
+            {
+              "reader": {
+                "name": lowerCase(['ORACLE','SQLSERVER','MYSQL','POSTGRESQL'].includes(model.dsType)? model.dsType : 'rdbms')+"reader",
+                "parameter": {
+                  "column":  model.leftList,
+                  "connection": [
+                    {
+                      "jdbcUrl": [
+                        sourceConnect.value.jdbcUrl
+                      ],
+                      "table": [
+                        model.dsType=='ORACLE' || model.dsType=='SQLSERVER' ? model.sourceDatabase+'.'+model.sourceTable : model.sourceTable
+                      ]
+                    }
+                  ],
+                  "fetchSize": 1024,
+                  "incrementColumn": "",
+                  "incrementStrategy": "NONE",
+                  "password": sourceConnect.value.password,
+                  "splitPk": "",
+                  "username": sourceConnect.value.user,
+                  "where": ""
+                }
+              },
+              "writer": {
+                "name": lowerCase(['ORACLE','SQLSERVER','MYSQL','POSTGRESQL'].includes(model.dtType)? model.dtType : 'rdbms')+"writer",
+                "parameter": {
+                  "batchSize": 1024,
+                  "column": model.rightList,
+                  "connection": [
+                    {
+                      "jdbcUrl": targetConnect.value.jdbcUrl,
+                      "table": [
+                        model.dtType=='ORACLE' || model.dtType=='SQLSERVER' ? model.targetDatabase+'.'+model.targetTable : model.targetTable
+                      ]
+                    }
+                  ],
+                  "password": targetConnect.value.password,
+                  "postSql": model.postStatements,
+                  "preSql": model.preStatements,
+                  "username": targetConnect.value.user
+                }
+              }
+            }
+          ],
+          "setting": {
+            "errorLimit": {
+              "percentage": "0",
+              "record": "0"
+            },
+            "speed": {
+              "channel": "1",
+              "byte": model.jobSpeedByte,
+              "record": model.jobSpeedRecord
+            }
+          }
+        }
+      },null,4)}
+    else
+    {
+      model.json = JSON.stringify({
+        "job": {
+          "content": [
+            {
+              "reader": {
+                "name": lowerCase(['ORACLE','SQLSERVER','MYSQL','POSTGRESQL'].includes(model.dsType)? model.dsType : 'rdbms')+"reader",
+                "parameter": {
+                  "column":  model.leftList,
+                  "connection": [
+                    {
+                      "jdbcUrl": [
+                        sourceConnect.value.jdbcUrl
+                      ],
+                      "querySql": [
+                        model.sql
+                      ]
+                    }
+                  ],
+                  "fetchSize": 1024,
+                  "incrementColumn": "",
+                  "incrementStrategy": "NONE",
+                  "password": sourceConnect.value.password,
+                  "splitPk": "",
+                  "username": sourceConnect.value.user,
+                  "where": ""
+                }
+              },
+              "writer": {
+                "name": lowerCase(['ORACLE','SQLSERVER','MYSQL','POSTGRESQL'].includes(model.dtType)? model.dtType : 'rdbms')+"writer",
+                "parameter": {
+                  "batchSize": 1024,
+                  "column": model.rightList,
+                  "connection": [
+                    {
+                      "jdbcUrl": targetConnect.value.jdbcUrl,
+                      "table": [
+                        model.dtType=='ORACLE' || model.dtType=='SQLSERVER' ? model.targetDatabase+'.'+model.targetTable : model.targetTable
+                      ]
+                    }
+                  ],
+                  "password": targetConnect.value.password,
+                  "postSql": model.postStatements,
+                  "preSql": model.preStatements,
+                  "username": targetConnect.value.user
+                }
+              }
+            }
+          ],
+          "setting": {
+            "errorLimit": {
+              "percentage": "0",
+              "record": "0"
+            },
+            "speed": {
+              "channel": "1",
+              "byte": model.jobSpeedByte,
+              "record": model.jobSpeedRecord
+            }
+          }
+        }
+      },null,4)
     }
   }
 
@@ -135,30 +301,163 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
   })
 
   watch(
-    () => model.customConfig,
+    () => [model.executeMode],
     () => {
       initConstants()
     }
   )
 
+  watch(
+      () => [model.jsonConfig],
+      () => {
+        if(model.jsonConfig){
+          jsonEditorSpan.value = 24
+        }else {
+          jsonEditorSpan.value = 0
+          saveJson()
+        }
+      }
+  )
+
+  watch(
+      () => [model.dataSource],
+      () => {
+        if(!!model.dataSource) getConnect(model.dataSource, 'dataSource')
+      }
+  )
+
+  watch(
+      () => [model.dataTarget],
+      () => {
+        if(!!model.dataTarget) getConnect(model.dataTarget, 'dataTarget')
+      }
+  )
+
+  watch(
+      () => [model.dsType],
+      () => {
+        sourceTableSpan.value = model.executeMode=== '1' ? 0 : ( model.dsType=='ORACLE' || model.dsType=='SQLSERVER'? 6: 12)
+        sourceDatabaseSpan.value = model.executeMode === '0' && ( model.dsType=='ORACLE' || model.dsType=='SQLSERVER') ? 6 : 0
+      }
+  )
+
+  watch(
+      () => [model.dtType],
+      () => {
+        targetTableSpan.value = model.dtType=='ORACLE' || model.dsType=='SQLSERVER'? 6: 12
+        targetDatabaseSpan.value = model.dtType=='ORACLE' || model.dsType=='SQLSERVER'? 6: 0
+      }
+  )
+
+  watch(
+      () => [model.leftList, model.rightList, sourceConnect.value, targetConnect.value],
+      () => {
+        if(!model.jsonConfig)saveJson()
+      }
+  )
+
   return [
     {
-      type: 'switch',
-      field: 'customConfig',
-      name: t('project.node.datax_custom_template')
+      type: 'custom',
+      field: 'custom-title-source',
+      span: tagSpan,
+      widget: h(
+          'div',
+          { class: styles['field-title'] },
+          t('project.node.data_source')
+      )
+    },
+    {
+      type: 'custom',
+      field: 'custom-title-target',
+      span: tagSpan,
+      widget: h(
+          'div',
+          { class: styles['field-title'] },
+          t('project.node.data_target')
+      )
     },
     ...useDatasource(model, {
       typeField: 'dsType',
       sourceField: 'dataSource',
       span: datasourceSpan
     }),
+    ...useDatasource(model, {
+      typeField: 'dtType',
+      sourceField: 'dataTarget',
+      span: destinationDatasourceSpan
+    }),
+    {
+      type: 'radio',
+      field: 'executeMode',
+      name: '读取模式',
+      span: executeModeSpan,
+      options: [{label:'表',value:'0'},{label:'查询',value:'1'}]
+    },
+    {
+      type: 'input',
+      field: 'targetDatabase',
+      name: t('project.node.datax_target_database'),
+      span: targetDatabaseSpan,
+      props: {
+        placeholder: t('project.node.datax_target_database'),
+        onBlur: saveJson
+      },
+      validate: {
+        trigger: ['input', 'blur'],
+        required: true
+      }
+    },
+    {
+      type: 'input',
+      field: 'targetTable',
+      name: t('project.node.datax_target_table'),
+      span: targetTableSpan,
+      props: {
+        placeholder: t('project.node.datax_target_table_tips'),
+        onBlur: saveJson
+      },
+      validate: {
+        trigger: ['input', 'blur'],
+        required: true
+      }
+    },
+    {
+      type: 'input',
+      field: 'sourceDatabase',
+      name: t('project.node.datax_source_database'),
+      span: sourceDatabaseSpan,
+      props: {
+        placeholder: t('project.node.datax_source_database'),
+        onBlur: saveJson
+      },
+      validate: {
+        trigger: ['input', 'blur'],
+        required: true
+      }
+    },
+    {
+      type: 'input',
+      field: 'sourceTable',
+      name: t('project.node.datax_source_table'),
+      span: sourceTableSpan,
+      props: {
+        placeholder: t('project.node.datax_source_table'),
+        onBlur: saveJson
+      },
+      validate: {
+        trigger: ['input', 'blur'],
+        required: true
+      }
+    },
     {
       type: 'switch',
       field: 'autoCreate',
-      name: '自动建表'
+      name: '自动建表',
+      span: autoCreate
     },
     ...useCreateTable(model, {
-      tableField: 'tableName',
+      tableField: 'sourceTable',
       sqlField: 'tableSql',
       createField: 'createTable',
       tips: tips,
@@ -178,34 +477,21 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       }
     },
     {
-      type: 'editor',
-      field: 'json',
-      name: t('project.node.datax_json_template'),
-      span: jsonEditorSpan,
-      validate: {
-        trigger: ['input', 'trigger'],
-        required: true,
-        message: t('project.node.sql_empty_tips')
-      }
+      type: 'custom',
+      field: 'custom-title-source',
+      span: 24,
+      widget: h(
+          'div',
+          { class: styles['field-title'] },
+          '字段映射'
+      )
     },
-    ...useDatasource(model, {
-      typeField: 'dtType',
-      sourceField: 'dataTarget',
-      span: destinationDatasourceSpan
+    ...useColumnJsplumb(model, {
+      leftField: 'leftList',
+      rightField: 'rightList',
+      leftDataList: 'leftData',
+      rightDataList: 'rightData'
     }),
-    {
-      type: 'input',
-      field: 'targetTable',
-      name: t('project.node.datax_target_table'),
-      span: destinationDatasourceSpan,
-      props: {
-        placeholder: t('project.node.datax_target_table_tips')
-      },
-      validate: {
-        trigger: ['input', 'blur'],
-        required: true
-      }
-    },
     {
       type: 'multi-input',
       field: 'preStatements',
@@ -214,7 +500,8 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       props: {
         placeholder: t('project.node.datax_non_query_sql_tips'),
         type: 'textarea',
-        autosize: { minRows: 1 }
+        autosize: { minRows: 1 },
+        onBlur: saveJson
       }
     },
     {
@@ -225,7 +512,8 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       props: {
         placeholder: t('project.node.datax_non_query_sql_tips'),
         type: 'textarea',
-        autosize: { minRows: 1 }
+        autosize: { minRows: 1 },
+        onBlur: saveJson
       }
     },
     {
@@ -234,7 +522,10 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       name: t('project.node.datax_job_speed_byte'),
       span: jobSpeedSpan,
       options: jobSpeedByteOptions,
-      value: 0
+      value: 0,
+      props: {
+        onBlur: saveJson
+      }
     },
     {
       type: 'select',
@@ -242,7 +533,10 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       name: t('project.node.datax_job_speed_record'),
       span: jobSpeedSpan,
       options: jobSpeedRecordOptions,
-      value: 1000
+      value: 1000,
+      props: {
+        onBlur: saveJson
+      }
     },
     {
       type: 'custom-parameters',
@@ -291,7 +585,7 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       type: 'select',
       field: 'xms',
       name: t('project.node.datax_job_runtime_memory_xms'),
-      span: 12,
+      span: 6,
       options: memoryLimitOptions,
       value: 1
     },
@@ -299,9 +593,25 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       type: 'select',
       field: 'xmx',
       name: t('project.node.datax_job_runtime_memory_xmx'),
-      span: 12,
+      span: 6,
       options: memoryLimitOptions,
       value: 1
+    },
+    {
+      type: 'switch',
+      field: 'jsonConfig',
+      name: '脚本模式'
+    },
+    {
+      type: 'editor',
+      field: 'json',
+      name: t('project.node.datax_json_template'),
+      span: jsonEditorSpan,
+      validate: {
+        trigger: ['input', 'trigger'],
+        required: true,
+        message: t('project.node.sql_empty_tips')
+      }
     }
   ]
 }

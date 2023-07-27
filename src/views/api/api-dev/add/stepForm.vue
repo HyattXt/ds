@@ -35,12 +35,14 @@ import {defineComponent,  ref} from 'vue'
   import step3 from './Step3.vue'
   import step4 from './Step4.vue'
   import axios from 'axios'
+import {useMessage} from "naive-ui";
 
   const currentTab = ref(1)
+  const message = useMessage()
   const currentStatus = ref('process')
   const SecondDevApiUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_API_URL
-    : import.meta.env.VITE_APP_PROD_API_URL
+    : window.webConfig.VITE_APP_PROD_API_URL
   const params = ref({
     id: -1,
     apiName: '',
@@ -65,7 +67,8 @@ import {defineComponent,  ref} from 'vue'
     apiTimeout: null,
     apiDatasourceId: '',
     apiDatasourceTable: '',
-    apiDatasourceType: ''
+    apiDatasourceType: '',
+    apiTreeId: 1
   })
 
   function nextStep1(value: any) {
@@ -76,8 +79,9 @@ import {defineComponent,  ref} from 'vue'
     params2.value.apiCreator = value.apiCreator
     params2.value.apiFrequency = value.apiFrequency
     params2.value.apiTimeout = value.apiTimeout
-    console.log(params)
-    console.log(params2)
+    params2.value.apiTreeId = value.apiTreeId
+
+
     if (currentTab.value < 4) {
       currentTab.value += 1
     }
@@ -89,7 +93,7 @@ import {defineComponent,  ref} from 'vue'
     params2.value.apiDatasourceId = value.apiDatasourceId
     params2.value.apiDatasourceTable = value.apiDatasourceTable
     params2.value.apiDatasourceType = value.apiDatasourceType
-    console.log(params)
+
     if (currentTab.value < 4) {
       currentTab.value += 1
     }
@@ -97,36 +101,39 @@ import {defineComponent,  ref} from 'vue'
 
   function nextStep3() {
     return new Promise((resolve) => {
-      const url = SecondDevApiUrl+'/interface-ui/api/save-api?id=-1'
-      const urlUpdate = SecondDevApiUrl+'/interface/update'
+      const url = SecondDevApiUrl+'/HDataApi/interface-ui/api/save-api?id=-1'
+      const urlUpdate = SecondDevApiUrl+'/HDataApi/interface/update'
       let apiId = ''
       axios
         .post(url, params.value)
         .then(function (response) {
-          console.log(response)
-          apiId = response.data.result
-          setTimeout(
-            () =>
-              resolve({
-                apiId
-              }),
-            100
-          )
-          params2.value.apiId = apiId
-          axios
-            .post(urlUpdate, params2.value)
-            .then(function (response) {
-              console.log(response)
-              resolve({
-                status: response.data.status
-              })
-            })
-            .catch(function (error) {
-              console.log(error)
-            })
+
+          if (!response.data.success){message.error(response.data.message)}
+          else {
+            apiId = response.data.result
+            setTimeout(
+                () =>
+                    resolve({
+                      apiId
+                    }),
+                100
+            )
+            params2.value.apiId = apiId
+            axios
+                .post(urlUpdate, params2.value)
+                .then(function (response) {
+
+                  resolve({
+                    status: response.data.status
+                  })
+                })
+                .catch(function (error) {
+                  message.info(error)
+                })
+          }
         })
         .catch(function (error) {
-          console.log('创建失败，请咨询管理员')
+          message.error('创建失败，请咨询管理员')
         })
       if (currentTab.value < 4) {
         currentTab.value += 1

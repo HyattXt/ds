@@ -33,7 +33,9 @@ const TYPES = [
   'custom',
   'multi-condition',
   'create-sql',
-  'execute-sql'
+  'execute-sql',
+  'column-jsplumb',
+  'button'
 ]
 
 const getField = (

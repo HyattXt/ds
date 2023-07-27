@@ -37,39 +37,20 @@ export function useCreateTable(
     spanLong?: Ref | number
   } = {}
 ): IJsonItem[] {
-  const { t } = useI18n()
-  const message = useMessage()
-  const getDatasourceTypes = async () => {
 
-  }
-
-  const refreshOptions = async () => {
-
-  }
-
-  const onClick = (val) => {
-    console.log('调试------', val)
-    console.log(model[params.tableField])
-    model[params.sqlField] = model[params.tableField] + '的建表语句'
-    console.log('调试------')
-  }
-
-  onMounted(async () => {
-    console.log(model[params.tips])
-    console.log(params.tips)
-  })
   return [
     {
       type: 'input',
       field: params.tableField,
-      span: params.spanMiddle || 12,
+      //span: params.spanMiddle || 12,
+      span: 0,
       props: {
         placeholder: params.tips
       },
       validate: {
         trigger: ['input', 'blur'],
         required: true,
-        message: '必须填写表名以获取建表语句'
+        message: '表名必填'
       }
     },
     {

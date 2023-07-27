@@ -84,7 +84,7 @@ export default defineComponent({
 
     const createDefinition = () => {
       router.push({
-        path: `/projects/${projectCode}/workflow/definitions/create`
+        path: `/projects/${projectCode}/workflow/relation`
       })
     }
 
@@ -126,9 +126,6 @@ export default defineComponent({
               >
                 {t('project.workflow.create_workflow')}
               </NButton>
-              <NButton strong secondary onClick={() => (this.showRef = true)}>
-                {t('project.workflow.import_workflow')}
-              </NButton>
             </NSpace>
             <div class={styles.right}>
               <div class={styles.search}>
@@ -149,7 +146,7 @@ export default defineComponent({
             </div>
           </div>
         </Card>
-        <Card title={t('project.workflow.workflow_definition')}>
+        <Card title={t('project.workflow.workflow_manager')}>
           <NDataTable
             loading={loadingRef}
             rowKey={(row) => row.code}
@@ -208,22 +205,6 @@ export default defineComponent({
                     class='btn-delete-all'
                   >
                     {t('project.workflow.export')}
-                  </NButton>
-                )
-              }}
-            </NTooltip>
-            <NTooltip>
-              {{
-                default: () => t('project.workflow.batch_copy'),
-                trigger: () => (
-                  <NButton
-                    tag='div'
-                    type='primary'
-                    disabled={this.checkedRowKeys.length <= 0}
-                    onClick={() => (this.copyShowRef = true)}
-                    class='btn-delete-all'
-                  >
-                    {t('project.workflow.batch_copy')}
                   </NButton>
                 )
               }}

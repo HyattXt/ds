@@ -22,7 +22,7 @@ import viteCompression from 'vite-plugin-compression'
 import path from 'path'
 
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? '/dolphinscheduler/ui/' : '/',
+  base: process.env.NODE_ENV === 'production' ? '/HData/ui/' : '/',
   plugins: [
     vue(),
     vueJsx(),
@@ -45,11 +45,15 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
     proxy: {
+      '/HDataApi': {
+        target: loadEnv('development', './').VITE_APP_DEV_API_URL,
+        changeOrigin: true
+      },
       '/debug': {
         target: loadEnv('development', './').VITE_APP_DEV_API_URL,
         changeOrigin: true
       },
-      '/dolphinscheduler': {
+      '/HData': {
         target: loadEnv('development', './').VITE_APP_DEV_WEB_URL,
         changeOrigin: true
       },

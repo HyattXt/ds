@@ -27,14 +27,14 @@ export function renderExecuteSql( item: IJsonItem, fields: { [field: string]: an
     const message = useMessage()
     const SecondDevCreateUrl = import.meta.env.MODE === 'development'
         ? import.meta.env.VITE_APP_DEV_API_URL
-        : import.meta.env.VITE_APP_PROD_API_URL
+        : window.webConfig.VITE_APP_PROD_API_URL
     const formValue = ref({
         id: '',
         sqlStr: ''
     })
 
     function execute() {
-        let getSql = SecondDevCreateUrl+'/createTable/excuteSql'
+        let getSql = SecondDevCreateUrl+'/HDataApi/createTable/excuteSql'
         formValue.value.id = fields.dataTarget
         formValue.value.sqlStr = fields.tableSql
             console.log(formValue.value)
@@ -64,6 +64,6 @@ export function renderExecuteSql( item: IJsonItem, fields: { [field: string]: an
         trigger:'hover'
     }, {
         default: () => h( 'span', null, '支持mysql建表'),
-        trigger: () => h(NButton, {type: 'info',onClick: () => onClick()},'执行sql'),
+        trigger: () => h(NButton, {type: 'info',onClick: () => onClick()},'执行SQL'),
     })
 }

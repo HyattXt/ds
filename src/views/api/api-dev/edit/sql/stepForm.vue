@@ -40,7 +40,7 @@ import {defineComponent, provide, ref, onMounted} from 'vue'
   const currentStatus = ref('process')
   const SecondDevApiUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_API_URL
-    : import.meta.env.VITE_APP_PROD_API_URL
+    : window.webConfig.VITE_APP_PROD_API_URL
   const params = ref({
     apiId: '',
     apiMethod: '',
@@ -54,12 +54,13 @@ import {defineComponent, provide, ref, onMounted} from 'vue'
     apiSample: '',
     apiDatasourceId: '',
     apiDatasourceTable: '',
-    apiDatasourceType: ''
+    apiDatasourceType: '',
+    apiTreeId: ''
   })
 
   function nextStep1(value) {
     params.value = value
-    console.log(params)
+
     if (currentTab.value < 4) {
       currentTab.value += 1
     }
@@ -71,7 +72,7 @@ import {defineComponent, provide, ref, onMounted} from 'vue'
     params.value.apiDatasourceId = value.apiDatasourceId
     params.value.apiDatasourceTable = value.apiDatasourceTable
     params.value.apiDatasourceType = value.apiDatasourceType
-    console.log(params)
+
     if (currentTab.value < 4) {
       currentTab.value += 1
     }
@@ -79,11 +80,11 @@ import {defineComponent, provide, ref, onMounted} from 'vue'
 
   function nextStep3() {
     return new Promise((resolve) => {
-      const urlUpdate = SecondDevApiUrl+'/interface/update'
+      const urlUpdate = SecondDevApiUrl+'/HDataApi/interface/update'
       axios
         .post(urlUpdate, params.value)
         .then(function (response) {
-          console.log(response)
+
           resolve({
             status: response.data.status
           })

@@ -2,7 +2,7 @@
   <n-space vertical>
     <n-card size="small">
       <n-space justify="space-between" style="height: 40px">
-        <router-link to="/rest/rest-dev">
+        <router-link to="/devops/rest/rest-dev">
         <n-button type="primary" > 新建接口</n-button>
         </router-link>
         <n-form ref="formRef" :model="pagination">
@@ -163,8 +163,8 @@ function query(
 ) {
   return new Promise((resolve) => {
     const url = import.meta.env.MODE === 'development'
-        ? import.meta.env.VITE_APP_DEV_REST_URL+'/httpHandle/getHttpDataListByParams'
-        : import.meta.env.VITE_APP_PROD_REST_URL+'/httpHandle/getHttpDataListByParams'
+        ? import.meta.env.VITE_APP_DEV_REST_URL+'/HDataApi/httpHandle/getHttpDataListByParams'
+        : window.webConfig.VITE_APP_PROD_REST_URL+'/HDataApi/httpHandle/getHttpDataListByParams'
     const params = {
       'pageNum': page,
       'pageSize': pageSize,
@@ -174,11 +174,11 @@ function query(
     axios
         .post(url, params)
         .then(function (response) {
-          console.log(response)
+
           TableData.tableList = response.data.data
           TableData.totalNum = response.data.totalNum
-          console.log(TableData.tableList)
-          console.log(TableData.totalNum)
+
+
           const copiedData = TableData.tableList.map((v) => v)
           const total = TableData.totalNum
           const pageCount = Math.ceil(total / pageSize)
@@ -219,14 +219,14 @@ export default defineComponent({
             {
               del(row) {
                 let urlDel = import.meta.env.MODE === 'development'
-                    ? import.meta.env.VITE_APP_DEV_REST_URL+'/httpHandle/deleteHttpDataById'
-                    : import.meta.env.VITE_APP_PROD_REST_URL+'/httpHandle/deleteHttpDataById'
+                    ? import.meta.env.VITE_APP_DEV_REST_URL+'/HDataApi/httpHandle/deleteHttpDataById'
+                    : window.webConfig.VITE_APP_PROD_REST_URL+'/HDataApi/httpHandle/deleteHttpDataById'
                 let delPar = {
                   id: null
                 }
                 delPar.id = row.id
                 axios.post(urlDel, delPar).then(function (response) {
-                  console.log(response)
+
                   message.info(response.data.info)
                   refresh(paginationReactive.page)
                 })

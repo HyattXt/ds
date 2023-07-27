@@ -16,7 +16,8 @@
  */
 
 interface IdReq {
-  taskInstanceId: number
+  taskInstanceId?: number
+  instanceId?:number
 }
 
 interface LogReq extends IdReq {
@@ -24,4 +25,8 @@ interface LogReq extends IdReq {
   skipLineNum: number
 }
 
-export { IdReq, LogReq }
+interface immediateLog {
+  taskCode: number
+}
+
+export { IdReq, LogReq, immediateLog }

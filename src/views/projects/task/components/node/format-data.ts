@@ -228,25 +228,36 @@ export function formatParams(data: INodeData): {
   }
 
   if (data.taskType === 'DATAX') {
-    taskParams.customConfig = data.customConfig ? 1 : 0
-    if (taskParams.customConfig === 0) {
+    //taskParams.customConfig = data.customConfig ? 1 : 0
+    //if (taskParams.customConfig === 0) {
+      taskParams.customConfig = 1
       taskParams.dsType = data.dsType
       taskParams.dataSource = data.dataSource
       taskParams.dtType = data.dtType
       taskParams.dataTarget = data.dataTarget
+      taskParams.executeMode = data.executeMode
       taskParams.sql = data.sql
+      taskParams.sourceTable = data.sourceTable
       taskParams.targetTable = data.targetTable
+      taskParams.leftList = data.leftList
+      taskParams.rightList = data.rightList
+      taskParams.leftData = data.leftData
+      taskParams.rightData = data.rightData
+      taskParams.sourceDatabase = data.sourceDatabase
+      taskParams.targetDatabase = data.targetDatabase
       taskParams.jobSpeedByte = data.jobSpeedByte
       taskParams.jobSpeedRecord = data.jobSpeedRecord
       taskParams.preStatements = data.preStatements
       taskParams.postStatements = data.postStatements
-    } else {
+      
+    //} else {
+      taskParams.jsonConfig = data.jsonConfig
       taskParams.json = data.json
       data?.localParams?.map((param: ILocalParam) => {
         param.direct = 'IN'
         param.type = 'VARCHAR'
       })
-    }
+    //}
     taskParams.xms = data.xms
     taskParams.xmx = data.xmx
   }

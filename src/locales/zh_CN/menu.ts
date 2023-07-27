@@ -17,15 +17,15 @@
 
 export default {
   home: '首页',
-  project: '项目管理',
+  project: '数据开发',
   resources: '资源中心',
   datasource: '数据源中心',
   monitor: '监控中心',
   security: '安全中心',
   project_overview: '项目概览',
-  workflow_relation: '工作流关系',
+  workflow_relation: '工作流定义',
   workflow: '工作流',
-  workflow_definition: '工作流定义',
+  workflow_definition: '工作流管理',
   workflow_instance: '工作流实例',
   task: '任务',
   task_instance: '任务实例',
@@ -60,9 +60,17 @@ export default {
   api_dev: 'API开发',
   api_manager: 'API管理',
   data_assets: '数据资产',
+  assets: '资产概览',
   assets_overview: '资产总览',
-  assets_catalog: '资产目录',
+  assets_catalog: '全部数据',
+  assets_query: '数据探查',
   rest: '接口管理',
   rest_dev: '接口注册',
-  rest_manager: '接口管理'
+  rest_manager: '接口管理',
+  devops: '运维中心',
+  devops_overview: '运维概览',
+  devops_task: '离线运维',
+  devops_rest: '接口运维',
+  devops_api: 'API运维',
+  project_manager: '项目中心'
 }

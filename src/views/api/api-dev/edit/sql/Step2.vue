@@ -49,7 +49,7 @@ import { onMounted, ref} from 'vue'
   const kvValue = ref([])
   const SecondDevApiUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_API_URL
-    : import.meta.env.VITE_APP_PROD_API_URL
+    : window.webConfig.VITE_APP_PROD_API_URL
   const formValue = ref({
     codeValue: '',
     apiSample: '',
@@ -69,14 +69,14 @@ import { onMounted, ref} from 'vue'
   const emit = defineEmits(['prevStep', 'nextStep'])
 
   onMounted(() => {
-    let url = SecondDevApiUrl+'/interface/getInterfaceInfoById'
+    let url = SecondDevApiUrl+'/HDataApi/interface/getInterfaceInfoById'
     let params = { apiId: '' }
     params.apiId = route.query.apiId
-    console.log(params)
+
     axios
       .post(url, params)
       .then(function (response) {
-        console.log(response.data)
+
         formValue.value.codeValue = response.data.obj.apiScript.substring(response.data.obj.apiScript.indexOf("HD688296")+8)
         kvValue.value = Object.entries(
           JSON.parse(JSON.parse(response.data.obj.apiSample).requestBody)
@@ -111,10 +111,10 @@ import { onMounted, ref} from 'vue'
     for (let i = 0; i < list.length; i++) {
       requestBody[list[i].key] = list[i].value
     }
-    console.log(requestBody)
+
     sample.requestBody = JSON.stringify(requestBody, null, 2)
     formValue.value.apiSample = JSON.stringify(sample, null, 2)
-    console.log(formValue.value.apiSample)
+
     emit('nextStep', formValue.value)
   }
 </script>

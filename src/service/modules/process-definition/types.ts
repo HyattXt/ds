@@ -55,14 +55,18 @@ interface ListReq extends PageReq {
 
 interface ProcessDefinitionReq {
   name: string
-  locations: string
-  taskDefinitionJson: string
-  taskRelationJson: string
-  tenantCode: string
-  executionType: string
+  locations?: string
+  taskDefinitionJson?: string
+  taskRelationJson?: string
+  tenantCode?: string
+  executionType?: string
   description?: string
   globalParams?: string
   timeout?: number
+  //tree acquired
+  parentId?: number
+  type?: number
+  projectCode?: number
 }
 
 interface TargetCodeReq {

@@ -180,7 +180,7 @@
       </n-form-item>
       <div style="margin-left: 400px">
         <n-space>
-          <router-link to="/rest/rest-manager">
+          <router-link to="/devops/rest/rest-manager">
             <n-button type="tertiary">返回</n-button>
           </router-link>
           <n-button type="primary" @click="formSubmit">确定</n-button>
@@ -228,7 +228,7 @@ const route = useRoute()
 const router = useRouter()
 const httpInsertUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_REST_URL
-    : import.meta.env.VITE_APP_PROD_REST_URL
+    : window.webConfig.VITE_APP_PROD_REST_URL
 
 const rules = {
   taskName: {
@@ -291,7 +291,7 @@ const dataTokenTypeOptions = ref([
 ])
 
 function formSubmit() {
-  let insUrl = httpInsertUrl+'/httpHandle/updateHttpData'
+  let insUrl = httpInsertUrl+'/HDataApi/httpHandle/updateHttpData'
 
   for(let i=0;i<dataKeyTmp.value.length; i++){
     formValue.value.dataKey[dataKeyTmp.value[i].value]=dataKeyTmp.value[i].key
@@ -313,17 +313,17 @@ function formSubmit() {
     formValue.value.dynamicParameterStatus=1
   }
 
-  console.log(formValue)
+
 
   axios
       .post(insUrl, formValue.value)
       .then(function (response) {
-        console.log(response)
+
         message.info(response.data.info)
         setTimeout(() => {
           if (response.data.info === 'HTTP任务编辑成功！') {
             router.push({
-              path: '/rest/rest-manager'
+              path: '/devops/rest/rest-manager'
             })
           }
         }, 1000)
@@ -335,25 +335,25 @@ function formSubmit() {
 }
 
 function queryDataSource() {
-  let queryUrl = httpInsertUrl+'/httpHandle/getDataSource?type=0'
+  let queryUrl = httpInsertUrl+'/HDataApi/httpHandle/getDataSource?type=0'
 
   axios.get(queryUrl).then(function (response) {
-    console.log(response)
+
     listSource.value = response.data.data
   })
 }
 
 onMounted(() => {
-  let url = httpInsertUrl+'/httpHandle/getHttpDataById'
+  let url = httpInsertUrl+'/HDataApi/httpHandle/getHttpDataById'
   let params = { id: '' }
   params.id = route.query.id
   formValue.value.id = route.query.id
   queryDataSource()
-  console.log(params)
+
   axios
       .post(url, params)
       .then(function (response) {
-        console.log(response.data)
+
         formValue.value = response.data.obj
         if(response.data.obj.dynamicParameterStatus===2){
           ifDynamicParameter.value=false
@@ -380,7 +380,7 @@ onMounted(() => {
           key,
           value
         }))
-        console.log(dataParamTmp.value)
+
       })
       .catch(function (error) {
         console.log(error)

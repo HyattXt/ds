@@ -25,7 +25,9 @@ import {
   TaskDefinitionJsonObjReq,
   ReleaseStateReq,
   VersionReq,
-  ISingleSaveReq
+  ISingleSaveReq,
+  SqlColumnJsonObjReq,
+  IInitSaveReq
 } from './types'
 
 export function queryTaskDefinitionListPaging(
@@ -67,6 +69,29 @@ export function queryTaskDefinitionByCode(
   return axios({
     url: `/projects/${projectCode}/task-definition/${code}`,
     method: 'get'
+  })
+}
+
+export function queryTaskConnect(
+    id: number,
+): any {
+  return axios({
+    url: `/datasources/queryDataSourceById/${id}`,
+    method: 'get'
+  })
+}
+
+export function querySqlColum(
+    data: SqlColumnJsonObjReq,
+): any {
+  return axios({
+    url: `/datasources/analysisSql`,
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    transformRequest: (params) => JSON.stringify(params)
   })
 }
 
@@ -141,6 +166,14 @@ export function deleteVersion(
 export function saveSingle(projectCode: number, data: ISingleSaveReq) {
   return axios({
     url: `/projects/${projectCode}/task-definition/save-single`,
+    method: 'post',
+    data
+  })
+}
+
+export function saveInit(projectCode: number, data: IInitSaveReq) {
+  return axios({
+    url: `/projects/${projectCode}/task-definition/save-task`,
     method: 'post',
     data
   })

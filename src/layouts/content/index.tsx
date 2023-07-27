@@ -16,7 +16,7 @@
  */
 
 import { defineComponent, onMounted, watch, toRefs, ref } from 'vue'
-import { NLayout, NLayoutContent, NLayoutHeader, useMessage } from 'naive-ui'
+import { NLayout, NSelect, NLayoutContent, NLayoutHeader, useMessage } from 'naive-ui'
 import NavBar from './components/navbar'
 import SideBar from './components/sidebar'
 import { useDataList } from './use-dataList'
@@ -24,6 +24,7 @@ import { useLocalesStore } from '@/store/locales/locales'
 import { useRouteStore } from '@/store/route/route'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
+import {useProjectStore} from "@/store/route/project";
 
 const Content = defineComponent({
   name: 'DSContent',
@@ -34,18 +35,22 @@ const Content = defineComponent({
     const { locale } = useI18n()
     const localesStore = useLocalesStore()
     const routeStore = useRouteStore()
+    const ProjectStore = useProjectStore()
     const {
       state,
       changeMenuOption,
       changeHeaderMenuOptions,
+      changeIconMenuOptions,
       changeUserDropdown
     } = useDataList()
     const sideKeyRef = ref()
+
 
     onMounted(() => {
       locale.value = localesStore.getLocales
       changeMenuOption(state)
       changeHeaderMenuOptions(state)
+      changeIconMenuOptions(state)
       getSideMenu(state)
       changeUserDropdown(state)
     })
@@ -61,18 +66,20 @@ const Content = defineComponent({
     watch(useI18n().locale, () => {
       changeMenuOption(state)
       changeHeaderMenuOptions(state)
+      changeIconMenuOptions(state)
       getSideMenu(state)
       changeUserDropdown(state)
     })
 
     watch(
-      () => route.path,
+      () => ({
+        path: route.path,
+      }),
       () => {
         if (route.path !== '/login') {
           routeStore.setLastRoute(route.path)
-
           state.isShowSide = route.meta.showSide as boolean
-          if (route.matched[1].path === '/projects/:projectCode') {
+          if (route.matched[1].path === '/projects/:projectCode/workflow/relation' || route.matched[1].path === '/devops/:projectCode/devops_overview') {
             changeMenuOption(state)
           }
 
@@ -83,11 +90,12 @@ const Content = defineComponent({
               ? route.meta.activeSide
               : route.matched[1].path
           ) as string
+
           sideKeyRef.value = currentSide.includes(':projectCode')
             ? currentSide.replace(
-                ':projectCode',
-                route.params.projectCode as string
-              )
+              ':projectCode',
+              route.params.projectCode as string
+            )
             : currentSide
         }
       },
@@ -97,10 +105,14 @@ const Content = defineComponent({
     return {
       ...toRefs(state),
       changeMenuOption,
-      sideKeyRef
+      sideKeyRef,
+
     }
   },
+
+
   render() {
+
     return (
       <NLayout style='height: 100%'>
         <NLayoutHeader style='height: 65px'>
@@ -110,9 +122,14 @@ const Content = defineComponent({
             localesOptions={this.localesOptions}
             timezoneOptions={this.timezoneOptions}
             userDropdownOptions={this.userDropdownOptions}
+            iconOptions={this.iconMenuOptions}
           />
+
         </NLayoutHeader>
+
+
         <NLayout has-sider position='absolute' style='top: 65px'>
+
           {this.isShowSide && (
             <SideBar
               sideMenuOptions={this.sideMenuOptions}

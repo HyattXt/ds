@@ -48,12 +48,15 @@ import { WorkflowDefinition, WorkflowInstance } from './types'
 import DagSaveModal from './dag-save-modal'
 import ContextMenuItem from './dag-context-menu'
 import TaskModal from '@/views/projects/task/components/node/detail-modal'
+import InitModal from '@/views/projects/task/components/node/init-modal'
 import StartModal from '@/views/projects/workflow/definition/components/start-modal'
 import LogModal from '@/components/log-modal'
 import './x6-style.scss'
 import { queryLog } from '@/service/modules/log'
 import { useAsyncState } from '@vueuse/core'
 import utils from '@/utils'
+import {useTask} from "@/views/projects/task/definition/use-task";
+import {INodeData} from "@/views/projects/task/components/node/types";
 
 const props = {
   // If this prop is passed, it means from definition detail
@@ -70,6 +73,10 @@ const props = {
     default: false
   },
   projectCode: {
+    type: Number as PropType<number>,
+    default: 0
+  },
+  processCode: {
     type: Number as PropType<number>,
     default: 0
   }
@@ -103,15 +110,21 @@ export default defineComponent({
     // Edit task
     const {
       taskConfirm,
+      initTaskConfirm,
       taskModalVisible,
+      initModalVisible,
       currTask,
       taskCancel,
+      initTaskCancel,
       appendTask,
+      initTaskData,
       editTask,
       copyTask,
       processDefinition,
       removeTasks
     } = useTaskEdit({ graph, definition: toRef(props, 'definition') })
+
+    const { onTaskSave } = useTask(props.projectCode)
 
     // Right click cell
     const { nodeVariables, menuHide, menuStart, viewLog } = useNodeMenu({
@@ -173,10 +186,11 @@ export default defineComponent({
     const statusTimerRef = ref()
     const { taskList, refreshTaskStatus } = useNodeStatus({ graph })
 
-    const { onDragStart, onDrop } = useDagDragAndDrop({
+    const { onDragStart, onDrop, commitInitTask, dragged } = useDagDragAndDrop({
       graph,
       readonly: toRef(props, 'readonly'),
-      appendTask
+      appendTask,
+      initTaskData
     })
 
     // backfill
@@ -192,8 +206,25 @@ export default defineComponent({
       }
     }
     const refreshDetail = () => {
-      context.emit('refresh')
+      context.emit('refresh',!!props.processCode ? props.processCode : Number(route.query.code), props.projectCode)
       versionModalShow.value = false
+    }
+
+    const refreshEdit = (code: number) => {
+      refreshDetail()
+      editTask(code)
+    }
+
+    const commitInitTaskAndVis = (taskName: string,taskDescription: string,processCode: number) => {
+      commitInitTask(taskName, taskDescription, processCode).then(r =>{
+        initTaskCancel()
+      })
+    }
+
+    const onTaskSubmit = async (params: { data: INodeData }) => {
+      const result = await onTaskSave(params.data)
+      if (result) {
+      }
     }
 
     // Save modal
@@ -353,13 +384,29 @@ export default defineComponent({
           readonly={props.readonly}
           show={taskModalVisible.value}
           projectCode={props.projectCode}
+          processCode={props.processCode}
           processInstance={props.instance}
           taskInstance={currentTaskInstance.value}
           onViewLog={handleViewLog}
+          onSaveBeforeRun={onTaskSubmit}
           data={currTask.value as any}
           definition={processDefinition}
           onSubmit={taskConfirm}
           onCancel={taskCancel}
+        />
+        <InitModal
+            readonly={props.readonly}
+            show={initModalVisible.value}
+            projectCode={props.projectCode}
+            processCode={props.processCode}
+            processInstance={props.instance}
+            type={dragged.value.type}
+            taskInstance={currentTaskInstance.value}
+            onViewLog={handleViewLog}
+            data={currTask.value as any}
+            definition={processDefinition}
+            onSubmit={commitInitTaskAndVis}
+            onCancel={initTaskCancel}
         />
         <ContextMenuItem
           startReadonly={startReadonly.value}
@@ -369,6 +416,7 @@ export default defineComponent({
           visible={nodeVariables.menuVisible}
           left={nodeVariables.pageX}
           top={nodeVariables.pageY}
+          processCode={props.processCode}
           onHide={menuHide}
           onStart={menuStart}
           onEdit={editTask}

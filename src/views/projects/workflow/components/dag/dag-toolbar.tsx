@@ -144,7 +144,7 @@ export default defineComponent({
       }
       if (history.state.current.includes('workflow/definitions')) {
         router.push({
-          path: `/projects/${route.params.projectCode}/workflow-definition`
+          path: `/devops/${route.params.projectCode}/workflow-definition`
         })
         return
       }

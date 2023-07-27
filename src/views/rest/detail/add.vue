@@ -179,7 +179,7 @@
       </n-form-item>
       <div style="margin-left: 400px">
         <n-space>
-          <router-link to="/rest/rest-manager">
+          <router-link to="/devops/rest/rest-manager">
             <n-button type="tertiary">返回</n-button>
           </router-link>
           <n-button type="primary" @click="formSubmit">确定</n-button>
@@ -225,18 +225,18 @@ const listSource = ref([])
 const router = useRouter()
 const httpInsertUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_REST_URL
-    : import.meta.env.VITE_APP_PROD_REST_URL
+    : window.webConfig.VITE_APP_PROD_REST_URL
 
 let validatePath = (rule: any, value: any, callback: any) => {
   return new Promise<void>((resolve, reject) => {
-    let url = httpInsertUrl+'/httpHandle/getHttpDataByTaskName'
+    let url = httpInsertUrl+'/HDataApi/httpHandle/getHttpDataByTaskName'
     let body = { taskName: value }
-    console.log(body)
+
     //0存在，1不存在
     axios
         .post(url, body)
         .then(function (response) {
-          console.log(response.data.status)
+
           if (response.data.status == 0) {
             reject(Error(response.data.info)) // reject with error message
           } else {
@@ -316,7 +316,7 @@ const dataTokenTypeOptions = ref([
 ])
 
 function formSubmit() {
-  let insUrl = httpInsertUrl+'/httpHandle/insertHttpData'
+  let insUrl = httpInsertUrl+'/HDataApi/httpHandle/insertHttpData'
 
   for(let i=0;i<dataKeyTmp.value.length; i++){
     formValue.value.dataKey[dataKeyTmp.value[i].value]=dataKeyTmp.value[i].key
@@ -338,17 +338,17 @@ function formSubmit() {
     formValue.value.dynamicParameterStatus=1
   }
 
-  console.log(formValue)
+
 
   axios
       .post(insUrl, formValue.value)
       .then(function (response) {
-        console.log(response)
+
         message.info(response.data.info)
         setTimeout(() => {
           if (response.data.info === 'HTTP任务新增成功！') {
             router.push({
-              path: '/rest/rest-manager'
+              path: '/devops/rest/rest-manager'
             })
           }
         }, 1000)
@@ -361,10 +361,10 @@ function formSubmit() {
 
 
 function queryDataSource() {
-  let queryUrl = httpInsertUrl+'/httpHandle/getDataSource?type=0'
+  let queryUrl = httpInsertUrl+'/HDataApi/httpHandle/getDataSource?type=0'
 
   axios.get(queryUrl).then(function (response) {
-    console.log(response)
+
     listSource.value = response.data.data
   })
 }

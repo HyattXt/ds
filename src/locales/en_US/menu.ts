@@ -17,7 +17,7 @@
 
 export default {
   home: 'Home',
-  project: 'Project',
+  project: 'Data Development',
   resources: 'Resources',
   datasource: 'Datasource',
   monitor: 'Monitor',
@@ -60,9 +60,12 @@ export default {
   api_dev: 'API development',
   api_manager: 'API manager',
   data_assets: 'Data Assets',
+  assets: 'Assets',
   assets_overview: 'Assets Overview',
   assets_catalog: 'Assets Catalog',
+  assets_query: 'Assets Query',
   rest: 'Http manager',
   rest_dev: 'Http development',
-  rest_manager: 'Http manager'
+  rest_manager: 'Http manager',
+  project_manager: 'Project manager'
 }

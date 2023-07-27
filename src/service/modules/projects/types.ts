@@ -57,11 +57,62 @@ interface ProjectRes {
   start: number
 }
 
+interface TreeMenuReq {
+  projectCode: number
+}
+
+interface TreeMenuList {
+  titleName: string,
+  taskCode: string,
+  id: number,
+  parentId: number,
+  children: []
+}
+
+interface TreeMenuCreate {
+  parentId: number,
+  titleName: string,
+  type: number
+  projectCode:string
+}
+
+interface TreeMenuRename {
+  id: number,
+  name: string
+}
+
+interface WorkflowRename {
+  taskCode: number,
+  name: string
+}
+
+interface FolderMove {
+  parentId: number,
+  id: number
+}
+
+interface WorkflowMove {
+  taskCode: number,
+  parentId: number
+}
+
+interface FolderDel {
+  id: number
+}
+
 export {
   ListReq,
   ProjectsReq,
   UserIdReq,
   UpdateProjectsReq,
   ProjectRes,
-  ProjectList
+  ProjectList,
+  TreeMenuReq,
+  TreeMenuList,
+  TreeMenuCreate,
+  TreeMenuRename,
+  WorkflowRename,
+  FolderMove,
+  WorkflowMove,
+  FolderDel
 }

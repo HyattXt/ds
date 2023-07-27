@@ -3,9 +3,19 @@
     <n-card size="small">
       <n-space justify="end" style="height: 40px">
         <n-form ref="formRef" :model="pagination">
-          <n-grid :cols="26" :x-gap="12">
+          <n-grid :cols="22" :x-gap="12">
+            <n-form-item-gi :span="4" :show-label="false">
+              <n-tree-select
+                  v-model:value="pagination.apiTreeId"
+                  :options="folderData"
+                  key-field="id"
+                  label-field="titleName"
+                  children-field="children"
+                  placeholder="API目录"
+              />
+            </n-form-item-gi>
             <n-form-item-gi
-              :span="6"
+              :span="4"
               :show-label="false"
               path="pagination.apiName"
             >
@@ -15,7 +25,7 @@
                 placeholder="名称"
               />
             </n-form-item-gi>
-            <n-form-item-gi :span="6" :show-label="false">
+            <n-form-item-gi :span="4" :show-label="false">
               <n-select
                 size="small"
                 v-model:value="pagination.apiFlag"
@@ -24,7 +34,7 @@
                 placeholder="API类型"
               />
             </n-form-item-gi>
-            <n-form-item-gi :span="6" :show-label="false">
+            <n-form-item-gi :span="4" :show-label="false">
               <n-select
                 size="small"
                 v-model:value="pagination.apiStatus"
@@ -33,7 +43,7 @@
                 placeholder="API状态"
               />
             </n-form-item-gi>
-            <n-form-item-gi :span="6" :show-label="false">
+            <n-form-item-gi :span="4" :show-label="false">
               <n-input
                 size="small"
                 v-model:value="pagination.apiPath"
@@ -164,6 +174,7 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
   import hljs from 'highlight.js/lib/core'
   import javascript from 'highlight.js/lib/languages/javascript'
   import moment from 'moment'
+import {queryTreeFolder} from "@/service/modules/projects";
 
   hljs.registerLanguage('javascript', javascript)
 
@@ -315,12 +326,13 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
     apiName = '',
     apiFlag = '',
     apiStatus = '',
-    apiPath = ''
+    apiPath = '',
+    apiTreeId = ''
   ) {
     return new Promise((resolve) => {
       const url = import.meta.env.MODE === 'development'
-          ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/getList'
-          : import.meta.env.VITE_APP_PROD_API_URL+'/interface/getList'
+          ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getList'
+          : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getList'
       const params = {
         pageNum: page,
       'pageSize': pageSize,
@@ -328,6 +340,7 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
       'apiFlag': apiFlag,
       'apiStatus': apiStatus,
       'apiPath': apiPath,
+      'apiTreeId': apiTreeId,
         order: 'api_create_time',
       'sort': 'desc'
       }
@@ -335,24 +348,20 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
       axios
         .post(url, params)
         .then(function (response) {
-          console.log(response)
+
           TableData.apiList = response.data.data
           TableData.totalNum = response.data.totalNum
-          console.log(TableData.apiList)
-          console.log(TableData.totalNum)
+
+
           const copiedData = TableData.apiList.map((v) => v)
           const total = TableData.totalNum
           const pageCount = Math.ceil(total / pageSize)
 
-          setTimeout(
-            () =>
-              resolve({
-                pageCount,
-                data: copiedData,
-                total
-              }),
-            300
-          )
+          resolve({
+            pageCount,
+            data: copiedData,
+            total
+          })
         })
         .catch(function (error) {
           console.log(error)
@@ -364,7 +373,10 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
     setup() {
       const ip = ref(import.meta.env.MODE === 'development'
           ? import.meta.env.VITE_APP_DEV_API_URL
-          : import.meta.env.VITE_APP_PROD_API_URL)
+          : window.webConfig.VITE_APP_PROD_API_URL)
+      const getApiTreeUrl = import.meta.env.MODE === 'development'
+          ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getApiTreeFloder'
+          : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getApiTreeFloder'
       const dataRef = ref([])
       const loadingRef = ref(true)
       const active = ref(false)
@@ -375,11 +387,12 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
       const apiAuthorizer = ref([])
       const apiAuthorizerName = ref('')
       const basicInfo = ref({})
+      const folderData = ref([])
       const activate = (row) => {
         active.value = true
         drawTitle.value = row.apiName
         drawId.value = row.apiId
-        console.log(drawTitle)
+
         basicInfo.value = {}
         queryBasic(row.apiId)
         queryUser()
@@ -388,20 +401,20 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
         showModal.value = true
         drawTitle.value = row.apiName
         drawId.value = row.apiId
-        console.log(drawTitle)
+
         queryUser()
       }
       const message = useMessage()
 
       function queryUser() {
         const listUrl = import.meta.env.MODE === 'development'
-            ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/getUser'
-            : import.meta.env.VITE_APP_PROD_API_URL+'/interface/getUser'
+            ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getUser'
+            : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getUser'
         const authListUrl = import.meta.env.MODE === 'development'
-            ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/getAuthorizeInfo'
-            : import.meta.env.VITE_APP_PROD_API_URL+'/interface/getAuthorizeInfo'
+            ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getAuthorizeInfo'
+            : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getAuthorizeInfo'
         axios.get(listUrl).then(function (response) {
-          console.log(response)
+
           userList.value = response.data.data
           userList.value = userList.value.map((item) => {
             let tempList = {}
@@ -409,16 +422,16 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
             tempList.label = item.userName
             return tempList
           })
-          console.log(userList.value)
+
         })
         let authBody = {
         'apiId': ''
         }
         authBody.apiId = drawId.value
-        console.log(authBody)
+
         axios.post(authListUrl, authBody).then(function (response) {
-          console.log('response')
-          console.log(response)
+
+
           let list = response.data.data
           apiAuthorizer.value = list.map((item) => {
             let authList = ''
@@ -432,26 +445,27 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
               return authList
             })
             .join(',')
-          console.log('apiAuthorizer')
-          console.log(apiAuthorizer.value)
-          console.log(apiAuthorizerName.value)
+
+
+
         })
       }
 
       function queryBasic(apiId) {
         const url = import.meta.env.MODE === 'development'
-            ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/getInterfaceInfoById'
-            : import.meta.env.VITE_APP_PROD_API_URL+'/interface/getInterfaceInfoById'
+            ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getInterfaceInfoById'
+            : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getInterfaceInfoById'
         let basicPar = {
           apiId: drawId.value
         }
         basicPar.apiId = apiId
         axios.post(url, basicPar).then(function (response) {
-          console.log(response)
+
           basicInfo.value = response.data.obj
           if (basicInfo.value.apiFlag === 1) {
             basicInfo.value.apiFlag = '接口开发'
             basicInfo.value.apiScript = basicInfo.value.apiScript.replace(/.*HD688296/,"")
+            basicInfo.value.apiPath = basicInfo.value.apiPath.replace('/api/','/HDataApi/api/')
           }
           if (basicInfo.value.apiFlag === 2) {
             basicInfo.value.apiFlag = '接口注册'
@@ -468,7 +482,8 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
           paginationReactive.apiName,
           paginationReactive.apiFlag,
           paginationReactive.apiStatus,
-          paginationReactive.apiPath
+          paginationReactive.apiPath,
+          paginationReactive.apiTreeId
         ).then((data) => {
           dataRef.value = data.data
           dataRef.value.apiCreateTime = dataRef.value.forEach((item) => {
@@ -508,8 +523,8 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
 
       function subAuth() {
         let subUrl = import.meta.env.MODE === 'development'
-            ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/insertAuthorizeInfo'
-            : import.meta.env.VITE_APP_PROD_API_URL+'/interface/insertAuthorizeInfo'
+            ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/insertAuthorizeInfo'
+            : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/insertAuthorizeInfo'
         let requestBody = {
           apiId: drawId.value,
         'authorizeId': apiAuthorizer.value
@@ -519,14 +534,14 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
           .then(function (response) {
             message.info('授权成功')
             showModal.value = false
-            console.log(response)
+
             refresh(paginationReactive.page)
           })
           .catch(function (error) {
             message.info('授权失败,请联系管理员')
             console.log(error)
           })
-        console.log(apiAuthorizer)
+
       }
 
       const columnsRef = ref(
@@ -541,8 +556,8 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
               if (row.apiStatus === '待发布') {
                 if (row.apiFlag === '接口开发') {
                   let urlPub = import.meta.env.MODE === 'development'
-                      ? import.meta.env.VITE_APP_DEV_API_URL+`/interface-ui/api/publish?id=${row.apiId}`
-                      : import.meta.env.VITE_APP_PROD_API_URL+`/interface-ui/api/publish?id=${row.apiId}`
+                      ? import.meta.env.VITE_APP_DEV_API_URL+`/HDataApi/interface-ui/api/publish?id=${row.apiId}`
+                      : window.webConfig.VITE_APP_PROD_API_URL+`/HDataApi/interface-ui/api/publish?id=${row.apiId}`
                   let pubPar = {
                     id: ''
                   }
@@ -550,7 +565,7 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
                   axios
                     .post(urlPub, pubPar)
                     .then(function (response) {
-                      console.log(response)
+
                       message.info(`成功发布 ${row.apiName}`)
                       refresh(paginationReactive.page)
                     })
@@ -560,8 +575,8 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
                     })
                 } else {
                   let urlPub = import.meta.env.MODE === 'development'
-                      ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/update'
-                      : import.meta.env.VITE_APP_PROD_API_URL+'/interface/update'
+                      ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/update'
+                      : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/update'
                   let pubPar = {
                     apiId: '',
                     apiStatus: 1
@@ -570,7 +585,7 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
                   axios
                     .post(urlPub, pubPar)
                     .then(function (response) {
-                      console.log(response)
+
                       message.info(`成功发布 ${row.apiName}`)
                       refresh(paginationReactive.page)
                     })
@@ -581,8 +596,8 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
                 }
               } else {
                 let urlPub = import.meta.env.MODE === 'development'
-                    ? import.meta.env.VITE_APP_DEV_API_URL+'/interface/update'
-                    : import.meta.env.VITE_APP_PROD_API_URL+'/interface/update'
+                    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/update'
+                    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/update'
                 let pubPar = {
                   apiId: '',
                   apiStatus: 0
@@ -591,7 +606,7 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
                 axios
                   .post(urlPub, pubPar)
                   .then(function (response) {
-                    console.log(response)
+
                     message.info(`成功下线 ${row.apiName}`)
                     refresh(paginationReactive.page)
                   })
@@ -617,19 +632,28 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
         apiFlag: null,
         apiStatus: null,
         apiPath: '',
+        apiTreeId: '',
         prefix({ itemCount }) {
           return `共${itemCount}条`
         }
       })
 
+      function getTreeFolder ()  {
+        axios.get(getApiTreeUrl).then((res) => {
+          folderData.value = res.data.data
+        })
+      }
+
       onMounted(() => {
+        getTreeFolder()
         query(
           paginationReactive.page,
           paginationReactive.pageSize,
           paginationReactive.apiName,
           paginationReactive.apiFlag,
           paginationReactive.apiStatus,
-          paginationReactive.apiPath
+          paginationReactive.apiPath,
+          paginationReactive.apiTreeId
         ).then((data) => {
           dataRef.value = data.data
           dataRef.value.apiCreateTime = dataRef.value.forEach((item) => {
@@ -674,6 +698,7 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
         loading: loadingRef,
         ip,
         SearchOutlined,
+        folderData,
         showModal,
         active,
         activate,
@@ -717,7 +742,8 @@ import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from '
               paginationReactive.apiName,
               paginationReactive.apiFlag,
               paginationReactive.apiStatus,
-              paginationReactive.apiPath
+              paginationReactive.apiPath,
+              paginationReactive.apiTreeId
             ).then((data) => {
               dataRef.value = data.data
               dataRef.value.apiCreateTime = dataRef.value.forEach((item) => {

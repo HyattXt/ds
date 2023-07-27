@@ -38,7 +38,10 @@ export default defineComponent({
     const executorNameRef = ref('')
     const hostRef = ref('')
     const stateTypeRef = ref('')
-    const startEndTimeRef = ref()
+    const startEndTimeRef = ref(
+        [new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 6 * 24 * 60 * 60 * 1000,
+          new Date(new Date().setHours(0, 0, 0, 0)).getTime() + 24 * 60 * 60 * 1000]
+    )
 
     const handleSearch = () => {
       let startDate = ''

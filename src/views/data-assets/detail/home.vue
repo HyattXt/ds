@@ -1,5 +1,8 @@
 <template>
   <n-card :title=tableName size="large">
+    <template #header-extra>
+      <n-button @click="goBack">返回</n-button>
+    </template>
     <n-descriptions label-placement="left" >
       <n-descriptions-item label="描述" label-style="color:grey">
         {{ tableComment }}
@@ -49,7 +52,7 @@
 import basic from './basic.vue'
 import overview from './overview.vue'
 import { onMounted, ref} from "vue";
-import {useRoute} from "vue-router";
+import { useRoute, useRouter} from "vue-router";
 import axios from "axios";
 import {useMessage} from "naive-ui";
 
@@ -59,14 +62,19 @@ const iframeSrc = ref("")
 const tableName = ref("")
 const tableComment = ref("")
 const dbType = ref("")
+const router = useRouter()
+
+function goBack(){
+  router.go(-1)
+}
 
 onMounted(() => {
-  tableName.value = route.query.tableName
-  tableComment.value = route.query.tableComment
-  dbType.value = route.query.dbType
+  tableName.value = history.state.tableName
+  tableComment.value = history.state.tableComment
+  dbType.value = history.state.dbType
   iframeSrc.value = import.meta.env.MODE === 'development'
-      ? import.meta.env.VITE_APP_DEV_BLOOD_URL+'/?e='+route.query.tableName
-      : import.meta.env.VITE_APP_PROD_BLOOD_URL+'/?e='+route.query.tableName
+      ? import.meta.env.VITE_APP_DEV_BLOOD_URL+'/?e='+history.state.tableName
+      : window.webConfig.VITE_APP_PROD_BLOOD_URL+'/?e='+history.state.tableName
 })
 </script>
 

@@ -99,8 +99,8 @@ export function useTable() {
                   {
                     onClick: () =>
                       void router.push({
-                        name: 'workflow-definition-detail',
-                        params: { code: row.code }
+                        name: 'workflow-relation',
+                        query: { code: row.code }
                       })
                   },
                   {
@@ -123,13 +123,39 @@ export function useTable() {
           )
       },
       {
-        title: t('project.workflow.status'),
+        title: t('project.workflow.workflow_status'),
         key: 'releaseState',
         ...COLUMN_WIDTH_CONFIG['state'],
         render: (row) =>
           row.releaseState === 'ONLINE'
             ? t('project.workflow.up_line')
             : t('project.workflow.down_line')
+      },
+      {
+        title: t('project.workflow.schedule_publish_status'),
+        key: 'scheduleReleaseState',
+        ...COLUMN_WIDTH_CONFIG['state'],
+        render: (row) => {
+          if (row.scheduleReleaseState === 'ONLINE') {
+            return h(
+                NTag,
+                { type: 'success', size: 'small' },
+                {
+                  default: () => t('project.workflow.up_line')
+                }
+            )
+          } else if (row.scheduleReleaseState === 'OFFLINE') {
+            return h(
+                NTag,
+                { type: 'warning', size: 'small' },
+                {
+                  default: () => t('project.workflow.down_line')
+                }
+            )
+          } else {
+            return '-'
+          }
+        }
       },
       {
         title: t('project.workflow.create_time'),
@@ -157,48 +183,22 @@ export function useTable() {
         ...COLUMN_WIDTH_CONFIG['userName']
       },
       {
-        title: t('project.workflow.schedule_publish_status'),
-        key: 'scheduleReleaseState',
-        ...COLUMN_WIDTH_CONFIG['state'],
-        render: (row) => {
-          if (row.scheduleReleaseState === 'ONLINE') {
-            return h(
-              NTag,
-              { type: 'success', size: 'small' },
-              {
-                default: () => t('project.workflow.up_line')
-              }
-            )
-          } else if (row.scheduleReleaseState === 'OFFLINE') {
-            return h(
-              NTag,
-              { type: 'warning', size: 'small' },
-              {
-                default: () => t('project.workflow.down_line')
-              }
-            )
-          } else {
-            return '-'
-          }
-        }
-      },
-      {
         title: t('project.workflow.operation'),
         key: 'operation',
-        ...COLUMN_WIDTH_CONFIG['operation'](10),
+        ...COLUMN_WIDTH_CONFIG['operation'](6),
         render: (row) =>
           h(TableAction, {
             row,
-            onEditWorkflow: () => editWorkflow(row),
+            //onEditWorkflow: () => editWorkflow(row),
             onStartWorkflow: () => startWorkflow(row),
             onTimingWorkflow: () => timingWorkflow(row),
             onVersionWorkflow: () => versionWorkflow(row),
             onDeleteWorkflow: () => deleteWorkflow(row),
             onReleaseWorkflow: () => releaseWorkflow(row),
-            onCopyWorkflow: () => copyWorkflow(row),
-            onExportWorkflow: () => exportWorkflow(row),
+            //onCopyWorkflow: () => copyWorkflow(row),
+            //onExportWorkflow: () => exportWorkflow(row),
             onGotoTimingManage: () => gotoTimingManage(row),
-            onGotoWorkflowTree: () => gotoWorkflowTree(row)
+            //onGotoWorkflowTree: () => gotoWorkflowTree(row)
           })
       }
     ] as TableColumns<any>
@@ -210,8 +210,8 @@ export function useTable() {
   const editWorkflow = (row: any) => {
     variables.row = row
     router.push({
-      name: 'workflow-definition-detail',
-      params: { code: row.code }
+      name: 'workflow-relation',
+      query: { code: row.code }
     })
   }
 
