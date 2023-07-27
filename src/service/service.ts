@@ -47,6 +47,7 @@ const baseRequestConfig: AxiosRequestConfig = {
   headers: {"X-Content-Type-Options" : "nosniff",
             "X-XSS-Protection" : "1",
             "Content-Security-Policy" : "default-src 'self'; script-src 'self'; frame-ancestors 'self'"
+
   },
   transformRequest: (params) => {
     if (_.isPlainObject(params)) {

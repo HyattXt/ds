@@ -46,6 +46,19 @@ axios.interceptors.request.use(config => {
 
 app.config.globalProperties.echarts = echarts
 
+axios.interceptors.request.use(config => {
+    // 为请求头添加x-access-token字段为服务端返回的token
+    // @ts-ignore
+    config.headers['X-Content-Type-Options'] = 'nosniff'
+    // @ts-ignore
+    config.headers['X-XSS-Protection'] = '1'
+    // @ts-ignore
+    config.headers['Content-Security-Policy'] = "default-src 'self'; script-src 'self'; frame-ancestors 'self'"
+    // return config是固定用法 必须有返回值
+    return config
+})
+
+
 app.use(naive)
 app.use(router)
 app.use(pinia)
