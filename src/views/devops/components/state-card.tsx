@@ -188,8 +188,8 @@ const StateCard = defineComponent({
         {{
           default: () => (
 
-            <NGrid x-gap={12} cols={1} >
-              <NGi>
+            <NGrid x-gap={12} cols={2}  >
+              <NGi span={2}>
                 <Card title={'任务状态统计'} style={{ height: '20vh' }}>
 
                   <NSpace justify="space-between">
@@ -288,78 +288,75 @@ const StateCard = defineComponent({
                   </NSpace>
                 </Card>
               </NGi>
-              <NGi >
-                <Card title={'实例运行时段分布'} style={{ height: '60vh', flexWrap: "nowrap" }}>
+              <NGi span={2}>
+                <Card title={'实例运行时段分布'} style={{ height: '60vh', width: '100%', flexWrap: "nowrap" }}>
                   {chartData.length > 0 && <ChartLineBox data={chartData} />}
                 </Card>
               </NGi>
-              <NGi >
-                <Card title={'实例类别占比'} style={{ height: '70vh' }}>
+              <NGi span={1} >
+                {/* <Card title={'实例类别占比'} style={{ height: '70vh' }}> */}
 
-                  <NSpace style={{ display: "flex", gap: "10px", flexWrap: "nowrap" }} >
-                    <Card style={{ height: '65vh', width: '40vw', border: 'none' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
-                        {TaskPieData.chart.length > 0 && <TaskPie data={TaskPieData.chart} taskTotalNum={TaskPieData.table[0].taskTotalNum} colors={colors} />}
-                      </div>
-                    </Card>
+                <Card title={'实例类别占比'} style={{ height: '65vh', border: 'none' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
+                    {TaskPieData.chart.length > 0 && <TaskPie data={TaskPieData.chart} taskTotalNum={TaskPieData.table[0].taskTotalNum} colors={colors} />}
+                  </div>
+                </Card>
+              </NGi>
+              <NGi span={1}>
+                <Card style={{ height: '65vh', border: 'none', display: 'flex', flexDirection: 'column', justifyContent: 'center', flexGrow: 1 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
+                    {nprogressElements}
+                  </div>
+                </Card>
+                {/* </Card> */}
 
+              </NGi>
+              <NGi span={1}>
 
-                    <Card style={{ height: '65vh', width: '40vw', border: 'none', display: 'flex', flexDirection: 'column', justifyContent: 'center', flexGrow: 1 }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
-                        {nprogressElements}
-                      </div>
-                    </Card>
+                <Card style={{ height: '60vh' }}>
+                  <NSpace justify='space-between' style={{ height: '40px' }}>
+                    <p style="font-size:16px;">作业运行时长排行TOP10</p>
+                    <NSelect
+                      size='small'
+                      value={RunSelectCurrent}
+                      defaultValue='今天'
+                      options={RunSelect}
+                      style="width:150px;border: none; outline: none;"
+                      onUpdateValue={onUpdateRunTop10DatePickerValue}
+                    />
                   </NSpace>
+                  <NDataTable
+                    columns={RunSelectHeader.value}
+                    data={RunTop10Data}
+                    size='small'
+                  />
+
                 </Card>
 
               </NGi>
-              <NGi >
-
-                <NSpace justify='space-between' style={{ display: "flex", gap: "5px", flexWrap: "nowrap" }} >
-                  <Card style={{ height: '60vh', width: '50vw' }}>
-                    <NSpace justify='space-between' style={{ height: '40px' }}>
-                      <p style="font-size:16px;">作业运行时长排行TOP10</p>
-                      <NSelect
-                        size='small'
-                        value={RunSelectCurrent}
-                        defaultValue='今天'
-                        options={RunSelect}
-                        style="width:150px;border: none; outline: none;"
-                        onUpdateValue={onUpdateRunTop10DatePickerValue}
-                      />
-                    </NSpace>
-                    <NDataTable
-                      columns={RunSelectHeader.value}
-                      data={RunTop10Data}
+              <NGi span={1}>
+                <Card style={{ height: '60vh' }}>
+                  <NSpace justify='space-between' style={{ height: '40px' }}>
+                    <p style="font-size:16px;">作业运行出错排行TOP10</p>
+                    <NSelect
                       size='small'
+                      value={RunErrorSelectCurrent}
+                      defaultValue='今天'
+                      options={RunSelect}
+                      style="width:150px;border: none; outline: none;"
+                      onUpdateValue={onUpdateRunErrorTop10DatePickerValue}
                     />
+                  </NSpace>
+                  <NDataTable
+                    columns={RunErrorSelectHeader.value}
+                    data={RunErrorTop10Data}
+                    size='small'
+                  />
 
-                  </Card>
-
-
-                  <Card style={{ height: '60vh', width: '35vw' }}>
-                    <NSpace justify='space-between' style={{ height: '40px' }}>
-                      <p style="font-size:16px;">作业运行出错排行TOP10</p>
-                      <NSelect
-                        size='small'
-                        value={RunErrorSelectCurrent}
-                        defaultValue='今天'
-                        options={RunSelect}
-                        style="width:150px;border: none; outline: none;"
-                        onUpdateValue={onUpdateRunErrorTop10DatePickerValue}
-                      />
-                    </NSpace>
-                    <NDataTable
-                      columns={RunErrorSelectHeader.value}
-                      data={RunErrorTop10Data}
-                      size='small'
-                    />
-
-                  </Card>
-                </NSpace>
+                </Card>
 
               </NGi>
-              <NGi >
+              <NGi span={2}>
                 <Card style={{ height: '60vh' }}>
                   <NSpace justify='space-between' style={{ height: '40px' }}>
                     <p style="font-size:16px;">API调用次数TOP10</p>
