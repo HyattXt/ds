@@ -27,10 +27,22 @@ export default {
   path: '/data-assets',
   name: 'data-assets',
   meta: { title: 'data-assets' },
-  redirect: { name: !!window.webConfig.VITE_APP_PROD_ASSETS_HOME_URL ? 'assets-overview': 'assets-catalog' },
+  redirect: { name: !!window.webConfig.VITE_APP_PROD_ASSETS_HOME_URL ? 'assets' : 'assets-catalog' },
   component: () => import('@/layouts/content'),
   children: [
-     {
+    {
+      path: '/data-assets/assets',
+      name: 'assets',
+      component: components['data-assets'],
+      meta: {
+        title: '资产概览',
+        activeMenu: 'data-assets',
+        showSide: true,
+        auth: []
+      }
+
+    },
+    {
       path: '/data-assets/assets-overview',
       name: 'assets-overview',
       component: () => import('@/views/iframe/index.vue'),
@@ -47,8 +59,20 @@ export default {
       name: 'assets-catalog',
       component: () => import('@/views/data-assets/catalog/index.vue'),
       meta: {
-        title: '资产目录-assets-catalog',
+        title: '全部数据-assets-catalog',
         activeMenu: 'data-assets',
+        showSide: true,
+        auth: []
+      }
+    },
+    {
+      path: '/data-assets/assets-query',
+      name: 'assets-query',
+      component: () => import('@/views/iframe/index.vue'),
+      meta: {
+        title: '数据探查-assets-query',
+        activeMenu: 'data-assets',
+        frameSrc: window.webConfig.VITE_APP_PROD_ASSETS_QUERY_URL,
         showSide: true,
         auth: []
       }
