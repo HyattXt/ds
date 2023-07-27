@@ -107,8 +107,8 @@ const StateCard = defineComponent({
         {{
           default: () => (
 
-            <NGrid x-gap={12} cols={1} >
-              <NGi>
+            <NGrid x-gap={12} cols={2} >
+              <NGi span={2}>
                 <Card title={'基础概况'} style={{ height: '20vh' }}>
 
                   <NSpace justify="space-between">
@@ -183,30 +183,30 @@ const StateCard = defineComponent({
                   </NSpace>
                 </Card>
               </NGi>
-              <NGi >
-                <NSpace justify='space-between' style={{ gap: "5px", flexWrap: "nowrap" }} >
+              <NGi span={1}>
 
-                  <Card title={'数据表总数'} style={{ height: '60vh', width: '40vw' }}>
-                    {AssetOverviewLineData.length > 0 && <LineBox data={AssetOverviewLineData} title='' label='totalTables' />}
-                  </Card>
-                  <Card title={'数据存储量'} style={{ height: '60vh', width: '40vw' }}>
-                    {AssetOverviewLineData.length > 0 && <LineBox data={AssetOverviewLineData} title='' label='dataSize' />}
-                  </Card>
-                </NSpace>
+                <Card title={'数据表总数'} style={{ height: '60vh' }}>
+                  {AssetOverviewLineData.length > 0 && <LineBox data={AssetOverviewLineData} title='' label='totalTables' />}
+                </Card>
               </NGi>
-              <NGi >
-                <NSpace justify='space-between' style={{ gap: "5px", flexWrap: "nowrap" }} >
+              <NGi span={1}>
+                <Card title={'数据存储量'} style={{ height: '60vh' }}>
+                  {AssetOverviewLineData.length > 0 && <LineBox data={AssetOverviewLineData} title='' label='dataSize' />}
+                </Card>
+              </NGi>
+              <NGi span={1}>
 
-                  <Card title={'存储记录数'} style={{ height: '60vh', width: '40vw' }}>
-                    {AssetOverviewLineData.length > 0 && <LineBox data={AssetOverviewLineData} title='' label='totalRecords' />}
-                  </Card>
-                  <Card title={'API服务数'} style={{ height: '60vh', width: '40vw' }}>
-                    {AssetOverviewLineData.length > 0 && <LineBox data={AssetOverviewLineData} title='' label='totalApiInterface' />}
-                  </Card>
-                </NSpace>
+                <Card title={'存储记录数'} style={{ height: '60vh' }}>
+                  {AssetOverviewLineData.length > 0 && <LineBox data={AssetOverviewLineData} title='' label='totalRecords' />}
+                </Card>
+              </NGi>
+              <NGi span={1}>
+                <Card title={'API服务数'} style={{ height: '60vh' }}>
+                  {AssetOverviewLineData.length > 0 && <LineBox data={AssetOverviewLineData} title='' label='totalApiInterface' />}
+                </Card>
               </NGi>
 
-              <NGi >
+              <NGi span={2}>
                 <Card style={{ height: '60vh' }}>
                   <NSpace justify='space-between' style={{ height: '40px' }}>
                     <p style="font-size:16px;">API调用次数TOP10</p>
