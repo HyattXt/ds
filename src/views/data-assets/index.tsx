@@ -39,7 +39,6 @@ const modules = import.meta.glob('/src/views/**/**.tsx')
 
 const components: { [key: string]: Component } = utils.mapping(modules)
 
-const DefinitionCard = defineAsyncComponent(() => import('./components/definition-card'))
 
 
 export default defineComponent({
