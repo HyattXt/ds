@@ -139,7 +139,7 @@ export default defineComponent({
       RunErrorSelectCurrent.value = RunSelect.value.filter(item => item.value[0] === val[0])[0].label;
     }
     const handlegetInterfaceTop10Data = (val: any) => {
-      RunErrorTop10.value = getInterfaceTop10Data(val, Proj.value)
+      ApiTop10.value = getInterfaceTop10Data(val, Proj.value)
       ApiSelectCurrent.value = RunSelect.value.filter(item => item.value[0] === val[0])[0].label;
     }
 

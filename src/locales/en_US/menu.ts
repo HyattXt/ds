@@ -60,6 +60,7 @@ export default {
   api_dev: 'API development',
   api_manager: 'API manager',
   data_assets: 'Data Assets',
+  assets: 'Assets',
   assets_overview: 'Assets Overview',
   assets_catalog: 'Assets Catalog',
   assets_query: 'Assets Query',

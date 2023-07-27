@@ -60,6 +60,7 @@ export default {
   api_dev: 'API开发',
   api_manager: 'API管理',
   data_assets: '数据资产',
+  assets: '资产概览',
   assets_overview: '资产总览',
   assets_catalog: '全部数据',
   assets_query: '数据探查',

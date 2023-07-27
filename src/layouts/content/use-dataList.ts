@@ -57,7 +57,7 @@ import { useRoute, RouterLink } from 'vue-router'
 import { useUserStore } from '@/store/user/user'
 import { timezoneList } from '@/common/timezone'
 import type { UserInfoRes } from '@/service/modules/users/types'
-import {useProjectStore} from "@/store/route/project";
+import { useProjectStore } from "@/store/route/project";
 
 export function useDataList() {
   const { t } = useI18n()
@@ -404,6 +404,11 @@ export function useDataList() {
         icon: renderIcon(PieChartOutlined),
         children: !!window.webConfig.VITE_APP_PROD_ASSETS_HOME_URL ? [
           {
+            label: t('menu.assets'),
+            key: '/data-assets/assets',
+            icon: renderIcon(BarChartOutlined)
+          },
+          {
             label: t('menu.assets_overview'),
             key: '/data-assets/assets-overview',
             icon: renderIcon(BarChartOutlined)
@@ -495,7 +500,7 @@ export function useDataList() {
                   path: '/' + item.key,
                 }
               },
-                //h(NIcon, {size: 20}, { default: () => h(item.icon) })
+              //h(NIcon, {size: 20}, { default: () => h(item.icon) })
             ),
           key: item.key,
           icon: item.icon,
