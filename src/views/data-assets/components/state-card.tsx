@@ -149,7 +149,7 @@ const StateCard = defineComponent({
                       size={'medium'}
                     >
                       <span role="img" class="anticon" style="font-size: 14px;"><svg width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" focusable="false" class=""><title>Icon / ZongshuSolid</title><desc>Created with Sketch.</desc><g id="Icon-/-ZongshuSolid" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g id="zongshuSolid" fill-rule="nonzero"><circle id="Oval" fill="#9171EE" cx="10" cy="10" r="10"></circle><path d="M14.75,14.01 L14.05,14.01 L14.05,10.75 C14.05,10.3357864 13.7142136,10 13.3,10 C12.8857864,10 12.55,10.3357864 12.55,10.75 L12.55,14 L10.815,14 L10.815,7.25 C10.815,6.83578644 10.4792136,6.5 10.065,6.5 C9.65078644,6.5 9.315,6.83578644 9.315,7.25 L9.315,14 L7.585,14 L7.585,4.75 C7.585,4.33578644 7.24921356,4 6.835,4 C6.42078644,4 6.085,4.33578644 6.085,4.75 L6.085,14 L5.25,14 C4.83578644,14 4.5,14.3357864 4.5,14.75 C4.5,15.1642136 4.83578644,15.5 5.25,15.5 L14.75,15.5 C15.1642136,15.5 15.5,15.1642136 15.5,14.75 C15.5,14.3357864 15.1642136,14 14.75,14 L14.75,14.01 Z" id="Path" fill="#FFFFFF"></path></g></g></svg></span>
-                      数据存储量（MB）
+                      数据存储量(MB)
                       <div>{AssetOverviewData[2]}</div >
                     </Card>
                     <Card
