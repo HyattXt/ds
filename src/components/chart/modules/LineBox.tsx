@@ -49,8 +49,11 @@ const lineChart = defineComponent({
           fontSize: '16',
           fontFamily: 'sans-serif',
         }
+      }
+      ,
+      grid: {
+        left: 35
       },
-
       tooltip: {              //设置tip提示
         trigger: 'axis'
       },
@@ -90,6 +93,9 @@ const lineChart = defineComponent({
         // max:function(value){
         //   return value.max;
         // },
+        axisLabel: {
+          margin: 0,
+        },
         nameTextStyle: {
           color: '#FA6F53',
           fontSize: 16,
