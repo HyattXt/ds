@@ -212,7 +212,7 @@ export function useTaskState() {
       }).then(function (res) {
         const table = res.map((item, index) => {
           return {
-            排名: index,
+            排名: index + 1,
             任务名名称: item.taskName,
             工作流名称: item.processName,
             任务代码: item.taskCode,
@@ -235,7 +235,7 @@ export function useTaskState() {
       }).then(function (res) {
         const table = res.map((item, index) => {
           return {
-            排名: index,
+            排名: index + 1,
             任务名: item.taskName,
             业务流程: item.NAME,
             出错次数: item.taskError,
@@ -257,7 +257,7 @@ export function useTaskState() {
       }).then(function (res) {
         const table = res.map((item, index) => {
           return {
-            排名: index,
+            排名: index + 1,
             接口地址: item.interfaceUrl,
             接口类型: item.interfaceUrlType,
             接口访问次数: item.interfaceNum,
