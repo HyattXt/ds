@@ -73,7 +73,7 @@ const PieChart = defineComponent({
         },
         axisLine: {             //坐标轴轴线相关设置。
           lineStyle: {
-            color: '#FA6F53',
+            color: '#333',
           }
         },
         axisTick: {
@@ -96,7 +96,7 @@ const PieChart = defineComponent({
         },
         axisLine: {
           lineStyle: {
-            color: '#FA6F53',
+            color: '#333',
           }
         },
         type: 'value'

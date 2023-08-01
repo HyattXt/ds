@@ -116,7 +116,7 @@ const StateCard = defineComponent({
                       // loading={loadingRef}
                       title=''
                       embedded
-                      style={{ width: '20vh' }}
+                      // style={{ width: '20vh' }}
                       // data={tablecount}
                       // striped
                       size={'medium'}
@@ -129,7 +129,7 @@ const StateCard = defineComponent({
                       // loading={loadingRef}
                       title=''
                       embedded
-                      style={{ width: '20vh' }}
+                      // style={{ width: '20vh' }}
                       // data={tablecount}
                       // striped
                       size={'medium'}
@@ -143,7 +143,7 @@ const StateCard = defineComponent({
                       // loading={loadingRef}
                       title=''
                       embedded
-                      style={{ width: '20vh' }}
+                      // style={{ width: '20vh' }}
                       // data={tablecount}
                       // striped
                       size={'medium'}
@@ -156,7 +156,7 @@ const StateCard = defineComponent({
                       // loading={loadingRef}
                       title=''
                       embedded
-                      style={{ width: '20vh' }}
+                      // style={{ width: '20vh' }}
                       // data={tablecount}
                       // striped
                       size={'medium'}
