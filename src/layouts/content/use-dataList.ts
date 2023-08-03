@@ -381,11 +381,11 @@ export function useDataList() {
             key: '/service/api-dev',
             icon: renderIcon(ApartmentOutlined)
           },
-          /*{
+          {
             label: t('menu.api_manager'),
             key: '/service/api-manager',
             icon: renderIcon(BarsOutlined)
-          }*/
+          }
         ]
       } ,
       {
@@ -451,7 +451,7 @@ export function useDataList() {
     !!window.webConfig.VITE_APP_PROD_ASSETS_HOME_URL ? null : keyToHidden.add('/data-assets/assets-overview')
     !!window.webConfig.VITE_APP_PROD_ASSETS_QUERY_URL ? null : keyToHidden.add('/data-assets/assets-query')
     window.webConfig.SHOW_REST ? null : keyToHidden.add('/devops/rest/rest-manager')
-    window.webConfig.SHOW_API ? null : keyToHidden.add('/devops/service/api-manager').add('service')
+    window.webConfig.SHOW_API ? null : keyToHidden.add('/devops/service/api-manager').add('/service/api-manager').add('service')
     !window.webConfig.SHOW_REST && !window.webConfig.SHOW_API ? keyToHidden.add('devops_rest') : null
 
     function deleteItemsWithKey(options, condition) {
