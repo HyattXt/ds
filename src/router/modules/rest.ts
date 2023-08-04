@@ -49,6 +49,7 @@ export default {
         title: '接口开发-rest-dev',
         activeMenu: 'rest',
         showSide: true,
+        activeSide: '/rest/rest-manager',
         auth: []
       }
     },
@@ -60,6 +61,7 @@ export default {
         title: '接口编辑-rest-edit',
         activeMenu: 'rest',
         showSide: true,
+        activeSide: '/rest/rest-manager',
         auth: []
       }
     }

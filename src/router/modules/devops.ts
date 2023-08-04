@@ -111,6 +111,7 @@ export default {
                 title: '接口开发-rest-dev',
                 activeMenu: 'devops',
                 showSide: true,
+                activeSide: '/devops/rest/rest-manager',
                 auth: []
             }
         },
@@ -122,6 +123,7 @@ export default {
                 title: '接口编辑-rest-edit',
                 activeMenu: 'devops',
                 showSide: true,
+                activeSide: '/devops/rest/rest-manager',
                 auth: []
             }
         },

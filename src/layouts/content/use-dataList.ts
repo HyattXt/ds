@@ -96,7 +96,6 @@ export function useDataList() {
 
   const changeMenuOption = (state: any) => {
     const projectCode = ProjectStore.getCurrentProject
-    console.log(projectCode)
     state.menuOptions = [
       {
         label: () => h(NEllipsis, null, { default: () => t('menu.home') }),

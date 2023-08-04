@@ -49,6 +49,7 @@ export default {
         title: '服务开发-api-dev-step',
         activeMenu: 'service',
         showSide: true,
+        activeSide: '/service/api-dev',
         auth: []
       }
     },
@@ -60,6 +61,7 @@ export default {
         title: '服务开发-api-dev-step',
         activeMenu: 'service',
         showSide: true,
+        activeSide: '/service/api-dev',
         auth: []
       }
     },
@@ -71,6 +73,7 @@ export default {
         title: '服务注册-api-register',
         activeMenu: 'service',
         showSide: true,
+        activeSide: '/service/api-dev',
         auth: []
       }
     },
@@ -82,6 +85,7 @@ export default {
         title: '服务注册-api-register-edit',
         activeMenu: 'service',
         showSide: true,
+        activeSide: '/service/api-dev',
         auth: []
       }
     },
