@@ -110,7 +110,7 @@ export function useColumns(onCallback: Function) {
                       circle: true,
                       type: 'info',
                       size: 'small',
-                      onClick: () => void onCallback(rowData.id, 'edit')
+                      onClick: () => void onCallback(rowData.id, rowData.name, 'edit')
                     },
                     {
                       default: () =>
@@ -125,7 +125,7 @@ export function useColumns(onCallback: Function) {
                     NPopconfirm,
                     {
                       onPositiveClick: () =>
-                        void onCallback(rowData.id, 'delete'),
+                        void onCallback(rowData.id, rowData.name, 'delete'),
                       negativeText: t('datasource.cancel'),
                       positiveText: t('datasource.confirm')
                     },

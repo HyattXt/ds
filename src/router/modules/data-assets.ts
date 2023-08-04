@@ -85,6 +85,7 @@ export default {
         title: '资产详情-assets-detail',
         activeMenu: 'data-assets',
         showSide: true,
+        activeSide: '/data-assets/assets-catalog',
         auth: []
       }
     }

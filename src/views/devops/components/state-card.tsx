@@ -149,16 +149,25 @@ const StateCard = defineComponent({
       .filter(item => item.ratio !== 0)
       .map((item, index) => {
         const formattedRatio = item.ratio.toFixed(1); // Ensure two decimal places
-        const displayRatio = formattedRatio.length < 4 ? `${formattedRatio}% | ${item.value}` : `${formattedRatio}% | ${item.value}`;
-        const displayNull = ' '
-        return h('div', { key: index, style: { display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', margin: '1px 0' } }, [
-          h('div', { style: { width: '10px', height: '10px', borderRadius: '50%', background: colors[index], marginRight: '10px' } }), // Colored dot
-          h('p', { style: { width: "25%", marginRight: '5px', textAlign: 'left' } }, { default: () => item.name }), // Left-align 'item.name'
-          h(NProgress, { percentage: item.ratio, height: 15 }, { default: () => displayNull }), // Use the formatted and concatenated ratio
-          h('p', { style: { width: "20%", marginRight: '5px', textAlign: 'left' } }, { default: () => displayRatio }), // Left-align 'item.name'
-
+        const displayRatio =
+          formattedRatio.length < 4 ? `${formattedRatio}% | ${item.value}` : `${formattedRatio}% | ${item.value}`;
+        const displayNull = ' ';
+        return h('div', { key: index, style: { display: 'flex', alignItems: 'center', margin: '1px 0' } }, [
+          h('div', {
+            style: {
+              width: '10px',
+              height: '10px',
+              borderRadius: '50%',
+              background: colors[index],
+              marginRight: '10px',
+            },
+          }), // Colored dot
+          h('p', { style: { width: '25%', marginRight: '5px', textAlign: 'left', flexShrink: 0 } }, { default: () => item.name }), // Left-align 'item.name'
+          h(NProgress, { percentage: item.ratio, height: 15, style: { width: '20vw', flexGrow: 1 } }, { default: () => displayNull }), // Use the formatted and concatenated ratio
+          h('p', { style: { width: '20%', marginRight: '5px', textAlign: 'left', flexShrink: 0 } }, { default: () => displayRatio }), // Left-align 'item.name'
         ]);
       });
+
 
 
     const RunSelectHeader = ref([
@@ -296,7 +305,7 @@ const StateCard = defineComponent({
               <NGi span={1} >
                 {/* <Card title={'实例类别占比'} style={{ height: '70vh' }}> */}
 
-                <Card title={'实例类别占比'} style={{ height: '65vh', border: 'none' }}>
+                <Card title={'实例类别占比'} style={{ border: 'none' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
                     {TaskPieData.chart.length > 0 && <TaskPie data={TaskPieData.chart} taskTotalNum={TaskPieData.table[0].taskTotalNum} colors={colors} />}
                   </div>
@@ -313,7 +322,7 @@ const StateCard = defineComponent({
               </NGi>
               <NGi span={1}>
 
-                <Card style={{ height: '60vh' }}>
+                <Card >
                   <NSpace justify='space-between' style={{ height: '40px' }}>
                     <p style="font-size:16px;">作业运行时长排行TOP10</p>
                     <NSelect

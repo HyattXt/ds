@@ -49,8 +49,8 @@ const lineChart = defineComponent({
           fontSize: '16',
           fontFamily: 'sans-serif',
         }
-      },
-
+      }
+      ,
       tooltip: {              //设置tip提示
         trigger: 'axis'
       },
@@ -68,13 +68,13 @@ const lineChart = defineComponent({
         data: props.data[0].time,
         name: '时间',           //X轴 name
         nameTextStyle: {        //坐标轴名称的文字样式
-          color: '#FA6F53',
+          color: '#333',
           fontSize: 16,
           padding: [0, 0, 0, 20]
         },
         axisLine: {             //坐标轴轴线相关设置。
           lineStyle: {
-            color: '#FA6F53',
+            color: '#333',
           }
         },
         axisTick: {
@@ -82,7 +82,7 @@ const lineChart = defineComponent({
         }
       },
       yAxis: {
-        name: '数量',
+        name: '',
         minInterval: 1,
         // min: function(value){
         //   return value.min;
@@ -90,14 +90,17 @@ const lineChart = defineComponent({
         // max:function(value){
         //   return value.max;
         // },
+        axisLabel: {
+          margin: 0,
+        },
         nameTextStyle: {
-          color: '#FA6F53',
+          color: '#333',
           fontSize: 16,
           padding: [0, 0, 10, 0]
         },
         axisLine: {
           lineStyle: {
-            color: '#FA6F53',
+            color: '#333',
           }
         },
         type: 'value'
@@ -117,7 +120,7 @@ const lineChart = defineComponent({
       grid: {
         x: 30,
         y: 50,
-        x2: 30,
+        x2: 35,
         y2: 35
       },
     };

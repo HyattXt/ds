@@ -282,25 +282,6 @@ export default defineComponent({
             )
           }}
         </NTooltip>
-        <NTooltip trigger={'hover'}>
-          {{
-            default: () => t('project.workflow.gantt'),
-            trigger: () => (
-              <NButton
-                tag='div'
-                size='small'
-                type='info'
-                circle
-                disabled={this.row?.disabled}
-                onClick={this.handleGantt}
-              >
-                <NIcon>
-                  <ControlOutlined />
-                </NIcon>
-              </NButton>
-            )
-          }}
-        </NTooltip>
       </NSpace>
     )
   }

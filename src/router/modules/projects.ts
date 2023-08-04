@@ -82,8 +82,8 @@ export default {
       component: components['projects-workflow-definition-timing'],
       meta: {
         title: '定时管理',
-        activeMenu: 'projects',
-        activeSide: '/projects/:projectCode/workflow-definition',
+        activeMenu: 'devops',
+        activeSide: '/devops/:projectCode/workflow-definition',
         showSide: true,
         auth: []
       }

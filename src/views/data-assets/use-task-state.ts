@@ -67,7 +67,7 @@ export function useTaskState() {
       }).then(function (res) {
         const table = res.map((item, index) => {
           return {
-            排名: index,
+            排名: index + 1,
             接口地址: item.interfaceUrl,
             接口类型: item.interfaceUrlType,
             接口访问次数: item.interfaceNum,

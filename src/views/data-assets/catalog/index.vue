@@ -87,9 +87,9 @@ const columns = ({ play }) => {
       {
         type: 'expand',
         renderExpand: (rowData) => {
-          return h(NGrid,{cols:16},[
+          return h(NGrid,{cols:11},[
               h(NGi,{span:1},null),
-              h(NGi,{span:15},
+              h(NGi,{span:10},
                 h(NDescriptions, { labelPlacement: 'left', size: "small"} , [
                   h(NDescriptionsItem,  { label: '数据行数', labelStyle: 'color:grey; font-size:13px', contentStyle: 'font-size:13px' } , {default: () => rowData.tableDataRow}),
                   h(NDescriptionsItem,  { label: '表大小', labelStyle: 'color:grey; font-size:13px', contentStyle: 'font-size:13px' } , {default: () => rowData.tableDataLength}),

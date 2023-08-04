@@ -32,12 +32,12 @@ export default {
     path: '/devops',
     name: 'devops',
     meta: { title: 'devops' },
-    redirect: { name: 'devops_overview', params: { projectCode: '123' } },
+    redirect: { name: 'devops-overview', params: { projectCode: '123' } },
     component: () => import('@/layouts/content'),
     children: [
         {
             path: '/devops/:projectCode/devops_overview',
-            name: 'devops_overview',
+            name: 'devops-overview',
             component: components['devops'],
             meta: {
                 title: '首页',
@@ -49,7 +49,7 @@ export default {
         },
         {
             path: '/devops/:projectCode/task/instances',
-            name: 'devops_task-instance',
+            name: 'devops-task-instance',
             component: components['projects-task-instance'],
             meta: {
                 title: '任务实例',
@@ -61,7 +61,7 @@ export default {
         ,
         {
             path: '/devops/:projectCode/workflow/instances',
-            name: 'devops_workflow-instance-list',
+            name: 'devops-workflow-instance-list',
             component: components['projects-workflow-instance'],
             meta: {
                 title: '工作流实例',
@@ -83,7 +83,7 @@ export default {
         },
         {
             path: '/devops/service/api-manager',
-            name: 'api-manager',
+            name: 'devops-api-manager',
             component: () => import('@/views/api/api-manager/list/index.vue'),
             meta: {
                 title: '服务开发-api-manager',
@@ -94,7 +94,7 @@ export default {
         },
         {
             path: '/devops/rest/rest-manager',
-            name: 'rest-manager',
+            name: 'devops-rest-manager',
             component: () => import('@/views/rest/catalog/list.vue'),
             meta: {
                 title: '接口管理-rest-manager',
@@ -105,29 +105,31 @@ export default {
         },
         {
             path: '/devops/rest/rest-dev',
-            name: 'rest-dev',
+            name: 'devops-rest-dev',
             component: () => import('@/views/rest/detail/add.vue'),
             meta: {
                 title: '接口开发-rest-dev',
                 activeMenu: 'devops',
                 showSide: true,
+                activeSide: '/devops/rest/rest-manager',
                 auth: []
             }
         },
         {
             path: '/devops/rest/rest-edit',
-            name: 'rest-edit',
+            name: 'devops-rest-edit',
             component: () => import('@/views/rest/detail/edit.vue'),
             meta: {
                 title: '接口编辑-rest-edit',
                 activeMenu: 'devops',
                 showSide: true,
+                activeSide: '/devops/rest/rest-manager',
                 auth: []
             }
         },
         {
             path: '/devops/security/alarm-instance-manage',
-            name: 'devops_alarm-instance-manage',
+            name: 'devops-alarm-instance-manage',
             component: components['security-alarm-instance-manage'],
             meta: {
                 title: '告警实例管理',

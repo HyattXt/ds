@@ -176,7 +176,7 @@ export function useTable() {
         title: t('project.workflow.operation'),
         key: 'operation',
         ...COLUMN_WIDTH_CONFIG['operation'](6),
-        className: styles.operation,
+        //className: styles.operation,
         render: (_row: IWorkflowInstance, index: number) =>
           h(TableAction, {
             row: _row,
