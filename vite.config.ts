@@ -72,7 +72,14 @@ export default defineConfig({
       '/httpHandle': {
         target: loadEnv('development', './').VITE_APP_DEV_API_URL,
         changeOrigin: true
-      }
+      },
+      '/chat2db/api': {
+        target: loadEnv('development', './').VITE_APP_DEV_ASSETS_QUERY_URL,
+        changeOrigin: true,
+        rewrite: path => {
+          return path.replace(/^\/chat2db/, '');
+        }
+      },
     }
   }
 })
