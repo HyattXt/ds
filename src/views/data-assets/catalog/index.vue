@@ -250,6 +250,7 @@ const columns = ({ play }) => {
           onClick() {
             paginationReactive.apiTreeId = option.id
             paginationReactive.page = 1
+            loadingRef.value = true
             query(
                 paginationReactive.page,
                 paginationReactive.pageSize,
