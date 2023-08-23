@@ -505,6 +505,7 @@ export default defineComponent({
       return {
         onClick() {
           paginationReactive.apiTreeId = option.id
+          loadingRef.value = true
           refresh(1)
         },
         onContextmenu (e)  {
@@ -630,6 +631,7 @@ export default defineComponent({
         paginationReactive.page = currentPage
         paginationReactive.pageCount = data.pageCount
         paginationReactive.itemCount = data.total
+        loadingRef.value = false
       })
     }
     const columnsRef = ref(
