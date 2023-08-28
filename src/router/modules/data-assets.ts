@@ -88,6 +88,17 @@ export default {
         activeSide: '/data-assets/assets-catalog',
         auth: []
       }
-    }
+    },
+    {
+      path: '/data-assets/assets-classify',
+      name: 'assets-classify',
+      component: () => import('@/views/data-assets/classify/index.vue'),
+      meta: {
+        title: '数据编目-assets-classify',
+        activeMenu: 'data-assets',
+        showSide: true,
+        auth: []
+      }
+    },
   ]
 }
