@@ -27,7 +27,7 @@ import {
   SafetyCertificateOutlined,
   UserOutlined,
   LogoutOutlined,
-  FundProjectionScreenOutlined,
+  PicRightOutlined,
   PartitionOutlined,
   SettingOutlined,
   FileSearchOutlined,
@@ -400,7 +400,7 @@ export function useDataList() {
           {
             label: t('menu.assets_overview'),
             key: '/data-assets/assets-overview',
-            icon: renderIcon(BarChartOutlined)
+            icon: renderIcon(PieChartOutlined)
           },
           {
             label: t('menu.assets_catalog'),
@@ -428,7 +428,12 @@ export function useDataList() {
                   ]
               )
             ])
-          }
+          },
+          {
+            label: t('menu.assets_classify'),
+            key: '/data-assets/assets-classify',
+            icon: renderIcon(PicRightOutlined)
+          },
         ]
       } ,
 
