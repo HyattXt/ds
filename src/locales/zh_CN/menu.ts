@@ -64,6 +64,7 @@ export default {
   assets_overview: '资产总览',
   assets_catalog: '全部数据',
   assets_query: '数据探查',
+  assets_classify: '数据编目',
   rest: '接口管理',
   rest_dev: '接口注册',
   rest_manager: '接口管理',
