@@ -85,6 +85,7 @@
       <n-grid x-gap="2" :cols="6">
         <n-gi span="1">
           <n-card size="small" class="container">
+            <n-spin :show="showSpin">
             <n-tree
                 block-line
                 show-irrelevant-nodes
@@ -95,6 +96,7 @@
                 :render-prefix="menuIcon"
                 :nodeProps="nodeProps"
             />
+            </n-spin>
           </n-card>
         </n-gi>
         <n-gi span="5">
@@ -410,6 +412,7 @@ export default defineComponent({
     const formRef2 = ref(null)
     const dataRef = ref([])
     const loadingRef = ref(true)
+    const showSpin = ref(false)
     const active = ref(false)
     const drawTitle = ref('')
     const drawPath = ref('')
@@ -476,8 +479,10 @@ export default defineComponent({
     }
 
     function getApiFolder ()  {
+      showSpin.value = true
       axios.get(getApiFolderUrl).then((res) => {
         treeFolder.value = res.data.data
+        showSpin.value = false
       })
     }
 
@@ -753,6 +758,7 @@ export default defineComponent({
       selectedMenu,
       showAddRef,
       formValue,
+      showSpin,
       formRef2,
       createMenu,
       rules,
