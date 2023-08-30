@@ -187,7 +187,7 @@ const columns = ({ play }) => {
                 play(row) {
                   router.push({
                         name: 'assets-detail',
-                        state: {tableName: row.sqlLineageName, tableComment: row.notes, dbType: row.dbType, fieldArray: row.fieldArray}
+                        state: {tableName: row.sqlLineageName, tableComment: row.notes, dbType: row.dbType, fieldArray: row.fieldArray, backName: 'assets-catalog'}
                       }
                   )
                 }
