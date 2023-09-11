@@ -808,10 +808,13 @@ a {
 .container::-webkit-scrollbar-thumb {
   /*滚动条里面小方块*/
   border-radius: 10px;
-  box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
-  background   : #b9b9b9;
 }
-
+.container:hover::-webkit-scrollbar-thumb {
+  /*滚动条里面小方块*/
+  border-radius: 10px;
+  box-shadow   : inset 0 0 5px rgb(179, 179, 179);
+  background   : #b3b3b3;
+}
 
 .menuModal {
   width: 600px;

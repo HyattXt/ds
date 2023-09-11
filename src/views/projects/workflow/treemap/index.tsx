@@ -409,7 +409,7 @@ export default defineComponent({
                         theme.darkTheme ? Styles['dark'] : Styles['light'],
                     ]}
                 >
-                    <n-grid x-gap="2" cols="6">
+                    <n-grid x-gap="2" cols="5">
                         <n-gi span="1">
                             <div>
                             <n-card
@@ -486,7 +486,7 @@ export default defineComponent({
                             </n-card>
                             </div>
                         </n-gi>
-                        <n-gi span="5">
+                        <n-gi span="4">
                             <div>
                             <Detail
                                ref={tsxRef}
