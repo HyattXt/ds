@@ -40,6 +40,7 @@
         <n-gi span="1">
           <n-card size="small" class="container">
             <n-tree
+                class="treeSize"
                 block-line
                 show-irrelevant-nodes
                 :data="treeFolder"
@@ -56,6 +57,7 @@
           <n-data-table
             ref="table"
             remote
+            size="small"
             :columns="columns"
             :data="data"
             :loading="loading"
@@ -373,10 +375,9 @@ const columns = ({ play }) => {
     box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
     background   : #b9b9b9;
   }
-  .container::-webkit-scrollbar-track {
-    /*滚动条里面轨道*/
-    box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-    background   : #ededed;
+
+
+  .treeSize {
+    font-size: 13px;
   }
 </style>

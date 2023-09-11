@@ -457,6 +457,7 @@ export default defineComponent({
                                 <div class={Styles.container}>
                                     <n-spin show={variables.loading}>
                                     <n-tree
+                                        class={Styles.treeSize}
                                         block-line
                                         show-irrelevant-nodes={false}
                                         pattern={pattern.value}

@@ -87,6 +87,7 @@
           <n-card size="small" class="container">
             <n-spin :show="showSpin">
             <n-tree
+                class="treeSize"
                 block-line
                 show-irrelevant-nodes
                 :data="folderData"
@@ -103,6 +104,7 @@
           <n-data-table
               ref="table"
               remote
+              size="small"
               :columns="columns"
               :data="data"
               :loading="loading"
@@ -962,16 +964,15 @@ a {
   box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
   background   : #b9b9b9;
 }
-.container::-webkit-scrollbar-track {
-  /*滚动条里面轨道*/
-  box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-  background   : #ededed;
-}
+
 
 .menuModal {
   width: 600px;
   height: 250px;
+}
+
+.treeSize {
+  font-size: 13px;
 }
 
 </style>
