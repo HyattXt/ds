@@ -260,7 +260,7 @@ const columns = ({ play }, { del }) => {
                 NPopconfirm,
                 {
                   onPositiveClick: () => {
-                    play(row)
+                    del(row)
                   }
                 },
                 {
