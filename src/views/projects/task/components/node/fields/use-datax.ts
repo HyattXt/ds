@@ -344,8 +344,8 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
   watch(
       () => [model.dtType],
       () => {
-        targetTableSpan.value = model.dtType=='ORACLE' || model.dsType=='SQLSERVER'? 6: 12
-        targetDatabaseSpan.value = model.dtType=='ORACLE' || model.dsType=='SQLSERVER'? 6: 0
+        targetTableSpan.value = model.dtType=='ORACLE' || model.dtType=='SQLSERVER'? 6: 12
+        targetDatabaseSpan.value = model.dtType=='ORACLE' || model.dtType=='SQLSERVER'? 6: 0
       }
   )
 
