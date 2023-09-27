@@ -211,7 +211,7 @@ export default defineComponent({
             {
               edit(row) {
                 router.push({
-                      path: '/rest/rest-edit',
+                      path: '/devops/rest/rest-edit',
                       query: {id: row.id}
                     }
                 )
