@@ -65,6 +65,7 @@ export function useColumnJsplumb(
 
     function execute() {
         Disassociate()
+        init()
         let getCol = SecondDevQueryUrl + '/HDataApi/apiService/getColumnsByTable'
         formTarget.value.id = model['dataTarget']
         formTarget.value.type = parseInt(model['dtType'].replace('MYSQL', 0).replace('ORACLE', 5).replace('SQLSERVER', 6))
@@ -132,7 +133,7 @@ export function useColumnJsplumb(
                     } else {
                         formSql.value.sql = model['sql']
                         const res = await querySqlColum(formSql.value)
-                        
+
                         leftData.value = res.map((item: any) => {
                                 let res = {
                                     id: '',
