@@ -61,7 +61,6 @@ export default defineComponent({
       initData()
 
     }
-    loginNew();
     const { t, locale } = useI18n()
     const dateRef = ref([getTime(startOfToday()), Date.now()])
     const taskStateRef = ref()
@@ -79,6 +78,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
+      loginNew();
       if (userStore.sessionId){
         initData()
       }
