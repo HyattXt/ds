@@ -100,5 +100,16 @@ export default {
         auth: []
       }
     },
+    {
+      path: '/data-assets/index-center',
+      name: 'index-center',
+      component: () => import('@/views/data-assets/index/index.vue'),
+      meta: {
+        title: '指标中心-index-center',
+        activeMenu: 'data-assets',
+        showSide: true,
+        auth: []
+      }
+    }
   ]
 }
