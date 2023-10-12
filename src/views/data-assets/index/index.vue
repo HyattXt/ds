@@ -928,6 +928,7 @@ export default defineComponent({
     }
 
     function addMetadata() {
+      ifUpdate.value = false
       indexFormValue.value = {}
       indexFormValue.value.treeId = paginationReactive.apiTreeId
       indexFormValue.value.opperate = '新增'
