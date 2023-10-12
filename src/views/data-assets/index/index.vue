@@ -508,6 +508,7 @@ const columns = ({ play }, { pub }, { del }) => {
                                 h(
                                     NButton,
                                     {
+                                      disabled: row.indicatorLabels === '已上架',
                                       circle: true,
                                       type: 'error',
                                       size: 'small',
@@ -929,6 +930,7 @@ export default defineComponent({
 
     function addMetadata() {
       ifUpdate.value = false
+      operaOffSpan.value = 0
       indexFormValue.value = {}
       indexFormValue.value.treeId = paginationReactive.apiTreeId
       indexFormValue.value.opperate = '新增'
