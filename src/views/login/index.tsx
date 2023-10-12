@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { defineComponent, toRefs, withKeys } from 'vue'
+import {defineComponent, nextTick, onMounted, toRefs, watchEffect, withKeys} from 'vue'
 import styles from './index.module.scss'
 import {
   NInput,
@@ -39,7 +39,7 @@ const login = defineComponent({
 
     const { state, t, locale } = useForm()
     const { handleChange } = useTranslate(locale)
-    const { handleLogin } = useLogin(state)
+    const { handleLogin, loginNew } = useLogin(state)
     const localesStore = useLocalesStore()
     const themeStore = useThemeStore()
 
@@ -48,6 +48,10 @@ const login = defineComponent({
     }
 
     cookies.set('language', localesStore.getLocales, { path: '/' })
+
+    onMounted(() => {
+      loginNew()
+    })
 
     return { t, handleChange, handleLogin, ...toRefs(state), localesStore }
   },

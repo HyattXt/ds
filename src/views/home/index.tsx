@@ -43,25 +43,6 @@ export default defineComponent({
           getProcessState(dateRef.value) || processStateRef.value
     }
 
-    const loginNew = async () => {
-
-      var uniwater_utoken = getUrlParam("uniwater_utoken") || ""
-      if (uniwater_utoken){
-        const loginRes: SessionIdRes = await login1({uniwater_utoken : uniwater_utoken})
-        await userStore.setSessionId(loginRes.sessionId)
-        userStore.setSessionId(loginRes.sessionId)
-
-        const userInfoRes: UserInfoRes = await getUserInfo()
-        await userStore.setUserInfo(userInfoRes)
-
-        const timezone = userInfoRes.timeZone ? userInfoRes.timeZone : 'UTC'
-        await timezoneStore.setTimezone(timezone)
-      }
-
-      initData()
-
-    }
-
     const { t, locale } = useI18n()
     const dateRef = ref([getTime(startOfToday()), Date.now()])
     const taskStateRef = ref()
@@ -79,7 +60,6 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      loginNew();
       if (userStore.sessionId){
         initData()
       }
