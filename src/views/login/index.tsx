@@ -39,7 +39,7 @@ const login = defineComponent({
 
     const { state, t, locale } = useForm()
     const { handleChange } = useTranslate(locale)
-    const { handleLogin, loginNew } = useLogin(state)
+    const { handleLogin } = useLogin(state)
     const localesStore = useLocalesStore()
     const themeStore = useThemeStore()
 
@@ -48,10 +48,6 @@ const login = defineComponent({
     }
 
     cookies.set('language', localesStore.getLocales, { path: '/' })
-
-    onMounted(() => {
-      loginNew()
-    })
 
     return { t, handleChange, handleLogin, ...toRefs(state), localesStore }
   },
