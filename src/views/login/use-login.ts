@@ -55,6 +55,7 @@ export function useLogin(state: any) {
   const loginNew = async () => {
 
     let uniwater_utoken = getUrlParam("uniwater_utoken") || ""
+    console.log(uniwater_utoken)
     if (uniwater_utoken){
       const loginRes: SessionIdRes = await login1({uniwater_utoken : uniwater_utoken})
       await userStore.setSessionId(loginRes.sessionId)
