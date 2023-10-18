@@ -31,13 +31,10 @@ const DefinitionCard = defineComponent({
   name: 'DefinitionCard',
   props,
   setup() {
-    let processDefinition:DefinitionChartData = { xAxisData: [], seriesData: [] };
-    setTimeout(() => {
-      const { getProcessDefinition } = useProcessDefinition()
-      // @ts-ignore
-      processDefinition = getProcessDefinition()
-    },2000 )
-    return {processDefinition}
+    const { getProcessDefinition } = useProcessDefinition()
+    const processDefinition = getProcessDefinition()
+
+    return { processDefinition }
   },
   render() {
     const { title, processDefinition } = this
