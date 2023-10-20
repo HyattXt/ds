@@ -115,8 +115,10 @@ export default defineComponent({
             formRef.value.validate((errors: any) => {
                 if (!errors) {
                     submitMenuModal().then(r => {
+                        setTimeout(()=>{
                             getTreeMenu(projectCode)
                             getTreeFolder(projectCode)
+                        },200)
                         }
                     )
                     menuModal.value = false
@@ -130,8 +132,10 @@ export default defineComponent({
             formRef.value.validate((errors: any) => {
                 if (!errors) {
                     renameMenuModal(projectCode).then(r => {
+                        setTimeout(()=>{
                             getTreeMenu(projectCode)
                             getTreeFolder(projectCode)
+                        },200)
                         }
                     )
                     reFolderModal.value = false
@@ -143,8 +147,10 @@ export default defineComponent({
 
         function moveWorkflow() {
             moveWorkflowModal(projectCode).then(r => {
+                setTimeout(()=>{
                     getTreeMenu(projectCode)
                     getTreeFolder(projectCode)
+                },200)
                 }
             )
             mvWorkflowModal.value = false
@@ -152,8 +158,10 @@ export default defineComponent({
 
         function moveMenu() {
             moveFolderModal(projectCode).then(r => {
+                setTimeout(()=>{
                     getTreeMenu(projectCode)
                     getTreeFolder(projectCode)
+                },200)
                 }
             )
             mvFolderModal.value = false
@@ -162,8 +170,10 @@ export default defineComponent({
         function delMenu() {
             delFolderModal().then(r => {
                     showDropdownRef.value = false
+                setTimeout(()=>{
                     getTreeMenu(projectCode)
                     getTreeFolder(projectCode)
+                },200)
                 }
             )
         }
@@ -171,8 +181,10 @@ export default defineComponent({
         function delWorkflow() {
             deleteWorkflow(projectCode).then(r => {
                     showDropdownRef.value = false
-                    getTreeMenu(projectCode)
-                    getTreeFolder(projectCode)
+                    setTimeout(()=>{
+                        getTreeMenu(projectCode)
+                        getTreeFolder(projectCode)
+                    },200)
                 }
             )
         }
@@ -205,8 +217,10 @@ export default defineComponent({
                     ).then((ignored: any) => {
                         message.success(t('project.dag.success'))
                         workflowModal.value = false
-                        getTreeMenu(projectCode)
-                        getTreeFolder(projectCode)
+                        setTimeout(()=>{
+                            getTreeMenu(projectCode)
+                            getTreeFolder(projectCode)
+                        },200)
                     })
                 } else {
                     message.error('验证失败，请填写完整信息')

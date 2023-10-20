@@ -62,6 +62,7 @@ export function useTreemap() {
   })
 
   const getTreeMenu = (projectCode: number) => {
+      variables.loading = true
         queryTreeMenu({
         projectCode
       }).then((res: TreeMenuList) => {

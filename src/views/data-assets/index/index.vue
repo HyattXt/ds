@@ -357,7 +357,7 @@ import {
   NGi,
   NPopconfirm
 } from "naive-ui";
-import {useRouter} from "vue-router";
+import { useUserStore } from '@/store/user/user'
 
 const columns = ({ play }, { pub }, { del }) => {
   return [
@@ -582,6 +582,8 @@ export default defineComponent({
     const offIndexUrl = import.meta.env.MODE === 'development'
         ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/indicatorCenter/indicatorOffline'
         : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/indicatorCenter/indicatorOffline'
+    const userStore = useUserStore()
+    const userInfo = userStore.getUserInfo
     const columnsRef = ref(
         columns(
             {
@@ -950,8 +952,11 @@ export default defineComponent({
     function createIndex () {
       formRef.value.validate((errors) => {
         if (!errors) {
+          indexFormValue.value.indicatorDefiner = userInfo.userName
+          indexFormValue.value.indicatorMaintainer = userInfo.userName
           let params = indexFormValue.value
           let url = indexFormValue.value.opperate === '新增' ? insertIndexUrl : updateIndexUrl
+          indexFormValue.value.opperate === '新增' ? delete indexFormValue.value.indicatorMaintainer : delete indexFormValue.value.indicatorDefiner
           axios.post(url, params).then((res) => {
             message.info(res.data.info)
             query(
