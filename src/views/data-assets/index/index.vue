@@ -957,7 +957,22 @@ export default defineComponent({
           let params = indexFormValue.value
           let url = indexFormValue.value.opperate === '新增' ? insertIndexUrl : updateIndexUrl
           indexFormValue.value.opperate === '新增' ? delete indexFormValue.value.indicatorMaintainer : delete indexFormValue.value.indicatorDefiner
-          axios.post(url, params).then((res) => {
+          switch (params.timeDimension){
+            case '分钟' : params.timeDimension = '1'
+              break;
+            case '小时' : params.timeDimension = '2'
+              break;
+            case '天' : params.timeDimension = '3'
+              break;
+            case '周' : params.timeDimension = '4'
+              break;
+            case '月' : params.timeDimension = '5'
+              break;
+            case '年' : params.timeDimension = '6'
+              break;
+          }
+          console.log(params)
+          /*axios.post(url, params).then((res) => {
             message.info(res.data.info)
             query(
                 paginationReactive.page,
@@ -971,7 +986,7 @@ export default defineComponent({
             )
           })
           indexFormValue.value = {}
-          active.value = false
+          active.value = false*/
         } else {
           message.error('验证失败，请填写完整信息')
         }
