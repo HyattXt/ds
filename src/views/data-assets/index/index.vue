@@ -971,8 +971,7 @@ export default defineComponent({
             case '年' : params.timeDimension = '6'
               break;
           }
-          console.log(params)
-          /*axios.post(url, params).then((res) => {
+          axios.post(url, params).then((res) => {
             message.info(res.data.info)
             query(
                 paginationReactive.page,
@@ -986,7 +985,7 @@ export default defineComponent({
             )
           })
           indexFormValue.value = {}
-          active.value = false*/
+          active.value = false
         } else {
           message.error('验证失败，请填写完整信息')
         }
