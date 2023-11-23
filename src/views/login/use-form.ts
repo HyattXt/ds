@@ -26,7 +26,8 @@ export function useForm() {
     loginFormRef: ref(),
     loginForm: {
       userName: '',
-      userPassword: ''
+      userPassword: '',
+      captcha: ''
     },
     rules: {
       userName: {
@@ -44,7 +45,15 @@ export function useForm() {
             return new Error(t('login.userPassword_tips'))
           }
         }
-      }
+      },
+      captcha: {
+        trigger: ['input', 'blur'],
+        validator() {
+          if (state.loginForm.captcha === '') {
+            return new Error(t('login.captcha_tips'))
+          }
+        }
+      },
     } as FormRules
   })
 
