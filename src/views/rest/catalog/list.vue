@@ -35,6 +35,7 @@
       <n-data-table
           ref="table"
           remote
+          size="small"
           :columns="columns"
           :data="data"
           :loading="loading"
@@ -210,7 +211,7 @@ export default defineComponent({
             {
               edit(row) {
                 router.push({
-                      path: '/rest/rest-edit',
+                      path: '/devops/rest/rest-edit',
                       query: {id: row.id}
                     }
                 )

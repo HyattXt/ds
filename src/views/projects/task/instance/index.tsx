@@ -206,6 +206,7 @@ const TaskInstance = defineComponent({
             columns={this.columns}
             data={this.tableData}
             scrollX={this.tableWidth}
+            size={"small"}
           />
           <div class={styles.pagination}>
             <NPagination

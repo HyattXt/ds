@@ -40,6 +40,7 @@
         <n-gi span="1">
           <n-card size="small" class="container">
             <n-tree
+                class="treeSize"
                 block-line
                 show-irrelevant-nodes
                 :data="treeFolder"
@@ -56,6 +57,7 @@
           <n-data-table
             ref="table"
             remote
+            size="small"
             :columns="columns"
             :data="data"
             :loading="loading"
@@ -187,7 +189,7 @@ const columns = ({ play }) => {
                 play(row) {
                   router.push({
                         name: 'assets-detail',
-                        state: {tableName: row.sqlLineageName, tableComment: row.notes, dbType: row.dbType, fieldArray: row.fieldArray}
+                        state: {tableName: row.sqlLineageName, tableComment: row.notes, dbType: row.dbType, fieldArray: row.fieldArray, backName: 'assets-catalog'}
                       }
                   )
                 }
@@ -250,6 +252,7 @@ const columns = ({ play }) => {
           onClick() {
             paginationReactive.apiTreeId = option.id
             paginationReactive.page = 1
+            loadingRef.value = true
             query(
                 paginationReactive.page,
                 paginationReactive.pageSize,
@@ -369,13 +372,15 @@ const columns = ({ play }) => {
   .container::-webkit-scrollbar-thumb {
     /*滚动条里面小方块*/
     border-radius: 10px;
-    box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
-    background   : #b9b9b9;
   }
-  .container::-webkit-scrollbar-track {
-    /*滚动条里面轨道*/
-    box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+  .container:hover::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
     border-radius: 10px;
-    background   : #ededed;
+    box-shadow   : inset 0 0 5px rgb(179, 179, 179);
+    background   : #b3b3b3;
+  }
+
+  .treeSize {
+    font-size: 13px;
   }
 </style>

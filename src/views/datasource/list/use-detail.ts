@@ -169,8 +169,8 @@ export function useDetail(getFieldsValue: Function) {
 
   const createChat2DB = () =>{
   const createChat2DB = import.meta.env.MODE === 'development'
-      ? '/chat2db/api/connection/datasource/create'
-      : window.webConfig.VITE_APP_PROD_ASSETS_QUERY_URL+'/chat2db/api/connection/datasource/create'
+      ? '/api/connection/datasource/create'
+      : window.webConfig.VITE_APP_PROD_ASSETS_QUERY_URL+'/api/connection/datasource/create'
   axios
       .post(createChat2DB, chat2DB)
       .then(function (response) {
@@ -182,8 +182,8 @@ export function useDetail(getFieldsValue: Function) {
 
   const updateChat2DB = (id : number) =>{
     const updateChat2DB = import.meta.env.MODE === 'development'
-        ? '/chat2db/api/connection/datasource/update'
-        : window.webConfig.VITE_APP_PROD_ASSETS_QUERY_URL+'/chat2db/api/connection/datasource/update'
+        ? '/api/connection/datasource/update'
+        : window.webConfig.VITE_APP_PROD_ASSETS_QUERY_URL+'/api/connection/datasource/update'
     chat2DB.id = id
     axios
         .post(updateChat2DB, chat2DB)
@@ -197,8 +197,8 @@ export function useDetail(getFieldsValue: Function) {
   const findChat2DB = (name: string) => {
     chat2DbId.value = null
     const findChat2DB = import.meta.env.MODE === 'development'
-        ? '/chat2db/api/connection/datasource/list?pageNo=1&pageSize=999'
-        : window.webConfig.VITE_APP_PROD_ASSETS_QUERY_URL+'/chat2db/api/connection/datasource/list?pageNo=1&pageSize=999'
+        ? '/api/connection/datasource/list?pageNo=1&pageSize=999'
+        : window.webConfig.VITE_APP_PROD_ASSETS_QUERY_URL+'/api/connection/datasource/list?pageNo=1&pageSize=999'
     axios
         .get(findChat2DB)
         .then(function (response) {

@@ -67,6 +67,7 @@
       <n-data-table
         ref="table"
         remote
+        size="small"
         :columns="columns"
         :data="data"
         :loading="loading"

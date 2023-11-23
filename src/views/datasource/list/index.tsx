@@ -52,8 +52,8 @@ const list = defineComponent({
     const findAndDelChat2DB = (name: string) => {
       chat2DbId.value = null
       const findChat2DB = import.meta.env.MODE === 'development'
-          ? '/chat2db/api/connection/datasource/list?pageNo=1&pageSize=999'
-          : window.webConfig.VITE_APP_PROD_ASSETS_QUERY_URL+'/chat2db/api/connection/datasource/list?pageNo=1&pageSize=999'
+          ? '/api/connection/datasource/list?pageNo=1&pageSize=999'
+          : window.webConfig.VITE_APP_PROD_ASSETS_QUERY_URL+'/api/connection/datasource/list?pageNo=1&pageSize=999'
       axios
           .get(findChat2DB)
           .then(function (response) {
@@ -72,8 +72,8 @@ const list = defineComponent({
 
     const deleteChat2DB = (id : number) =>{
       const updateChat2DB = import.meta.env.MODE === 'development'
-          ? `/chat2db/api/connection/datasource/${id}`
-          : window.webConfig.VITE_APP_PROD_ASSETS_QUERY_URL+`/chat2db/api/connection/datasource/${id}`
+          ? `/api/connection/datasource/${id}`
+          : window.webConfig.VITE_APP_PROD_ASSETS_QUERY_URL+`/api/connection/datasource/${id}`
       axios
           .delete(updateChat2DB)
           .then(function (response) {

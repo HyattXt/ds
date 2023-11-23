@@ -499,6 +499,8 @@ export default {
     datax_json_template: 'JSON',
     datax_target_datasource_type: 'Target Datasource Types',
     datax_target_database: 'Target Database',
+    datax_ora_tips: 'Oracle Database',
+    datax_sql_tips: 'Sqlserver Schema，default "dbo"',
     datax_target_table: 'Target Table',
     datax_source_table: 'Source Table',
     datax_source_database: 'Source Database',

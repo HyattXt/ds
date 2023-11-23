@@ -182,7 +182,7 @@ export function useTaskState() {
             return {
               value: item.taskNum,
               name: item.taskType,
-              ratio: item.ratio,
+              ratio: item.ratio !== null ? item.ratio : 0,
               taskTotalNum: item.taskTotalNum
             }
           })

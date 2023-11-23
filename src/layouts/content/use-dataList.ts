@@ -27,7 +27,6 @@ import {
   SafetyCertificateOutlined,
   UserOutlined,
   LogoutOutlined,
-  FundProjectionScreenOutlined,
   PartitionOutlined,
   SettingOutlined,
   FileSearchOutlined,
@@ -51,7 +50,9 @@ import {
   PieChartOutlined,
   BarChartOutlined,
   BoxPlotOutlined,
-  ProjectOutlined
+  ProjectOutlined,
+  FormOutlined,
+  RadarChartOutlined
 } from '@vicons/antd'
 import { useRoute, RouterLink } from 'vue-router'
 import { useUserStore } from '@/store/user/user'
@@ -400,7 +401,7 @@ export function useDataList() {
           {
             label: t('menu.assets_overview'),
             key: '/data-assets/assets-overview',
-            icon: renderIcon(BarChartOutlined)
+            icon: renderIcon(PieChartOutlined)
           },
           {
             label: t('menu.assets_catalog'),
@@ -428,6 +429,16 @@ export function useDataList() {
                   ]
               )
             ])
+          },
+          {
+            label: t('menu.assets_classify'),
+            key: '/data-assets/assets-classify',
+            icon: renderIcon(FormOutlined)
+          },
+          {
+            label: t('menu.index_center'),
+            key: '/data-assets/index-center',
+            icon: renderIcon(RadarChartOutlined)
           }
         ]
       } ,

@@ -85,7 +85,9 @@
       <n-grid x-gap="2" :cols="6">
         <n-gi span="1">
           <n-card size="small" class="container">
+            <n-spin :show="showSpin">
             <n-tree
+                class="treeSize"
                 block-line
                 show-irrelevant-nodes
                 :data="folderData"
@@ -95,12 +97,14 @@
                 :render-prefix="menuIcon"
                 :nodeProps="nodeProps"
             />
+            </n-spin>
           </n-card>
         </n-gi>
         <n-gi span="5">
           <n-data-table
               ref="table"
               remote
+              size="small"
               :columns="columns"
               :data="data"
               :loading="loading"
@@ -410,6 +414,7 @@ export default defineComponent({
     const formRef2 = ref(null)
     const dataRef = ref([])
     const loadingRef = ref(true)
+    const showSpin = ref(false)
     const active = ref(false)
     const drawTitle = ref('')
     const drawPath = ref('')
@@ -476,8 +481,10 @@ export default defineComponent({
     }
 
     function getApiFolder ()  {
+      showSpin.value = true
       axios.get(getApiFolderUrl).then((res) => {
         treeFolder.value = res.data.data
+        showSpin.value = false
       })
     }
 
@@ -505,6 +512,7 @@ export default defineComponent({
       return {
         onClick() {
           paginationReactive.apiTreeId = option.id
+          loadingRef.value = true
           refresh(1)
         },
         onContextmenu (e)  {
@@ -630,6 +638,7 @@ export default defineComponent({
         paginationReactive.page = currentPage
         paginationReactive.pageCount = data.pageCount
         paginationReactive.itemCount = data.total
+        loadingRef.value = false
       })
     }
     const columnsRef = ref(
@@ -751,6 +760,7 @@ export default defineComponent({
       selectedMenu,
       showAddRef,
       formValue,
+      showSpin,
       formRef2,
       createMenu,
       rules,
@@ -951,19 +961,21 @@ a {
 .container::-webkit-scrollbar-thumb {
   /*滚动条里面小方块*/
   border-radius: 10px;
-  box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
-  background   : #b9b9b9;
 }
-.container::-webkit-scrollbar-track {
-  /*滚动条里面轨道*/
-  box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+.container:hover::-webkit-scrollbar-thumb {
+  /*滚动条里面小方块*/
   border-radius: 10px;
-  background   : #ededed;
+  box-shadow   : inset 0 0 5px rgb(179, 179, 179);
+  background   : #b3b3b3;
 }
 
 .menuModal {
   width: 600px;
   height: 250px;
+}
+
+.treeSize {
+  font-size: 13px;
 }
 
 </style>

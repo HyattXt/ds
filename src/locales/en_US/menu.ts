@@ -64,6 +64,8 @@ export default {
   assets_overview: 'Assets Overview',
   assets_catalog: 'Assets Catalog',
   assets_query: 'Assets Query',
+  assets_classify: 'Assets Classify',
+  index_center: 'Index Center',
   rest: 'Http manager',
   rest_dev: 'Http development',
   rest_manager: 'Http manager',

@@ -62,16 +62,18 @@ const iframeSrc = ref("")
 const tableName = ref("")
 const tableComment = ref("")
 const dbType = ref("")
+const backName = ref("")
 const router = useRouter()
 
 function goBack(){
-  router.go(-1)
+  router.push({ name: backName.value })
 }
 
 onMounted(() => {
   tableName.value = history.state.tableName
   tableComment.value = history.state.tableComment
   dbType.value = history.state.dbType
+  backName.value = history.state.backName
   iframeSrc.value = import.meta.env.MODE === 'development'
       ? import.meta.env.VITE_APP_DEV_BLOOD_URL+'/?e='+history.state.tableName
       : window.webConfig.VITE_APP_PROD_BLOOD_URL+'/?e='+history.state.tableName

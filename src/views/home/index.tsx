@@ -22,12 +22,7 @@ import { useI18n } from 'vue-i18n'
 import { useTaskState } from './use-task-state'
 import { useProcessState } from './use-process-state'
 import StateCard from './components/state-card'
-//import DefinitionCard from './components/definition-card'
-import {getUrlParam} from "@/service/service";
-import {login1} from "@/service/modules/login";
-import {SessionIdRes} from "@/service/modules/login/types";
-import {UserInfoRes} from "@/service/modules/users/types";
-import {getUserInfo} from "@/service/modules/users";
+import { useLogin } from '../login/use-login'
 import {useUserStore} from "@/store/user/user";
 import {useTimezoneStore} from "@/store/timezone/timezone";
 const DefinitionCard = defineAsyncComponent(() => import('./components/definition-card'))
@@ -37,31 +32,13 @@ export default defineComponent({
   setup() {
     const userStore = useUserStore()
     const timezoneStore = useTimezoneStore()
+    const { loginNew } = useLogin(userStore)
     const initData = () => {
       taskStateRef.value = getTaskState(dateRef.value) || taskStateRef.value
       processStateRef.value =
           getProcessState(dateRef.value) || processStateRef.value
     }
 
-    const loginNew = async () => {
-
-      var uniwater_utoken = getUrlParam("uniwater_utoken") || ""
-      if (uniwater_utoken){
-        const loginRes: SessionIdRes = await login1({uniwater_utoken : uniwater_utoken})
-        await userStore.setSessionId(loginRes.sessionId)
-        userStore.setSessionId(loginRes.sessionId)
-
-        const userInfoRes: UserInfoRes = await getUserInfo()
-        await userStore.setUserInfo(userInfoRes)
-
-        const timezone = userInfoRes.timeZone ? userInfoRes.timeZone : 'UTC'
-        await timezoneStore.setTimezone(timezone)
-      }
-
-      initData()
-
-    }
-    loginNew();
     const { t, locale } = useI18n()
     const dateRef = ref([getTime(startOfToday()), Date.now()])
     const taskStateRef = ref()
@@ -79,6 +56,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
+      loginNew()
       if (userStore.sessionId){
         initData()
       }
