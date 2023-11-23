@@ -43,7 +43,10 @@ const login = defineComponent({
   },
   methods:{
     updateCaptchaUrl:function(){
-      axios.post('http://localhost:3000/HData/defaultKaptcha').then((response)=> {
+      let urlDel = import.meta.env.MODE === 'development'
+          ? import.meta.env.VITE_APP_DEV_WEB_URL+'/HData/defaultKaptcha'
+          : window.webConfig.VITE_APP_PROD_WEB_URL+'/HData/defaultKaptcha'
+      axios.post(urlDel).then((response)=> {
         this.captchaUrl = 'data:image/jpg;base64,' + response.data.data
       }).catch(function (error) {
         console.log(error)
@@ -51,7 +54,10 @@ const login = defineComponent({
     }
   },
   beforeCreate() {
-    axios.post('http://localhost:3000/HData/defaultKaptcha').then((response)=> {
+    let urlDel = import.meta.env.MODE === 'development'
+        ? import.meta.env.VITE_APP_DEV_WEB_URL+'/HData/defaultKaptcha'
+        : window.webConfig.VITE_APP_PROD_WEB_URL+'/HData/defaultKaptcha'
+    axios.post(urlDel).then((response)=> {
       this.captchaUrl = 'data:image/jpg;base64,' + response.data.data
     }).catch(function (error) {
       console.log(error)
