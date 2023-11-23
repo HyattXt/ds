@@ -219,7 +219,13 @@ export const datasourceType: IDataBaseOptionKeys = {
     value: 'REDSHIFT',
     label: 'REDSHIFT',
     defaultPort: 5439
+  },
+  DM:{
+    value: 'DM',
+    label: 'DM',
+    defaultPort: 5236
   }
+
 }
 
 export const datasourceTypeList: IDataBaseOption[] = Object.values(

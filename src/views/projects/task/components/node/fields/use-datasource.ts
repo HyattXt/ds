@@ -86,6 +86,11 @@ export function useDatasource(
       id: 9,
       code: 'REDSHIFT',
       disabled: false
+    },
+    {
+      id: 12,
+      code: 'DM',
+      disabled: false
     }
   ]
 
