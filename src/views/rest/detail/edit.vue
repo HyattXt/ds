@@ -292,9 +292,13 @@ const dataTokenTypeOptions = ref([
 
 function formSubmit() {
   let insUrl = httpInsertUrl+'/HDataApi/httpHandle/updateHttpData'
+  formValue.value.dataKey = {}
+  formValue.value.dataUser = {}
+  formValue.value.dataParam = {}
+  formValue.value.dynamicParameter = {}
 
   for(let i=0;i<dataKeyTmp.value.length; i++){
-    formValue.value.dataKey[dataKeyTmp.value[i].value]=dataKeyTmp.value[i].key
+    formValue.value.dataKey[dataKeyTmp.value[i].key]=dataKeyTmp.value[i].value
   }
 
   for(let i=0;i<dataUserTmp.value.length; i++){
@@ -311,9 +315,9 @@ function formSubmit() {
 
   if(ifDynamicParameter.value){
     formValue.value.dynamicParameterStatus=1
+  } else {
+    formValue.value.dynamicParameterStatus=2
   }
-
-
 
   axios
       .post(insUrl, formValue.value)
@@ -331,7 +335,6 @@ function formSubmit() {
       .catch(function (error) {
         message.error('修改失败，请咨询管理员')
       })
-
 }
 
 function queryDataSource() {
