@@ -27,7 +27,8 @@ export function useForm() {
     loginForm: {
       userName: '',
       userPassword: '',
-      captcha: ''
+      captcha: '',
+      captchaUrl: ''
     },
     rules: {
       userName: {

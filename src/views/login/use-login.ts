@@ -16,7 +16,7 @@
  */
 
 import { useRouter } from 'vue-router'
-import {login, login1} from '@/service/modules/login'
+import {login, login1, captchaUrl} from '@/service/modules/login'
 import { getUserInfo } from '@/service/modules/users'
 import { useUserStore } from '@/store/user/user'
 import type { Router } from 'vue-router'
@@ -70,8 +70,13 @@ export function useLogin(state: any) {
 
   }
 
+  const getCaptchaUrl = async () => {
+      state.loginForm.captchaUrl = await captchaUrl()
+  }
+
   return {
     handleLogin,
-    loginNew
+    loginNew,
+    getCaptchaUrl
   }
 }

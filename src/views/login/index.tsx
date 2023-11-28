@@ -35,41 +35,12 @@ import axios from "axios";
 
 const login = defineComponent({
   name: 'login',
-  data(){
-    return{
-      captchaUrl:'',
-      url:''
-    }
-  },
-  methods:{
-    updateCaptchaUrl:function(){
-      let urlDel = import.meta.env.MODE === 'development'
-          ? import.meta.env.VITE_APP_DEV_WEB_URL+'/HData/defaultKaptcha'
-          : window.webConfig.VITE_APP_PROD_WEB_URL+'/HData/defaultKaptcha'
-      axios.post(urlDel).then((response)=> {
-        this.captchaUrl = 'data:image/jpg;base64,' + response.data.data
-      }).catch(function (error) {
-        console.log(error)
-      })
-    }
-  },
-  beforeCreate() {
-    let urlDel = import.meta.env.MODE === 'development'
-        ? import.meta.env.VITE_APP_DEV_WEB_URL+'/HData/defaultKaptcha'
-        : window.webConfig.VITE_APP_PROD_WEB_URL+'/HData/defaultKaptcha'
-    axios.post(urlDel).then((response)=> {
-      this.captchaUrl = 'data:image/jpg;base64,' + response.data.data
-    }).catch(function (error) {
-      console.log(error)
-    })
-
-  },
   setup() {
     window.$message = useMessage()
 
     const {state, t, locale} = useForm()
     const {handleChange} = useTranslate(locale)
-    const {handleLogin} = useLogin(state)
+    const {handleLogin, getCaptchaUrl} = useLogin(state)
     const localesStore = useLocalesStore()
     const themeStore = useThemeStore()
     if (themeStore.getTheme) {
@@ -77,7 +48,11 @@ const login = defineComponent({
     }
     cookies.set('language', localesStore.getLocales, {path: '/'})
 
-    return {t, handleChange, handleLogin, ...toRefs(state), localesStore}
+    onMounted(()=>{
+      getCaptchaUrl()
+    })
+
+    return {t, handleChange, handleLogin, getCaptchaUrl, ...toRefs(state), localesStore}
   },
   render() {
     return (
@@ -137,14 +112,12 @@ const login = defineComponent({
                 >
                   <NInput
                       class='input-captcha'
-                      stype='height:50px,'
-                      type='captcha'
                       size='large'
                       v-model={[this.loginForm.captcha, 'value']}
                       placeholder={this.t('login.captcha_tips')}
                   />
-                  <img src={this.captchaUrl} alt="验证码" class='btn-captcha'
-                       style={{width: '64%',height: '83%'}}  onclick={this.updateCaptchaUrl}/>
+                  <img src={'data:image/jpg;base64,' + this.loginForm.captchaUrl} alt="验证码" class='btn-captcha'
+                       style={{width: '64%',height: '83%'}}  onClick={this.getCaptchaUrl}/>
                 </NFormItem>
               </NForm>
               <NButton
