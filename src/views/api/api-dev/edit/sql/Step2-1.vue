@@ -152,6 +152,6 @@ function submitValue(){
 
 <style scoped>
   .n-data-table {
-    font-size: 5px;
+    font-size: 12px;
   }
 </style>
