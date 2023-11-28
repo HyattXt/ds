@@ -21,6 +21,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import viteCompression from 'vite-plugin-compression'
 import path from 'path'
 
+const CurrentTimeVersion = `version-${new Date().toLocaleDateString()}`
 export default defineConfig({
   base: process.env.NODE_ENV === 'production' ? '/HData/ui/' : '/',
   plugins: [
@@ -41,6 +42,9 @@ export default defineConfig({
       // resolve vue-i18n warning: You are running the esm-bundler build of vue-i18n.
       'vue-i18n': 'vue-i18n/dist/vue-i18n.cjs.js'
     }
+  },
+  define: {
+    '__APP_VERSION__': JSON.stringify(CurrentTimeVersion)
   },
   server: {
     host: "0.0.0.0",

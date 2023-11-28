@@ -56,6 +56,8 @@ export default defineComponent({
     }
 
     onMounted(() => {
+      // @ts-ignore
+      console.log(__APP_VERSION__)
       loginNew()
       if (userStore.sessionId){
         initData()
