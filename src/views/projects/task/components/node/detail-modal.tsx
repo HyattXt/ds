@@ -314,7 +314,7 @@ const NodeDetailModal = defineComponent({
     })
 
     return () => (
-      <div class={styles.taskContainer}>
+      <div>
       <Modal
         id={"drawer-target"}
         show={props.show}
