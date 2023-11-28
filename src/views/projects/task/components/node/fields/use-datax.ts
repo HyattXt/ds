@@ -352,7 +352,7 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
   )
 
   watch(
-      () => [model.leftList, model.rightList, sourceConnect.value, targetConnect.value],
+      () => [model.leftList, model.rightList, sourceConnect.value, targetConnect.value, model.sql],
       () => {
         if(!model.jsonConfig)saveJson()
       }
