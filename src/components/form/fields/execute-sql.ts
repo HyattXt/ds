@@ -37,11 +37,9 @@ export function renderExecuteSql( item: IJsonItem, fields: { [field: string]: an
         let getSql = SecondDevCreateUrl+'/HDataApi/createTable/excuteSql'
         formValue.value.id = fields.dataTarget
         formValue.value.sqlStr = fields.tableSql
-            console.log(formValue.value)
             axios
             .post(getSql, formValue.value)
             .then(function (response) {
-                console.log(response)
                 if(response.data.status ==0 ){
                     message.error(response.data.error)
                 }else{
@@ -55,7 +53,6 @@ export function renderExecuteSql( item: IJsonItem, fields: { [field: string]: an
     }
 
     function onClick(){
-        console.log(fields.dataTarget)
         if(typeof(fields.dataTarget) == 'undefined'){message.error('请选择目标源')}else execute()
     }
 

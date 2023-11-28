@@ -110,7 +110,6 @@ export function useTaskState() {
 
 
   const getTaskData = (date: Array<any>, projectCode: any) => {
-    console.log(date)
     const { state } = useAsyncState(
       getDataByProjectCodeAndDate({
         startTime: !date ? '' : format(date[0][0], 'yyyy-MM-dd HH:mm:ss'),

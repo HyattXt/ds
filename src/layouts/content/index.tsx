@@ -78,8 +78,6 @@ const Content = defineComponent({
       () => {
         if (route.path !== '/login') {
           routeStore.setLastRoute(route.path)
-          console.log('activeSide:'+route.meta.activeSide)
-          console.log('path:'+route.matched[1].path)
           state.isShowSide = route.meta.showSide as boolean
           if (route.matched[1].path === '/projects/:projectCode/workflow/relation' || route.matched[1].path === '/devops/:projectCode/devops_overview') {
             changeMenuOption(state)

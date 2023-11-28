@@ -175,9 +175,6 @@ export default defineComponent({
       taskDevRef.value = getTaskDev(dateRef.value, Proj.value) || taskDevRef.value
 
       TaskPie.value = getTaskStatisticsInfoData(dateRef.value, Proj.value)
-      console.log('TaskPie')
-      console.log(TaskPie)
-
     }
 
 

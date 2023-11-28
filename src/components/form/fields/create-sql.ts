@@ -41,7 +41,6 @@ export function renderCreateSql( item: IJsonItem, fields: { [field: string]: any
         axios
         .post(getSql, formValue.value)
         .then(function (response) {
-            console.log(response)
             if(response.data.status ==0 ){
                 message.error(response.data.error)
             }else{
@@ -55,7 +54,6 @@ export function renderCreateSql( item: IJsonItem, fields: { [field: string]: any
 
     }
     function onClick(){
-        console.log(fields.dataSource)
         if(typeof(fields.dataSource) == 'undefined') {
             message.error('请选择来源库')
         }

@@ -519,7 +519,6 @@ export default defineComponent({
             detailPaginationReactive.itemCount = detailTableData.totalNum
             detailPaginationReactive.pageCount = Math.ceil(detailTableData.totalNum / pageSize)
             detailLoadingRef.value = false
-            console.log(detailPaginationReactive)
           })
           .catch(function (error) {
             console.log(error)

@@ -54,18 +54,14 @@ export function useTable() {
   // 如果 timeRange 参数存在，则进行拆分处理
   if (timeRangeParam) {
     const [startTime, endTime] = timeRangeParam.split(',');
-    console.log('is in timeRangeParam')
     // 将拆分后的值存入 timeRangeArray
     datePickerRange.value = [Number(startTime), Number(endTime)];
   } else {
-    console.log('is  not in timeRangeParam')
     datePickerRange.value = [new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 6 * 24 * 60 * 60 * 1000,
     new Date(new Date().setHours(0, 0, 0, 0)).getTime() + 24 * 60 * 60 * 1000]
 
   }
-  console.log('datePickerRange')
 
-  console.log(datePickerRange)
   const variables = reactive({
     columns: [],
     tableWidth: DefaultTableWidth,

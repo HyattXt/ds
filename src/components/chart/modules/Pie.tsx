@@ -38,7 +38,6 @@ const PieChart = defineComponent({
   props,
   setup(props) {
     const pieChartRef: Ref<HTMLDivElement | null> = ref(null)
-    console.log(props)
 
     const option = {
       tooltip: {
