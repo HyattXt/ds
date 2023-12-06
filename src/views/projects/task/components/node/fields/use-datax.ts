@@ -148,10 +148,10 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       customParameterSpan.value = 0
     } else {*/
       sqlEditorSpan.value = model.executeMode === '0' ? 0 : 24
-      sourceTableSpan.value = model.executeMode=== '1' ? 0 : (model.dsType=='ORACLE' || model.dsType=='SQLSERVER'? 6: 12)
-      sourceDatabaseSpan.value = model.executeMode === '0' && (model.dsType=='ORACLE' || model.dsType=='SQLSERVER') ? 6 : 0
-      targetTableSpan.value = model.dtType=='ORACLE' || model.dtType=='SQLSERVER'? 6: 12
-      targetDatabaseSpan.value = model.dtType=='ORACLE' || model.dtType=='SQLSERVER'? 6: 0
+      sourceTableSpan.value = model.executeMode=== '1' ? 0 : (model.dsType=='ORACLE' || model.dsType=='SQLSERVER' || model.dsType=='POSTGRESQL' ? 6: 12)
+      sourceDatabaseSpan.value = model.executeMode === '0' && (model.dsType=='ORACLE' || model.dsType=='SQLSERVER' || model.dsType=='POSTGRESQL' ) ? 6 : 0
+      targetTableSpan.value = model.dtType=='ORACLE' || model.dtType=='SQLSERVER' || model.dtType=='POSTGRESQL' ? 6: 12
+      targetDatabaseSpan.value = model.dtType=='ORACLE' || model.dtType=='SQLSERVER' || model.dtType=='POSTGRESQL' ? 6: 0
       datasourceSpan.value = 6
       jsonEditorSpan.value = model.jsonConfig ? 24 : 0
       destinationDatasourceSpan.value = 6
@@ -185,7 +185,7 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
                         sourceConnect.value.jdbcUrl
                       ],
                       "table": [
-                        model.dsType=='ORACLE' || model.dsType=='SQLSERVER' ? model.sourceDatabase+'.'+model.sourceTable : model.sourceTable
+                        model.dsType=='ORACLE' || model.dsType=='SQLSERVER' || model.dsType=='POSTGRESQL' ? model.sourceDatabase+'.'+model.sourceTable : model.sourceTable
                       ]
                     }
                   ],
@@ -207,7 +207,7 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
                     {
                       "jdbcUrl": targetConnect.value.jdbcUrl,
                       "table": [
-                        model.dtType=='ORACLE' || model.dtType=='SQLSERVER' ? model.targetDatabase+'.'+model.targetTable : model.targetTable
+                        model.dtType=='ORACLE' || model.dtType=='SQLSERVER' || model.dtType=='POSTGRESQL' ? model.targetDatabase+'.'+model.targetTable : model.targetTable
                       ]
                     }
                   ],
@@ -270,7 +270,7 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
                     {
                       "jdbcUrl": targetConnect.value.jdbcUrl,
                       "table": [
-                        model.dtType=='ORACLE' || model.dtType=='SQLSERVER' ? model.targetDatabase+'.'+model.targetTable : model.targetTable
+                        model.dtType=='ORACLE' || model.dtType=='SQLSERVER' || model.dtType=='POSTGRESQL'? model.targetDatabase+'.'+model.targetTable : model.targetTable
                       ]
                     }
                   ],
@@ -338,16 +338,16 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
   watch(
       () => [model.dsType],
       () => {
-        sourceTableSpan.value = model.executeMode=== '1' ? 0 : ( model.dsType=='ORACLE' || model.dsType=='SQLSERVER'? 6: 12)
-        sourceDatabaseSpan.value = model.executeMode === '0' && ( model.dsType=='ORACLE' || model.dsType=='SQLSERVER') ? 6 : 0
+        sourceTableSpan.value = model.executeMode=== '1' ? 0 : ( model.dsType=='ORACLE' || model.dsType=='SQLSERVER' || model.dsType=='POSTGRESQL'? 6: 12)
+        sourceDatabaseSpan.value = model.executeMode === '0' && ( model.dsType=='ORACLE' || model.dsType=='SQLSERVER' || model.dsType=='POSTGRESQL') ? 6 : 0
       }
   )
 
   watch(
       () => [model.dtType],
       () => {
-        targetTableSpan.value = model.dtType=='ORACLE' || model.dtType=='SQLSERVER'? 6: 12
-        targetDatabaseSpan.value = model.dtType=='ORACLE' || model.dtType=='SQLSERVER'? 6: 0
+        targetTableSpan.value = model.dtType=='ORACLE' || model.dtType=='SQLSERVER' || model.dtType=='POSTGRESQL' ? 6: 12
+        targetDatabaseSpan.value = model.dtType=='ORACLE' || model.dtType=='SQLSERVER' || model.dtType=='POSTGRESQL' ? 6: 0
       }
   )
 

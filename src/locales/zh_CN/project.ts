@@ -494,7 +494,7 @@ export default {
     datax_target_datasource_type: '目标源类型',
     datax_target_database: '目标库',
     datax_ora_tips: 'oracle库名',
-    datax_sql_tips: 'sqlserver模式名，默认dbo',
+    datax_sql_tips: '数据库模式名',
     datax_target_table: '目标表',
     datax_source_table: '来源表',
     datax_source_database: '来源库',
