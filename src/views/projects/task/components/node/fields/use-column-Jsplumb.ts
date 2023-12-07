@@ -68,8 +68,8 @@ export function useColumnJsplumb(
         init()
         let getCol = SecondDevQueryUrl + '/HDataApi/apiService/getColumnsByTable'
         formTarget.value.id = model['dataTarget']
-        formTarget.value.type = parseInt(model['dtType'].replace('MYSQL', 0).replace('ORACLE', 5).replace('SQLSERVER', 6))
-        formTarget.value.tableName = model['dtType'] == 'ORACLE' || model['dtType'] == 'SQLSERVER' ? model['targetDatabase'] + '.' + model['targetTable'] : model['targetTable']
+        formTarget.value.type = parseInt(model['dtType'].replace('MYSQL', 0).replace('ORACLE', 5).replace('SQLSERVER', 6).replace('POSTGRESQL', 1))
+        formTarget.value.tableName = model['dtType'] == 'ORACLE' || model['dtType'] == 'SQLSERVER' || model['dtType'] == 'POSTGRESQL' ? model['targetDatabase'] + '.' + model['targetTable'] : model['targetTable']
         if ( (model['executeMode'] == 0 ? !!model['sourceTable'] : !!model['sql']) && !!model['targetTable'] )
         {
             axios
@@ -94,8 +94,8 @@ export function useColumnJsplumb(
                     }
                     if (model['executeMode'] == 0) {
                         formSource.value.id = model['dataSource']
-                        formSource.value.type = parseInt(model['dsType'].replace('MYSQL', 0).replace('ORACLE', 5).replace('SQLSERVER', 6))
-                        formSource.value.tableName = model['dsType'] == 'ORACLE' || model['dsType'] == 'SQLSERVER' ? model['sourceDatabase'] + '.' + model['sourceTable'] : model['sourceTable']
+                        formSource.value.type = parseInt(model['dsType'].replace('MYSQL', 0).replace('ORACLE', 5).replace('SQLSERVER', 6).replace('POSTGRESQL', 1))
+                        formSource.value.tableName = model['dsType'] == 'ORACLE' || model['dsType'] == 'SQLSERVER' || model['dsType'] == 'POSTGRESQL' ? model['sourceDatabase'] + '.' + model['sourceTable'] : model['sourceTable']
                         axios
                             .post(getCol, formSource.value)
                             .then(function (response) {
