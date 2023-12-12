@@ -42,9 +42,6 @@ export function useSqlType(model: { [field: string]: any }): IJsonItem[] {
       label: t('project.node.sql_type_non_query')
     }
   ]
-  const saveJson = () =>{
-    console.log(model)
-  }
 
   const indicatorDisableFunc = () =>{
     console.log(model.indicatorStatus)
@@ -89,7 +86,6 @@ export function useSqlType(model: { [field: string]: any }): IJsonItem[] {
       field: 'indicatorStatus',
       span: 2,
       props:{
-        'on-update:value': saveJson,
         checkedValue : 1,
         uncheckedValue : 2,
         disabled: indicatorDisable
@@ -152,10 +148,7 @@ export function useSqlType(model: { [field: string]: any }): IJsonItem[] {
       type: 'switch',
       field: 'sendEmail',
       span: querySpan,
-      name: t('project.node.send_email'),
-      props: {
-        'on-update:value': saveJson
-      }
+      name: t('project.node.send_email')
     },
     {
       type: 'input',
