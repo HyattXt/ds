@@ -299,6 +299,8 @@ interface ITaskParams {
   jobSpeedRecord?: number
   xms?: number
   xmx?: number
+  indicatorStatus: number
+  indicatorCode: string
   sparkParameters?: ISparkParameters
   ruleId?: number
   ruleInputParameter?: IRuleParameters

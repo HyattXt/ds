@@ -602,6 +602,8 @@ export default {
     segment_separator: 'Segment Execution Separator',
     segment_separator_tips: 'Please enter the segment execution separator',
     send_email: 'Send Email',
+    if_index: 'Generate Index',
+    index_code: 'Index Code',
     log_display: 'Log display',
     rows_of_result: 'rows of result',
     title: 'Title',

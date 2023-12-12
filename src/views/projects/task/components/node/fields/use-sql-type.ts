@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { ref, onMounted, computed, h } from 'vue'
+import {ref, onMounted, computed, h, nextTick} from 'vue'
 import { useI18n } from 'vue-i18n'
 import { listAlertGroupById } from '@/service/modules/alert-group'
 import styles from '../index.module.scss'
@@ -23,8 +23,10 @@ import type { IJsonItem } from '../types'
 
 export function useSqlType(model: { [field: string]: any }): IJsonItem[] {
   const { t } = useI18n()
+  const indicatorDisable = ref(false)
   const querySpan = computed(() => (model.sqlType === '0' ? 6 : 0))
-  const nonQuerySpan = computed(() => (model.sqlType === '1' ? 18 : 0))
+  const nonQuerySpan = computed(() => (model.sqlType === '1' ? 9 : 0))
+  const indicatorSpan = computed(() => (model.indicatorStatus === 1 ? 4 : 0))
   const emailSpan = computed(() =>
     model.sqlType === '0' && model.sendEmail ? 24 : 0
   )
@@ -40,6 +42,16 @@ export function useSqlType(model: { [field: string]: any }): IJsonItem[] {
       label: t('project.node.sql_type_non_query')
     }
   ]
+  const saveJson = () =>{
+    console.log(model)
+  }
+
+  const indicatorDisableFunc = () =>{
+    console.log(model.indicatorStatus)
+    indicatorDisable.value = !!model.indicatorStatus
+    console.log(indicatorDisable.value)
+  }
+
 
   const getGroups = async () => {
     if (groupsLoading.value) return
@@ -56,6 +68,10 @@ export function useSqlType(model: { [field: string]: any }): IJsonItem[] {
     getGroups()
   })
 
+  nextTick(()=>{
+    indicatorDisableFunc()
+  })
+
   return [
     {
       type: 'select',
@@ -69,6 +85,32 @@ export function useSqlType(model: { [field: string]: any }): IJsonItem[] {
       }
     },
     {
+      type: 'switch',
+      field: 'indicatorStatus',
+      span: 2,
+      props:{
+        'on-update:value': saveJson,
+        checkedValue : 1,
+        uncheckedValue : 2,
+        disabled: indicatorDisable
+      },
+      name: t('project.node.if_index')
+    },
+    {
+      type: 'input',
+      field: 'indicatorCode',
+      name: t('project.node.index_code'),
+      props: {
+        placeholder: t('project.node.index_code'),
+        disabled: indicatorDisable
+      },
+      span: indicatorSpan,
+      validate: {
+        trigger: ['input', 'blur'],
+        required: true
+      }
+    },
+    {
       type: 'input',
       field: 'segmentSeparator',
       name: t('project.node.segment_separator'),
@@ -76,12 +118,6 @@ export function useSqlType(model: { [field: string]: any }): IJsonItem[] {
         placeholder: t('project.node.segment_separator_tips')
       },
       span: nonQuerySpan
-    },
-    {
-      type: 'switch',
-      field: 'sendEmail',
-      span: querySpan,
-      name: t('project.node.send_email')
     },
     {
       type: 'select',
@@ -107,10 +143,19 @@ export function useSqlType(model: { [field: string]: any }): IJsonItem[] {
       field: 'displayRowsTips',
       span: querySpan,
       widget: h(
-        'div',
-        { class: styles['display-rows-tips'] },
-        t('project.node.rows_of_result')
+          'div',
+          { class: styles['display-rows-tips'] },
+          t('project.node.rows_of_result')
       )
+    },
+    {
+      type: 'switch',
+      field: 'sendEmail',
+      span: querySpan,
+      name: t('project.node.send_email'),
+      props: {
+        'on-update:value': saveJson
+      }
     },
     {
       type: 'input',

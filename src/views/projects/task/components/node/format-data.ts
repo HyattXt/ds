@@ -182,6 +182,8 @@ export function formatParams(data: INodeData): {
     taskParams.segmentSeparator = data.segmentSeparator
     taskParams.sendEmail = data.sendEmail
     taskParams.displayRows = data.displayRows
+    taskParams.indicatorStatus = data.indicatorStatus
+    taskParams.indicatorCode = data.indicatorCode
     if (data.sqlType === '0' && data.sendEmail) {
       taskParams.title = data.title
       taskParams.groupId = data.groupId
@@ -249,7 +251,7 @@ export function formatParams(data: INodeData): {
       taskParams.jobSpeedRecord = data.jobSpeedRecord
       taskParams.preStatements = data.preStatements
       taskParams.postStatements = data.postStatements
-      
+
     //} else {
       taskParams.jsonConfig = data.jsonConfig
       taskParams.json = data.json

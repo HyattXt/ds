@@ -596,6 +596,8 @@ export default {
     segment_separator: '分段执行符号',
     segment_separator_tips: '请输入分段执行符号',
     send_email: '发送邮件',
+    if_index: '生成指标',
+    index_code: '指标编码',
     log_display: '日志显示',
     rows_of_result: '行查询结果',
     title: '主题',
