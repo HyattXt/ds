@@ -394,7 +394,17 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       field: 'executeMode',
       name: '读取方式',
       span: executeModeSpan,
-      options: [{label:'表',value:'0'},{label:'查询',value:'1'}]
+      options: [{label:'表',value:'0'},{label:'查询',value:'1'}],
+      props: {
+        'on-update:value': () => {
+            if(model.executeMode === '0'){
+                model.sql = ''
+            }else{
+              model.sourceDatabase = ''
+              model.sourceTable = ''
+            }
+        }
+      }
     },
     {
       type: 'input',
