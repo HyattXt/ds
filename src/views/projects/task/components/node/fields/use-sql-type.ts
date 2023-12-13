@@ -44,9 +44,7 @@ export function useSqlType(model: { [field: string]: any }): IJsonItem[] {
   ]
 
   const indicatorDisableFunc = () =>{
-    console.log(model.indicatorStatus)
     indicatorDisable.value = !!model.indicatorStatus
-    console.log(indicatorDisable.value)
   }
 
 
