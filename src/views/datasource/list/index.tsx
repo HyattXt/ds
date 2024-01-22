@@ -49,47 +49,12 @@ const list = defineComponent({
     const { data, changePage, changePageSize, deleteRecord, updateList } =
       useTable()
 
-    const findAndDelChat2DB = (name: string) => {
-      chat2DbId.value = null
-      const findChat2DB = import.meta.env.MODE === 'development'
-          ? '/api/connection/datasource/list?pageNo=1&pageSize=999'
-          : window.webConfig.VITE_APP_PROD_ASSETS_QUERY_URL+'/api/connection/datasource/list?pageNo=1&pageSize=999'
-      axios
-          .get(findChat2DB)
-          .then(function (response) {
-            let data = response.data.data.data
-            for (let i = 0; i < data.length; i++) {
-              if (data[i].alias === name) {
-                chat2DbId.value = data[i].id;
-              }
-            }
-            deleteChat2DB(chat2DbId.value)
-          })
-          .catch(function (error) {
-            console.log(error)
-          })
-    }
-
-    const deleteChat2DB = (id : number) =>{
-      const updateChat2DB = import.meta.env.MODE === 'development'
-          ? `/api/connection/datasource/${id}`
-          : window.webConfig.VITE_APP_PROD_ASSETS_QUERY_URL+`/api/connection/datasource/${id}`
-      axios
-          .delete(updateChat2DB)
-          .then(function (response) {
-          })
-          .catch(function (error) {
-            console.log(error)
-          })
-    }
-
-    const { getColumns } = useColumns((id: number, name: string, type: 'edit' | 'delete') => {
+    const { getColumns } = useColumns((id: number, type: 'edit' | 'delete') => {
       if (type === 'edit') {
         showDetailModal.value = true
         selectId.value = id
       } else {
         deleteRecord(id)
-        findAndDelChat2DB(name)
       }
     })
 
