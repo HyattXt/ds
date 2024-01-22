@@ -127,6 +127,17 @@ export default {
         showSide: true,
         auth: ['ADMIN_USER']
       }
+    },
+    {
+      path: '/security/license-manage',
+      name: 'license-manage',
+      component: components['security-license-manage'],
+      meta: {
+        title: 'License管理',
+        activeMenu: 'security',
+        showSide: true,
+        auth: ['ADMIN_USER']
+      }
     }
   ]
 }

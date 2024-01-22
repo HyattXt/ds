@@ -79,6 +79,10 @@ export default {
     queue_name_tips: '请输入队列名',
     queue_value_tips: '请输入队列值'
   },
+  license: {
+    change_license: '更换License',
+    input_license: '请输入License'
+  },
   environment: {
     create_environment: '创建环境',
     edit_environment: '编辑环境',
@@ -260,6 +264,7 @@ export default {
     operation: '操作',
     edit: '编辑',
     delete: '删除',
-    delete_confirm: '确定删除吗?'
+    delete_confirm: '确定删除吗?',
+    tag: '标签'
   }
 }

@@ -52,7 +52,8 @@ import {
   BoxPlotOutlined,
   ProjectOutlined,
   FormOutlined,
-  RadarChartOutlined
+  RadarChartOutlined,
+  VerifiedOutlined
 } from '@vicons/antd'
 import { useRoute, RouterLink } from 'vue-router'
 import { useUserStore } from '@/store/user/user'
@@ -308,6 +309,11 @@ export function useDataList() {
                 label: t('menu.token_manage'),
                 key: '/security/token-manage',
                 icon: renderIcon(SafetyOutlined)
+              },
+              {
+                label: t('menu.license_manage'),
+                key: '/security/license-manage',
+                icon: renderIcon(VerifiedOutlined)
               }
             ]
             : [

@@ -50,6 +50,7 @@ export default {
   environment_manage: '环境管理',
   k8s_namespace_manage: 'K8S命名空间管理',
   token_manage: '令牌管理',
+  license_manage: 'License管理',
   task_group_manage: '任务组管理',
   task_group_option: '任务组配置',
   task_group_queue: '任务组队列',

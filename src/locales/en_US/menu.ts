@@ -50,6 +50,7 @@ export default {
   environment_manage: 'Environment Manage',
   k8s_namespace_manage: 'K8S Namespace Manage',
   token_manage: 'Token Manage',
+  license_manage: 'License Manage',
   task_group_manage: 'Task Group Manage',
   task_group_option: 'Task Group Option',
   task_group_queue: 'Task Group Queue',

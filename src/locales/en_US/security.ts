@@ -79,6 +79,10 @@ export default {
     queue_name_tips: 'Please enter your queue name',
     queue_value_tips: 'Please enter your queue value'
   },
+  license: {
+    change_license: 'Change License',
+    input_license: 'Input License'
+  },
   environment: {
     create_environment: 'Create Environment',
     edit_environment: 'Edit Environment',
@@ -260,6 +264,7 @@ export default {
     operation: 'Operation',
     edit: 'Edit',
     delete: 'Delete',
-    delete_confirm: 'Delete?'
+    delete_confirm: 'Delete?',
+    tag: 'Tag'
   }
 }
