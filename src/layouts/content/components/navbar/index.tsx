@@ -24,6 +24,7 @@ import Locales from '../locales'
 import Timezone from '../timezone'
 import User from '../user'
 import Project from '../project'
+import Alert from '../alert'
 import Theme from '../theme'
 import {useProjectStore} from "@/store/route/project";
 
@@ -59,7 +60,6 @@ const Navbar = defineComponent({
     const menuKey = ref(route.meta.activeMenu as string)
 
     const handleMenuClick = (key: string) => {
-      console.log(key)
       if(key == 'projects'){
         router.push({ path: `/projects/${ProjectStore.getCurrentProject}/workflow/relation` })
       }else if(key == 'devops'){
@@ -98,7 +98,8 @@ const Navbar = defineComponent({
             options={this.iconOptions}
             onUpdateValue={this.handleMenuClick}
           />
-          <Theme />
+          <Alert/>
+          <Theme/>
           <Project/>
           <User userDropdownOptions={this.userDropdownOptions} />
         </div>
