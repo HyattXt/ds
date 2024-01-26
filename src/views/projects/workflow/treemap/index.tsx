@@ -25,6 +25,7 @@ import {useRoute} from "vue-router";
 import {useTreemap} from "@/views/projects/workflow/treemap/use-treemap";
 import { createProcessDefinition } from '@/service/modules/process-definition'
 import {useI18n} from "vue-i18n";
+import {useLogin} from "@/views/login/use-login";
 
 export default defineComponent({
     name: 'WorkflowTreeMap',
@@ -61,6 +62,7 @@ export default defineComponent({
         const yRef = ref(0)
         const dropdownOption = ref([{label: '', key: '',disable: false}])
         const defaultFolder = ref(1)
+        const { loginNew } = useLogin('')
         const addMenuOptions = ref([
             {
                 label: '新建文件夹',
@@ -104,11 +106,15 @@ export default defineComponent({
         }
 
         onMounted(() => {
-            getTreeMenu(projectCode)
-            getTreeFolder(projectCode)
-            // @ts-ignore
-            variables.model.projectCode = projectCode
-            if( typeof(route.query.code) != 'undefined' )tsxRef.value.refresh(route.query.code, projectCode)
+            loginNew()
+            setTimeout(() => {
+                getTreeMenu(projectCode)
+                getTreeFolder(projectCode)
+                // @ts-ignore
+                variables.model.projectCode = projectCode
+                if( typeof(route.query.code) != 'undefined' )tsxRef.value.refresh(route.query.code, projectCode)
+            }, 1000)
+
         })
 
         function createMenu() {
