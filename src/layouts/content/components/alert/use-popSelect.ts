@@ -15,25 +15,14 @@
  * limitations under the License.
  */
 
-import { DropdownOption } from 'naive-ui'
-import { useProjectStore } from '@/store/route/project'
-import {Router, useRoute, useRouter} from "vue-router";
+import {queryLicense} from "@/service/modules/license";
 
 export function usePopSelect() {
-  const router: Router = useRouter()
-  const route = useRoute()
-  const ProjectStore = useProjectStore()
 
-  const handleSelect = (key: number, option: DropdownOption) => {
-    ProjectStore.setCurrentProjectName(option.name as string)
-    ProjectStore.setCurrentProject(key)
-    if(route.path.includes('projects')) {
-      router.push({ path: `/projects/${key}/workflow/relation` })
-    }else if(route.path.includes('devops')){
-      router.push({ path: `/devops/${key}/devops_overview` })
-    }
+  const handleQuery = () => {
+    queryLicense()
   }
   return {
-    handleSelect
+    handleQuery
   }
 }

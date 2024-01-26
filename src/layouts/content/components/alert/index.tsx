@@ -16,86 +16,79 @@
  */
 
 import {defineComponent, onMounted, ref} from 'vue'
-import {NIcon, NButton, NPopselect, NBadge, NListItem, NThing, NTag, NList} from 'naive-ui'
+import {
+  NIcon,
+  NButton,
+  NBadge,
+  NListItem,
+  NThing,
+  NList,
+  NPopover,
+  NCard,
+  NTabs,
+  NTabPane
+} from 'naive-ui'
 import {AlertOutlined} from '@vicons/antd'
-import { usePopSelect } from './use-popSelect'
+import {queryLicense} from "@/service/modules/license";
 import styles from './index.module.scss'
-import {queryProjectListPaging} from "@/service/modules/projects";
-import {ProjectRes} from "@/service/modules/projects/types";
-import { useProjectStore } from '@/store/route/project'
+
 
 
 const Alert = defineComponent({
   name: 'Alert',
   setup() {
-    const projectOptions = ref([])
-    const { handleSelect } = usePopSelect()
-    const ProjectStore = useProjectStore()
-    const showModal =ref(false)
+    const message = ref({})
+    const number = ref(0)
 
     const getProjectList = () => {
-      let params ={
-        pageNo: 1,
-        pageSize: 100
-      }
-      queryProjectListPaging(params).then((res: ProjectRes) => {
-        ProjectStore.setCurrentProjectName(res.totalList[0].name)
-        ProjectStore.setCurrentProject(res.totalList[0].code)
-        // @ts-ignore
-        projectOptions.value = res.totalList
+      queryLicense().then((res:any)=>{
+        message.value = res.licenseErrorInfo
+        number.value = res.licenseStatus
       })
-    }
-
-    const test = () => {
-      showModal.value = !showModal.value
     }
 
     onMounted(() => {
       setTimeout(()=> { getProjectList() }, 500)
     })
-    return { handleSelect, projectOptions, ProjectStore, test, showModal }
+    return { message, number }
   },
   render() {
     return (
-          <NPopselect trigger={"click"} options={[]} class={styles.nBaseSelectMenu}>
-            {{
-              default: ()=> (
-                  <NBadge class={styles.alert}
-                          value={100}
-                          max={99}
-                  >
-                    <NButton text style="font-size:22px" onClick={this.test}>
-                      <NIcon>
-                        <AlertOutlined/>
-                      </NIcon>
-                    </NButton>
-                  </NBadge>
-              ),
-              empty: ()=> (
-                  <NList hoverable class={styles.nList}>
-                    {{
-                      header: ()=> (
-                          <NTag bordered={false} type={"info"} size={"large"}>
-                            消息提醒
-                          </NTag>
-                      ),
-                      default: ()=> (
-                          <NListItem class={styles.nList}>
-                            <NThing>
-                              {{
-                                default: ()=> (
-                                    '[系统公告]您的产品将于2024年1月1日(13天后)过期，请及时联系管理员'
-                                )
-                              }}
-                            </NThing>
-                          </NListItem>
-                      )
-                    }}
-                  </NList>
-              )
-            }}
-          </NPopselect>
-
+        <NPopover trigger={"click"} placement={"bottom"} style="padding: 0">
+          {{
+            trigger: ()=> (
+                <NBadge class={styles.alert}
+                        value={this.number}
+                        max={99}
+                >
+                  <NButton text style="font-size:22px">
+                    <NIcon>
+                      <AlertOutlined/>
+                    </NIcon>
+                  </NButton>
+                </NBadge>
+            ),
+            default: ()=> (
+                <NCard title="" style="margin-bottom: 16px">
+                  <NTabs type="line" animated>
+                    <NTabPane name="the beatles" tab="消息">
+                      <NList hoverable clickable style="width: 300px">
+                        <NListItem>
+                          <NThing>
+                            {{
+                              default: ()=> (
+                                  this.message
+                              )
+                            }}
+                          </NThing>
+                        </NListItem>
+                      </NList>
+                    </NTabPane>
+                  </NTabs>
+                </NCard>
+            )
+          }}
+        </NPopover>
     )
   }
 })
