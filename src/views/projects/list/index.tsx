@@ -31,12 +31,15 @@ import { useI18n } from 'vue-i18n'
 import ProjectModal from './components/project-modal'
 import styles from './index.module.scss'
 import { useTable } from './use-table'
+import {useLogin} from "@/views/login/use-login";
+
 
 const list = defineComponent({
   name: 'list',
   setup() {
     const { t } = useI18n()
     const { variables, getTableData, createColumns } = useTable()
+    const { loginNew } = useLogin('')
 
     const requestData = () => {
       getTableData({
@@ -71,6 +74,7 @@ const list = defineComponent({
     }
 
     onMounted(() => {
+      loginNew()
       createColumns(variables)
       requestData()
     })

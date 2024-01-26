@@ -83,6 +83,8 @@ import {
 } from '@vicons/antd'
 import {NButton, NIcon, NSpace, NTooltip, NDescriptions, NDescriptionsItem, useMessage, NCard, NGrid, NGi} from "naive-ui";
 import {useRouter} from "vue-router";
+import {useLogin} from "@/views/login/use-login";
+
 
 const columns = ({ play }) => {
     return [
@@ -180,6 +182,7 @@ const columns = ({ play }) => {
       const loadingMeta = ref(false)
       const message = useMessage()
       const treeFolder = ref([])
+      const { loginNew } = useLogin('')
       const getApiFolderUrl = import.meta.env.MODE === 'development'
           ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface_lineage/getTreeAll'
           : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface_lineage/getTreeAll'
@@ -311,13 +314,17 @@ const columns = ({ play }) => {
       }
 
       onMounted(() => {
-        getApiFolder()
-        query(
-          paginationReactive.page,
-          paginationReactive.pageSize,
-          paginationReactive.sqlLineageName,
-          paginationReactive.apiTreeId
-        )
+        loginNew()
+        setTimeout(() => {
+          getApiFolder()
+          query(
+              paginationReactive.page,
+              paginationReactive.pageSize,
+              paginationReactive.sqlLineageName,
+              paginationReactive.apiTreeId
+          )
+        }, 1000)
+
       })
 
       return {
