@@ -65,7 +65,7 @@ export function useLogin(state: any) {
       await timezoneStore.setTimezone(timezone)
 
       const path = routeStore.lastRoute
-      router.push({ path: path || 'home' })
+      //router.push({ path: path || 'home' })
     }
 
   }
