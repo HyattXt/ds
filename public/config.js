@@ -35,6 +35,6 @@ window.webConfig = {
     VITE_APP_PROD_ASSETS_QUERY_URL:'http://192.168.100.88:10824',
 
     //初始化的项目编号，同步修改平台嵌入的数据开发及运维里的url中的编号
-    VITE_APP_PROD_PROJECT_ID:'10833729111968'
+    VITE_APP_PROD_PROJECT_ID:10833729111968
 
 }
