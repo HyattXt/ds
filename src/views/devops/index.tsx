@@ -17,17 +17,10 @@
 
 import { defineAsyncComponent, defineComponent, onMounted, onBeforeMount, ref, toRefs, watch } from 'vue'
 import { NGrid, NGi } from 'naive-ui'
-import { startOfToday, getTime } from 'date-fns'
 import { useI18n } from 'vue-i18n'
 import { useTaskState } from './use-task-state'
 import { useProcessState } from './use-process-state'
 import StateCard from './components/state-card'
-//import DefinitionCard from './components/definition-card'
-import { getUrlParam } from "@/service/service";
-import { login1 } from "@/service/modules/login";
-import { SessionIdRes } from "@/service/modules/login/types";
-import { UserInfoRes } from "@/service/modules/users/types";
-import { getUserInfo } from "@/service/modules/users";
 import { useUserStore } from "@/store/user/user";
 import { useTimezoneStore } from "@/store/timezone/timezone";
 import { useRoute, useRouter } from 'vue-router'
@@ -38,19 +31,12 @@ import { queryUnauthorizedProject, getDataByProjectCodeAndDate, getStatisticsDat
 
 const modules = import.meta.glob('/src/views/**/**.tsx')
 
-const components: { [key: string]: Component } = utils.mapping(modules)
-
-const DefinitionCard = defineAsyncComponent(() => import('./components/definition-card'))
-
 
 export default defineComponent({
   name: 'devops',
   setup() {
-    const userStore = useUserStore()
-    const timezoneStore = useTimezoneStore()
 
     const { t, locale } = useI18n()
-    // const dateRef = ref([[getTime(startOfToday()), Date.now()]])
     const dateRef = ref(
       [[new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 6 * 24 * 60 * 60 * 1000,
       new Date(new Date().setHours(0, 0, 0, 0)).getTime() + 24 * 60 * 60 * 1000]]
@@ -101,7 +87,7 @@ export default defineComponent({
     const ProjName = ref()
     const ProjSelect = ref()
     const { getInterfaceTop10Data, getJobRunErrorTop10Data, getJobRuntimeTop10Data, getTaskStatisticsInfoData, getTaskState, taskVariables, getTaskData, getTaskDev, getProjData } = useTaskState()
-    const { getProcessState, processVariables } = useProcessState()
+    const { processVariables } = useProcessState()
     const route = useRoute()
     const router = useRouter()
     const TaskPie = ref()
@@ -197,19 +183,7 @@ export default defineComponent({
               value: item.code,
             }
           });
-          const proj = table[0].value
-          if (route.params.projectCode == '123') {
-            const currentRoute = router.currentRoute.value; // 复制当前路由对象
-            // 修改参数
-            currentRoute.params.projectCode = table[0].value;
-            // 使用 router.replace() 替换当前路由
-            router.replace(currentRoute);
-            Proj.value = table[0].value;
-            ProjName.value = table[0].label
-          }
-          else {
-            ProjName.value = table.filter(item => item.value.toString() === route.params.projectCode).map(item => item.label)[0]
-          }
+          ProjName.value = table.filter(item => item.value.toString() === route.params.projectCode).map(item => item.label)[0]
           ProjSelect.value = table
           return { table, Proj }
         }),
@@ -221,11 +195,6 @@ export default defineComponent({
 
 
     getProjData1()
-
-    onMounted(() => {
-      // getProjData1()
-
-    })
 
     watch(
       () => locale.value,
@@ -263,15 +232,12 @@ export default defineComponent({
     const {
       t,
       dateRef,
-      taskDevRef,
       handleTaskData,
       handleProjData,
       handleRunTop10Data,
       handleRunErrorTop10Data,
       handlegetInterfaceTop10Data,
-      taskLoadingRef,
-      processLoadingRef,
-      TaskPie
+      taskLoadingRef
     } = this
 
 

@@ -16,11 +16,9 @@
  */
 
 import { defineComponent, PropType, onMounted, h } from 'vue'
-import { useTable } from '../use-table'
-import { NLayout, NProgress, NDataTable, NDatePicker, NGrid, NGi, NSpace, NSelect, NTag } from 'naive-ui'
+import { NProgress, NDataTable, NDatePicker, NGrid, NGi, NSpace, NSelect } from 'naive-ui'
 import ChartLineBox from '@/components/chart/modules/ChartLineBox'
 import TaskPie from '@/components/chart/modules/TaskPie'
-import PieChart from '@/components/chart/modules/Pie'
 
 
 import Card from '@/components/card'
@@ -125,11 +123,8 @@ const StateCard = defineComponent({
       onUpdateProjPickerValue,
       onUpdateRunTop10DatePickerValue,
       onUpdateRunErrorTop10DatePickerValue,
-      onUpdategetInterfaceTop10Data,
-      loadingRef,
-      datePickerRange
+      onUpdategetInterfaceTop10Data
     } = this
-    const { columnsRef } = useTable()
 
     const route = useRoute()
     const ALL = `/devops/${route.params.projectCode}/task/instances?timeRange=${this.datePickerRange}`

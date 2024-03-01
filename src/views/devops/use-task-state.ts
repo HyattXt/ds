@@ -22,7 +22,6 @@ import { useI18n } from 'vue-i18n'
 import { countTaskState } from '@/service/modules/projects-analysis'
 import type { TaskStateRes } from '@/service/modules/projects-analysis/types'
 import { getInterfaceTop10, getJobRunErrorTop10, getJobRuntimeTop10, getTaskStatisticsInfo, queryUnauthorizedProject, getDataByProjectCodeAndDate, getStatisticsDataByProjectCodeAndDate } from '@/service/modules/devops-analysis'
-import { parseTime, renderTableTime, tasksState } from '@/common/common'
 
 import type { StateData } from './types'
 import { reactive, ref } from 'vue'
