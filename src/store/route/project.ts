@@ -20,7 +20,7 @@ import { defineStore } from 'pinia'
 export const useProjectStore = defineStore({
   id: 'project',
   state: () => ({
-    currentProject: 11231953331264,
+    currentProject: window.webConfig.VITE_APP_PROD_PROJECT_ID,
     currentProjectName: '数仓'
   }),
   persist: true,
