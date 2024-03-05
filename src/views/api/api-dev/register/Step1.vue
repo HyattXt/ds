@@ -10,7 +10,6 @@
     <n-form-item label="服务名称" path="apiName">
       <n-input
         v-model:value="formValue.apiName"
-        :disabled="isDisable"
         placeholder="请输入"
       />
     </n-form-item>
@@ -42,7 +41,6 @@
     <n-form-item label="请求方式" path="apiMethod">
       <n-select
         v-model:value="formValue.apiMethod"
-        :disabled="isDisable"
         placeholder="请选择"
         :options="[
           { label: 'POST', value: 'POST' },
@@ -53,14 +51,12 @@
     <n-form-item label="创建人" path="apiCreator">
       <n-input
         v-model:value="formValue.apiCreator"
-        :disabled="isDisable"
         placeholder="请输入"
       />
     </n-form-item>
     <n-form-item label="描述" path="comment">
       <n-input
         v-model:value="formValue.comment"
-        :disabled="isDisable"
         type="textarea"
         :rows="2"
         placeholder="描述"
@@ -69,7 +65,6 @@
     <n-form-item label="请求header参数" path="comment" label-placement="top">
       <n-dynamic-input
         v-model:value="kvValue"
-        :disabled="isDisable"
         preset="pair"
         key-placeholder="参数名"
         value-placeholder="参数值"
@@ -78,7 +73,6 @@
     <n-form-item label="请求body参数" path="comment" label-placement="top">
       <n-dynamic-input
         v-model:value="bodyValue"
-        :disabled="isDisable"
         preset="pair"
         key-placeholder="参数名"
         value-placeholder="参数值"
@@ -89,7 +83,7 @@
         <router-link to="/service/api-dev">
           <n-button type="tertiary">返回</n-button>
         </router-link>
-        <n-button type="primary" :disabled="isDisable" @click="formSubmit"
+        <n-button type="primary"  @click="formSubmit"
           >确定</n-button
         >
       </n-space>
@@ -103,6 +97,7 @@ import {onMounted, ref} from 'vue'
   import axios from 'axios'
   import { replace } from 'lodash'
 import {queryTreeFolder} from "@/service/modules/projects";
+import {useRoute} from "vue-router";
 
   const form1Ref: any = ref(null)
   const message = useMessage()
@@ -111,6 +106,7 @@ import {queryTreeFolder} from "@/service/modules/projects";
   const bodyValue = ref([])
   const folderData = ref([])
   const emit = defineEmits(['nextStep'])
+  const route = useRoute()
   const SecondDevApiUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_API_URL
     : window.webConfig.VITE_APP_PROD_API_URL
@@ -200,7 +196,9 @@ import {queryTreeFolder} from "@/service/modules/projects";
   function formSubmit() {
     form1Ref.value.validate((errors: any) => {
       if (!errors) {
-        let insUrl = SecondDevApiUrl+'/HDataApi/interface/insert'
+        console.log(route.query.apiId)
+        console.log(!!route.query.apiId)
+        let insUrl = SecondDevApiUrl+ (!!route.query.apiId ? '/HDataApi/interface/update' : '/HDataApi/interface/insert')
         let sample = {
           requestHeader: [],
           requestBody: {},
@@ -221,7 +219,9 @@ import {queryTreeFolder} from "@/service/modules/projects";
           requestBody[bodyList[i].key] = bodyList[i].value
         }
 
-        formValue.value.apiPath = '/HDataApi/proxy' + formValue.value.apiPath
+        if(route.query.apiId == undefined){
+          formValue.value.apiPath = '/HDataApi/proxy' + formValue.value.apiPath
+        }
         sample.requestHeader = requestHeader
         sample.requestBody = requestBody
         formValue.value.apiSample = JSON.stringify(sample, null, 2)
@@ -230,10 +230,9 @@ import {queryTreeFolder} from "@/service/modules/projects";
           .post(insUrl, formValue.value)
           .then(function (response) {
 
-            message.info('注册成功！')
-            isDisable.value = true
+            message.info(response.data.info)
             formValue.value.apiPath = formValue.value.apiPath.replace(
-              '/HDataApi/proxy',
+              !!route.query.apiId ? '/proxy' : '/HDataApi/proxy',
               ''
             )
             emit('nextStep')
@@ -253,8 +252,42 @@ function getTreeFolder ()  {
   })
 }
 
+function getInitData ()  {
+  let url = SecondDevApiUrl+'/HDataApi/interface/getInterfaceInfoById'
+  let params = { apiId: '' }
+  params.apiId = route.query.apiId
+
+  axios
+      .post(url, params)
+      .then(function (response) {
+
+        formValue.value = response.data.obj
+        bodyValue.value = Object.entries(
+            JSON.parse(JSON.parse(formValue.value.apiSample).requestBody)
+        ).map(([key, value]) => ({
+          key,
+          value
+        }))
+        kvValue.value = JSON.parse(
+            JSON.parse(formValue.value.apiSample).requestHeader
+        ).map((item) => {
+          return {
+            key: item.name,
+            value: item.value
+          }
+        })
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+}
+
 onMounted(() => {
   getTreeFolder()
+  if (route.query.apiId !== undefined) {
+    getInitData();
+    isDisable.value = true
+  }
 })
 </script>
 

@@ -673,7 +673,7 @@ export default defineComponent({
                   })
                 } else {
                   router.push({
-                    path: '/service/api-register-edit',
+                    path: '/service/api-register',
                     query: { apiId: row.apiId }
                   })
                 }

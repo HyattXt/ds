@@ -78,18 +78,6 @@ export default {
       }
     },
     {
-      path: '/service/api-register-edit',
-      name: 'api-register-edit',
-      component: () => import('@/views/api/api-dev/edit/register/stepForm.vue'),
-      meta: {
-        title: '服务注册-api-register-edit',
-        activeMenu: 'service',
-        showSide: true,
-        activeSide: '/service/api-dev',
-        auth: []
-      }
-    },
-    {
       path: '/service/api-manager',
       name: 'api-manager',
       component: () => import('@/views/api/api-manager/list/index.vue'),
