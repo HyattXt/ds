@@ -54,18 +54,6 @@ export default {
       }
     },
     {
-      path: '/service/api-dev-step-edit',
-      name: 'api-dev-step-edit',
-      component: () => import('@/views/api/api-dev/edit/sql/stepForm.vue'),
-      meta: {
-        title: '服务开发-api-dev-step',
-        activeMenu: 'service',
-        showSide: true,
-        activeSide: '/service/api-dev',
-        auth: []
-      }
-    },
-    {
       path: '/service/api-register',
       name: 'api-register',
       component: () => import('@/views/api/api-dev/register/stepForm.vue'),

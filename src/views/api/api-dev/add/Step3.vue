@@ -1,7 +1,6 @@
 <template>
   <n-form
     ref="form2Ref"
-    :model="formValue"
     label-placement="top"
     style="max-width: 900px; margin: 40px auto 0 80px"
   >
@@ -52,18 +51,14 @@
   const message = useMessage()
   const loading = ref(false)
 
-  const formValue = ref({
-    password: '086611'
-  })
-
   const success =
     '     {\n' +
     '    "success": true,\n' +
     '    "message": "OK",\n' +
-    '    "code": 200,\n' +
+    '    "code": 0,\n' +
     '    "lifeCycleTime": "@timeLifeCycle",\n' +
     '    "executionTime": "@timeExecution",\n' +
-    '    "value": "@resultData"\n' +
+    '    "data": "@resultData"\n' +
     '    }'
 
   const failure =

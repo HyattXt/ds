@@ -56,7 +56,7 @@
     </n-form-item>
     <n-form-item label="描述" path="comment">
       <n-input
-        v-model:value="formValue.comment"
+        v-model:value="formValue.apiComment"
         type="textarea"
         :rows="2"
         placeholder="描述"
@@ -118,7 +118,7 @@ import {useRoute} from "vue-router";
     apiPath: '',
     apiCreator: '',
     apiMethod: null,
-    comment: '',
+    apiComment: '',
     apiIpaddr: '',
     apiFlag: 2,
     apiSample: '',

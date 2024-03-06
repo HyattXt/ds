@@ -668,7 +668,7 @@ export default defineComponent({
               editApi(row) {
                 if (row.apiFlag === '接口开发') {
                   router.push({
-                    path: '/service/api-dev-step-edit',
+                    path: '/service/api-dev-step',
                     query: { apiId: row.apiId }
                   })
                 } else {

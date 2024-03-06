@@ -14,6 +14,7 @@
       <n-input
         v-model:value="formValue.apiPath"
         placeholder="请输入路径 /api/开头"
+        :disabled="isDisable"
       />
     </n-form-item>
     <n-form-item label="API目录" path="apiMenu">
@@ -27,11 +28,12 @@
           placeholder="请选择API目录"
       />
     </n-form-item>
-    <n-form-item label="请求方式" path="select">
+    <n-form-item label="请求方式" path="apiMethod">
       <n-select
-        v-model:value="formValue.select"
+        v-model:value="formValue.apiMethod"
         placeholder="请选择"
         :options="[{ label: 'POST', value: 'POST' }]"
+        default-value="POST"
       />
     </n-form-item>
     <n-form-item label="创建人" path="apiCreator">
@@ -40,7 +42,7 @@
     <n-space justify="space-between">
       <n-input-group>
         <n-form-item label="频次限制" path="apiFrequency">
-          <n-input
+          <n-input-number
             v-model:value="formValue.apiFrequency"
             placeholder="请输入"
           />
@@ -49,14 +51,14 @@
       </n-input-group>
       <n-input-group>
         <n-form-item label="后端超时" path="apiTimeout">
-          <n-input v-model:value="formValue.apiTimeout" placeholder="请输入" />
+          <n-input-number v-model:value="formValue.apiTimeout" placeholder="请输入" />
         </n-form-item>
         <n-input-group-label>ms</n-input-group-label>
       </n-input-group>
     </n-space>
-    <n-form-item label="描述" path="comment">
+    <n-form-item label="描述" path="apiComment">
       <n-input
-        v-model:value="formValue.comment"
+        v-model:value="formValue.apiComment"
         type="textarea"
         :rows="2"
         placeholder="描述"
@@ -74,14 +76,17 @@
 </template>
 
 <script lang="ts" setup>
-import {onMounted, ref} from 'vue'
+  import {useRoute} from "vue-router";
+
+  import { onMounted, ref} from 'vue'
   import { useMessage } from 'naive-ui'
   import axios from 'axios'
-  import {queryTreeFolder} from "@/service/modules/projects";
   const emit = defineEmits(['nextStep'])
   const form1Ref: any = ref(null)
   const folderData = ref([])
   const message = useMessage()
+  const isDisable = ref(false)
+  const route = useRoute()
   const SecondDevApiUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_API_URL
     : window.webConfig.VITE_APP_PROD_API_URL
@@ -90,37 +95,38 @@ import {onMounted, ref} from 'vue'
       : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getApiTreeFloder'
 
   let validatePath = (rule: any, value: any, callback: any) => {
-    return new Promise<void>((resolve, reject) => {
-      let url = SecondDevApiUrl+'/HDataApi/interface/getApiPath'
-      let body = { apiPath: value }
+    console.log(formValue.value)
+    if (route.query.apiId == undefined) {
+      return new Promise<void>((resolve, reject) => {
+        let url = SecondDevApiUrl+'/HDataApi/interface/getApiPath'
+        let body = { apiPath: value }
 
-      //0存在，1不存在
-      axios
-        .post(url, body)
-        .then(function (response) {
+        //0存在，1不存在
+        axios
+            .post(url, body)
+            .then(function (response) {
 
-          if (response.data.status == 0) {
-            reject(Error('该路径与已有路径重复')) // reject with error message
-          } else {
-            resolve()
-          }
-        })
-        .catch(function (error) {
-          reject(error)
-        })
-    })
+              if (response.data.status == 0) {
+                reject(Error('该路径与已有路径重复')) // reject with error message
+              } else {
+                resolve()
+              }
+            })
+            .catch(function (error) {
+              reject(error)
+            })
+      })
+    }
   }
 
   const formValue = ref({
     apiName: '',
     apiPath: '',
     apiCreator: '',
-    apiFrequency: null,
-    apiTimeout: null,
-    select: null,
-    comment: '',
-    sourceType: null,
-    source: null,
+    apiFrequency: '',
+    apiTimeout: '',
+    apiMethod: '',
+    apiComment: '',
     apiTreeId: 1
   })
 
@@ -146,19 +152,9 @@ import {onMounted, ref} from 'vue'
         trigger: 'blur'
       }
     ],
-    select: {
+    apiMethod: {
       required: true,
       message: '请选择请求方式',
-      trigger: 'blur'
-    },
-    sourceType: {
-      required: true,
-      message: '请选择数据源类型',
-      trigger: 'blur'
-    },
-    source: {
-      required: true,
-      message: '请选择数据源',
       trigger: 'blur'
     },
     apiCreator: {
@@ -169,25 +165,17 @@ import {onMounted, ref} from 'vue'
     apiFrequency: [
       {
         required: true,
-        message: '请输入调用频次',
+        type:"number",
+        message: '请输入频次限制',
         trigger: 'blur'
-      },
-      {
-        message: '请输入数字格式',
-        trigger: 'blur',
-        pattern: /^[1-9]\d*$/
       }
     ],
     apiTimeout: [
       {
         required: true,
+        type:"number",
         message: '请输入超时时间(数字格式)',
         trigger: 'blur'
-      },
-      {
-        message: '请输入数字格式',
-        trigger: 'blur',
-        pattern: /^[1-9]\d*$/
       }
     ]
   }
@@ -202,6 +190,23 @@ import {onMounted, ref} from 'vue'
     })
   }
 
+  function getInitData() {
+    let url = SecondDevApiUrl+'/HDataApi/interface/getInterfaceInfoById'
+    let params = { apiId: '' }
+    params.apiId = route.query.apiId
+
+    axios
+        .post(url, params)
+        .then(function (response) {
+          formValue.value = response.data.obj
+          formValue.value.apiTimeout = parseInt(formValue.value.apiTimeout)
+          console.log(formValue.value)
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+  }
+
 function getTreeFolder ()  {
   axios.get(getApiTreeUrl).then((res) => {
     folderData.value = res.data.data
@@ -210,6 +215,10 @@ function getTreeFolder ()  {
 
 onMounted(() => {
   getTreeFolder()
+    if (route.query.apiId !== undefined) {
+      getInitData()
+      isDisable.value = true
+    }
 })
 </script>
 
