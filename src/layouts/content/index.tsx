@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { defineComponent, onMounted, watch, toRefs, ref } from 'vue'
+import { defineComponent, computed, onMounted, watch, toRefs, ref } from 'vue'
 import { NLayout, NSelect, NLayoutContent, NLayoutHeader, useMessage } from 'naive-ui'
 import NavBar from './components/navbar'
 import SideBar from './components/sidebar'
@@ -44,6 +44,17 @@ const Content = defineComponent({
       changeUserDropdown
     } = useDataList()
     const sideKeyRef = ref()
+    const customStyle = computed(() => {
+      if (window.webConfig.VITE_APP_PROD_IS_IFRAME) {
+        // 如果 isIframe 为 true，则返回一个不包含 top 属性的样式对象
+        return {};
+      } else {
+        // 否则，返回一个包含 top: 65px 的样式对象
+        return {
+          top: '65px',
+        };
+      }
+    });
 
 
     onMounted(() => {
@@ -106,7 +117,7 @@ const Content = defineComponent({
       ...toRefs(state),
       changeMenuOption,
       sideKeyRef,
-
+      customStyle
     }
   },
 
@@ -115,12 +126,21 @@ const Content = defineComponent({
 
     return (
       <NLayout style='height: 100%'>
-
-
-
-        <NLayout has-sider position='absolute'>
-
-          {this.isShowSide && (
+        {!window.webConfig.VITE_APP_PROD_IS_IFRAME &&
+          (<NLayoutHeader style='height: 65px'>
+            <NavBar
+              class='tab-horizontal'
+              headerMenuOptions={this.headerMenuOptions}
+              localesOptions={this.localesOptions}
+              timezoneOptions={this.timezoneOptions}
+              userDropdownOptions={this.userDropdownOptions}
+              iconOptions={this.iconMenuOptions}
+            />
+          </NLayoutHeader>)
+        }
+        <NLayout has-sider position='absolute'  style={this.customStyle} >
+          {/*<NLayout has-sider position='absolute'>*/}
+          {this.isShowSide && !window.webConfig.VITE_APP_PROD_IS_IFRAME && (
             <SideBar
               sideMenuOptions={this.sideMenuOptions}
               sideKey={this.sideKeyRef}
@@ -128,7 +148,7 @@ const Content = defineComponent({
           )}
           <NLayoutContent
             native-scrollbar={false}
-            style='padding: 16px 22px'
+            style='padding: 6px'
             contentStyle={'height: 100%'}
           >
             <router-view key={this.$route.fullPath} />
