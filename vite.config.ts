@@ -22,6 +22,7 @@ import viteCompression from 'vite-plugin-compression'
 import path from 'path'
 
 const CurrentTimeVersion = `version-${new Date().toLocaleDateString()}`
+// @ts-ignore
 export default defineConfig({
   base: process.env.NODE_ENV === 'production' ? '/HData/ui/' : '/',
   plugins: [

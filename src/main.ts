@@ -24,9 +24,11 @@ import i18n from '@/locales'
 import * as echarts from 'echarts'
 import 'echarts/theme/macarons'
 import 'echarts/theme/dark-bold'
-import './assets/styles/default.scss'
 import naive from 'naive-ui'
 import axios from 'axios'
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+import './assets/styles/default.scss'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -63,4 +65,5 @@ app.use(naive)
 app.use(router)
 app.use(pinia)
 app.use(i18n)
+app.use(ElementPlus)
 app.mount('#app')
