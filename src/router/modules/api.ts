@@ -75,6 +75,17 @@ export default {
         showSide: true,
         auth: []
       }
+    },
+    {
+      path: '/service/api-detail',
+      name: 'api-detail',
+      component: () => import('@/views/api/api-manager/list/detail.vue'),
+      meta: {
+        title: '服务详情-api-detail',
+        activeMenu: 'service',
+        showSide: true,
+        auth: []
+      }
     }
   ]
 }
