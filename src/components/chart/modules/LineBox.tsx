@@ -52,7 +52,8 @@ const lineChart = defineComponent({
       }
       ,
       tooltip: {              //设置tip提示
-        trigger: 'axis'
+        trigger: 'axis',
+        backgroundColor: 'rgb(255,255,255)'
       },
 
       legend: {               //设置区分（哪条线属于什么）
@@ -61,7 +62,7 @@ const lineChart = defineComponent({
         right: 20,
         top: 50,
       },
-      color: ['#30CE78', '#FF5D40', '#349EFF', '#BB85B3', '#FFB834'],       //设置区分（每条线是什么颜色，和 legend 一一对应）
+      color: ['#3bb969', '#0299cb', '#e6824d', '#BB85B3', '#FFB834'],       //设置区分（每条线是什么颜色，和 legend 一一对应）
       xAxis: {                //设置x轴
         type: 'category',
         boundaryGap: false,     //坐标轴两边不留白
@@ -113,7 +114,7 @@ const lineChart = defineComponent({
           type: 'line',               // 类型为折线图
           // smooth: false,
           lineStyle: {                // 线条样式 => 必须使用normal属性
-            color: '#30CE78',
+            color: '#3bb969',
           },
         }
       ],

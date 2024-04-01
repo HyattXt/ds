@@ -1,6 +1,7 @@
 <template>
-  <n-card title="字段信息" size="large" :bordered="false" >
-    <n-table :single-line="false" size="small">
+  <n-card size="small" :bordered="false">
+    <crudSplit class='titleSplit' title="字段信息"/>
+    <n-table style="text-align: center;" :single-line="false" size="small">
       <thead>
       <tr>
         <th>字段名</th>
@@ -24,6 +25,7 @@ import axios from 'axios'
 import { onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
 import {useMessage} from "naive-ui";
+import crudSplit from "@/components/cue/crud-split.vue";
 
 const fieldInfo =ref([])
 const route = useRoute()
@@ -36,5 +38,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
+.titleSplit {
+  background: white !important;
+  font-size: 18px !important;
+  padding: 0 16px 16px 0 !important;
+}
 </style>
