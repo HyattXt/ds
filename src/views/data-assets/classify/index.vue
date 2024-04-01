@@ -301,7 +301,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, h, nextTick, unref} from 'vue'
+import { ref, reactive, onMounted, h, unref} from 'vue'
 import axios from 'axios'
 import {
   ApartmentOutlined,
@@ -311,7 +311,7 @@ import {
 import {
   NIcon,
   useMessage,
-  NPopconfirm, NPopover, NButton
+  NPopover, NButton
 } from "naive-ui";
 import {useRouter} from "vue-router";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
@@ -356,17 +356,13 @@ const selectedMenu = ref(1)
 const showDropdownRef = ref(false)
 const showAddRef = ref(false)
 const showUpdateRef = ref(false)
-const xRef = ref(0)
-const yRef = ref(0)
 const formValue = ref({ applicationScenarios: '' })
 const updateFormValue = ref({})
-const MetadataParams = ref()
 const expandedKeys = ref([]);
 const pattern = ref('');
 const activeName = ref('first')
 const currentRow = ref()
 const ifDisableDelete = ref(true)
-const dropdownOption = ref([{label: '添加', key: '添加'},{label: '删除', key: '删除'}])
 const getCatalogFolderUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/dataCatalog/getDataCatalogTreeFloder'
     : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/dataCatalog/getDataCatalogTreeFloder'
@@ -637,44 +633,13 @@ function nodeProps ({option}) {
     },
     onContextmenu (e)  {
       e.preventDefault()
-      selectedMenu.value = option.id
-      if(option.children.length !== 0) {
-        dropdownOption.value = [{label: '添加', key: '添加'},{label: '删除', key: '删除', disabled: true}]
-      }else {
-        dropdownOption.value = [{label: '添加', key: '添加'},{label: '删除', key: '删除'}]
-      }
-      nextTick().then(() => {
-        showDropdownRef.value = true
-        xRef.value = e.clientX
-        yRef.value = e.clientY
-      })
     }
   }
-}
-function onClickOutside () {
-  showDropdownRef.value = false
 }
 function handleSelect (key, option) {
   if(option.key !== '删除') {
     showDropdownRef.value = false
     showAddRef.value = true
-  }
-}
-const dropdownConfirm = ({ node, option }) => {
-  if (option.key !== '删除' || option.disabled ) {
-    return node
-  }else{
-    return h(
-        NPopconfirm,
-        {
-          onPositiveClick: () => {
-            delMenu(selectedMenu.value)
-          }},
-        {
-          trigger: () => [node],
-          default: () => '确定'+option.label+'?'
-        }
-    )
   }
 }
 function delMenu(id) {
@@ -861,14 +826,6 @@ function renderSuffix({ option }) {
         }
     )
   }
-}
-
-function handleCheck (rowKeys)  {
-  MetadataParams.value = []
-  MetadataParams.value =
-      rowKeys.map((item)=>{
-        return JSON.parse(item)
-      })
 }
 
 function dialogVisible () {

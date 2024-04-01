@@ -37,17 +37,6 @@
               :render-suffix="renderSuffix"
               :nodeProps="nodeProps"
           />
-          <n-dropdown
-              placement="bottom-start"
-              trigger="manual"
-              :x="xRef"
-              :y="yRef"
-              :options="dropdownOption"
-              :show="showDropdownRef"
-              :on-clickoutside="onClickOutside"
-              :on-select="handleSelect"
-              :render-option="dropdownConfirm"
-          />
         </div>
       </div>
       <div class="cue-drag-layout__mainview" :style="{width: 'calc(100% - ' + (280 + 12) + 'px)'}">
@@ -327,30 +316,26 @@
 </template>
 
 <script setup>
-import {defineComponent, ref, reactive, onMounted, h, nextTick, unref} from 'vue'
+import { ref, reactive, onMounted, h, unref} from 'vue'
 import axios from 'axios'
 import {
-  ApartmentOutlined, BarsOutlined,
-  DeleteOutlined, EditOutlined, ProfileOutlined,
+  ApartmentOutlined,
   SearchOutlined,
-  TableOutlined, ToTopOutlined, VerticalAlignBottomOutlined
+  TableOutlined
 } from '@vicons/antd'
 import {
   NButton,
   NIcon,
   NSpace,
-  NTooltip,
   useMessage,
-  NCard,
   NGrid,
-  NGi,
-  NPopconfirm, NPopover
+  NPopover
 } from "naive-ui";
 import { useUserStore } from '@/store/user/user'
 import CrudHead from "@/components/cue/crud-header.vue";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 import {Search} from "@element-plus/icons-vue";
-import {ElMessage, ElMessageBox} from "element-plus";
+import {ElMessageBox} from "element-plus";
 
 const TableData = reactive({
   tableList: [],
@@ -367,11 +352,8 @@ const selectedMenu = ref(1)
 const showDropdownRef = ref(false)
 const showPubRef = ref(false)
 const showAddRef = ref(false)
-const xRef = ref(0)
-const yRef = ref(0)
 const formValue = ref({})
 const indexFormValue = ref({})
-const dropdownOption = ref([{label: '添加', key: '添加'},{label: '删除', key: '删除'}])
 const operaSpan = ref(0)
 const operaOffSpan = ref(0)
 const ifUpdate = ref(false)
@@ -547,10 +529,7 @@ const paginationReactive = reactive({
   indicatorCode: '',
   indicatorTargetTable: '',
   indicatorLatitude: '',
-  apiTreeId: 1,
-  prefix({ itemCount }) {
-    return `共${itemCount}条`
-  }
+  apiTreeId: 1
 })
 function query(
     indicatorDefiner,
@@ -646,46 +625,17 @@ function nodeProps ({option}) {
     },
     onContextmenu (e)  {
       e.preventDefault()
-      selectedMenu.value = option.id
-      if(option.children.length !== 0) {
-        dropdownOption.value = [{label: '添加', key: '添加'},{label: '删除', key: '删除', disabled: true}]
-      }else {
-        dropdownOption.value = [{label: '添加', key: '添加'},{label: '删除', key: '删除'}]
-      }
-      nextTick().then(() => {
-        showDropdownRef.value = true
-        xRef.value = e.clientX
-        yRef.value = e.clientY
-      })
     }
   }
 }
-function onClickOutside () {
-  showDropdownRef.value = false
-}
+
 function handleSelect (key, option) {
   if(option.key !== '删除') {
     showDropdownRef.value = false
     showAddRef.value = true
   }
 }
-const dropdownConfirm = ({ node, option }) => {
-  if (option.key !== '删除' || option.disabled ) {
-    return node
-  }else{
-    return h(
-        NPopconfirm,
-        {
-          onPositiveClick: () => {
-            delMenu(selectedMenu.value)
-          }},
-        {
-          trigger: () => [node],
-          default: () => '确定'+option.label+'?'
-        }
-    )
-  }
-}
+
 function delMenu(id) {
   let params ={
     id: id,
