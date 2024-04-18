@@ -18,7 +18,10 @@
 import { defineComponent } from 'vue'
 import {
   TaskType,
-  TASK_TYPES_MAP
+  TASK_TYPES_MAP,
+  TASK_TYPES_MAP_BASIC,
+  TASK_TYPES_MAP_REALTIME,
+  TASK_TYPES_MAP_OFFLINE
 } from '@/views/projects/task/constants/task-type'
 import styles from './dag.module.scss'
 
@@ -30,10 +33,23 @@ export default defineComponent({
       type,
       ...TASK_TYPES_MAP[type as TaskType]
     }))
+    const allTaskTypesBasic = Object.keys(TASK_TYPES_MAP_BASIC).map((type) => ({
+      type,
+      ...TASK_TYPES_MAP_BASIC[type as TaskType]
+    }))
+    const allTaskTypesOffline = Object.keys(TASK_TYPES_MAP_OFFLINE).map((type) => ({
+      type,
+      ...TASK_TYPES_MAP_OFFLINE[type as TaskType]
+    }))
+    const allTaskTypesRealtime = Object.keys(TASK_TYPES_MAP_REALTIME).map((type) => ({
+      type,
+      ...TASK_TYPES_MAP_REALTIME[type as TaskType]
+    }))
 
     return () => (
       <div class={styles.sidebar}>
-        {allTaskTypes.map((task) => (
+        <div class={styles.draggable} style={"pointer-events: none; background-color: #0099CB; justify-content: center; color: #ffffff"}>基础任务</div>
+        {allTaskTypesBasic.map((task) => (
           <div
             class={[styles.draggable, `task-item-${task.type}`]}
             draggable='true'
@@ -49,6 +65,42 @@ export default defineComponent({
             />
             <span>{task.alias}</span>
           </div>
+        ))}
+        <div class={styles.draggable} style={"pointer-events: none; background-color: #0099CB; justify-content: center; color: #ffffff"}>离线计算</div>
+        {allTaskTypesOffline.map((task) => (
+            <div
+                class={[styles.draggable, `task-item-${task.type}`]}
+                draggable='true'
+                onDragstart={(e) => {
+                  context.emit('dragStart', e, task.type as TaskType)
+                }}
+            >
+              <em
+                  class={[
+                    styles['sidebar-icon'],
+                    styles['icon-' + task.type.toLocaleLowerCase()]
+                  ]}
+              />
+              <span>{task.alias}</span>
+            </div>
+        ))}
+        <div class={styles.draggable} style={"pointer-events: none; background-color: #0099CB; justify-content: center; color: #ffffff"}>实时计算</div>
+        {allTaskTypesRealtime.map((task) => (
+            <div
+                class={[styles.draggable, `task-item-${task.type}`]}
+                draggable='true'
+                onDragstart={(e) => {
+                  context.emit('dragStart', e, task.type as TaskType)
+                }}
+            >
+              <em
+                  class={[
+                    styles['sidebar-icon'],
+                    styles['icon-' + task.type.toLocaleLowerCase()]
+                  ]}
+              />
+              <span>{task.alias}</span>
+            </div>
         ))}
       </div>
     )

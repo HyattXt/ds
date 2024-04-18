@@ -133,7 +133,7 @@ export default defineComponent({
           theme.darkTheme ? Styles['dark'] : Styles['light']
         ]}
       >
-        {!isLoading.value && (
+        {!isLoading.value ? (
             <Dag
                 definition={definition.value}
                 onRefresh={refresh}
@@ -142,6 +142,12 @@ export default defineComponent({
                 onSave={save}
                 readonly={readonly.value}
             />
+        ):(
+              <div style={"height: 100%; display: flex; justify-content: center; flex-direction: column; align-items: center; text-align: center;"}>
+                <p style={"font-size: 20px; color: #C2C2C2; user-select: none"}>打开工作流: 双击</p>
+                <p style={"font-size: 20px; color: #C2C2C2; user-select: none"}>编辑工作流: 右键</p>
+                <p style={"font-size: 20px; color: #C2C2C2; user-select: none"}>新建工作流: 点击+号</p>
+              </div>
         )}
       </div>
     )

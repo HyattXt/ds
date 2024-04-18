@@ -105,16 +105,17 @@ export default defineComponent({
             }
         }
 
-        onMounted(() => {
-            loginNew()
-            setTimeout(() => {
-                getTreeMenu(projectCode)
-                getTreeFolder(projectCode)
-                // @ts-ignore
-                variables.model.projectCode = projectCode
-                if( typeof(route.query.code) != 'undefined' )tsxRef.value.refresh(route.query.code, projectCode)
-            }, 1000)
+        const ssoLogin = async () => {
+            await loginNew()
+            getTreeMenu(projectCode)
+            getTreeFolder(projectCode)
+            // @ts-ignore
+            variables.model.projectCode = projectCode
+            if( typeof(route.query.code) != 'undefined' )tsxRef.value.refresh(route.query.code, projectCode)
+        }
 
+        onMounted(() => {
+            ssoLogin()
         })
 
         function createMenu() {
@@ -389,8 +390,8 @@ export default defineComponent({
 
         const menuIcon = ({ option }: { option: TreeOption }) => {
              switch (option.type){
-                 case 1 : return h(<svg class="icon" viewBox="0 0 1260 1024" xmlns="http://www.w3.org/2000/svg" width="19.688" height="16"><defs><style/></defs><path d="M1171.561 157.538H601.797L570.814 61.44A88.222 88.222 0 00486.794 0H88.747A88.747 88.747 0 000 88.747v846.506A88.747 88.747 0 0088.747 1024H1171.56a88.747 88.747 0 0088.747-88.747V246.285a88.747 88.747 0 00-88.747-88.747zm-1082.814 0V88.747h398.047l22.055 68.791z" fill="#0099FF"/></svg>)
-                 case 2 : return h(<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><g data-name="矩形 256" stroke="#0099FF" fill="none"><rect width="24" height="24" rx="4" stroke="none"/><rect x=".5" y=".5" width="23" height="23" rx="3.5"/></g><path data-name="路径 735" d="M19.008 16.948a.2.2 0 01-.057.145.2.2 0 01-.142.061h-3.6a.2.2 0 01-.2-.2v-2.61a.2.2 0 01.057-.147.2.2 0 01.145-.059h3.59a.2.2 0 01.143.056.2.2 0 01.062.142v2.614zm-8.835-8.916a.2.2 0 01-.14-.058.2.2 0 01-.058-.142V5.215a.2.2 0 01.057-.146.2.2 0 01.142-.061h3.623a.2.2 0 01.141.061.2.2 0 01.055.145v2.618a.2.2 0 01-.053.142.194.194 0 01-.137.062h-3.63zm-1.39 6.09a.2.2 0 01.143.056.2.2 0 01.061.143v2.624a.223.223 0 01-.2.23H5.209a.224.224 0 01-.2-.23v-2.613a.2.2 0 01.056-.145.2.2 0 01.141-.062h3.577zm8.732-1.01v-2.604h-4.949V9.065h1.307c.675 0 1.129-.309 1.129-.992V5.216A1.136 1.136 0 0013.873 4H9.994c-.675 0-1.018.532-1.018 1.216v2.857c0 .683.344.992 1.018.992h1.412v1.443H6.48v2.608H4.988c-.673 0-.987.286-.987.967v2.867c0 .682.314 1.05.987 1.05h4.029c.675 0 .976-.369.976-1.051v-2.866c0-.683-.3-.967-.976-.967H7.5v-1.692h8.993v1.692h-1.6c-.674 0-.868.286-.868.967v2.867c0 .682.194 1.05.868 1.05h4.1A.916.916 0 0020 16.949v-2.866c0-.683-.331-.967-1.007-.967h-1.478z" fill="#0099FF"/></svg>)
+                 case 1 : return h(<svg class="icon" viewBox="0 0 1260 1024" xmlns="http://www.w3.org/2000/svg" width="19.688" height="16"><defs><style/></defs><path d="M1171.561 157.538H601.797L570.814 61.44A88.222 88.222 0 00486.794 0H88.747A88.747 88.747 0 000 88.747v846.506A88.747 88.747 0 0088.747 1024H1171.56a88.747 88.747 0 0088.747-88.747V246.285a88.747 88.747 0 00-88.747-88.747zm-1082.814 0V88.747h398.047l22.055 68.791z" fill="#0099CB"/></svg>)
+                 case 2 : return h(<svg class="icon" viewBox="0 0 1260 1024" xmlns="http://www.w3.org/2000/svg" width="19.688" height="16"><defs><style/></defs><path d="M543.872 480h268.224c52.416 0 94.848 43.008 94.848 96v160h52.8a64 64 0 0 1 64 64V960a64 64 0 0 1-64 64H803.2a64 64 0 0 1-64-64v-160a64 64 0 0 1 64-64h40.512V576c0-17.664-14.144-32-31.616-32h-268.16v192h46.528a64 64 0 0 1 64 64V960a64 64 0 0 1-64 64H433.92a64 64 0 0 1-64-64v-160a64 64 0 0 1 64-64h46.72v-192H211.328a31.808 31.808 0 0 0-31.616 32v160h40.832a64 64 0 0 1 64 64V960a64 64 0 0 1-64 64H64a64 64 0 0 1-64-64v-160a64 64 0 0 1 64-64h52.48V576c0-52.992 42.496-96 94.848-96H480.64v-192h-46.72a64 64 0 0 1-64-64V64a64 64 0 0 1 64-64h156.544a64 64 0 0 1 64 64v160a64 64 0 0 1-64 64h-46.592v192z" fill="#0099CB"/></svg>)
                  default: {
                      // @ts-ignore
                      let url= '/HData/ui/images/task-icons/'+option.taskType.toLocaleLowerCase()+'_hover.png'
@@ -424,138 +425,114 @@ export default defineComponent({
 
         return () =>
             (
-                <div
-                    class={[
-                        theme.darkTheme ? Styles['dark'] : Styles['light'],
-                    ]}
-                >
-                    <n-grid x-gap="2" cols="5">
-                        <n-gi span="1">
-                            <div>
-                            <n-card
-                                v-slots={{
-                                    header: () => (
-                                        <div>
-                                            <n-grid x-gap="2" cols="2">
-                                                <n-gi span="1">
-                                                    <n-button type="info" ghost icon-placement="left" onClick={packHandle}>
-                                                    {expandedKeys.value.length ? '收起' : '展开'}
-                                                    <div>
-                                                        <n-icon size="14">
-                                                            <AlignLeftOutlined/>
-                                                        </n-icon>
-                                                    </div>
-                                                    </n-button>
-                                                </n-gi>
-                                                <n-gi span="1">
-                                                    <n-dropdown trigger="click" options={addMenuOptions.value} onSelect={ifShowModal}>
-                                                        <n-button type="info" ghost icon-placement="right">
-                                                            新建
-                                                            <n-icon size="14">
-                                                                <DownOutlined/>
-                                                            </n-icon>
-                                                        </n-button>
-                                                    </n-dropdown>
-                                                </n-gi>
-                                            </n-grid>
+                <div style={"height:100%; border: 0px"}>
+                            <div class="cue-drag-layout flex-row">
+                                <div class="cue-drag-layout__mainview" style={"width: 350px; margin-right:12px"}>
+                                    <div class="tree-container" style={"width: 100%"}>
+                                        <div class="add-buttons">
+                                            <span class="title">分类</span>
+                                            <div class="button-item-toggle" onClick={packHandle} title={expandedKeys.value.length ? '收起' : '展开'}>
+                                                <i class={`iconfont icon-caret-${expandedKeys.value.length? 'top' : 'bottom'}`}></i>
+                                            </div>
+                                            <n-dropdown trigger="click" options={addMenuOptions.value} onSelect={ifShowModal}>
+                                                <div class="button-item" title="添加">
+                                                    <i class="iconfont icon-cart_add"></i>
+                                                </div>
+                                            </n-dropdown>
+
                                         </div>
-                                    )
-                                }}
-                            >
+                                        <n-input
+                                            type="text"
+                                            placeholder="搜索"
+                                            class="search-input"
+                                            v-model:value={pattern.value}
+                                            v-slots={{
+                                                suffix: () => (
+                                                    <div>
+                                                        <n-icon component={SearchOutlined}/>
+                                                    </div>
+                                                )
+                                            }}
+                                        >
+                                        </n-input>
+                                            <n-tree
+                                                class="tree-scrollbar"
+                                                block-line
+                                                show-irrelevant-nodes={false}
+                                                pattern={pattern.value}
+                                                data={variables.treeData}
+                                                key-field="id"
+                                                label-field="titleName"
+                                                children-field="children"
+                                                onUpdate:expanded-keys={onExpandedKeys}
+                                                expanded-keys={expandedKeys.value}
+                                                node-props={menu}
+                                                render-prefix={menuIcon}
+                                            />
+                                        <n-dropdown
+                                            placement="bottom-start"
+                                            trigger="manual"
+                                            x={xRef.value}
+                                            y={yRef.value}
+                                            options={dropdownOption.value}
+                                            show={showDropdownRef.value}
+                                            on-clickoutside={onClickoutside}
+                                            on-select={handleSelect}
+                                            render-option={dropdownConfirm}
+                                        />
+                                    </div>
+                                </div>
+                                <div class="cue-drag-layout__mainview" style={"width: calc(100% - 362px)"}>
+                                    <Detail
+                                        ref={tsxRef}
+                                        projectCode={projectCode}
+                                        code={Number(linkage.value.code)}
+                                        parentId={linkage.value.parentId}
+                                    />
+                                </div>
+                            </div>
+                    <el-dialog
+                        v-model={menuModal.value}
+                        width={"600px"}
+                        v-slots={{header: () => (
+                                "新建文件夹"
+                            )}}
+                    >
+                        <n-form
+                            ref={formRef}
+                            label-placement="left"
+                            label-width="auto"
+                            rules={rules}
+                            model={variables}
+                        >
+                            <n-form-item label="文件夹名称" path="model.titleName">
                                 <n-input
                                     type="text"
-                                    v-model:value={pattern.value}
-                                    placeholder="输入菜单名称搜索"
-                                    v-slots={{
-                                        suffix: () => (
-                                            <n-icon size="14">
-                                                <SearchOutlined/>
-                                            </n-icon>
-                                        )
-                                    }}
+                                    v-model:value={variables.model.titleName}
+                                    placeholder="输入文件夹名称"
                                 />
-                                <div class={Styles.container}>
-                                    <n-spin show={variables.loading}>
-                                    <n-tree
-                                        class={Styles.treeSize}
-                                        block-line
-                                        show-irrelevant-nodes={false}
-                                        pattern={pattern.value}
-                                        data={variables.treeData}
-                                        key-field="id"
-                                        label-field="titleName"
-                                        children-field="children"
-                                        onUpdate:expanded-keys={onExpandedKeys}
-                                        expanded-keys={expandedKeys.value}
-                                        node-props={menu}
-                                        render-prefix={menuIcon}
-                                    />
-                                    </n-spin>
-                                </div>
-                                <n-dropdown
-                                    placement="bottom-start"
-                                    trigger="manual"
-                                    x={xRef.value}
-                                    y={yRef.value}
-                                    options={dropdownOption.value}
-                                    show={showDropdownRef.value}
-                                    on-clickoutside={onClickoutside}
-                                    on-select={handleSelect}
-                                    render-option={dropdownConfirm}
+                            </n-form-item>
+                            <n-form-item label="目标文件夹" path="inputValue">
+                                <n-tree-select
+                                    options={variables.folderData}
+                                    key-field="id"
+                                    label-field="titleName"
+                                    v-model:value={variables.model.parentId}
+                                    filterable
                                 />
-                            </n-card>
-                            </div>
-                        </n-gi>
-                        <n-gi span="4">
-                            <div>
-                            <Detail
-                               ref={tsxRef}
-                               projectCode={projectCode}
-                               code={Number(linkage.value.code)}
-                               parentId={linkage.value.parentId}
-                            />
-                            </div>
-                        </n-gi>
-                    </n-grid>
-                    <n-modal
-                        v-model:show={menuModal.value}
-                        class={Styles.menuModal}
+                            </n-form-item>
+                        </n-form>
+                        <n-space justify="end">
+                            <n-button type="info" onClick={createMenu} >确定</n-button>
+                        </n-space>
+                    </el-dialog>
+                    <el-dialog
+                        v-model={reFolderModal.value}
+                        width={"600px"}
+                        v-slots={{header: () => (
+                                "重命名文件夹"
+                            )}}
                     >
-                        <n-card title="新建文件夹" size="huge">
-                            <n-form
-                                ref={formRef}
-                                label-placement="left"
-                                label-width="auto"
-                                rules={rules}
-                                model={variables}
-                            >
-                                <n-form-item label="文件夹名称" path="model.titleName">
-                                    <n-input
-                                        type="text"
-                                        v-model:value={variables.model.titleName}
-                                        placeholder="输入文件夹名称"
-                                    />
-                                </n-form-item>
-                                <n-form-item label="目标文件夹" path="inputValue">
-                                    <n-tree-select
-                                        options={variables.folderData}
-                                        key-field="id"
-                                        label-field="titleName"
-                                        v-model:value={variables.model.parentId}
-                                        filterable
-                                    />
-                                </n-form-item>
-                            </n-form>
-                            <n-space justify="end">
-                                <n-button type="info" onClick={createMenu} >确定</n-button>
-                            </n-space>
-                        </n-card>
-                    </n-modal>
-                    <n-modal
-                        v-model:show={reFolderModal.value}
-                        class={Styles.reName}
-                    >
-                        <n-card title="重命名文件夹" size="huge">
                             <n-form
                                 ref={formRef}
                                 label-placement="left"
@@ -574,13 +551,14 @@ export default defineComponent({
                             <n-space justify="end">
                                 <n-button type="info" onClick={renameMenu}>确定</n-button>
                             </n-space>
-                        </n-card>
-                    </n-modal>
-                    <n-modal
-                        v-model:show={mvFolderModal.value}
-                        class={Styles.reName}
+                    </el-dialog>
+                    <el-dialog
+                        v-model={mvFolderModal.value}
+                        width={"600px"}
+                        v-slots={{header: () => (
+                                "移动文件夹"
+                            )}}
                     >
-                        <n-card title="移动文件夹" size="huge">
                             <n-form
                                 label-placement="left"
                                 label-width="auto"
@@ -600,13 +578,14 @@ export default defineComponent({
                             <n-space justify="end">
                                 <n-button type="info" onClick={moveMenu} >确定</n-button>
                             </n-space>
-                        </n-card>
-                    </n-modal>
-                    <n-modal
-                        v-model:show={workflowModal.value}
-                        class={Styles.workflowModal}
+                    </el-dialog>
+                    <el-dialog
+                        v-model={workflowModal.value}
+                        width={"600px"}
+                        v-slots={{header: () => (
+                                "新建工作流"
+                            )}}
                     >
-                        <n-card title="新建工作流" size="huge">
                             <n-space vertical>
                             <n-form
                                 ref={formRef}
@@ -636,13 +615,14 @@ export default defineComponent({
                             <n-space justify="end">
                                 <n-button type="info" onClick={createWorkFlow} >确定</n-button>
                             </n-space>
-                        </n-card>
-                    </n-modal>
-                    <n-modal
-                        v-model:show={reWorkflowModal.value}
-                        class={Styles.reName}
+                    </el-dialog>
+                    <el-dialog
+                        v-model={reWorkflowModal.value}
+                        width={"600px"}
+                        v-slots={{header: () => (
+                                "重命名工作流"
+                            )}}
                     >
-                        <n-card title="重命名工作流" size="huge">
                             <n-form
                                 ref={formRef}
                                 label-placement="left"
@@ -661,13 +641,14 @@ export default defineComponent({
                             <n-space justify="end">
                                 <n-button type="info" onClick={renameWorkflow}>确定</n-button>
                             </n-space>
-                        </n-card>
-                    </n-modal>
-                    <n-modal
-                        v-model:show={mvWorkflowModal.value}
-                        class={Styles.reName}
+                    </el-dialog>
+                    <el-dialog
+                        v-model={mvWorkflowModal.value}
+                        width={"600px"}
+                        v-slots={{header: () => (
+                                "移动工作流"
+                            )}}
                     >
-                        <n-card title="移动工作流" size="huge">
                             <n-form
                                 label-placement="left"
                                 label-width="auto"
@@ -687,8 +668,7 @@ export default defineComponent({
                             <n-space justify="end">
                                 <n-button type="info" onClick={moveWorkflow} >确定</n-button>
                             </n-space>
-                        </n-card>
-                    </n-modal>
+                    </el-dialog>
                 </div>
             )
     }

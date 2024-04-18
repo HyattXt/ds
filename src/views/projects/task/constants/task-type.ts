@@ -94,3 +94,48 @@ export const TASK_TYPES_MAP = {
     alias: 'ZEPPELIN',
   }
 } as { [key in TaskType]: { alias: string; helperLinkDisable?: boolean } }
+
+export const TASK_TYPES_MAP_BASIC = {
+  SHELL: {
+    alias: 'SHELL'
+  },
+  SUB_PROCESS: {
+    alias: 'SUB_PROCESS'
+  },
+  PYTHON: {
+    alias: 'PYTHON'
+  },
+  DEPENDENT: {
+    alias: 'DEPENDENT'
+  },
+  HTTP: {
+    alias: 'HTTP'
+  },
+  CONDITIONS: {
+    alias: 'CONDITIONS'
+  },
+  DATA_QUALITY: {
+    alias: 'DATA_QUALITY',
+  },
+  SWITCH: {
+    alias: 'SWITCH'
+  }
+} as { [key in TaskType]: { alias: string; helperLinkDisable?: boolean } }
+
+export const TASK_TYPES_MAP_OFFLINE = {
+  DATAX: {
+    alias: 'DataX'
+  },
+  SQL: {
+    alias: 'SQL'
+  },
+  SQOOP: {
+    alias: 'SQOOP',
+  }
+} as { [key in TaskType]: { alias: string; helperLinkDisable?: boolean } }
+
+export const TASK_TYPES_MAP_REALTIME = {
+  FLINK: {
+    alias: 'FLINK'
+  }
+} as { [key in TaskType]: { alias: string; helperLinkDisable?: boolean } }
