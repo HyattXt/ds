@@ -1,0 +1,101 @@
+$themes: primary, success, info, warning, danger;
+$font-size-base: 12px;
+$font-size-normal: 14px;
+$color-black: #000;
+$color-white: #fff;
+$color-common: #333;
+$color-primary: #4698eb;
+$color-success: #58a632;
+$color-info: #909399;
+$color-warning: #e6a23c;
+$color-danger: #f56c6c;
+$color-label:#666666;
+$color-content:#222222;
+
+//button
+$button-hover-tint-percent: 20%; // 按钮悬浮色彩变化
+$button-circle-background-color: #f1f1f1; // 图标按钮背景色
+$button-circle-hover-border-color: mix($color-white, $color-primary, 70%); // 图标按钮悬浮边框色
+$button-circle-hover-background-color: mix($color-white, $color-primary, 90%); // 图标按钮悬浮背景色
+$button-hover-border-color: #c8e0f9;
+$button-hover-background-color: #edf5fd;
+$button-disabled-border-color: #d7d8d9;
+$button-disabled-background-color: #f5f5f6;
+$button-disabled-color: #b8b8b8;
+$button-background-color: #f1f2f4;
+$button-default-background-color: #ffffff;
+$button-default-border-color: #cbd5dd;
+$button-default-color: #000000;
+$button-default-hover-background-color: mix($color-white, $color-primary, 90%);
+$button-default-hover-border-color:mix($color-white, $color-primary, 70%);
+$button-default-hover-color: $color-primary;
+
+$background-body:#EEF1F4;
+$background-container: #e8ecf0;
+$background-base: #fff;
+$background-hover: #f5f7fa;
+
+$border-color-common: #dddddd;
+$border-color-base: #d6d6d6;
+$border-color-hover: #bbbbbb;
+$border-color-focus: $color-primary;
+$border-radius-base: 2px;
+$border-color-common-v2: #eeeeee;
+
+// 框架变量
+$platform-header-background: #2f3239;
+$platform-header-color: #999;
+$platform-header-color-active: $color-white;
+
+// page-tag
+$page-tag-container-height: 30px;
+$page-tag-container-background: #262B31;
+$page-tag-icon-size: 16px;
+$page-tag-color: #dddddd;
+$page-tag-color-active: $color-white;
+$page-tag-color-icon-active: #7ac5eb;
+$page-tag-background: #2c3137;
+$page-tag-background-active: #41444d;
+
+// element-ui
+$element-icon-font-size: 12px;
+$element-dialog-header-background: #f5f7fa;
+$element-dialog-header-color: $color-black;
+$element-disabled-border:#e8e8e8;
+$element-disabled-background:#f5f5f5;
+$element-disabled-color:#666666;
+
+// form
+$form-border-color: #d0d0d0;
+$form-border-color-error: #f56c6c;
+$form-line-height: 28px;
+$form-label-color: #333;
+
+// report and table
+$table-background: $background-base;
+$table-color: $color-common;
+$table-header-background: #f1f1f1;
+$table-header-color: $color-black;
+$table-border-color: #eeeeee;
+$table-tr-stripe: #f9fafc;
+$table-tr-highlight: #ffe7bc;
+$table-expand-background: #f0f1f1;
+$report-top-split-line: solid 2px #41444d;
+
+
+// tabs
+$tabs-color-default:$color-primary;
+$tabs-color-dropdown:#f0f1f3;
+$tabs-color-primary:#0099CB;
+$tabs-color-more:#0061C8;
+
+
+// pagination
+$pagination-border-color: #D0D0D0;
+$pagination-background-color: #FFF;
+$pagination-hover-border-color: #0099CB;
+$pagination-hover-background-color: #E7F8FF;
+
+//link
+$link-color: #0061C8;
+$link-color-hover: mix($link-color, $color-white, 70%);
