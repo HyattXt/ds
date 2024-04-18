@@ -1,798 +1,525 @@
 <template>
-  <n-space vertical>
-    <n-card size="small">
-      <n-space justify="end" style="height: 40px">
-        <n-form ref="formRef" :model="pagination">
-          <n-grid :cols="22" :x-gap="12">
-            <n-form-item-gi :span="4" :show-label="false">
-              <n-tree-select
-                  v-model:value="pagination.apiTreeId"
-                  :options="folderData"
-                  key-field="id"
-                  label-field="titleName"
-                  children-field="children"
-                  placeholder="API目录"
-              />
-            </n-form-item-gi>
-            <n-form-item-gi
-              :span="4"
-              :show-label="false"
-              path="pagination.apiName"
-            >
-              <n-input
-                size="small"
-                v-model:value="pagination.apiName"
-                placeholder="名称"
-              />
-            </n-form-item-gi>
-            <n-form-item-gi :span="4" :show-label="false">
-              <n-select
-                size="small"
-                v-model:value="pagination.apiFlag"
-                :options="stateOptions"
-                clearable
-                placeholder="API类型"
-              />
-            </n-form-item-gi>
-            <n-form-item-gi :span="4" :show-label="false">
-              <n-select
-                size="small"
-                v-model:value="pagination.apiStatus"
-                :options="statusOptions"
-                clearable
-                placeholder="API状态"
-              />
-            </n-form-item-gi>
-            <n-form-item-gi :span="4" :show-label="false">
-              <n-input
-                size="small"
-                v-model:value="pagination.apiPath"
-                placeholder="路径"
-              />
-            </n-form-item-gi>
-            <n-form-item-gi :span="2" :show-label="false">
-              <n-button
-                size="small"
-                type="primary"
-                @click="handlePageChange(1)"
-              >
-                <NIcon :component="SearchOutlined"></NIcon>
-              </n-button>
-            </n-form-item-gi>
-          </n-grid>
-        </n-form>
-      </n-space>
-    </n-card>
-    <n-card>
+  <CrudForm>
+    <template v-slot:header>
+      <CrudHeader title="API管理"/>
+    </template>
+    <template v-slot:condition>
+      <n-form :show-feedback="false" :model="paginationReactive" label-placement="left" style="margin-bottom: 3px">
+        <n-grid :cols="22" :x-gap="12">
+        <n-form-item-gi label="目录:" :span="4">
+          <n-tree-select
+              v-model:value="paginationReactive.apiTreeId"
+              :options="folderData"
+              key-field="id"
+              label-field="titleName"
+              children-field="children"
+              placeholder="请选择"
+              size="small"
+          />
+        </n-form-item-gi>
+        <n-form-item-gi
+            :span="4"
+            label="名称:"
+            path="pagination.apiName"
+        >
+          <n-input
+              size="small"
+              v-model:value="paginationReactive.apiName"
+          />
+        </n-form-item-gi>
+        <n-form-item-gi :span="4" label="API类型:">
+          <n-select
+              size="small"
+              v-model:value="paginationReactive.apiFlag"
+              :options="stateOptions"
+              clearable
+              placeholder="请选择"
+          />
+        </n-form-item-gi>
+        <n-form-item-gi :span="4" label="API状态:">
+          <n-select
+              size="small"
+              v-model:value="paginationReactive.apiStatus"
+              :options="statusOptions"
+              clearable
+              placeholder="请选择"
+          />
+        </n-form-item-gi>
+        <n-form-item-gi :span="4" label="路径:">
+          <n-input
+              size="small"
+              v-model:value="paginationReactive.apiPath"
+          />
+        </n-form-item-gi>
+        <n-form-item-gi :span="2">
+          <el-button color="#0099CB" class="cue-crud__header-query" type="primary" size="default" style="margin-bottom: 0"
+                     :icon="Search" @click="handlePageChange(1, paginationReactive.pageSize)" >查询
+          </el-button>
+        </n-form-item-gi>
+        </n-grid>
+      </n-form>
+    </template>
+    <template v-slot:table>
       <n-data-table
-        ref="table"
-        remote
-        size="small"
-        :columns="columns"
-        :data="data"
-        :loading="loading"
-        :pagination="pagination"
-        :row-key="rowKey"
-        @update:page="handlePageChange"
+          ref="table"
+          remote
+          bordered
+          flex-height
+          style="height: 100%"
+          :single-line="false"
+          size="small"
+          :columns="columnsRef"
+          :data="dataRef"
+          :loading="loadingRef"
+          :row-key="rowKey"
+          class="cue-table"
       />
-    </n-card>
-  </n-space>
-  <n-drawer v-model:show="active" :width="700">
-    <n-drawer-content closable>
-      <template #header> 查看API详情: {{ drawTitle }} </template>
-      <n-card size="small">
-        <n-descriptions label-placement="left" title="基本信息">
-          <n-descriptions-item label="API名称">
-            {{ basicInfo.apiName }}
-          </n-descriptions-item>
-          <n-descriptions-item label="API类型">
-            {{ basicInfo.apiFlag }}
-          </n-descriptions-item>
-          <n-descriptions-item label="更新时间">
-            {{ basicInfo.apiGmtTime }}
-          </n-descriptions-item>
-          <n-descriptions-item label="描述">
-            {{ basicInfo.apiComment }}
-          </n-descriptions-item>
-          <n-descriptions-item label="创建人">
-            {{ basicInfo.apiCreator }}
-          </n-descriptions-item>
-          <n-descriptions-item label="频次限制">
-            {{ basicInfo.apiFrequency }}次/秒
-          </n-descriptions-item>
-          <n-descriptions-item label="后端超时">
-            {{ basicInfo.apiTimeout }}ms
-          </n-descriptions-item>
-        </n-descriptions>
-        <n-descriptions label-placement="left" style="margin-top: 8px">
-          <n-descriptions-item label="服务路径">
-            {{ ip }}{{ basicInfo.apiPath }}
-          </n-descriptions-item>
-        </n-descriptions>
-      </n-card>
-      <n-card size="small" style="margin-top: 10px">
-        <n-descriptions label-placement="left" title="自定义SQL" column="1">
-          <n-descriptions-item label="数据源"> API服务 </n-descriptions-item>
-          <n-descriptions-item label="自定义SQL">
-            {{ basicInfo.apiScript }}
-          </n-descriptions-item>
-        </n-descriptions>
-      </n-card>
-      <n-card size="small" style="margin-top: 10px">
-        <n-descriptions label-placement="left" title="授权用户" column="1">
-          <n-descriptions-item label="用户列表">
-            {{ apiAuthorizerName }}
-          </n-descriptions-item>
-        </n-descriptions>
-      </n-card>
-    </n-drawer-content>
-  </n-drawer>
-  <n-modal
-    v-model:show="showModal"
-    class="custom-card"
-    :style="{ height: '520px', width: '600px' }"
-    preset="card"
-    title="授权API给用户"
-    size="huge"
-    :bordered="false"
+    </template>
+    <template v-slot:page>
+      <CrudPage
+          :paginationReactive="paginationReactive"
+          @page-change="handlePageChange"
+      />
+    </template>
+  </CrudForm>
+  <el-dialog
+      v-model="showModal"
+      width="600px"
   >
-    <n-form-item label="API名称 : " label-placement="left">
-      {{ drawTitle }}
-    </n-form-item>
-    <n-form-item label="授权用户" label-placement="left" path="user.name">
+    <template #header> API授权 </template>
+    <CrudSplit title="API名称：" style="margin-bottom: 10px; font-size: 14px; background: rgba(255,255,255,0)">
+      <template v-slot:default>
+        <div style="display: flex; align-items: center">
+          <div style="font-size: 14px">API名称：</div>
+          <div style="font-size: 16px; margin-left: 10px">{{drawTitle}}</div>
+        </div>
+      </template>
+    </CrudSplit>
+
+    <CrudSplit title="授权用户：" style="margin-top: 10px; font-size: 14px; background: rgba(255,255,255,0)"/>
+    <n-form-item :show-label="false" path="user.name">
       <n-transfer
-        ref="transfer"
-        v-model:value="apiAuthorizer"
-        virtual-scroll
-        :options="userList"
-        filterable
+          ref="transfer"
+          v-model:value="apiAuthorizer"
+          virtual-scroll
+          :options="userList"
+          filterable
       />
     </n-form-item>
-    <n-space justify="end">
-      <n-button type="info" @click="subAuth">确定</n-button>
-    </n-space>
-  </n-modal>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button color="#0099CB" @click="subAuth" >确定</el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
-<script>
-import {defineComponent, ref, reactive, onMounted, h, getCurrentInstance} from 'vue'
-  import axios from 'axios'
-  import {
-    UserOutlined,
-    SearchOutlined,
-    ToTopOutlined,
-    ProfileOutlined,
-    VerticalAlignBottomOutlined
-  } from '@vicons/antd'
-  import {
-    NButton,
-    NSpace,
-    useMessage,
-    NTooltip,
-    NIcon,
-    NPopconfirm
-  } from 'naive-ui'
-  import hljs from 'highlight.js/lib/core'
-  import javascript from 'highlight.js/lib/languages/javascript'
-  import moment from 'moment'
-import {queryTreeFolder} from "@/service/modules/projects";
+<script setup>
+import { ref, reactive, onMounted, h} from 'vue'
+import axios from 'axios'
+import {
+  UserOutlined,
+  ToTopOutlined,
+  ProfileOutlined,
+  VerticalAlignBottomOutlined
+} from '@vicons/antd'
+import {
+  NButton,
+  NSpace,
+  useMessage,
+  NTooltip,
+  NIcon,
+  NPopconfirm
+} from 'naive-ui'
+import hljs from 'highlight.js/lib/core'
+import javascript from 'highlight.js/lib/languages/javascript'
+import moment from 'moment'
+import CrudHeader from "@/components/cue/crud-header.vue";
+import {ElButton} from "element-plus";
+import {Search} from "@element-plus/icons-vue";
+import CrudForm from "@/components/cue/crud-form.vue";
+import CrudSplit from "@/components/cue/crud-split.vue";
+import router from "@/router";
+import CrudPage from "@/components/cue/crud-page.vue";
 
-  hljs.registerLanguage('javascript', javascript)
+hljs.registerLanguage('javascript', javascript)
 
-  const columns = ({ play }, { pub }, { auth }) => {
-    return [
-      {
-        title: 'ID',
-        key: 'apiId'
-      },
-      {
-        title: '名称',
-        key: 'apiName'
-      },
-      {
-        title: '方式',
-        key: 'apiMethod',
-        width: 61
-      },
-      {
-        title: '路径',
-        key: 'apiPath'
-      },
-      {
-        title: '状态',
-        key: 'apiStatus',
-        width: 66
-      },
-      {
-        title: 'API类型',
-        key: 'apiFlag',
-        width: 80
-      },
-      {
-        title: '创建时间',
-        key: 'apiCreateTime'
-      },
-      {
-        title: '操作',
-        key: 'actions',
-        width: 132,
-        render(row) {
-          return h(NSpace, null, {
-            default: () => [
-              h(
-                NTooltip,
-                {},
-                {
-                  trigger: () =>
-                    h(
-                      NButton,
-                      {
-                        circle: true,
-                        type: row.apiAuthorizer === null ? 'warning' : 'info',
-                        size: 'small',
-                        class: 'edit',
-                        onClick: () => {
-                          auth(row)
-                        }
-                      },
-                      {
-                        icon: () =>
-                          h(NIcon, null, { default: () => h(UserOutlined) })
-                      }
-                    ),
-                  default: () => '授权'
-                }
-              ),
-              h(
-                NTooltip,
-                {},
-                {
-                  trigger: () =>
-                    h(
-                      NButton,
-                      {
-                        circle: true,
-                        type: 'info',
-                        size: 'small',
-                        class: 'edit',
-                        onClick: () => {
-                          play(row)
-                        }
-                      },
-                      {
-                        icon: () =>
-                          h(NIcon, null, { default: () => h(ProfileOutlined) })
-                      }
-                    ),
-                  default: () => '查看'
-                }
-              ),
-              h(
-                NPopconfirm,
-                {
-                  onPositiveClick: () => {
-                    pub(row)
-                  }
-                },
-                {
-                  trigger: () =>
-                    h(
-                      NTooltip,
-                      {},
-                      {
-                        trigger: () =>
-                          h(
-                            NButton,
-                            {
-                              disabled: row.apiAuthorizer === null,
-                              circle: true,
-                              type:
-                                row.apiStatus === '待发布' ? 'info' : 'warning',
-                              size: 'small',
-                              class: 'edit'
-                            },
-                            {
-                              icon: () =>
-                                h(NIcon, null, {
-                                  default: () =>
-                                    row.apiStatus === '待发布'
-                                      ? h(ToTopOutlined)
-                                      : h(VerticalAlignBottomOutlined)
-                                })
-                            }
-                          ),
-                        default: () =>
-                          row.apiStatus === '待发布' ? '发布' : '下线'
-                      }
-                    ),
-                  default: () =>
-                    row.apiStatus === '待发布' ? '确定发布吗？' : '确定下线吗？'
-                }
-              )
-            ]
-          })
-        }
+const columns = ({ play }, { pub }, { auth }) => {
+  return [
+    {
+      title: '序号',
+      key: 'key',
+      align: 'center',
+      width: 60,
+      render: (_, index) => {
+        return `${index + 1}`
       }
-    ]
-  }
-
-  const TableData = reactive({
-    apiList: [],
-    totalNum: 0
-  })
-
-  function query(
-    page,
-    pageSize = 10,
-    apiName = '',
-    apiFlag = '',
-    apiStatus = '',
-    apiPath = '',
-    apiTreeId = ''
-  ) {
-    return new Promise((resolve) => {
-      const url = import.meta.env.MODE === 'development'
-          ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getList'
-          : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getList'
-      const params = {
-        pageNum: page,
-      'pageSize': pageSize,
-      'apiName': apiName,
-      'apiFlag': apiFlag,
-      'apiStatus': apiStatus,
-      'apiPath': apiPath,
-      'apiTreeId': apiTreeId,
-        order: 'api_create_time',
-      'sort': 'desc'
+    },
+    {
+      title: 'ID',
+      key: 'apiId',
+      align: 'center',
+      width: 250,
+    },
+    {
+      title: '名称',
+      key: 'apiName',
+      align: 'center'
+    },
+    {
+      title: '方式',
+      key: 'apiMethod',
+      width: 61,
+      align: 'center'
+    },
+    {
+      title: '路径',
+      key: 'apiPath',
+      align: 'center',
+      ellipsis: {
+        tooltip: true
       }
-
-      axios
-        .post(url, params)
-        .then(function (response) {
-
-          TableData.apiList = response.data.data
-          TableData.totalNum = response.data.totalNum
-
-
-          const copiedData = TableData.apiList.map((v) => v)
-          const total = TableData.totalNum
-          const pageCount = Math.ceil(total / pageSize)
-
-          resolve({
-            pageCount,
-            data: copiedData,
-            total
-          })
+    },
+    {
+      title: '状态',
+      key: 'apiStatus',
+      width: 66,
+      align: 'center'
+    },
+    {
+      title: 'API类型',
+      key: 'apiFlag',
+      width: 80,
+      align: 'center'
+    },
+    {
+      title: '创建时间',
+      key: 'apiCreateTime',
+      align: 'center'
+    },
+    {
+      title: '操作',
+      key: 'actions',
+      align: 'center',
+      width: 132,
+      render(row) {
+        return h(NSpace, {justify: "center"}, {
+          default: () => [
+            h(NTooltip, {}, {trigger: () =>
+                  h(NButton, {circle: true, type: row.apiAuthorizer === null ? 'warning' : 'info', size: 'tiny', class: 'edit', onClick: () => {auth(row)}}, {icon: () =>
+                        h(NIcon, null, { default: () => h(UserOutlined) })}
+                  ), default: () => '授权'}
+            ),
+            h(NTooltip, {}, {trigger: () =>
+                  h(NButton, {circle: true, type: 'info', size: 'tiny', class: 'edit', onClick: () => {play(row)}}, {icon: () =>
+                        h(NIcon, null, { default: () => h(ProfileOutlined) })}
+                  ), default: () => '查看'}
+            ),
+            h(NPopconfirm, {onPositiveClick: () => {pub(row)}}, {trigger: () =>
+                  h(NTooltip, {}, {trigger: () =>
+                        h(NButton, {disabled: row.apiAuthorizer === null, circle: true, type: row.apiStatus === '待发布' ? 'info' : 'warning', size: 'tiny', class: 'edit'}, {icon: () =>
+                              h(NIcon, null, {
+                                default: () => row.apiStatus === '待发布'
+                                    ? h(ToTopOutlined)
+                                    : h(VerticalAlignBottomOutlined)
+                              })}
+                        ), default: () =>
+                        row.apiStatus === '待发布' ? '发布' : '下线'}
+                  ), default: () =>
+                  row.apiStatus === '待发布' ? '确定发布吗？' : '确定下线吗？'}
+            )
+          ]
         })
-        .catch(function (error) {
-          console.log(error)
-        })
-    })
-  }
-
-  export default defineComponent({
-    setup() {
-      const ip = ref(import.meta.env.MODE === 'development'
-          ? import.meta.env.VITE_APP_DEV_API_URL
-          : window.webConfig.VITE_APP_PROD_API_URL)
-      const getApiTreeUrl = import.meta.env.MODE === 'development'
-          ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getApiTreeFloder'
-          : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getApiTreeFloder'
-      const dataRef = ref([])
-      const loadingRef = ref(true)
-      const active = ref(false)
-      const showModal = ref(false)
-      const drawTitle = ref('')
-      const drawId = ref('')
-      const userList = ref([])
-      const apiAuthorizer = ref([])
-      const apiAuthorizerName = ref('')
-      const basicInfo = ref({})
-      const folderData = ref([])
-      const activate = (row) => {
-        active.value = true
-        drawTitle.value = row.apiName
-        drawId.value = row.apiId
-
-        basicInfo.value = {}
-        queryBasic(row.apiId)
-        queryUser()
-      }
-      const actAuth = (row) => {
-        showModal.value = true
-        drawTitle.value = row.apiName
-        drawId.value = row.apiId
-
-        queryUser()
-      }
-      const message = useMessage()
-
-      function queryUser() {
-        const listUrl = import.meta.env.MODE === 'development'
-            ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getUser'
-            : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getUser'
-        const authListUrl = import.meta.env.MODE === 'development'
-            ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getAuthorizeInfo'
-            : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getAuthorizeInfo'
-        axios.get(listUrl).then(function (response) {
-
-          userList.value = response.data.data
-          userList.value = userList.value.map((item) => {
-            let tempList = {}
-            tempList.value = item.id
-            tempList.label = item.userName
-            return tempList
-          })
-
-        })
-        let authBody = {
-        'apiId': ''
-        }
-        authBody.apiId = drawId.value
-
-        axios.post(authListUrl, authBody).then(function (response) {
-
-
-          let list = response.data.data
-          apiAuthorizer.value = list.map((item) => {
-            let authList = ''
-            authList = item.id
-            return authList
-          })
-          apiAuthorizerName.value = list
-            .map((item) => {
-              let authList = ''
-              authList = item.userName
-              return authList
-            })
-            .join(',')
-
-
-
-        })
-      }
-
-      function queryBasic(apiId) {
-        const url = import.meta.env.MODE === 'development'
-            ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getInterfaceInfoById'
-            : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getInterfaceInfoById'
-        let basicPar = {
-          apiId: drawId.value
-        }
-        basicPar.apiId = apiId
-        axios.post(url, basicPar).then(function (response) {
-
-          basicInfo.value = response.data.obj
-          if (basicInfo.value.apiFlag === 1) {
-            basicInfo.value.apiFlag = '接口开发'
-            basicInfo.value.apiScript = basicInfo.value.apiScript.replace(/.*HD688296/,"")
-            basicInfo.value.apiPath = basicInfo.value.apiPath.replace('/api/','/HDataApi/api/')
-          }
-          if (basicInfo.value.apiFlag === 2) {
-            basicInfo.value.apiFlag = '接口注册'
-          }
-          let date = new Date(parseInt(basicInfo.value.apiGmtTime))
-          basicInfo.value.apiGmtTime = moment(date).format('YYYY-MM-DD HH:mm:ss')
-        })
-      }
-
-      function refresh(currentPage) {
-        query(
-          currentPage,
-          paginationReactive.pageSize,
-          paginationReactive.apiName,
-          paginationReactive.apiFlag,
-          paginationReactive.apiStatus,
-          paginationReactive.apiPath,
-          paginationReactive.apiTreeId
-        ).then((data) => {
-          dataRef.value = data.data
-          dataRef.value.apiCreateTime = dataRef.value.forEach((item) => {
-            let date = new Date(parseInt(item.apiCreateTime))
-            item.apiCreateTime = moment(date).format('YYYY-MM-DD HH:mm:ss')
-          })
-          dataRef.value.apiStatus = dataRef.value.forEach((item) => {
-            if (item.apiStatus === '-1') {
-              item.apiStatus = '删除'
-            }
-            if (item.apiStatus === '0') {
-              item.apiStatus = '待发布'
-            }
-            if (item.apiStatus === '1') {
-              item.apiStatus = '发布'
-            }
-            if (item.apiStatus === '2') {
-              item.apiStatus = '有变更'
-            }
-            if (item.apiStatus === '3') {
-              item.apiStatus = '禁用'
-            }
-          })
-          dataRef.value.apiFlag = dataRef.value.forEach((item) => {
-            if (item.apiFlag === 1) {
-              item.apiFlag = '接口开发'
-            }
-            if (item.apiFlag === 2) {
-              item.apiFlag = '接口注册'
-            }
-          })
-          paginationReactive.page = currentPage
-          paginationReactive.pageCount = data.pageCount
-          paginationReactive.itemCount = data.total
-        })
-      }
-
-      function subAuth() {
-        let subUrl = import.meta.env.MODE === 'development'
-            ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/insertAuthorizeInfo'
-            : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/insertAuthorizeInfo'
-        let requestBody = {
-          apiId: drawId.value,
-        'authorizeId': apiAuthorizer.value
-        }
-        axios
-          .post(subUrl, requestBody)
-          .then(function (response) {
-            message.info('授权成功')
-            showModal.value = false
-
-            refresh(paginationReactive.page)
-          })
-          .catch(function (error) {
-            message.info('授权失败,请联系管理员')
-            console.log(error)
-          })
-
-      }
-
-      const columnsRef = ref(
-        columns(
-          {
-            play(row) {
-              activate(row)
-            }
-          },
-          {
-            pub(row) {
-              if (row.apiStatus === '待发布') {
-                if (row.apiFlag === '接口开发') {
-                  let urlPub = import.meta.env.MODE === 'development'
-                      ? import.meta.env.VITE_APP_DEV_API_URL+`/HDataApi/interface-ui/api/publish?id=${row.apiId}`
-                      : window.webConfig.VITE_APP_PROD_API_URL+`/HDataApi/interface-ui/api/publish?id=${row.apiId}`
-                  let pubPar = {
-                    id: ''
-                  }
-                  pubPar.id = row.apiId
-                  axios
-                    .post(urlPub, pubPar)
-                    .then(function (response) {
-
-                      message.info(`成功发布 ${row.apiName}`)
-                      refresh(paginationReactive.page)
-                    })
-                    .catch(function (error) {
-                      message.info('发布失败,请联系管理员')
-                      console.log(error)
-                    })
-                } else {
-                  let urlPub = import.meta.env.MODE === 'development'
-                      ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/update'
-                      : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/update'
-                  let pubPar = {
-                    apiId: '',
-                    apiStatus: 1
-                  }
-                  pubPar.apiId = row.apiId
-                  axios
-                    .post(urlPub, pubPar)
-                    .then(function (response) {
-
-                      message.info(`成功发布 ${row.apiName}`)
-                      refresh(paginationReactive.page)
-                    })
-                    .catch(function (error) {
-                      message.info('发布失败,请联系管理员')
-                      console.log(error)
-                    })
-                }
-              } else {
-                let urlPub = import.meta.env.MODE === 'development'
-                    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/update'
-                    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/update'
-                let pubPar = {
-                  apiId: '',
-                  apiStatus: 0
-                }
-                pubPar.apiId = row.apiId
-                axios
-                  .post(urlPub, pubPar)
-                  .then(function (response) {
-
-                    message.info(`成功下线 ${row.apiName}`)
-                    refresh(paginationReactive.page)
-                  })
-                  .catch(function (error) {
-                    message.info('下线失败,请联系管理员')
-                    console.log(error)
-                  })
-              }
-            }
-          },
-          {
-            auth(row) {
-              actAuth(row)
-            }
-          }
-        )
-      )
-      const paginationReactive = reactive({
-        page: 1,
-        pageCount: 1,
-        pageSize: 10,
-        apiName: '',
-        apiFlag: null,
-        apiStatus: null,
-        apiPath: '',
-        apiTreeId: '',
-        prefix({ itemCount }) {
-          return `共${itemCount}条`
-        }
-      })
-
-      function getTreeFolder ()  {
-        axios.get(getApiTreeUrl).then((res) => {
-          folderData.value = res.data.data
-        })
-      }
-
-      onMounted(() => {
-        getTreeFolder()
-        query(
-          paginationReactive.page,
-          paginationReactive.pageSize,
-          paginationReactive.apiName,
-          paginationReactive.apiFlag,
-          paginationReactive.apiStatus,
-          paginationReactive.apiPath,
-          paginationReactive.apiTreeId
-        ).then((data) => {
-          dataRef.value = data.data
-          dataRef.value.apiCreateTime = dataRef.value.forEach((item) => {
-            let date = new Date(parseInt(item.apiCreateTime))
-            item.apiCreateTime = moment(date).format('YYYY-MM-DD HH:mm:ss')
-          })
-          dataRef.value.apiStatus = dataRef.value.forEach((item) => {
-            if (item.apiStatus === '-1') {
-              item.apiStatus = '删除'
-            }
-            if (item.apiStatus === '0') {
-              item.apiStatus = '待发布'
-            }
-            if (item.apiStatus === '1') {
-              item.apiStatus = '发布'
-            }
-            if (item.apiStatus === '2') {
-              item.apiStatus = '有变更'
-            }
-            if (item.apiStatus === '3') {
-              item.apiStatus = '禁用'
-            }
-          })
-          dataRef.value.apiFlag = dataRef.value.forEach((item) => {
-            if (item.apiFlag === 1) {
-              item.apiFlag = '接口开发'
-            }
-            if (item.apiFlag === 2) {
-              item.apiFlag = '接口注册'
-            }
-          })
-          paginationReactive.pageCount = data.pageCount
-          paginationReactive.itemCount = data.total
-          loadingRef.value = false
-        })
-      })
-
-      return {
-        data: dataRef,
-        columns: columnsRef,
-        pagination: paginationReactive,
-        loading: loadingRef,
-        ip,
-        SearchOutlined,
-        folderData,
-        showModal,
-        active,
-        activate,
-        drawTitle,
-        drawId,
-        userList,
-        basicInfo,
-        apiAuthorizer,
-        apiAuthorizerName,
-        subAuth,
-        rowKey(rowData) {
-          return rowData.apiId
-        },
-        hljs,
-        stateOptions: [
-          {
-            label: '接口开发',
-            value: '1'
-          },
-          {
-            label: '接口注册',
-            value: '2'
-          }
-        ],
-        statusOptions: [
-          {
-            label: '待发布',
-            value: '0'
-          },
-          {
-            label: '发布',
-            value: '1'
-          }
-        ],
-        handlePageChange(currentPage) {
-          if (!loadingRef.value) {
-            loadingRef.value = true
-            query(
-              currentPage,
-              paginationReactive.pageSize,
-              paginationReactive.apiName,
-              paginationReactive.apiFlag,
-              paginationReactive.apiStatus,
-              paginationReactive.apiPath,
-              paginationReactive.apiTreeId
-            ).then((data) => {
-              dataRef.value = data.data
-              dataRef.value.apiCreateTime = dataRef.value.forEach((item) => {
-                let date = new Date(parseInt(item.apiCreateTime))
-                item.apiCreateTime = moment(date).format('YYYY-MM-DD HH:mm:ss')
-              })
-              dataRef.value.apiStatus = dataRef.value.forEach((item) => {
-                if (item.apiStatus === '-1') {
-                  item.apiStatus = '删除'
-                }
-                if (item.apiStatus === '0') {
-                  item.apiStatus = '待发布'
-                }
-                if (item.apiStatus === '1') {
-                  item.apiStatus = '发布'
-                }
-                if (item.apiStatus === '2') {
-                  item.apiStatus = '有变更'
-                }
-                if (item.apiStatus === '3') {
-                  item.apiStatus = '禁用'
-                }
-              })
-              dataRef.value.apiFlag = dataRef.value.forEach((item) => {
-                if (item.apiFlag === 1) {
-                  item.apiFlag = '接口开发'
-                }
-                if (item.apiFlag === 2) {
-                  item.apiFlag = '接口注册'
-                }
-              })
-              paginationReactive.page = currentPage
-              paginationReactive.pageCount = data.pageCount
-              paginationReactive.itemCount = data.total
-              loadingRef.value = false
-            })
-          }
-        }
       }
     }
+  ]
+}
+const TableData = reactive({
+  apiList: [],
+  totalNum: 0
+})
+
+const rowKey = (rowData) => {
+  return rowData.apiId
+}
+
+const stateOptions = [
+  {
+    label: '接口开发',
+    value: '1'
+  },
+  {
+    label: '接口注册',
+    value: '2'
+  }
+]
+const statusOptions = [
+  {
+    label: '待发布',
+    value: '0'
+  },
+  {
+    label: '发布',
+    value: '1'
+  }
+]
+const ip = ref(import.meta.env.MODE === 'development'
+    ? import.meta.env.VITE_APP_DEV_API_URL
+    : window.webConfig.VITE_APP_PROD_API_URL)
+const getApiTreeUrl = import.meta.env.MODE === 'development'
+    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getApiTreeFloder'
+    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getApiTreeFloder'
+const dataRef = ref([])
+const loadingRef = ref(false)
+const active = ref(false)
+const showModal = ref(false)
+const drawTitle = ref('')
+const drawId = ref('')
+const userList = ref([])
+const apiAuthorizer = ref([])
+const apiAuthorizerName = ref('')
+const basicInfo = ref({})
+const folderData = ref([])
+const actAuth = (row) => {
+  showModal.value = true
+  drawTitle.value = row.apiName
+  drawId.value = row.apiId
+  queryUser()
+}
+const message = useMessage()
+function queryUser() {
+  const listUrl = import.meta.env.MODE === 'development'
+      ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getUser'
+      : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getUser'
+  const authListUrl = import.meta.env.MODE === 'development'
+      ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getAuthorizeInfo'
+      : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getAuthorizeInfo'
+  axios.get(listUrl).then(function (response) {
+    userList.value = response.data.data
+    userList.value = userList.value.map((item) => {
+      let tempList = {}
+      tempList.value = item.id
+      tempList.label = item.userName
+      return tempList
+    })
   })
+  let authBody = {
+    'apiId': ''
+  }
+  authBody.apiId = drawId.value
+  axios.post(authListUrl, authBody).then(function (response) {
+    let list = response.data.data
+    apiAuthorizer.value = list.map((item) => {
+      let authList = ''
+      authList = item.id
+      return authList
+    })
+    apiAuthorizerName.value = list
+        .map((item) => {
+          let authList = ''
+          authList = item.userName
+          return authList
+        })
+        .join(',')
+  })
+}
+
+function handlePageChange(currentPage, pageSize) {
+  if (!loadingRef.value) {
+    loadingRef.value = true
+    paginationReactive.page = currentPage
+    paginationReactive.pageSize = pageSize
+    query(
+        paginationReactive.page,
+        paginationReactive.pageSize,
+        paginationReactive.apiName,
+        paginationReactive.apiFlag,
+        paginationReactive.apiStatus,
+        paginationReactive.apiPath,
+        paginationReactive.apiTreeId
+    ).then((data) => {
+      dataRef.value = data.data
+      dataRef.value.apiCreateTime = dataRef.value.forEach((item) => {
+        let date = new Date(parseInt(item.apiCreateTime))
+        item.apiCreateTime = moment(date).format('YYYY-MM-DD HH:mm:ss')
+      })
+      dataRef.value.apiStatus = dataRef.value.forEach((item) => {
+        if (item.apiStatus === '-1') {
+          item.apiStatus = '删除'
+        }
+        if (item.apiStatus === '0') {
+          item.apiStatus = '待发布'
+        }
+        if (item.apiStatus === '1') {
+          item.apiStatus = '发布'
+        }
+        if (item.apiStatus === '2') {
+          item.apiStatus = '有变更'
+        }
+        if (item.apiStatus === '3') {
+          item.apiStatus = '禁用'
+        }
+      })
+      dataRef.value.apiFlag = dataRef.value.forEach((item) => {
+        if (item.apiFlag === 1) {
+          item.apiFlag = '接口开发'
+        }
+        if (item.apiFlag === 2) {
+          item.apiFlag = '接口注册'
+        }
+      })
+      paginationReactive.page = currentPage
+      paginationReactive.pageCount = data.pageCount
+      paginationReactive.itemCount = data.total
+      loadingRef.value = false
+    })
+  }
+}
+
+function query(page, pageSize = 10, apiName = '', apiFlag = '', apiStatus = '', apiPath = '', apiTreeId = '') {
+  return new Promise((resolve) => {
+    const url = import.meta.env.MODE === 'development'
+        ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getList'
+        : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getList'
+    const params = {
+      pageNum: page, 'pageSize': pageSize, 'apiName': apiName, 'apiFlag': apiFlag, 'apiStatus': apiStatus, 'apiPath': apiPath, 'apiTreeId': apiTreeId,
+      order: 'api_create_time', 'sort': 'desc'
+    }
+    axios.post(url, params).then(function (response) {
+      TableData.apiList = response.data.data
+      TableData.totalNum = response.data.totalNum
+      const copiedData = TableData.apiList.map((v) => v)
+      const total = TableData.totalNum
+      const pageCount = Math.ceil(total / pageSize)
+      resolve({
+        pageCount,
+        data: copiedData,
+        total
+      })
+    }).catch(function (error) {
+      console.log(error)
+    })
+  })
+}
+
+function subAuth() {
+  let subUrl = import.meta.env.MODE === 'development'
+      ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/insertAuthorizeInfo'
+      : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/insertAuthorizeInfo'
+  let requestBody = {
+    apiId: drawId.value,
+    'authorizeId': apiAuthorizer.value
+  }
+  axios
+      .post(subUrl, requestBody)
+      .then(function (response) {
+        message.info('授权成功')
+        showModal.value = false
+        handlePageChange(paginationReactive.page, paginationReactive.pageSize)
+      })
+      .catch(function (error) {
+        message.info('授权失败,请联系管理员')
+        console.log(error)
+      })
+}
+const columnsRef = ref(
+    columns(
+        {
+          play(row) {
+            router.push({
+                  name: 'api-detail',
+                  state: {apiId: row.apiId, backName: 'api-manager'}
+                }
+            )
+            }
+        },
+        {
+          pub(row) {
+            if (row.apiStatus === '待发布') {
+              if (row.apiFlag === '接口开发') {
+                let urlPub = import.meta.env.MODE === 'development'
+                    ? import.meta.env.VITE_APP_DEV_API_URL+`/HDataApi/interface-ui/api/publish?id=${row.apiId}`
+                    : window.webConfig.VITE_APP_PROD_API_URL+`/HDataApi/interface-ui/api/publish?id=${row.apiId}`
+                let pubPar = {
+                  id: ''
+                }
+                pubPar.id = row.apiId
+                axios.post(urlPub, pubPar).then(function (response) {
+                  message.info(`成功发布 ${row.apiName}`)
+                  handlePageChange(paginationReactive.page, paginationReactive.pageSize)
+                }).catch(function (error) {
+                  message.info('发布失败,请联系管理员')
+                  console.log(error)
+                })
+              } else {
+                let urlPub = import.meta.env.MODE === 'development'
+                    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/upAndDownLines'
+                    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/upAndDownLines'
+                let pubPar = {
+                  apiId: '',
+                  apiStatus: 1
+                }
+                pubPar.apiId = row.apiId
+                axios.post(urlPub, pubPar).then(function (response) {
+                  message.info(`成功发布 ${row.apiName}`)
+                  handlePageChange(paginationReactive.page, paginationReactive.pageSize)
+                }).catch(function (error) {
+                  message.info('发布失败,请联系管理员')
+                  console.log(error)
+                })
+              }
+            } else {
+              let urlPub = import.meta.env.MODE === 'development'
+                  ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/upAndDownLines'
+                  : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/upAndDownLines'
+              let pubPar = {
+                apiId: '',
+                apiStatus: 0
+              }
+              pubPar.apiId = row.apiId
+              axios.post(urlPub, pubPar).then(function (response) {
+                message.info(`成功下线 ${row.apiName}`)
+                handlePageChange(paginationReactive.page, paginationReactive.pageSize)
+              }).catch(function (error) {
+                message.info('下线失败,请联系管理员')
+                console.log(error)
+              })
+            }
+          }
+        },
+        {
+          auth(row) {
+            actAuth(row)
+          }
+        }
+    )
+)
+const paginationReactive = reactive({
+  page: 1,
+  pageCount: 1,
+  pageSize: 30,
+  apiName: '',
+  apiFlag: null,
+  apiStatus: null,
+  apiPath: '',
+  apiTreeId: ''
+})
+function getTreeFolder ()  {
+  axios.get(getApiTreeUrl).then((res) => {
+    folderData.value = res.data.data
+  })
+}
+onMounted(() => {
+  getTreeFolder()
+  handlePageChange(1, 30)
+})
 </script>
 
-<style scoped>
-  a {
-    text-decoration: none;
+<style lang="scss" scoped>
+.cue-table {
+  :deep(.n-data-table-td.n-data-table-td--last-row) {
+    border-bottom: 1px solid #efeff5;
   }
-  .n-gradient-text {
-    color: #555555;
-  }
+}
+
 </style>

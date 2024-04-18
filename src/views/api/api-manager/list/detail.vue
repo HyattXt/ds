@@ -18,29 +18,39 @@
         <n-descriptions-item label="频次限制">
           {{ basicInfo.apiFrequency }}次/秒
         </n-descriptions-item>
-        <n-descriptions-item label="后端超时">
-          {{ basicInfo.apiTimeout }}ms
-        </n-descriptions-item>
       </n-descriptions>
     </n-card>
-    <n-card size="small" style="margin-top: 10px">
-      <crudSplit class='titleSplit' title="服务路径"/>
-      <n-descriptions label-placement="left" column="1" separator="" style="padding: 18px">
-        <n-descriptions-item>
-          {{ ip }}{{ basicInfo.apiPath }}
-        </n-descriptions-item>
-      </n-descriptions>
+    <n-card size="small" style="height: 200px">
+      <CrudSplit class='titleSplit' title="服务路径"/>
+      <CrudTable
+          :tableData="apiData.portTable.data"
+          :columnData="apiData.portTable.columns"
+      />
     </n-card>
-    <n-card size="small" style="margin-top: 10px">
-      <crudSplit class='titleSplit' title="自定义SQL"/>
+    <n-card size="small" style="height: 200px">
+      <CrudSplit class='titleSplit' title="请求参数(Headers)"/>
+      <CrudTable
+          :tableData="apiData.requestParamHeadersTable.data"
+          :columnData="apiData.requestParamHeadersTable.columns"
+      />
+    </n-card>
+    <n-card size="small" style="height: 200px">
+      <CrudSplit class='titleSplit' title="请求参数(Body)"/>
+      <CrudTable
+          :tableData="apiData.requestParamBodyTable.data"
+          :columnData="apiData.requestParamBodyTable.columns"
+      />
+    </n-card>
+    <n-card size="small">
+      <CrudSplit class='titleSplit' title="自定义SQL"/>
       <n-descriptions label-placement="left" column="1" separator="" style="padding: 18px">
         <n-descriptions-item>
           {{ basicInfo.apiScript }}
         </n-descriptions-item>
       </n-descriptions>
     </n-card>
-    <n-card size="small" style="margin-top: 10px">
-      <crudSplit class='titleSplit' title="授权用户"/>
+    <n-card size="small">
+      <CrudSplit class='titleSplit' title="授权用户"/>
       <n-descriptions label-placement="left" column="1" style="padding: 18px">
         <n-descriptions-item label="用户列表">
           {{ apiAuthorizerName }}
@@ -52,12 +62,13 @@
 
 <script setup>
 
-import { onMounted, ref} from "vue";
-import { useRoute, useRouter} from "vue-router";
+import {onMounted, ref} from "vue";
+import {useRoute, useRouter} from "vue-router";
 import axios from "axios";
 import CrudHead from "@/components/cue/crud-header.vue";
 import moment from "moment/moment";
-import crudSplit from "@/components/cue/crud-split.vue";
+import CrudSplit from "@/components/cue/crud-split.vue";
+import CrudTable from "@/components/cue/crud-table.vue";
 
 const route = useRoute()
 const backName = ref("")
@@ -69,6 +80,80 @@ const userList = ref([])
 const ip = ref(import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_API_URL
     : window.webConfig.VITE_APP_PROD_API_URL)
+const apiData =ref({
+      portTable: {
+        data: [],
+        columns: [
+          { prop: 'apiPath', label: 'URL' },
+          { prop: 'json', label: '返回参数格式' },
+          { prop: 'apiMethod', label: '请求方式' }
+        ]
+      },
+      requestParamHeadersTable: {
+        data: [],
+        columns: [
+          { prop: 'paramTitle', label: '参数标题 ' },
+          { prop: 'paramNotes', label: '参数描述' },
+          { prop: 'paramType', label: '参数类型' },
+          { prop: 'paramIsNull', label: '是否必填' },
+          { prop: 'demoValue', label: '示例值' }
+        ]
+      },
+      requestParamBodyTable: {
+        data: [],
+        columns: [
+          { prop: 'paramTitle', label: '参数标题 ' },
+          { prop: 'paramNotes', label: '参数描述' },
+          { prop: 'paramType', label: '参数类型' },
+          { prop: 'paramIsNull', label: '是否必填' },
+          { prop: 'demoValue', label: '示例值' }
+        ]
+      },
+      responseTable: {
+        data: [],
+        columns: [
+          {
+            title: '#',
+            type: 'index',
+            data: ''
+          },
+          { data: 'paramValue', title: '参数' },
+          { data: 'paramType', title: '类型' },
+          { data: 'paramNotes', title: '说明' },
+          { data: 'demoValue', title: '示例值' }
+        ]
+      },
+      responseCodeInfoTable: {
+        data: [],
+        columns: [
+          {
+            title: '#',
+            type: 'index',
+            data: ''
+          },
+
+          { data: 'statusCode', title: '状态码 ' },
+          { data: 'statusValue', title: '状态值' },
+          { data: 'paramNotes', title: '状态说明' }
+        ]
+      },
+      requestExampleTable: {
+        data: [],
+        columns: [
+          {
+            title: '#',
+            type: 'index',
+            data: ''
+          },
+
+          { data: 'organization', title: '状态码 ' },
+          { data: 'job', title: '状态值' },
+          { data: 'isType', title: '状态说明' }
+        ]
+      },
+      requestDemo: '',
+      responseDemo: ''
+    })
 
 function queryUser() {
   const listUrl = import.meta.env.MODE === 'development'
@@ -94,16 +179,13 @@ function queryUser() {
 
   axios.post(authListUrl, authBody).then(function (response) {
 
-
     let list = response.data.data
     apiAuthorizer.value = list.map((item) => {
-      let authList = ''
-      authList = item.id
-      return authList
+      return item.id
     })
     apiAuthorizerName.value = list
         .map((item) => {
-          let authList = ''
+          let authList
           authList = item.userName
           return authList
         })
@@ -111,13 +193,21 @@ function queryUser() {
   })
 }
 
-function queryBasic(apiName) {
-  const url = import.meta.env.MODE === 'development'
-      ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getInterfaceInfoByApiName'
-      : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getInterfaceInfoByApiName'
-  let basicPar = {
-    apiName: apiName
+function queryBasic(apiParam, type) {
+  let url
+  let basicPar = {}
+  if(type === 'apiName'){
+    url = import.meta.env.MODE === 'development'
+        ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getInterfaceInfoByApiName'
+        : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getInterfaceInfoByApiName'
+    basicPar.apiName = apiParam
+  } else {
+    url = import.meta.env.MODE === 'development'
+        ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getInterfaceInfoById'
+        : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getInterfaceInfoById'
+    basicPar.apiId = apiParam
   }
+
   axios.post(url, basicPar).then(function (response) {
 
     basicInfo.value = response.data.obj
@@ -132,6 +222,19 @@ function queryBasic(apiName) {
     let date = new Date(parseInt(basicInfo.value.apiGmtTime))
     basicInfo.value.apiGmtTime = moment(date).format('YYYY-MM-DD HH:mm:ss')
 
+    apiData.value.portTable.data.push({
+      apiPath: basicInfo.value.apiPath,
+      json: 'json',
+      apiMethod: basicInfo.value.apiMethod
+    })
+    apiData.value.requestParamHeadersTable.data = basicInfo.value.headersArray
+    apiData.value.requestParamHeadersTable.data.map(item => {
+      return item.paramIsNull = item.paramIsNull === 'Y' ? '否' : '是'
+    })
+    apiData.value.requestParamBodyTable.data = basicInfo.value.bodyArray
+    apiData.value.requestParamBodyTable.data.map(item => {
+      return item.paramIsNull = item.paramIsNull === 'Y' ? '否' : '是'
+    })
     queryUser()
   })
 }
@@ -140,7 +243,7 @@ function goBack(){
 }
 
 onMounted(() => {
-  queryBasic(history.state.apiName)
+  !!history.state.apiId ? queryBasic(history.state.apiId, 'apiId') : queryBasic(history.state.apiName, 'apiName')
   backName.value = history.state.backName
 })
 </script>
@@ -157,7 +260,7 @@ onMounted(() => {
 .sticky-top {
   position: sticky;
   top: 0; /* 粘在顶部 */
-  z-index: 1; /* 确保固定在顶部的div在其他内容之上 */
+  z-index: 10; /* 确保固定在顶部的div在其他内容之上 */
   padding: 10px; /* 添加一些内边距 */
 }
 
@@ -167,7 +270,8 @@ onMounted(() => {
 
 .titleSplit {
   background: white !important;
-  font-size: 18px !important;
+  font-size: 14px !important;
   padding-left: 0 !important;
+  color: #2B96EF;
 }
 </style>
