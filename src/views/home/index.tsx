@@ -55,13 +55,17 @@ export default defineComponent({
       processStateRef.value = getProcessState(val)
     }
 
-    onMounted(() => {
-      // @ts-ignore
-      console.log(__APP_VERSION__)
-      loginNew()
+    const ssoLogin = async () => {
+      await loginNew()
       if (userStore.sessionId){
         initData()
       }
+    }
+
+    onMounted(() => {
+      // @ts-ignore
+      console.log(__APP_VERSION__)
+      ssoLogin()
     })
 
     watch(

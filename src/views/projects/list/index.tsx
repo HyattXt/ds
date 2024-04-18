@@ -73,10 +73,14 @@ const list = defineComponent({
       requestData()
     }
 
-    onMounted(() => {
-      loginNew()
+    const ssoLogin = async () => {
+      await loginNew()
       createColumns(variables)
       requestData()
+    }
+
+    onMounted(() => {
+      ssoLogin()
     })
 
     watch(useI18n().locale, () => {
