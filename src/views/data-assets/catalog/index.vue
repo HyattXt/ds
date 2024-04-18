@@ -22,20 +22,20 @@
                 <n-icon :component="SearchOutlined"/>
               </template>
             </n-input>
-            <n-tree
-                class="tree-scrollbar"
-                block-line
-                show-irrelevant-nodes
-                :data="treeFolder"
-                key-field="id"
-                label-field="titleName"
-                children-field="children"
-                :pattern="pattern"
-                @update:expanded-keys="onExpandedKeys"
-                :expanded-keys="expandedKeys"
-                :render-prefix="menuIcon"
-                :nodeProps="nodeProps"
-            />
+              <n-tree
+                  class="tree-scrollbar"
+                  block-line
+                  show-irrelevant-nodes
+                  :data="treeFolder"
+                  key-field="id"
+                  label-field="titleName"
+                  children-field="children"
+                  :pattern="pattern"
+                  @update:expanded-keys="onExpandedKeys"
+                  :expanded-keys="expandedKeys"
+                  :render-prefix="menuIcon"
+                  :nodeProps="nodeProps"
+              />
           </div>
         </div>
         <div class="cue-drag-layout__mainview" :style="{width: 'calc(100% - ' + (280 + 12) + 'px)'}">
@@ -58,7 +58,7 @@
             <div class="cue-crud__body">
               <div class="cue-table">
                 <div class="cue-table-container">
-                  <el-table :data="dataRef" border resizable highlight-current-row height="100%">
+                  <el-table v-loading="loadingRef" :data="dataRef" border resizable highlight-current-row height="100%">
                     <el-table-column type="expand" fixed>
                       <template #default="props">
                         <div style="margin: 6px">
@@ -191,14 +191,7 @@ const TableData = reactive({
       return {
         onClick() {
           paginationReactive.apiTreeId = option.id
-          paginationReactive.page = 1
-          loadingRef.value = true
-          query(
-              paginationReactive.page,
-              paginationReactive.pageSize,
-              paginationReactive.sqlLineageName,
-              paginationReactive.apiTreeId
-          )
+          handlePageChange(1, paginationReactive.pageSize)
         }
       }
     }

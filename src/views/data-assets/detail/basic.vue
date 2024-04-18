@@ -1,22 +1,12 @@
 <template>
   <n-card size="small" :bordered="false">
     <crudSplit class='titleSplit' title="字段信息"/>
-    <n-table style="text-align: center;" :single-line="false" size="small">
-      <thead>
-      <tr>
-        <th>字段名</th>
-        <th>字段类型</th>
-        <th>字段注释</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="item in fieldInfo">
-        <td>{{ item.colName }}</td>
-        <td>{{ item.colComment }}</td>
-        <td>{{ item.colDataType }}</td>
-      </tr>
-      </tbody>
-    </n-table>
+    <n-data-table
+        :single-line="false"
+        size="small"
+        :columns="columnsRef"
+        :data="fieldInfo"
+    />
   </n-card>
 </template>
 <script setup>
@@ -30,10 +20,40 @@ import crudSplit from "@/components/cue/crud-split.vue";
 const fieldInfo =ref([])
 const route = useRoute()
 const message = useMessage()
+const columnsRef =[
+  {
+    title: '序号',
+    key: 'key',
+    align: 'center',
+    width: 60,
+    render: (_, index) => {
+      return `${index + 1}`
+    }
+  },
+  {
+    title: '字段名',
+    key: 'colName',
+    align: 'center',
+    width: 300
+  },
+  {
+    title: '类型',
+    key: 'colComment',
+    align: 'center',
+    width: 250
+  },
+  {
+    title: '注释',
+    key: 'colDataType',
+    align: 'center',
+    ellipsis: { tooltip: true}
+  },
+  ]
 
 onMounted(() => {
 
   fieldInfo.value = JSON.parse(history.state.fieldArray)
+  console.log(fieldInfo.value)
 })
 </script>
 

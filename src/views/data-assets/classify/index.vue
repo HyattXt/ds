@@ -80,11 +80,16 @@
           <div class="cue-crud__body">
             <div class="cue-table">
               <div class="cue-table-container">
-                <el-table :data="dataRef" border resizable highlight-current-row @current-change="handleCurrentChange" height="100%">
+                <el-table v-loading="loadingRef" :data="dataRef" show-overflow-tooltip border resizable highlight-current-row @current-change="handleCurrentChange" height="100%">
                   <el-table-column type="index" fixed label="序号" width="50" align="center"/>
                   <el-table-column prop="assetName" label="资产名称" align="center"/>
                   <el-table-column prop="notes" label="注释" align="center"/>
-                  <el-table-column prop="assetType" label="资产类型" align="center"/>
+                  <el-table-column prop="assetType" label="资产类型" width="120" align="center"/>
+                  <el-table-column v-if="showAssetOperation" label="已绑定资产运营" width="120" align="center">
+                    <template #default="scope">
+                      {{ scope.row.addFlag === 1 ? '是' : '否' }}
+                    </template>
+                  </el-table-column>
                   <el-table-column prop="databaseName" label="数据源" width="120" align="center"/>
                   <el-table-column prop="databaseType" label="数据库类型" width="120" align="center"/>
                   <el-table-column fixed="right" label="操作" width="120" align="center">
@@ -120,6 +125,7 @@
     </div>
     <el-dialog
         v-model="showAddRef"
+        :before-close="addDialogVisible"
         title="新建文件夹"
         width="500px"
     >
@@ -362,6 +368,7 @@ const expandedKeys = ref([]);
 const pattern = ref('');
 const activeName = ref('first')
 const currentRow = ref()
+const showAssetOperation = ref(false)
 const ifDisableDelete = ref(true)
 const getCatalogFolderUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/dataCatalog/getDataCatalogTreeFloder'
@@ -621,15 +628,8 @@ function nodeProps ({option}) {
   return {
     onClick() {
       paginationReactive.apiTreeId = option.id
-      paginationReactive.page = 1
       selectedMenu.value = option.id
-      query(
-          paginationReactive.page,
-          paginationReactive.pageSize,
-          paginationReactive.assetName,
-          paginationReactive.assetType,
-          paginationReactive.apiTreeId
-      )
+      handlePageChange(1, paginationReactive.pageSize)
     },
     onContextmenu (e)  {
       e.preventDefault()
@@ -836,6 +836,10 @@ function dialogVisible () {
   dataSetRef.value.clearSelection()
   apiRef.value.clearSelection()
 }
+function addDialogVisible () {
+  showAddRef.value = false
+  formValue.value.titleName = ''
+}
 function submitSelect(ruleFormRef, ruleApiFormRef) {
   ruleFormRef.validate((valid) => {
     if (addDataSetRef.value.length>0) {
@@ -902,6 +906,7 @@ function handlePageChange(currentPage, pageSize) {
     loadingRef.value = true
     paginationReactive.page = currentPage
     paginationReactive.pageSize = pageSize
+    showAssetOperation.value = paginationReactive.apiTreeId===2 || paginationReactive.apiTreeId===3 || paginationReactive.apiTreeId===4 ? true : false
     query(
         paginationReactive.page,
         paginationReactive.pageSize,
@@ -953,7 +958,6 @@ function refreshApiDetail(currentPage, pageSize) {
   apiRef.value.clearSelection()
 }
 function play(row) {
-  console.log(row)
   if(row.assetType === '数据表') {
     router.push({
           name: 'assets-detail',
@@ -967,8 +971,8 @@ function play(row) {
         }
     )
   }
-
 }
+
 function setId(datas) { //遍历树  获取id数组
   for (let i in datas) {
     expandedKeys.value.push(datas[i].id)  // 遍历项目满足条件后的操作

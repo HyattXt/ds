@@ -68,7 +68,7 @@
           <div class="cue-crud__body">
             <div class="cue-table">
               <div class="cue-table-container">
-                <el-table :data="dataRef" border resizable highlight-current-row height="100%" @current-change="handleCurrentChange">
+                <el-table v-loading="loadingRef" :data="dataRef" border resizable highlight-current-row height="100%" show-overflow-tooltip @current-change="handleCurrentChange">
                   <el-table-column type="index" fixed label="序号" width="50" align="center"/>
                   <el-table-column prop="indicatorCode" fixed label="指标编码" align="center"/>
                   <el-table-column prop="indicatorName" fixed label="指标名称" align="center"/>
@@ -114,6 +114,7 @@
     </div>
     <el-dialog
         v-model="showAddRef"
+        :before-close="addDialogVisible"
         width="500px"
     >
       <template #header> 新建文件夹 </template>
@@ -143,7 +144,7 @@
         </div>
       </template>
     </el-dialog>
-    <el-dialog v-model="active" append-to-body>
+    <el-dialog :before-close="metaDialogVisible" v-model="active" append-to-body>
       <template #header> {{ indexFormValue.opperate }} </template>
         <n-form
             :size="'small'"
@@ -285,6 +286,28 @@
         </template>
     </el-dialog>
     <el-dialog
+        v-model="showUpdateRef"
+        :before-close="updateDialogVisible"
+        title="修改文件夹"
+        width="500px"
+    >
+      <template #header> 修改文件夹 </template>
+      <el-form
+          ref="ruleFormRef"
+          :rules="rules"
+          :model="updateFormValue"
+      >
+        <el-form-item required label="文件夹名称" prop="titleName">
+          <el-input type="text" style="width: 240px" v-model="updateFormValue.titleName"/>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button color="#0099CB" @click="updateMenu(ruleFormRef)" >确定</el-button>
+        </div>
+      </template>
+    </el-dialog>
+    <el-dialog
         v-model="showPubRef"
         width="600px"
     >
@@ -362,6 +385,8 @@ const pattern = ref('');
 const ruleFormRef = ref()
 const currentRow = ref()
 const ifDisableDelete = ref(true)
+const showUpdateRef = ref(false)
+const updateFormValue = ref({})
 const getCatalogFolderUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/indicatorCenter/getIndicatorCenterTreeFloder'
     : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/indicatorCenter/getIndicatorCenterTreeFloder'
@@ -371,6 +396,9 @@ const addCatalogTreeUrl = import.meta.env.MODE === 'development'
 const delCatalogTreeUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/indicatorCenter/deleteIndicatorCenterTree'
     : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/indicatorCenter/deleteIndicatorCenterTree'
+const updateIndexTreeUrl = import.meta.env.MODE === 'development'
+    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/indicatorCenter/updateIndicatorCenterFloderRename'
+    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/indicatorCenter/updateIndicatorCenterFloderRename'
 const insertIndexUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/indicatorCenter/insert'
     : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/indicatorCenter/insert'
@@ -609,19 +637,8 @@ function nodeProps ({option}) {
   return {
     onClick() {
       paginationReactive.apiTreeId = option.id
-      paginationReactive.page = 1
       selectedMenu.value = option.id
-      query(
-          paginationReactive.indicatorDefiner,
-          paginationReactive.page,
-          paginationReactive.pageSize,
-          paginationReactive.timeDimension,
-          paginationReactive.indicatorName,
-          paginationReactive.indicatorCode,
-          paginationReactive.indicatorTargetTable,
-          paginationReactive.indicatorLatitude,
-          paginationReactive.apiTreeId
-      )
+      handlePageChange(1, paginationReactive.pageSize)
     },
     onContextmenu (e)  {
       e.preventDefault()
@@ -674,7 +691,24 @@ function addMetadata() {
   operaSpan.value = 0
   active.value = true
 }
-
+function updateMenu(ruleFormRef) {
+  ruleFormRef.validate((valid) => {
+    if (valid) {
+      let params ={
+        id: updateFormValue.value.id,
+        titleName: updateFormValue.value.titleName,
+        parentId: updateFormValue.value.parentId
+      }
+      axios.post(updateIndexTreeUrl, params).then((res) => {
+        message.info(res.data.info)
+        showUpdateRef.value = false
+        getApiFolder()
+      })
+    } else {
+      message.error('验证失败，请填写完整信息')
+    }
+  })
+}
 function editMetadata() {
   indexFormValue.value = currentRow.value
   indexFormValue.value.treeId = Number(currentRow.value.treeId)
@@ -685,6 +719,22 @@ function editMetadata() {
   active.value = true
 }
 
+function metaDialogVisible () {
+  active.value = false
+  Object.keys(indexFormValue.value).forEach(key => {
+    indexFormValue.value[key] = ''; // 将表单的所有响应式属性设置为空字符串
+  });
+}
+
+function addDialogVisible () {
+  showAddRef.value = false
+  formValue.value.titleName = ''
+}
+
+function updateDialogVisible () {
+  showUpdateRef.value = false
+  updateFormValue.value.titleName = ''
+}
 
 function pubMetadata(row) {
   if(row.indicatorLabels !== '已上架')
@@ -761,7 +811,7 @@ function renderSuffix({ option }) {
               ),
           default: () =>
               h('div', [
-                h('div', h(NButton, { quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h('i',{class:"iconfont fa-pencil", 'aria-hidden':"true", style: {'font-size': '12px'}}),default: () =>"修改"} )),
+                h('div', h(NButton, { onClick: () => updateTree(option.id, option.parentId), quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h('i',{class:"iconfont fa-pencil", 'aria-hidden':"true", style: {'font-size': '12px'}}),default: () =>"修改"} )),
                 h('div', h(NButton, { onClick: () => delTreeConfirm(option.id, option.titleName), disabled: option.children.length !== 0, quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h('i',{class:"iconfont fa-trash", 'aria-hidden':"true", style: {'font-size': '12px'}}),default: () =>"删除"} ))
               ])
         }
@@ -807,6 +857,11 @@ function packHandle() {
   }
 }
 
+function updateTree (id, parentId) {
+  showUpdateRef.value = true
+  updateFormValue.value.id = id
+  updateFormValue.value.parentId = parentId
+}
 function createIndex () {
   formRef.value.validate((errors) => {
     if (!errors) {

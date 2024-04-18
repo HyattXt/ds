@@ -35,6 +35,9 @@
       <n-data-table
           ref="table"
           remote
+          flex-height
+          style="height: 100%"
+          :single-line="false"
           size="small"
           :columns="columns"
           :data="data"
@@ -61,27 +64,42 @@ import {useRoute, useRouter} from "vue-router";
 const columns = ({ edit }, {del}) => {
   return [
     {
+      title: '序号',
+      key: 'key',
+      align: 'center',
+      width: 60,
+      render: (_, index) => {
+        return `${index + 1}`
+      }
+    },
+    {
       title: 'ID',
-      key: 'id'
+      key: 'id',
+      align: 'center'
     },
     {
       title: '任务名',
+      align: 'center',
       key: 'taskName'
     },
     {
       title: '接口URL',
+      align: 'center',
       key: 'dataUrl'
     },
     {
       title: '请求类型',
+      align: 'center',
       key: 'httpType'
     },
     {
       title: '目标表',
+      align: 'center',
       key: 'dataTable'
     },
     {
       title: '操作',
+      align: 'center',
       key: 'actions',
       width: 132,
       render(row) {
