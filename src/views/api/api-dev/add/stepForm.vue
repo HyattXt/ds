@@ -1,9 +1,7 @@
 <template>
-  <div>
-    <div class="n-layout-page-header">
-      <n-card :bordered="false" title="自定义SQL"> </n-card>
-    </div>
-    <n-card :bordered="false" class="mt-4 proCard">
+  <div class="cue-crud">
+    <CrudHeader title="API开发/新建API"/>
+    <n-card :bordered="false" style="border-top: solid 1px #e8ecf0;">
       <n-space vertical class="steps" justify="center">
         <n-steps :current="currentTab" :status="currentStatus">
           <n-step title="API信息配置" />
@@ -35,7 +33,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup>
   import {ref} from 'vue'
   import step1 from './Step1.vue'
   import step2 from './Step2.vue'
@@ -44,6 +42,7 @@
   import axios from 'axios'
   import {useMessage} from "naive-ui";
   import {useRoute} from "vue-router";
+  import CrudHeader from "@/components/cue/crud-header.vue";
 
   const currentTab = ref(1)
   const message = useMessage()
@@ -64,7 +63,7 @@
     headerData: [],
     optionInfo: {
       responseFormat:
-        '{\n "success" : "@resultStatus",\n "message" : "@resultMessage",\n "code" : "@resultCode",\n "lifeCycleTime": "@timeLifeCycle",\n "executionTime": "@timeExecution",\n "value" : "@resultData"\n}'
+        '{\n "success" : "@resultStatus",\n "message" : "@resultMessage",\n "code" : "@resultCode",\n "lifeCycleTime": "@timeLifeCycle",\n "executionTime": "@timeExecution",\n "data" : "@resultData"\n}'
     }
   })
   const params2 = ref({
@@ -78,15 +77,31 @@
     apiDatasourceTable: '',
     apiDatasourceType: '',
     apiTreeId: 1,
-
     apiMethod: '',
     apiPath: '',
     apiComment: '',
     apiScript: '',
-    apiSample: ''
+    fieldsInfo: [],
+    headersArray: [{
+      paramTitle: "token",
+      paramNotes: "接口token信息",
+      paramType: "varchar",
+      paramIsNull: "N",
+      demoValue: "token test"
+    }],
+    bodyArray: [],
+    requestDemo: [],
+    responseDemo: '{\n' +
+        '      success: true,\n' +
+        '      message: "OK",\n' +
+        '      code: 0,\n' +
+        '      lifeCycleTime: "@timeLifeCycle",\n' +
+        '      executionTime: "@timeExecution",\n' +
+        '      data: "@resultData"\n' +
+        '    }'
   })
 
-  function nextStep1(value: any) {
+  function nextStep1(value) {
     params2.value.apiName = value.apiName
     params2.value.apiPath = params.value.apiPath = value.apiPath
     params2.value.apiMethod = params.value.select = value.apiMethod
@@ -96,13 +111,12 @@
     params2.value.apiTimeout = value.apiTimeout
     params2.value.apiTreeId = value.apiTreeId
 
-
     if (currentTab.value < 4) {
       currentTab.value += 1
     }
   }
 
-  function nextStep2(value: any) {
+  function nextStep2(value) {
     params2.value.apiScript = params.value.codeValue = value.apiDatasourceId+"HD688296"+value.codeValue
     if (route.query.apiId !== undefined) {
       params2.value.apiSample = value.apiSample
@@ -110,17 +124,18 @@
       params.value.requestBody = value.requestBody
       delete params2.value['apiSample']
     }
-    !!route.query.apiId ? params2.value.apiSample = value.apiSample : params.value.requestBody = value.requestBody
     params2.value.apiDatasourceId = value.apiDatasourceId
     params2.value.apiDatasourceTable = value.apiDatasourceTable
     params2.value.apiDatasourceType = value.apiDatasourceType
-
+    params2.value.bodyArray = value.bodyArray
+    params2.value.fieldsInfo = value.fieldsInfo
+    params2.value.requestDemo = value.requestDemo
     if (currentTab.value < 4) {
       currentTab.value += 1
     }
   }
 
-  function updateApi(apiId: string) {
+  function updateApi(apiId) {
     const urlUpdate = SecondDevApiUrl+'/HDataApi/interface/update'
     params2.value.apiId = apiId
     axios
@@ -136,7 +151,7 @@
   function nextStep3() {
     return new Promise((resolve) => {
       const url = SecondDevApiUrl+'/HDataApi/interface-ui/api/save-api?id=-1'
-      if (route.query.apiId == undefined) {
+      if (route.query.apiId === undefined) {
         let apiId = ''
         axios
             .post(url, params.value)
@@ -162,7 +177,6 @@
         updateApi(route.query.apiId)
       }
 
-
       if (currentTab.value < 4) {
         currentTab.value += 1
       }
@@ -182,7 +196,12 @@
 
 <style lang="less" scoped>
   .steps {
-    max-width: 1200px;
-    margin: 16px auto;
+    margin: 16px 50px;
+  }
+
+  .titleSplit {
+    background: white !important;
+    font-size: 14px !important;
+    padding: 0 !important;
   }
 </style>

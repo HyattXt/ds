@@ -2,13 +2,13 @@
   <n-form
     ref="form2Ref"
     label-placement="top"
-    style="max-width: 900px; margin: 40px auto 0 80px"
+    style="margin: 40px 80px 0 80px"
   >
     <n-grid x-gap="12" :cols="2">
       <n-gi span="1">
         <n-card>
           <n-form-item label="成功返回结果示例" path="comment">
-            <n-scrollbar style="max-height: 250px">
+            <n-scrollbar style="height: 250px">
               <n-config-provider :hljs="hljs">
                 <n-code :code="success" language="javascript" />
               </n-config-provider>
@@ -19,7 +19,7 @@
       <n-gi span="1">
         <n-card>
           <n-form-item label="失败返回结果示例" path="comment">
-            <n-scrollbar style="max-height: 250px">
+            <n-scrollbar style="height: 250px">
               <n-config-provider :hljs="hljs">
                 <n-code :code="failure" language="javascript" />
               </n-config-provider>
@@ -28,14 +28,10 @@
         </n-card>
       </n-gi>
     </n-grid>
-    <div style="margin-left: 250px; margin-top: 30px">
-      <n-space>
-        <n-button @click="prevStep">上一步</n-button>
-        <n-button type="primary" :loading="loading" @click="formSubmit"
-          >提交</n-button
-        >
+      <n-space justify="center" style="margin-top: 30px">
+        <n-button tertiary @click="prevStep">上一步</n-button>
+        <n-button color="#0099CB" type="primary" :loading="loading" @click="formSubmit">提交</n-button>
       </n-space>
-    </div>
   </n-form>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <n-scrollbar style="max-height: 300px">
+  <n-scrollbar  style="height: 526px">
     <n-form :model="formValue" label-placement="top" :rules="rules" ref="form2Ref">
       <n-form-item label="数据源类型" path="apiDatasourceType">
         <n-select
@@ -38,8 +38,9 @@
           size="small"
           :single-line="false"
           :columns="[
-            { title: '字段名称', key: 'TABLE_NAME' },
-            { title: '字段类型', key: 'COLUMN_TYPE' }
+            { title: '字段名称', key: 'TABLE_NAME', align: 'center', ellipsis: { tooltip: true} },
+            { title: '字段类型', key: 'COLUMN_TYPE', align: 'center', ellipsis: { tooltip: true} },
+            { title: '字段注释', key: 'COLUMN_COMMENT', align: 'center', ellipsis: { tooltip: true} }
           ]"
           :data="colList"
         >

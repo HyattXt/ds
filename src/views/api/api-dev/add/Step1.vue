@@ -5,7 +5,7 @@
     :model="formValue"
     :rules="rules"
     label-placement="left"
-    style="max-width: 800px; margin: 40px auto 0 80px"
+    style="margin: 40px 80px 0 80px"
   >
     <n-form-item label="API名称" path="apiName">
       <n-input v-model:value="formValue.apiName" placeholder="请输入名称" />
@@ -49,12 +49,6 @@
         </n-form-item>
         <n-input-group-label>次/秒</n-input-group-label>
       </n-input-group>
-      <n-input-group>
-        <n-form-item label="后端超时" path="apiTimeout">
-          <n-input-number v-model:value="formValue.apiTimeout" placeholder="请输入" />
-        </n-form-item>
-        <n-input-group-label>ms</n-input-group-label>
-      </n-input-group>
     </n-space>
     <n-form-item label="描述" path="apiComment">
       <n-input
@@ -64,14 +58,12 @@
         placeholder="描述"
       />
     </n-form-item>
-    <div style="margin-left: 300px">
-      <n-space>
+    <n-space justify="center" style="margin-top: 30px">
         <router-link to="/service/api-dev">
-          <n-button type="tertiary">返回</n-button>
+          <n-button tertiary >返回</n-button>
         </router-link>
-        <n-button type="primary" @click="formSubmit">下一步</n-button>
-      </n-space>
-    </div>
+        <n-button color="#0099CB" type="primary" @click="formSubmit">下一步</n-button>
+    </n-space>
   </n-form>
 </template>
 
@@ -95,7 +87,6 @@
       : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getApiTreeFloder'
 
   let validatePath = (rule: any, value: any, callback: any) => {
-    console.log(formValue.value)
     if (route.query.apiId == undefined) {
       return new Promise<void>((resolve, reject) => {
         let url = SecondDevApiUrl+'/HDataApi/interface/getApiPath'
@@ -119,6 +110,30 @@
     }
   }
 
+  let validateName = (rule: any, value: any, callback: any) => {
+    if (route.query.apiId == undefined) {
+      return new Promise<void>((resolve, reject) => {
+        let url = SecondDevApiUrl+'/HDataApi/interface/getInterfaceInfoByApiName'
+        let body = { apiName: value }
+
+        //0存在，1不存在
+        axios
+            .post(url, body)
+            .then(function (response) {
+              console.log(response.data.obj)
+              if (!!response.data.obj) {
+                reject(Error('该名称与已有名称重复')) // reject with error message
+              } else {
+                resolve()
+              }
+            })
+            .catch(function (error) {
+              reject(error)
+            })
+      })
+    }
+  }
+
   const formValue = ref({
     apiName: '',
     apiPath: '',
@@ -131,11 +146,17 @@
   })
 
   const rules = {
-    apiName: {
+    apiName: [
+     {
       required: true,
       message: '请输入名称',
       trigger: 'blur'
-    },
+     },
+     {
+       validator: validateName,
+       trigger: 'blur'
+     }
+    ],
     apiPath: [
       {
         required: true,
@@ -170,11 +191,10 @@
         trigger: 'blur'
       }
     ],
-    apiTimeout: [
+    apiComment: [
       {
         required: true,
-        type:"number",
-        message: '请输入超时时间(数字格式)',
+        message: '请输入描述',
         trigger: 'blur'
       }
     ]
