@@ -21,7 +21,10 @@ import LineBox from '@/components/chart/modules/LineBox'
 import Card from '@/components/card'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
+// @ts-ignore
 import CrudHead from "@/components/cue/crud-header.vue"
+import {SelectMixedOption} from "naive-ui/lib/select/src/interface";
+import {RowData} from "naive-ui/es/data-table/src/interface";
 
 const props = {
   title: {
@@ -30,16 +33,16 @@ const props = {
   date: {
     type: Array as PropType<Array<any>>
   },
-  RunSelect: {},
-  AssentsSelect: {},
-  RunErrorSelectCurrent: {},
-  ApiSelectCurrent: {},
-  AssentsSelectCurrent: {},
+  RunSelect: {type: Array as PropType<SelectMixedOption[]>},
+  AssentsSelect: {type: Array as PropType<SelectMixedOption[]>},
+  RunErrorSelectCurrent: {type: String},
+  ApiSelectCurrent: {type: String},
+  AssentsSelectCurrent: {type: String},
   loadingRef: {
     type: Boolean as PropType<boolean>,
     default: false
   },
-  ApiTop10Data: {},
+  ApiTop10Data: {type: Array as PropType<RowData[]>},
   AssetOverviewData: {
     type: Array,
     default: () => []
