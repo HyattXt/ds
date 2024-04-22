@@ -709,3 +709,10 @@ dt {
   top: 0 !important;
   right: 0 !important;
 }
+
+.el-tabs--card>.el-tabs__header {
+  border-bottom: 1px solid var(--el-border-color-light);
+  height: var(--el-tabs-header-height);
+  background-color: #ffffff;
+  margin: 0;
+}
