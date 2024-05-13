@@ -138,7 +138,7 @@ export function useDatasource(
     {
       type: 'select',
       field: params.typeField || 'type',
-      span: params.span || 6,
+      span: params.span || 12,
       name: t('project.node.datasource_type'),
       props: {
         'on-update:value': onChange
@@ -152,7 +152,7 @@ export function useDatasource(
     {
       type: 'select',
       field: params.sourceField || 'datasource',
-      span: params.span || 6,
+      span: params.span || 12,
       name: t('project.node.datasource_instances'),
       options: datasourceOptions,
       validate: {

@@ -24,7 +24,7 @@ import {
   toRef,
   watch,
   onBeforeUnmount,
-  computed
+  computed, inject
 } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
@@ -57,6 +57,7 @@ import { useAsyncState } from '@vueuse/core'
 import utils from '@/utils'
 import {useTask} from "@/views/projects/task/definition/use-task";
 import {INodeData} from "@/views/projects/task/components/node/types";
+import graph from "@/views/projects/workflow/relation/components/Graph";
 
 const props = {
   // If this prop is passed, it means from definition detail
@@ -212,11 +213,11 @@ export default defineComponent({
 
     const refreshEdit = (code: number) => {
       refreshDetail()
-      editTask(code)
+      //editTask(code)
     }
 
-    const commitInitTaskAndVis = (taskName: string,taskDescription: string,processCode: number) => {
-      commitInitTask(taskName, taskDescription, processCode).then(r =>{
+    const commitInitTaskAndVis = (taskName: string,taskDescription: string,processCode: number,datasourceType: String, datasource: Number ) => {
+      commitInitTask(taskName, taskDescription, processCode, datasourceType, datasource).then(r =>{
         initTaskCancel()
       })
     }

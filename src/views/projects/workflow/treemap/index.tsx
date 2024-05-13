@@ -15,17 +15,21 @@
 * limitations under the License.
 */
 
-import {defineComponent, onMounted, ref, unref, h, nextTick, VNode} from 'vue'
-import {DropdownGroupOption, DropdownOption, NIcon, NPopconfirm, TreeOption, useMessage} from 'naive-ui'
+import {defineComponent, onMounted, ref, unref, h, nextTick, VNode, provide} from 'vue'
+import {DropdownGroupOption, DropdownOption, NIcon, NPopconfirm, TreeOption, useMessage, NSplit} from 'naive-ui'
 import Detail from '../definition/detail'
-import {AlignLeftOutlined, DownOutlined, FolderTwotone, SearchOutlined, ApartmentOutlined, ConsoleSqlOutlined} from '@vicons/antd';
-import Styles from "@/views/projects/workflow/treemap/index.module.scss";
+import {SqlBox, DataXBox, ShellBox } from '../components/task/index.js'
+import { SearchOutlined } from '@vicons/antd';
+import {Circle24Filled, Add12Filled} from "@vicons/fluent";
+import { CaretUp, CaretDown } from "@vicons/fa";
+import Styles from "./index.module.scss";
 import {useThemeStore} from "@/store/theme/theme";
 import {useRoute} from "vue-router";
 import {useTreemap} from "@/views/projects/workflow/treemap/use-treemap";
 import { createProcessDefinition } from '@/service/modules/process-definition'
 import {useI18n} from "vue-i18n";
 import {useLogin} from "@/views/login/use-login";
+import {ElTabs, ElTabPane} from 'element-plus'
 
 export default defineComponent({
     name: 'WorkflowTreeMap',
@@ -36,14 +40,9 @@ export default defineComponent({
         const route = useRoute()
         const pattern = ref('');
         const expandedKeys = ref([]);
-        const theme = useThemeStore()
         const projectCode = Number(route.params.projectCode)
         const formRef: any = ref(null)
-        const linkage = ref({
-            code: 0,
-            type: 0,
-            parentId: 0
-        })
+        const activeTab = ref('')
         const workflowModel = ref({
             parentId: 1,
             type: 2,
@@ -61,7 +60,6 @@ export default defineComponent({
         const xRef = ref(0)
         const yRef = ref(0)
         const dropdownOption = ref([{label: '', key: '',disable: false}])
-        const defaultFolder = ref(1)
         const { loginNew } = useLogin('')
         const addMenuOptions = ref([
             {
@@ -73,6 +71,15 @@ export default defineComponent({
                 key: 'workflow'
             },
         ]);
+
+        const workflowBox: any = ref([])
+        const componentRefs = ref({})
+
+        const taskDictionary = {
+            'SQL': SqlBox,
+            'DATAX': DataXBox,
+            'SHELL': ShellBox
+        };
 
         const rules = {
             model:{
@@ -107,11 +114,37 @@ export default defineComponent({
 
         const ssoLogin = async () => {
             await loginNew()
+            refreshTree()
+            // @ts-ignore
+            variables.value.model.projectCode = projectCode
+            if( typeof(route.query.code) != 'undefined' )tsxRef.value.refresh(route.query.code, projectCode)
+        }
+
+        const refreshTree = () => {
             getTreeMenu(projectCode)
             getTreeFolder(projectCode)
-            // @ts-ignore
-            variables.model.projectCode = projectCode
-            if( typeof(route.query.code) != 'undefined' )tsxRef.value.refresh(route.query.code, projectCode)
+        }
+
+        const updateTab = (taskCode: Number, taskName: string) => {
+                refreshTree()
+                updateLabel(taskCode, taskName)
+        }
+        const updateEdited = (taskCode: Number, tag: Boolean) => {
+            for (let i = 0; i < workflowBox.value.length; i++) {
+                if (workflowBox.value[i].key === taskCode) {
+                    workflowBox.value[i].edited = tag;
+                    break;
+                }
+            }
+        }
+
+        function updateLabel( key: Number, newLabel: string) {
+            for (let i = 0; i < workflowBox.value.length; i++) {
+                if (workflowBox.value[i].key === key) {
+                    workflowBox.value[i].label = newLabel;
+                    break;
+                }
+            }
         }
 
         onMounted(() => {
@@ -240,8 +273,8 @@ export default defineComponent({
                 expandedKeys.value = [];
             } else {
                 // @ts-ignore
-                setId(unref(variables.treeData))
-                //expandedKeys.value = unref(variables.treeData).map((item: any) => item.id as string) as [];
+                setId(unref(variables.value.treeData))
+                //expandedKeys.value = unref(variables.value.treeData).map((item: any) => item.id as string) as [];
             }
         }
         function setId(datas: []) { //遍历树  获取id数组
@@ -261,8 +294,8 @@ export default defineComponent({
         }
 
         function ifShowModal(key: string){
-            variables.model.titleName = ''
-            variables.model.parentId = 1
+            variables.value.model.titleName = ''
+            variables.value.model.parentId = 1
             workflowModel.value.parentId = 1
             key == 'menu' ? menuModal.value = true : workflowModal.value = true;
         }
@@ -286,8 +319,8 @@ export default defineComponent({
                 onContextmenu(e: MouseEvent) {
                     e.preventDefault()
                     showDropdownRef.value = false
-                    variables.delFolderModel.id = variables.moveFolderModel.id = variables.model.parentId = workflowModel.value.parentId = variables.renameFolderModel.id = option.id as number
-                    variables.moveWorkflowModel.taskCode = variables.taskCode = variables.renameWorkflowModel.taskCode = option.taskCode as number
+                    variables.value.delFolderModel.id = variables.value.moveFolderModel.id = variables.value.model.parentId = workflowModel.value.parentId = variables.value.renameFolderModel.id = option.id as number
+                    variables.value.moveWorkflowModel.taskCode = variables.value.taskCode = variables.value.renameWorkflowModel.taskCode = option.taskCode as number
                     if(option.type == 1) {
                         dropdownOption.value =[
                             {
@@ -324,16 +357,6 @@ export default defineComponent({
                                 key: 'renameWorkflow',
                                 disable: false
                             },
-                            /*{
-                                label: '复制',
-                                key: 'copyWorkflow',
-                                disable: false
-                            },
-                            {
-                                label: '导出',
-                                key: 'exportWorkflow',
-                                disable: false
-                            },*/
                             {
                                 label: '移动',
                                 key: 'removeWorkflow',
@@ -359,11 +382,6 @@ export default defineComponent({
                                 disable: false
                             },
                             {
-                                label: '复制',
-                                key: 'copyTask',
-                                disable: false
-                            },
-                            {
                                 label: '删除',
                                 key: 'deleteTask',
                                 disable: true
@@ -378,12 +396,9 @@ export default defineComponent({
                 },
                 ondblclick() {
                     //双击事件
-                    linkage.value.type = 0
-                    linkage.value.code = option.taskCode as number
-                    linkage.value.type = option.type as number
-                    linkage.value.parentId = option.parentId as number
-                    if(option.type == 2) {tsxRef.value.refresh(linkage.value.code, projectCode) }
-                    if(option.type == null) {}//message.info("打开任务节点还在开发")
+                    if(option.type !== 1){
+                        pushComponent(option.type, option.taskCode, option.titleName, option.taskType, !!option.state, option.parentId)
+                    }
                     }
                 }
         }
@@ -422,74 +437,159 @@ export default defineComponent({
             }
         }
 
+        const removeTab = (targetName: string) => {
+            const tabs = workflowBox.value
+            let activeName = activeTab.value
+            if (activeName === targetName) {
+                tabs.forEach((tab, index) => {
+                    if (tab.name === targetName) {
+                        const nextTab = tabs[index + 1] || tabs[index - 1]
+                        if (nextTab) {
+                            activeName = nextTab.name
+                        }
+                    }
+                })
+            }
+
+            activeTab.value = activeName
+            workflowBox.value = tabs.filter((tab) => tab.name !== targetName)
+        }
+
+        function refresh(name) {
+            componentRefs.value[name].refresh(name, projectCode)
+        }
+
+        const pushComponent = (type, taskCode, taskName, taskType, state, processCode)=> {
+            const newItem = {
+                label: taskName,
+                name: taskCode,
+                component: type === 2 ? Detail : taskDictionary[taskType], // 2任务流 null节点
+                key: taskCode,
+                type: type,
+                taskType: taskType,
+                edited: false,
+                props: {
+                    projectCode: projectCode,
+                    taskCode: taskCode,
+                    processCode: processCode,
+                    readOnly: state
+                }
+            };
+
+            if (workflowBox.value.length === 0 || !workflowBox.value.some(item => item.key === taskCode)) {
+                workflowBox.value.push(newItem);
+                componentRefs.value[taskCode] = null;
+            }
+            activeTab.value = taskCode as string
+        }
+
+        provide('pushComponent', pushComponent);
+        provide('updateTab', updateTab);
+        provide('updateEdited', updateEdited);
+
 
         return () =>
             (
                 <div style={"height:100%; border: 0px"}>
                             <div class="cue-drag-layout flex-row">
-                                <div class="cue-drag-layout__mainview" style={"width: 350px; margin-right:12px"}>
-                                    <div class="tree-container" style={"width: 100%"}>
-                                        <div class="add-buttons">
-                                            <span class="title">分类</span>
-                                            <div class="button-item-toggle" onClick={packHandle} title={expandedKeys.value.length ? '收起' : '展开'}>
-                                                <i class={`iconfont icon-caret-${expandedKeys.value.length? 'top' : 'bottom'}`}></i>
-                                            </div>
-                                            <n-dropdown trigger="click" options={addMenuOptions.value} onSelect={ifShowModal}>
-                                                <div class="button-item" title="添加">
-                                                    <i class="iconfont icon-cart_add"></i>
-                                                </div>
-                                            </n-dropdown>
+                                <NSplit default-size={0.2} min={0.07} max={0.9}
+                                    v-slots={{
+                                        1: () => (
+                                            <div class="cue-drag-layout__mainview" style={"height: 100%"}>
+                                                <div class="tree-container" style={"width: 100%"}>
+                                                    <div class="add-buttons">
+                                                        <span class="title">分类</span>
+                                                        <div class="button-item-toggle" onClick={packHandle} title={expandedKeys.value.length ? '收起' : '展开'}>
+                                                            <n-icon size="16" style={"padding-top: 5px"}>{expandedKeys.value.length ? (<CaretUp/>) : (<CaretDown/>)}</n-icon>
+                                                        </div>
+                                                        <n-dropdown trigger="click" options={addMenuOptions.value} onSelect={ifShowModal}>
+                                                            <div class="button-item" title="添加">
+                                                                <n-icon size="16"><Add12Filled/></n-icon>
+                                                            </div>
+                                                        </n-dropdown>
 
-                                        </div>
-                                        <n-input
-                                            type="text"
-                                            placeholder="搜索"
-                                            class="search-input"
-                                            v-model:value={pattern.value}
-                                            v-slots={{
-                                                suffix: () => (
-                                                    <div>
-                                                        <n-icon component={SearchOutlined}/>
                                                     </div>
-                                                )
-                                            }}
-                                        >
-                                        </n-input>
-                                            <n-tree
-                                                class="tree-scrollbar"
-                                                block-line
-                                                show-irrelevant-nodes={false}
-                                                pattern={pattern.value}
-                                                data={variables.treeData}
-                                                key-field="id"
-                                                label-field="titleName"
-                                                children-field="children"
-                                                onUpdate:expanded-keys={onExpandedKeys}
-                                                expanded-keys={expandedKeys.value}
-                                                node-props={menu}
-                                                render-prefix={menuIcon}
-                                            />
-                                        <n-dropdown
-                                            placement="bottom-start"
-                                            trigger="manual"
-                                            x={xRef.value}
-                                            y={yRef.value}
-                                            options={dropdownOption.value}
-                                            show={showDropdownRef.value}
-                                            on-clickoutside={onClickoutside}
-                                            on-select={handleSelect}
-                                            render-option={dropdownConfirm}
-                                        />
-                                    </div>
-                                </div>
-                                <div class="cue-drag-layout__mainview" style={"width: calc(100% - 362px)"}>
-                                    <Detail
-                                        ref={tsxRef}
-                                        projectCode={projectCode}
-                                        code={Number(linkage.value.code)}
-                                        parentId={linkage.value.parentId}
-                                    />
-                                </div>
+                                                    <n-input
+                                                        type="text"
+                                                        placeholder="搜索"
+                                                        class="search-input"
+                                                        v-model:value={pattern.value}
+                                                        v-slots={{
+                                                            suffix: () => (
+                                                                <div>
+                                                                    <n-icon component={SearchOutlined}/>
+                                                                </div>
+                                                            )
+                                                        }}
+                                                    >
+                                                    </n-input>
+                                                    <n-tree
+                                                        class="tree-scrollbar"
+                                                        block-line
+                                                        show-irrelevant-nodes={false}
+                                                        pattern={pattern.value}
+                                                        data={variables.value.treeData}
+                                                        key-field="id"
+                                                        label-field="titleName"
+                                                        children-field="children"
+                                                        onUpdate:expanded-keys={onExpandedKeys}
+                                                        expanded-keys={expandedKeys.value}
+                                                        node-props={menu}
+                                                        render-prefix={menuIcon}
+                                                    />
+                                                    <n-dropdown
+                                                        placement="bottom-start"
+                                                        trigger="manual"
+                                                        x={xRef.value}
+                                                        y={yRef.value}
+                                                        options={dropdownOption.value}
+                                                        show={showDropdownRef.value}
+                                                        on-clickoutside={onClickoutside}
+                                                        on-select={handleSelect}
+                                                        render-option={dropdownConfirm}
+                                                    />
+                                                </div>
+                                            </div>
+                                        ),
+                                        2: () => (
+                                            <div class="cue-drag-layout__mainview" style={"height: 100%"}>
+                                                {workflowBox.value.length === 0 ? (
+                                                    <div class={Styles.backgroundDiv}/>
+                                                ) : (
+                                                    <ElTabs v-model={activeTab.value} closable type={"card"} onTabRemove={removeTab} onTabChange={refresh}>
+                                                        {workflowBox.value.map((item: any) => (
+                                                            <ElTabPane
+                                                                key={item.name}
+                                                                label={item.label}
+                                                                name={item.name}
+                                                                lazy={true}
+                                                                v-slots={{
+                                                                    label: () => {
+                                                                        switch (item.type){
+                                                                            case 2 : return h(<div>
+                                                                                                <svg class="icon" viewBox="0 0 1260 1024" xmlns="http://www.w3.org/2000/svg" width="19.688" height="16"><defs><style/></defs><path d="M543.872 480h268.224c52.416 0 94.848 43.008 94.848 96v160h52.8a64 64 0 0 1 64 64V960a64 64 0 0 1-64 64H803.2a64 64 0 0 1-64-64v-160a64 64 0 0 1 64-64h40.512V576c0-17.664-14.144-32-31.616-32h-268.16v192h46.528a64 64 0 0 1 64 64V960a64 64 0 0 1-64 64H433.92a64 64 0 0 1-64-64v-160a64 64 0 0 1 64-64h46.72v-192H211.328a31.808 31.808 0 0 0-31.616 32v160h40.832a64 64 0 0 1 64 64V960a64 64 0 0 1-64 64H64a64 64 0 0 1-64-64v-160a64 64 0 0 1 64-64h52.48V576c0-52.992 42.496-96 94.848-96H480.64v-192h-46.72a64 64 0 0 1-64-64V64a64 64 0 0 1 64-64h156.544a64 64 0 0 1 64 64v160a64 64 0 0 1-64 64h-46.592v192z" fill="#0099CB"/></svg>
+                                                                                                <span>{item.label}</span>
+                                                                                              </div>
+                                                                                             )
+                                                                            default: {
+                                                                                let url= '/HData/ui/images/task-icons/'+item.taskType.toLocaleLowerCase()+'_hover.png'
+                                                                                return h(<div style={"display: flex; align-items: center"}><img src={url} width="24" height="24"/>
+                                                                                            <span>{item.label}</span>
+                                                                                    {item.edited && (<n-icon style={"margin: 0 -8px 0 16px"} color={"#ffd192"}><Circle24Filled/></n-icon>)}
+                                                                                        </div>)
+                                                                            }
+                                                                        }
+                                                                }}}
+                                                            >
+                                                                <item.component ref={(ref) => { componentRefs.value[item.name] = ref }} {...item.props} />
+                                                            </ElTabPane>
+                                                        ))}
+                                                    </ElTabs>
+                                                )}
+                                            </div>
+                                        )
+                                    }}
+                                />
                             </div>
                     <el-dialog
                         v-model={menuModal.value}
@@ -508,16 +608,16 @@ export default defineComponent({
                             <n-form-item label="文件夹名称" path="model.titleName">
                                 <n-input
                                     type="text"
-                                    v-model:value={variables.model.titleName}
+                                    v-model:value={variables.value.model.titleName}
                                     placeholder="输入文件夹名称"
                                 />
                             </n-form-item>
                             <n-form-item label="目标文件夹" path="inputValue">
                                 <n-tree-select
-                                    options={variables.folderData}
+                                    options={variables.value.folderData}
                                     key-field="id"
                                     label-field="titleName"
-                                    v-model:value={variables.model.parentId}
+                                    v-model:value={variables.value.model.parentId}
                                     filterable
                                 />
                             </n-form-item>
@@ -543,7 +643,7 @@ export default defineComponent({
                                 <n-form-item label="文件夹名称" path="renameFolderModel.name">
                                     <n-input
                                         type="text"
-                                        v-model:value={variables.renameFolderModel.name}
+                                        v-model:value={variables.value.renameFolderModel.name}
                                         placeholder="输入文件夹名称"
                                     />
                                 </n-form-item>
@@ -567,10 +667,10 @@ export default defineComponent({
                             >
                                 <n-form-item label="目标文件夹" path="inputValue">
                                     <n-tree-select
-                                        options={variables.folderData}
+                                        options={variables.value.folderData}
                                         key-field="id"
                                         label-field="titleName"
-                                        v-model:value={variables.moveFolderModel.parentId}
+                                        v-model:value={variables.value.moveFolderModel.parentId}
                                         filterable
                                     />
                                 </n-form-item>
@@ -603,7 +703,7 @@ export default defineComponent({
                                 </n-form-item>
                                 <n-form-item label="目标文件夹" path="value.parentId">
                                     <n-tree-select
-                                        options={variables.folderData}
+                                        options={variables.value.folderData}
                                         key-field="id"
                                         label-field="titleName"
                                         v-model:value={workflowModel.value.parentId}
@@ -633,7 +733,7 @@ export default defineComponent({
                                 <n-form-item label="工作流名称" path="renameWorkflowModel.name">
                                     <n-input
                                         type="text"
-                                        v-model:value={variables.renameWorkflowModel.name}
+                                        v-model:value={variables.value.renameWorkflowModel.name}
                                         placeholder="输入工作流名称"
                                     />
                                 </n-form-item>
@@ -657,10 +757,10 @@ export default defineComponent({
                             >
                                 <n-form-item label="目标文件夹" path="inputValue">
                                     <n-tree-select
-                                        options={variables.folderData}
+                                        options={variables.value.folderData}
                                         key-field="id"
                                         label-field="titleName"
-                                        v-model:value={variables.moveWorkflowModel.parentId}
+                                        v-model:value={variables.value.moveWorkflowModel.parentId}
                                         filterable
                                     />
                                 </n-form-item>

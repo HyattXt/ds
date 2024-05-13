@@ -78,7 +78,7 @@ export default defineComponent({
     }
 
     const handleEdit = () => {
-      ctx.emit('edit', Number(props.cell?.id))
+      ctx.emit('edit', Number(props.cell?.id),props.cell?.data.taskName, props.cell?.data.taskType)
     }
 
     const handleViewLog = () => {

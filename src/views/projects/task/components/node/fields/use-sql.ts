@@ -39,6 +39,9 @@ export function useSql(model: { [field: string]: any }): IJsonItem[] {
       type: 'editor',
       field: 'sql',
       name: t('project.node.sql_statement'),
+      props: {
+        language: 'sql'
+      },
       validate: {
         trigger: ['input', 'trigger'],
         required: true,

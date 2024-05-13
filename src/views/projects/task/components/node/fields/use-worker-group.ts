@@ -40,10 +40,10 @@ export function useWorkerGroup(): IJsonItem {
   return {
     type: 'select',
     field: 'workerGroup',
-    span: 12,
+    span: 24,
     name: t('project.node.worker_group'),
     props: {
-      loading: loading
+      loading: false
     },
     options: options,
     validate: {

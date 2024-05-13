@@ -15,35 +15,37 @@
  * limitations under the License.
  */
 
-$borderDark: rgba(255, 255, 255, 0.09);
-$borderLight: rgb(239, 239, 245);
-$bgDark: rgb(24, 24, 28);
-$bgLight: #ffffff;
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import type { IJsonItem } from '../types'
 
-.container {
-  width: 100%;
-  padding: 20px;
-  box-sizing: border-box;
-  height: calc(100vh - 40px);
-  overflow: hidden;
-  display: block;
-}
+export function useSqlIndicator(model: { [field: string]: any }): IJsonItem[] {
+  const { t } = useI18n()
+  const span = computed(() => (model.indicatorStatus === 1  ? 12 : 0))
 
-.tree {
-  width: 100%;
-  padding: 20px;
-  box-sizing: border-box;
-  height: calc(100vh - 280px);
-  overflow: hidden;
-  display: block;
-}
-
-.dark {
-  border: solid 1px $borderDark;
-  background-color: $bgDark;
-}
-
-.light {
-  border: solid 1px $borderLight;
-  background-color: $bgLight;
+  return [
+    {
+      type: 'switch',
+      field: 'indicatorStatus',
+      span: 12,
+      props:{
+        checkedValue : 1,
+        uncheckedValue : 2
+      },
+      name: t('project.node.if_index')
+    },
+    {
+      type: 'input',
+      field: 'indicatorCode',
+      name: t('project.node.index_code'),
+      props: {
+        placeholder: t('project.node.index_code')
+      },
+      span: span,
+      validate: {
+        trigger: ['input', 'blur'],
+        required: true
+      }
+    }
+  ]
 }

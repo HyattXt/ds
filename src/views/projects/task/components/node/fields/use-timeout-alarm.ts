@@ -54,7 +54,7 @@ export function useTimeoutAlarm(model: { [field: string]: any }): IJsonItem[] {
       field: 'timeoutNotifyStrategy',
       name: t('project.node.timeout_strategy'),
       options: strategyOptions,
-      span: span,
+      span: span || 0,
       validate: {
         trigger: ['input'],
         validator(validate: any, value: []) {

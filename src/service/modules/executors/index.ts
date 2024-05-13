@@ -65,3 +65,14 @@ export function startTaskInstance(
     data
   })
 }
+
+export function runTask(
+    projectCode: number,
+    data: Object,
+): any {
+  return axios({
+    url: `/projects/${projectCode}/task-definition/execute`,
+    method: 'post',
+    data
+  })
+}

@@ -28,7 +28,7 @@ import type {
 import {deleteByCode} from "@/service/modules/process-definition";
 
 export function useTreemap() {
-  const variables = reactive({
+  const variables = ref({
       treeData:[],
       folderData:[],
       saving: false,
@@ -62,13 +62,13 @@ export function useTreemap() {
   })
 
   const getTreeMenu = (projectCode: number) => {
-      variables.loading = true
+      variables.value.loading = true
         queryTreeMenu({
         projectCode
       }).then((res: TreeMenuList) => {
           // @ts-ignore
-          variables.treeData = res
-          variables.loading = false
+          variables.value.treeData = res
+          variables.value.loading = false
       })
   }
 
@@ -77,84 +77,84 @@ export function useTreemap() {
             projectCode
         }).then((res: TreeMenuList) => {
             // @ts-ignore
-            variables.folderData = res
+            variables.value.folderData = res
         })
     }
 
     const submitMenuModal = async () => {
-        if (variables.saving) return
-        variables.saving = true
+        if (variables.value.saving) return
+        variables.value.saving = true
         try {
-            await createTreeMenu(variables.model)
+            await createTreeMenu(variables.value.model)
             window.$message.success("创建成功")
-            variables.saving = false
+            variables.value.saving = false
         } catch (err) {
-            variables.saving = false
+            variables.value.saving = false
         }
     }
 
     const renameMenuModal = async (projectCode: number) => {
-        if (variables.saving) return
-        variables.saving = true
+        if (variables.value.saving) return
+        variables.value.saving = true
         try {
-            await renameTreeMenu(projectCode, variables.renameFolderModel)
+            await renameTreeMenu(projectCode, variables.value.renameFolderModel)
             window.$message.success("重命名成功")
-            variables.saving = false
+            variables.value.saving = false
         } catch (err) {
-            variables.saving = false
+            variables.value.saving = false
         }
     }
 
     const renameWorkflowModal = async (projectCode: number) => {
-        if (variables.saving) return
-        variables.saving = true
+        if (variables.value.saving) return
+        variables.value.saving = true
         try {
-            await renameWorkflow(projectCode, variables.renameWorkflowModel)
+            await renameWorkflow(projectCode, variables.value.renameWorkflowModel)
             window.$message.success("重命名成功")
-            variables.saving = false
+            variables.value.saving = false
         } catch (err) {
-            variables.saving = false
+            variables.value.saving = false
         }
     }
 
     const moveFolderModal = async (projectCode: number) => {
-        if (variables.saving) return
-        variables.saving = true
+        if (variables.value.saving) return
+        variables.value.saving = true
         try {
-            await moveFolder(projectCode, variables.moveFolderModel)
+            await moveFolder(projectCode, variables.value.moveFolderModel)
             window.$message.success("移动成功")
-            variables.saving = false
+            variables.value.saving = false
         } catch (err) {
-            variables.saving = false
+            variables.value.saving = false
         }
     }
 
     const moveWorkflowModal = async (projectCode: number) => {
-        if (variables.saving) return
-        variables.saving = true
+        if (variables.value.saving) return
+        variables.value.saving = true
         try {
-            await moveWorkflow(projectCode, variables.moveWorkflowModel)
+            await moveWorkflow(projectCode, variables.value.moveWorkflowModel)
             window.$message.success("移动成功")
-            variables.saving = false
+            variables.value.saving = false
         } catch (err) {
-            variables.saving = false
+            variables.value.saving = false
         }
     }
 
     const delFolderModal = async () => {
-        if (variables.saving) return
-        variables.saving = true
+        if (variables.value.saving) return
+        variables.value.saving = true
         try {
-            await delFolder(variables.delFolderModel)
+            await delFolder(variables.value.delFolderModel)
             window.$message.success("删除成功")
-            variables.saving = false
+            variables.value.saving = false
         } catch (err) {
-            variables.saving = false
+            variables.value.saving = false
         }
     }
 
     const deleteWorkflow = async (projectCode: number) => {
-        deleteByCode(projectCode, variables.taskCode).then(() => {
+        deleteByCode(projectCode, variables.value.taskCode).then(() => {
             window.$message.success('删除成功')
         })
     }

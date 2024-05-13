@@ -81,3 +81,19 @@ $bgLight: #ffffff;
 .treeSize {
   font-size: 13px;
 }
+
+.backgroundDiv {
+  /* 设置div的尺寸 */
+  width: 100%;
+  height: 100%;
+  background-color: #FFFFFF;
+
+  /* 使用Base64编码的SVG作为背景图像 */
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNzEzNTE3ODc1OTUzIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9Ijg2NTciIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PHBhdGggZD0iTTgxNyA4MDBIMjA3YTgwIDgwIDAgMCAxLTgwLTgwVjI3MGE4MCA4MCAwIDAgMSA4MC04MGg2MTBhODAgODAgMCAwIDEgODAgODB2NDUwYTgwIDgwIDAgMCAxLTgwIDgweiBtMjktNTE5YTQwIDQwIDAgMCAwLTQwLTQwSDIxNmE0MCA0MCAwIDAgMC00MCA0MHY0MzBhNDAgNDAgMCAwIDAgNDAgNDBoNTkwYTQwIDQwIDAgMCAwIDQwLTQwVjI4MXpNNTk1IDYzMkg0MjlhMjUgMjUgMCAwIDEgMC01MGgxNjZhMjUgMjUgMCAwIDEgMCA1MHpNNDU3LjM4IDQ1Ny4xNTFsLTE0My43NiA4M2EyNSAyNSAwIDAgMS0yNS00My4zTDM5Ni42MTIgNDM0LjUgMjg4LjYyIDM3Mi4xNTFhMjUgMjUgMCAwIDEgMjUtNDMuM2wxNDMuNzYgODNhMjYuODA2IDI2LjgwNiAwIDAgMSAwIDQ1LjN6IiBmaWxsPSIjZTZlNmU2IiBwLWlkPSI4NjU4Ij48L3BhdGg+PC9zdmc+');
+
+  /* 不重复背景图像 */
+  background-repeat: no-repeat;
+
+  background-position: center;
+
+}

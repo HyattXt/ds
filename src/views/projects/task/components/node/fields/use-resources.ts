@@ -62,7 +62,7 @@ export function useResources(): IJsonItem {
       placeholder: t('project.node.resources_tips'),
       keyField: 'id',
       labelField: 'name',
-      loading: resourcesLoading
+      loading: resourcesLoading.value
     }
   }
 }

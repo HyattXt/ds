@@ -66,18 +66,6 @@ export default {
       }
     },
     {
-      path: '/projects/:projectCode/workflow/dataDev',
-      name: 'workflow-dataDev',
-      //component: components['projects-workflow-relation'],
-      component: components['projects-workflow-treemap_new'],
-      meta: {
-        title: '工作流定义',
-        activeMenu: 'projects',
-        showSide: true,
-        auth: []
-      }
-    },
-    {
       path: '/projects/:projectCode/workflow-definition',
       name: 'workflow-definition-list',
       component: components['projects-workflow-definition'],
