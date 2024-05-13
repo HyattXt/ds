@@ -287,15 +287,11 @@ function updateJsonObject(original, updates) {
 function ifSave() {
   let actualValues = tabData.value.filter(value => value !== undefined && value !== null);
   if(actualValues.length === 3) {
-    console.log('开始保存')
-    console.log(tabData.value[2])
     updateJsonObject(taskData.value, tabData.value[0])
     updateJsonObject(taskData.value, tabData.value[1])
     updateJsonObject(taskData.value, tabData.value[2])
     updateDatasource()
     configTabsVisible.value = !configTabsVisible.value
-  } else {
-    console.log('有报错，不保存')
   }
 }
 

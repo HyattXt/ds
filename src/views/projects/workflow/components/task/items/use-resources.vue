@@ -26,8 +26,6 @@ const resourcesModel = ref ({
 const json = [ Fields.useResources() ]
 
 const { rules, elements } = getElementByJson(json, resourcesModel.value)
-console.log(elements)
-console.log("elements")
 
 function save() {
   emit('update-resources', 2, resourcesModel.value);
