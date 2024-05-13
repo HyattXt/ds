@@ -6,10 +6,10 @@
             <div class="add-buttons">
               <span class="title">分类</span>
               <div class="button-item-toggle" @click="packHandle" :title="expandedKeys.length ? '收起' : '展开'">
-                <i :class="`iconfont icon-caret-${expandedKeys.length? 'top' : 'bottom'}`"></i>
+                <n-icon size="16" style="padding-top: 5px"><CaretUp v-if="expandedKeys.length"/><CaretDown v-else /></n-icon>
               </div>
               <div v-if="false" class="button-item" @click="packHandle" title="添加">
-                <i class="iconfont icon-cart_add"></i>
+                <n-icon size="16"><Add12Filled/></n-icon>
               </div>
             </div>
             <n-input
@@ -58,7 +58,7 @@
             <div class="cue-crud__body">
               <div class="cue-table">
                 <div class="cue-table-container">
-                  <el-table v-loading="loadingRef" :data="dataRef" border resizable highlight-current-row height="100%">
+                  <el-table v-loading="loadingRef" :data="dataRef" show-overflow-tooltip border resizable highlight-current-row height="100%">
                     <el-table-column type="expand" fixed>
                       <template #default="props">
                         <div style="margin: 6px">
@@ -121,8 +121,9 @@ import {
 } from '@vicons/antd'
 import { NIcon, useMessage } from "naive-ui";
 import {useRouter} from "vue-router";
-import {useLogin} from "@/views/login/use-login";
+import { CaretUp, CaretDown } from "@vicons/fa";
 import CrudHead from "@/components/cue/crud-header.vue"
+import {Add12Filled} from "@vicons/fluent";
 
 const TableData = reactive({
   tableList: [],

@@ -3,7 +3,7 @@
     <div class="cue-crud__body">
       <div class="cue-table">
         <div class="cue-table-container">
-          <el-table v-loading="loadingRef" :data="tableData" border resizable highlight-current-row height="100%" @current-change="handleCurrentChange">
+          <el-table v-loading="loadingRef" :data="tableData" show-overflow-tooltip border resizable highlight-current-row height="100%" @current-change="handleCurrentChange">
             <el-table-column type="index" fixed label="序号" width="50" align="center"/>
             <el-table-column
                 v-for="column in columnData"

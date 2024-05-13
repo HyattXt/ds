@@ -161,6 +161,7 @@ import CrudSplit from "@/components/cue/crud-split.vue";
 import CrudForm from "@/components/cue/crud-form.vue";
 import CrudHeader from "@/components/cue/crud-header.vue";
 import CrudPage from "@/components/cue/crud-page.vue";
+import {PencilAlt, TrashAlt} from "@vicons/fa";
 
 hljs.registerLanguage('javascript', javascript)
 
@@ -436,8 +437,8 @@ function renderSuffix({ option }) {
               ),
           default: () =>
               h('div', [
-                h('div', h(NButton, { onClick: () => updateTree(option.id, option.parentId), quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h('i',{class:"iconfont fa-pencil", 'aria-hidden':"true", style: {'font-size': '12px'}}),default: () =>"修改"} )),
-                h('div', h(NButton, { onClick: () => delTreeConfirm(option.id, option.titleName), disabled: option.children.length !== 0, quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h('i',{class:"iconfont fa-trash", 'aria-hidden':"true", style: {'font-size': '12px'}}),default: () =>"删除"} ))
+                h('div', h(NButton, { onClick: () => updateTree(option.id, option.parentId), quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h(NIcon,{ text: true ,size: '12'}, h(PencilAlt) ),default: () =>"修改"} )),
+                h('div', h(NButton, { onClick: () => delTreeConfirm(option.id, option.titleName), disabled: option.children.length !== 0, quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h(NIcon,{ text: true ,size: '12'}, h(TrashAlt) ),default: () =>"删除"} ))
               ])
         }
     )

@@ -5,10 +5,10 @@
       <div class="add-buttons">
         <span class="title">分类</span>
         <div class="button-item-toggle" @click="packHandle" :title="expandedKeys.length ? '收起' : '展开'">
-          <i :class="`iconfont icon-caret-${expandedKeys.length? 'top' : 'bottom'}`"></i>
+          <n-icon size="16" style="padding-top: 5px"><CaretUp v-if="expandedKeys.length"/><CaretDown v-else /></n-icon>
         </div>
         <div v-if="addButton" class="button-item" @click="$emit('addEvent')" title="添加">
-          <i class="iconfont icon-cart_add"></i>
+          <n-icon size="16"><Add12Filled/></n-icon>
         </div>
       </div>
       <n-input
@@ -97,9 +97,11 @@
 
 <script setup>
 
-import {ApartmentOutlined, SearchOutlined, TableOutlined} from "@vicons/antd";
-import {h, ref, unref} from "vue";
-import {NButton, NIcon, NPopover, useMessage} from "naive-ui";
+import { SearchOutlined} from "@vicons/antd";
+import { Add12Filled } from "@vicons/fluent";
+import { CaretUp, CaretDown } from "@vicons/fa";
+import { ref, unref} from "vue";
+import { NIcon, useMessage} from "naive-ui";
 import {ElButton} from "element-plus";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 

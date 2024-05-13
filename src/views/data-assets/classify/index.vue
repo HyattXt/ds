@@ -6,10 +6,10 @@
           <div class="add-buttons">
             <span class="title">分类</span>
             <div class="button-item-toggle" @click="packHandle" :title="expandedKeys.length ? '收起' : '展开'">
-              <i :class="`iconfont icon-caret-${expandedKeys.length? 'top' : 'bottom'}`"></i>
+              <n-icon size="16" style="padding-top: 5px"><CaretUp v-if="expandedKeys.length"/><CaretDown v-else /></n-icon>
             </div>
             <div v-if="true" class="button-item" @click="showAddRef=!showAddRef" title="添加">
-              <i class="iconfont icon-cart_add"></i>
+              <n-icon size="16"><Add12Filled/></n-icon>
             </div>
           </div>
           <n-input
@@ -219,7 +219,7 @@
               <el-checkbox v-model="detailPaginationReactive.tableDataLength" label="存储不为空" />
               <el-checkbox v-model="detailPaginationReactive.tableUpdateTime" label="近7日更新" />
             </el-form>
-            <el-table row-key="apiName"	ref="dataSetRef" @selection-change="handleSelectionChange" :data="detailDataRef" border resizable highlight-current-row height="100%">
+            <el-table row-key="apiName"	ref="dataSetRef" @selection-change="handleSelectionChange" :data="detailDataRef" border resizable show-overflow-tooltip highlight-current-row height="100%">
               <el-table-column type="selection" reserve-selection width="55" />
               <el-table-column type="index" fixed label="序号" width="50" align="center"/>
               <el-table-column prop="apiName" label="资产名称" align="center"/>
@@ -275,7 +275,7 @@
               <el-checkbox v-model="apiDetailPaginationReactive.apiComment" label="存在注释" />
               <el-checkbox v-model="apiDetailPaginationReactive.apiTimeConsuming" label="返回时间小于3S" />
             </el-form>
-            <el-table row-key="apiName"	ref="apiRef" @selection-change="handleSelectionChange" :data="apiDetailDataRef" border resizable highlight-current-row height="100%">
+            <el-table row-key="apiName"	ref="apiRef" @selection-change="handleSelectionChange" :data="apiDetailDataRef" border resizable show-overflow-tooltip highlight-current-row height="100%">
               <el-table-column type="selection" reserve-selection width="55" />
               <el-table-column type="index" fixed label="序号" width="50" align="center"/>
               <el-table-column prop="apiName" label="资产名称" align="center"/>
@@ -325,6 +325,8 @@ import CrudHead from "@/components/cue/crud-header.vue";
 import crudSplit from "@/components/cue/crud-split.vue";
 import {Search} from "@element-plus/icons-vue";
 import {ElMessageBox} from "element-plus";
+import { CaretUp, CaretDown, PencilAlt, TrashAlt } from '@vicons/fa'
+import {Add12Filled} from "@vicons/fluent";
 
 const TableData = reactive({
   tableList: [],
@@ -820,8 +822,8 @@ function renderSuffix({ option }) {
               ),
           default: () =>
               h('div', [
-                h('div', h(NButton, { onClick: () => updateTree(option.id, option.parentId), quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h('i',{class:"iconfont fa-pencil", 'aria-hidden':"true", style: {'font-size': '12px'}}),default: () =>"修改"} )),
-                h('div', h(NButton, { onClick: () => delTreeConfirm(option.id, option.titleName), disabled: option.children.length !== 0, quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h('i',{class:"iconfont fa-trash", 'aria-hidden':"true", style: {'font-size': '12px'}}),default: () =>"删除"} ))
+                h('div', h(NButton, { onClick: () => updateTree(option.id, option.parentId), quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h(NIcon,{ text: true ,size: '12'}, h(PencilAlt) ),default: () =>"修改"} )),
+                h('div', h(NButton, { onClick: () => delTreeConfirm(option.id, option.titleName), disabled: option.children.length !== 0, quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h(NIcon,{ text: true ,size: '12'}, h(TrashAlt) ),default: () =>"删除"} ))
               ])
         }
     )

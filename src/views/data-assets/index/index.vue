@@ -6,10 +6,10 @@
           <div class="add-buttons">
             <span class="title">分类</span>
             <div class="button-item-toggle" @click="packHandle" :title="expandedKeys.length ? '收起' : '展开'">
-              <i :class="`iconfont icon-caret-${expandedKeys.length? 'top' : 'bottom'}`"></i>
+              <n-icon size="16" style="padding-top: 5px"><CaretUp v-if="expandedKeys.length"/><CaretDown v-else /></n-icon>
             </div>
             <div v-if="true" class="button-item" @click="showAddRef=!showAddRef" title="添加">
-              <i class="iconfont icon-cart_add"></i>
+              <n-icon size="16"><Add12Filled/></n-icon>
             </div>
           </div>
           <n-input
@@ -359,6 +359,8 @@ import CrudHead from "@/components/cue/crud-header.vue";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 import {Search} from "@element-plus/icons-vue";
 import {ElMessageBox} from "element-plus";
+import {CaretUp, CaretDown, PencilAlt, TrashAlt} from "@vicons/fa";
+import {Add12Filled} from "@vicons/fluent";
 
 const TableData = reactive({
   tableList: [],
@@ -811,8 +813,8 @@ function renderSuffix({ option }) {
               ),
           default: () =>
               h('div', [
-                h('div', h(NButton, { onClick: () => updateTree(option.id, option.parentId), quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h('i',{class:"iconfont fa-pencil", 'aria-hidden':"true", style: {'font-size': '12px'}}),default: () =>"修改"} )),
-                h('div', h(NButton, { onClick: () => delTreeConfirm(option.id, option.titleName), disabled: option.children.length !== 0, quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h('i',{class:"iconfont fa-trash", 'aria-hidden':"true", style: {'font-size': '12px'}}),default: () =>"删除"} ))
+                h('div', h(NButton, { onClick: () => updateTree(option.id, option.parentId), quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h(NIcon,{ text: true ,size: '12'}, h(PencilAlt) ),default: () =>"修改"} )),
+                h('div', h(NButton, { onClick: () => delTreeConfirm(option.id, option.titleName), disabled: option.children.length !== 0, quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h(NIcon,{ text: true ,size: '12'}, h(TrashAlt) ),default: () =>"删除"} ))
               ])
         }
     )
