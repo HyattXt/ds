@@ -1,52 +1,37 @@
 <template>
-  <div class="m-sql-box">
+  <div class="m-shell-box">
     <CrudWorkflowTooltip
         @save-event="onTaskSubmit(taskData)"
-        @run-event="onTaskRun(taskData)"
-        @format-event="formatSql"
-        :disableRun="disableRun"
+        @run-event="onTaskRun"
+        @stop-event="onTaskStop"
+        :disableRun="logLoadingRef"
         :disableStop="disableStop"
-        showFormat
         :showOnline="props.readOnly"
     >
-      <template #right>
-        <div class="datasource"><span>数据源类型：</span> <span>{{taskData.type}}</span> <span>数据源：</span> <span>{{ dataSourceName }}</span></div>
-      </template>
     </CrudWorkflowTooltip>
-    <div class="right-bar"><div @click="openTab('first')">任务属性</div><div @click="openTab('second')">参数配置</div><div @click="openTab('third')">数据源配置</div></div>
-    <n-split class="split_lower" direction="vertical" v-model:size="logHeight" style="width: calc(100% - 36px)">
+    <div class="right-bar"><div @click="openTab('first')">任务属性</div><div @click="openTab('second')">参数配置</div><div @click="openTab('third')">资源源配置</div></div>
+    <n-split class="split_lower" direction="vertical" v-model:size="logHeight" @drag-move="handleOnDragMove" style="width: calc(100% - 36px)">
       <template #1>
         <div style="height: 100%">
           <Editor
               ref="editorRef"
-              :value="taskData.sql"
-              :onUpdateValue = "(value) => taskData.sql = value"
-              :options="{readOnly: props.readOnly, language: 'sql'}"
+              :value="taskData.rawScript"
+              :onUpdateValue = "(value) => taskData.rawScript = value"
+              :options="{readOnly: props.readOnly, language: 'shell' }"
               style="height: 100%"
           />
         </div>
       </template>
       <template #2>
-          <n-tabs v-model:value="editableTabsValue" type="card"  style="height: 100%" >
+          <n-tabs v-model:value="editableTabsValue" type="card" style="height: 100%;" >
             <template #suffix>
               <n-button @click="VerticalLog" text><n-icon size="16"><ArrowMinimizeVertical20Filled/></n-icon></n-button>
               <n-button @click="minimizeLog" text><n-icon size="16"><ArrowMinimize28Filled/></n-icon></n-button>
               <n-button @click="fullScreenLog" text><n-icon size="16"><FullScreenMinimize24Filled/></n-icon></n-button>
             </template>
             <n-tab-pane name="信息" tab="信息">
-              <div>执行时间:{{ elapsedTime/50 }}s</div>
-              <div>{{ runStatus }}</div>
-            </n-tab-pane>
-            <n-tab-pane
-                v-for="(item, index) in resultData"
-                :key="index"
-                :name="'结果' + (index + 1)"
-                :tab="tabProps(item, index)"
-            >
-              <div style="height: 100%">
-                <el-table :data="item" border show-overflow-tooltip	height="100%">
-                  <el-table-column v-for="key in Object.keys(item[0] || {})" :prop="key" :label="key"/>
-                </el-table>
+              <div style="height: 100%" ref="logRowsRef">
+                <n-log ref="logInst" :log="logMessage" :loading="logLoadingRef" :rows="logRows"/>
               </div>
             </n-tab-pane>
           </n-tabs>
@@ -69,7 +54,7 @@
           </el-tab-pane>
           <el-tab-pane label="数据源配置" name="third" >
             <div style="padding: 30px 20px; overflow: auto">
-              <UseDatasource :disabled="props.readOnly" @updateDatasource="updateTaskTab" ref="datasourceRef"  :formModel="taskData"/>
+              <UseResources :disabled="props.readOnly" @updateResources="updateTaskTab" ref="resourcesRef"  :formModel="taskData"/>
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -89,24 +74,19 @@
 </template>
 
 <script setup>
-import {h, inject, nextTick, onMounted, ref, watch} from "vue";
+import {inject, nextTick, onMounted, ref, watch, watchEffect, h} from "vue";
 import {queryTaskDefinitionByCode, updateWithUpstream} from "@/service/modules/task-definition";
 import CrudWorkflowTooltip from "@/components/cue/crud-workflow-tooltip.vue";
-import {queryDataSourceList} from "@/service/modules/data-source";
 import UseTaskProperties from "@/views/projects/workflow/components/task/items/use-task-properties.vue";
 import UseParameterConfiguration from "@/views/projects/workflow/components/task/items/use-parameter-configuration.vue";
-import UseDatasource from "@/views/projects/workflow/components/task/items/use-datasource.vue";
 import {NIcon, useMessage} from "naive-ui";
 import Editor from '@/components/monaco-editor'
 import {formatModel, formatParams as formatData} from "@/views/projects/task/components/node/format-data";
-import {useUserStore} from "@/store/user/user";
-import {runTask} from "@/service/modules/executors";
-import {
-  ArrowMinimize28Filled,
-  ArrowMinimizeVertical20Filled,
-  Circle24Filled,
-  FullScreenMinimize24Filled
-} from "@vicons/fluent";
+import {execute, startTaskInstance} from "@/service/modules/executors";
+import {queryLog, startImmediateLog} from "@/service/modules/log";
+import {useAsyncState} from "@vueuse/core";
+import UseResources from "@/views/projects/workflow/components/task/items/use-resources.vue";
+import {ArrowMinimize28Filled, FullScreenMinimize24Filled, ArrowMinimizeVertical20Filled} from "@vicons/fluent";
 
 const props = defineProps({
   taskCode: {
@@ -129,34 +109,32 @@ const props = defineProps({
 //src/views/projects/workflow/treemap/index.tsx
 const updateTab = inject('updateTab')
 const updateEdited = inject('updateEdited')
-const userStore = useUserStore()
-const userInfo = userStore.getUserInfo
 const message = useMessage()
+const saveBeforeRun = ref(false)
 const configTabsVisible = ref(false)
 const activeTabName = ref(1)
 const logHeight = ref('calc(100% - 90px)')
-const dataSourceList = ref()
-const dataSourceName = ref ('')
+const logRowsRef = ref()
+const logRows = ref(13)
 const taskProperRef = ref(null)
 const paramConfigRef = ref(null)
-const datasourceRef = ref(null)
+const resourcesRef = ref(null)
 const editorRef = ref()
 const tabData = ref([])
 const initTag = ref(false)
+const logLoadingRef = ref(false)
+const processInstanceId = ref()
 const limit = ref()
 const skipLineNum = ref()
+const logMessage = ref('')
 const disableStop = ref(true)
-const disableRun = ref(false)
-const elapsedTime = ref(0)
-const timerId = ref(0)
-const resultData = ref([])
+const logInst = ref()
 const editableTabsValue = ref('信息')
-const runStatus = ref('')
 const taskData = ref({
   code: '',
   name: '',
   description: '',
-  taskType: 'SQL',
+  taskType: 'SHELL',
   flag: 'YES',
   taskPriority: 'MEDIUM',
   workerGroup: 'default',
@@ -172,16 +150,7 @@ const taskData = ref({
 
   localParams: [],
   resourceList: [],
-  type: '',
-  datasource: '',
-  sql: '',
-  sqlType: '1',
-  preStatements: [],
-  postStatements: [],
-  segmentSeparator: '',
-  displayRows: 1000,
-  indicatorStatus: null,
-  indicatorCode: ''
+  rawScript: ''
 })
 
 const onTaskSubmit = async (data) => {
@@ -199,58 +168,62 @@ const onTaskSubmit = async (data) => {
     await initData()
     updateTab(data.code, data.name)
     updateEdited(taskData.value.code, false)
+    saveBeforeRun.value = false
     return true
   } catch (err) {
     return false
   }
 }
 
-const startTimer = () => {
-  runStatus.value = ''
-  elapsedTime.value = 0
-  timerId.value = setInterval(() => {
-    elapsedTime.value++;
-  }, 20);
-};
-
-const stopTimer = () => {
-  clearInterval(timerId.value);
-  timerId.value = 0;
-};
-
-const onTaskRun = async (data) => {
-  let runData = JSON.parse(JSON.stringify(data))
-  if(editorRef.value.getSelectionVal()){
-    runData.sql = editorRef.value.getSelectionVal()
-  }
-  startTimer()
-  resultData.value = []
-  editableTabsValue.value = '信息'
-  if(logHeight.value === 'calc(100% - 90px)') {
-    logHeight.value = 'calc(100% - 360px)'
-  }
-  disableStop.value = false
-  disableRun.value = true
-  try {
-    resultData.value = await runTask(props.projectCode, {taskDefinitionJson: '[' + JSON.stringify(formatData(runData).taskDefinitionJsonObj) + ']'})
-    runStatus.value = 'ok'
-  } catch (error) {
-    message.error( error.message)
-    runStatus.value = 'error'
-  } finally {
-    stopTimer()
-    disableStop.value = true
-    disableRun.value = false
+const onTaskRun = () => {
+  if(saveBeforeRun.value) {
+    message.info('任务处于已编辑状态，请先保存再运行!')
+  }else{
+    startTaskInstance(props.processCode, props.projectCode, {taskDefinitionCode: props.taskCode})
+    if(logHeight.value === 'calc(100% - 90px)') {
+      logHeight.value = 'calc(100% - 360px)'
+    }
+    logMessage.value = ''
+    logLoadingRef.value = true
+    limit.value = 1000
+    skipLineNum.value = 0
+    setTimeout(()=>{
+      disableStop.value = false
+      startImmediateLog(props.processCode, props.projectCode, {taskCode: props.taskCode})
+          .then((res) => {
+            getLogs(res)
+            processInstanceId.value = res.processInstanceId
+          })
+    },3000)
   }
 }
 
-const tabProps = (item, index) => {
-  return h('span',  [
-    h(NIcon, {
-      color: item[0].status === '失败' ? 'red' : 'green'
-    }, () => h(Circle24Filled) ),
-    h('span', ' 结果' + (index + 1))
-  ])
+const getLogs = (row) => {
+  const { state } = useAsyncState(
+      queryLog({
+        taskInstanceId: Number(row.id),
+        limit: limit.value,
+        skipLineNum: skipLineNum.value
+      }).then((res) => {
+        if (!'35679'.includes(res.state)) {
+          if(res?.message){
+            logMessage.value += res.message
+            limit.value += 100
+            skipLineNum.value += res.lineNum
+          }
+          if(disableStop.value){
+            setTimeout(()=>getLogs(row),3000)
+          }
+        } else {
+          logMessage.value += res.message
+          logLoadingRef.value = false
+          disableStop.value = true
+        }
+      }),
+      {}
+  )
+
+  return state
 }
 
 function VerticalLog () {
@@ -271,8 +244,16 @@ function fullScreenLog () {
   })
 }
 
-function formatSql () {
-  editorRef.value.sqlFormat()
+function onTaskStop () {
+  execute({
+    processInstanceId: processInstanceId.value,
+    executeType: 'STOP'
+  },
+  props.projectCode).then(() => {
+    disableStop.value = true
+    logLoadingRef.value = false
+    window.$message.success('成功')
+  })
 }
 
 function openTab (tab) {
@@ -280,19 +261,11 @@ function openTab (tab) {
   activeTabName.value = tab
 }
 
-function findNameById(id, dataSource) {
-  // 使用 find 方法在 dataSource 中查找第一个满足条件的对象
-  let foundObject = dataSource.find(obj => obj.id === id);
-
-  // 如果找到了对应的对象，返回它的 name 属性，否则返回 null
-  return foundObject ? foundObject.name : null;
-}
-
 function confirmTaskProperties() {
   tabData.value = []
   taskProperRef.value.save()
   paramConfigRef.value.save();
-  datasourceRef.value.save();
+  resourcesRef.value.save();
 }
 
 function updateTaskTab(index, val) {
@@ -314,21 +287,24 @@ function updateJsonObject(original, updates) {
 function ifSave() {
   let actualValues = tabData.value.filter(value => value !== undefined && value !== null);
   if(actualValues.length === 3) {
+    console.log('开始保存')
+    console.log(tabData.value[2])
     updateJsonObject(taskData.value, tabData.value[0])
     updateJsonObject(taskData.value, tabData.value[1])
     updateJsonObject(taskData.value, tabData.value[2])
     updateDatasource()
     configTabsVisible.value = !configTabsVisible.value
+  } else {
+    console.log('有报错，不保存')
   }
+}
+
+function  handleOnDragMove () {
+  logRows.value = Math.trunc((logRowsRef.value.offsetHeight)/17.5)
 }
 
 function cancelTaskProperties () {
   configTabsVisible.value = !configTabsVisible.value
-}
-
-async function updateDatasource() {
-  dataSourceList.value = await queryDataSourceList({type: taskData.value.type || 'MYSQL'})
-  dataSourceName.value = findNameById(taskData.value.datasource, dataSourceList.value)
 }
 
 async function initData() {
@@ -339,32 +315,35 @@ async function initData() {
     ...rest,
     ...taskParams
   }
-  if(!taskData.value.sql){
-    taskData.value.sql = '-- '+taskData.value.type+'\n' +
-        '-- *****************************************************************************\n' +
-        '-- author: '+userInfo.userName+'\n' +
-        '-- create_time: '+taskData.value.createTime+'\n' +
-        '-- *****************************************************************************'
-  }
-  await updateDatasource()
-  initTag.value = true
+  setTimeout(()=>{
+    initTag.value = true
+  },0)
+
 }
 
 watch(taskData, () => {
   if(initTag.value) {
     updateEdited(taskData.value.code, true)
+    saveBeforeRun.value = true
   }
 },{deep: true} );
 
 onMounted( () => {
   initData()
+  watchEffect(() => {
+    if (logMessage.value) {
+      nextTick(() => {
+        logInst.value?.scrollTo({ position: 'bottom', silent: true })
+      })
+    }
+  })
 })
 
 </script>
 
 <style lang="scss" scoped>
 
-.m-sql-box {
+.m-shell-box {
   width: 100%;
   height: calc(100vh - 100px);
   position: relative;
@@ -464,10 +443,7 @@ onMounted( () => {
       padding: 0 15px
     }
   }
-
-  :deep(.n-tabs-tab-pad) {
-    width: 0
-  }
 }
+
 
 </style>
