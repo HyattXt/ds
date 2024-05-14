@@ -45,6 +45,7 @@
             >
               <div style="height: 100%">
                 <el-table :data="item" border show-overflow-tooltip	height="100%">
+                  <el-table-column type="index" label="#"/>
                   <el-table-column v-for="key in Object.keys(item[0] || {})" :prop="key" :label="key"/>
                 </el-table>
               </div>
