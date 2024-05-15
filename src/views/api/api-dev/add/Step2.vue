@@ -27,10 +27,10 @@
       </n-card>
       <el-tabs v-model="activeName" type="border-card">
       <el-tab-pane name="请求参数" label="请求参数">
-          <n-data-table :columns="requestColumns" :data="requestParams" :max-height="100" class="table-padding" />
+          <n-data-table :columns="requestColumns" :data="requestParams" :max-height="122" class="table-padding" />
       </el-tab-pane>
       <el-tab-pane name="返回参数" label="返回参数">
-          <n-data-table :columns="returnColumns" :data="returnParams" :max-height="100" class="table-padding" />
+          <n-data-table :columns="returnColumns" :data="returnParams" :max-height="122" class="table-padding" />
       </el-tab-pane>
       </el-tabs>
     </n-gi>
