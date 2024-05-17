@@ -29,7 +29,7 @@
               <n-button @click="minimizeLog" text><n-icon size="16"><ArrowMinimize28Filled/></n-icon></n-button>
               <n-button @click="fullScreenLog" text><n-icon size="16"><FullScreenMinimize24Filled/></n-icon></n-button>
             </template>
-            <n-tab-pane name="信息" tab="信息">
+            <n-tab-pane name="信息" tab="运行日志">
               <div style="height: 100%" ref="logRowsRef">
                 <n-log ref="logInst" :log="logMessage" :loading="logLoadingRef" :rows="logRows"/>
               </div>
@@ -290,7 +290,6 @@ function ifSave() {
     updateJsonObject(taskData.value, tabData.value[0])
     updateJsonObject(taskData.value, tabData.value[1])
     updateJsonObject(taskData.value, tabData.value[2])
-    updateDatasource()
     configTabsVisible.value = !configTabsVisible.value
   }
 }
@@ -305,11 +304,10 @@ function cancelTaskProperties () {
 
 async function initData() {
   initTag.value = false
-  const {taskParams, ...rest } = formatModel(await queryTaskDefinitionByCode(props.taskCode, props.projectCode))
+  const params = formatModel(await queryTaskDefinitionByCode(props.taskCode, props.projectCode))
   taskData.value = {
     ...taskData.value,
-    ...rest,
-    ...taskParams
+    ...params
   }
   setTimeout(()=>{
     initTag.value = true
@@ -375,15 +373,6 @@ onMounted( () => {
     }
   }
 
-}
-
-.datasource {
-  margin-right: 15px;
-
-  & span:nth-child(2n) {
-    font-weight: 700;
-    margin-right: 15px;
-  }
 }
 
 .drawer-container {
