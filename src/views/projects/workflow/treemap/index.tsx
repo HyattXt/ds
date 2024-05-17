@@ -18,12 +18,11 @@
 import {defineComponent, onMounted, ref, unref, h, nextTick, VNode, provide} from 'vue'
 import {DropdownGroupOption, DropdownOption, NIcon, NPopconfirm, TreeOption, useMessage, NSplit} from 'naive-ui'
 import Detail from '../definition/detail'
-import {SqlBox, DataXBox, ShellBox } from '../components/task/index.js'
+import {SqlBox, DataXBox, ShellBox, PythonBox } from '../components/task/index.js'
 import { SearchOutlined } from '@vicons/antd';
 import {Circle24Filled, Add12Filled} from "@vicons/fluent";
 import { CaretUp, CaretDown } from "@vicons/fa";
 import Styles from "./index.module.scss";
-import {useThemeStore} from "@/store/theme/theme";
 import {useRoute} from "vue-router";
 import {useTreemap} from "@/views/projects/workflow/treemap/use-treemap";
 import { createProcessDefinition } from '@/service/modules/process-definition'
@@ -78,38 +77,39 @@ export default defineComponent({
         const taskDictionary = {
             'SQL': SqlBox,
             'DATAX': DataXBox,
-            'SHELL': ShellBox
+            'SHELL': ShellBox,
+            'PYTHON': PythonBox
         };
 
         const rules = {
-            model:{
-                titleName: {
-                    required: true,
-                    message: '请输入名称',
-                    trigger: 'blur'
-                }
-            },
             value:{
                 name:{
                     required: true,
                     message: '请输入名称',
                     trigger: 'blur'
+                },
+                model:{
+                    titleName: {
+                        required: true,
+                        message: '请输入名称',
+                        trigger: 'blur'
+                    }
+                },
+                renameFolderModel:{
+                    name:{
+                        required: true,
+                        message: '请输入名称',
+                        trigger: 'blur'
+                    }
+                },
+                renameWorkflowModel:{
+                    name:{
+                        required: true,
+                        message: '请输入名称',
+                        trigger: 'blur'
+                    }
                 }
             },
-            renameFolderModel:{
-                name:{
-                    required: true,
-                    message: '请输入名称',
-                    trigger: 'blur'
-                }
-            },
-            renameWorkflowModel:{
-                name:{
-                    required: true,
-                    message: '请输入名称',
-                    trigger: 'blur'
-                }
-            }
         }
 
         const ssoLogin = async () => {
@@ -321,34 +321,50 @@ export default defineComponent({
                     showDropdownRef.value = false
                     variables.value.delFolderModel.id = variables.value.moveFolderModel.id = variables.value.model.parentId = workflowModel.value.parentId = variables.value.renameFolderModel.id = option.id as number
                     variables.value.moveWorkflowModel.taskCode = variables.value.taskCode = variables.value.renameWorkflowModel.taskCode = option.taskCode as number
-                    if(option.type == 1) {
-                        dropdownOption.value =[
-                            {
-                                label: '新建文件夹',
-                                key: 'menu',
-                                disable: false
-                            },
-                            {
-                                label: '新建工作流',
-                                key: 'workflow',
-                                disable: false
-                            },
-                            {
-                                label: '重命名',
-                                key: 'renameMenu',
-                                disable: false
-                            },
-                            {
-                                label: '移动',
-                                key: 'removeMenu',
-                                disable: false
-                            },
-                            {
-                                label: '删除',
-                                key: 'deleteMenu',
-                                disable: true
-                            },
-                        ]
+                    if(option.type == 1 ) {
+                        if(option.id === 57 || option.id === 58){
+                            dropdownOption.value =[
+                                {
+                                    label: '新建文件夹',
+                                    key: 'menu',
+                                    disable: false
+                                },
+                                {
+                                    label: '新建工作流',
+                                    key: 'workflow',
+                                    disable: false
+                                }
+                            ]
+                        } else {
+                            dropdownOption.value =[
+                                {
+                                    label: '新建文件夹',
+                                    key: 'menu',
+                                    disable: false
+                                },
+                                {
+                                    label: '新建工作流',
+                                    key: 'workflow',
+                                    disable: false
+                                },
+                                {
+                                    label: '重命名',
+                                    key: 'renameMenu',
+                                    disable: false
+                                },
+                                {
+                                    label: '移动',
+                                    key: 'removeMenu',
+                                    disable: false
+                                },
+                                {
+                                    label: '删除',
+                                    key: 'deleteMenu',
+                                    disable: true
+                                },
+                            ]
+                        }
+
                     }
                     if(option.type == 2){
                         dropdownOption.value = [
@@ -605,14 +621,14 @@ export default defineComponent({
                             rules={rules}
                             model={variables}
                         >
-                            <n-form-item label="文件夹名称" path="model.titleName">
+                            <n-form-item label="文件夹名称" path="value.model.titleName">
                                 <n-input
                                     type="text"
                                     v-model:value={variables.value.model.titleName}
                                     placeholder="输入文件夹名称"
                                 />
                             </n-form-item>
-                            <n-form-item label="目标文件夹" path="inputValue">
+                            <n-form-item label="目标文件夹" path="value.model.parentId">
                                 <n-tree-select
                                     options={variables.value.folderData}
                                     key-field="id"
@@ -640,7 +656,7 @@ export default defineComponent({
                                 rules={rules}
                                 model={variables}
                             >
-                                <n-form-item label="文件夹名称" path="renameFolderModel.name">
+                                <n-form-item label="文件夹名称" path="value.renameFolderModel.name">
                                     <n-input
                                         type="text"
                                         v-model:value={variables.value.renameFolderModel.name}
@@ -665,7 +681,7 @@ export default defineComponent({
                                 rules={rules}
                                 model={variables}
                             >
-                                <n-form-item label="目标文件夹" path="inputValue">
+                                <n-form-item label="目标文件夹" path="value.moveFolderModel.parentId">
                                     <n-tree-select
                                         options={variables.value.folderData}
                                         key-field="id"
