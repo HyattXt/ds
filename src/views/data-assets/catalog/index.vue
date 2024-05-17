@@ -49,7 +49,6 @@
                 children-field="children"
                 :render-prefix="menuIcon"
                 :nodeProps="nodeProps"
-                default-expand-all
             />
           </n-card>
         </n-gi>

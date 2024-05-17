@@ -97,8 +97,8 @@ const Navbar = defineComponent({
             mode='horizontal'
             options={this.iconOptions}
             onUpdateValue={this.handleMenuClick}
+            style={"justify-content: flex-end;"}
           />
-          <Alert/>
           <Theme/>
           <Project/>
           <User userDropdownOptions={this.userDropdownOptions} />
