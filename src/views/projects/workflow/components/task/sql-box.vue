@@ -3,6 +3,7 @@
     <CrudWorkflowTooltip
         @save-event="onTaskSubmit(taskData)"
         @run-event="onTaskRun(taskData)"
+        @stop-event="onTaskStop"
         @format-event="formatSql"
         :disableRun="disableRun"
         :disableStop="disableStop"
@@ -101,7 +102,8 @@ import {NIcon, useMessage} from "naive-ui";
 import Editor from '@/components/monaco-editor'
 import {formatModel, formatParams as formatData} from "@/views/projects/task/components/node/format-data";
 import {useUserStore} from "@/store/user/user";
-import {runTask} from "@/service/modules/executors";
+import {runTask, stopTask} from "@/service/modules/executors";
+import { v4 as uuidV4 } from "uuid"
 import {
   ArrowMinimize28Filled,
   ArrowMinimizeVertical20Filled,
@@ -153,6 +155,8 @@ const timerId = ref(0)
 const resultData = ref([])
 const editableTabsValue = ref('信息')
 const runStatus = ref('')
+const uuid = ref('')
+const stopStatus = ref(false)
 const taskData = ref({
   code: '',
   name: '',
@@ -232,17 +236,35 @@ const onTaskRun = async (data) => {
   }
   disableStop.value = false
   disableRun.value = true
+  stopStatus.value = false
+  uuid.value = uuidV4()
   try {
-    resultData.value = await runTask(props.projectCode, {taskDefinitionJson: '[' + JSON.stringify(formatData(runData).taskDefinitionJsonObj) + ']'})
+    resultData.value = await runTask(props.projectCode, {taskDefinitionJson: '[' + JSON.stringify(formatData(runData).taskDefinitionJsonObj) + ']', threadName: uuid.value})
     runStatus.value = 'ok'
   } catch (error) {
-    message.error( error.message)
-    runStatus.value = 'error'
+    if(stopStatus.value){
+      runStatus.value = 'cancel'
+    } else {
+      message.error( error.message)
+      runStatus.value = 'error'
+    }
   } finally {
     stopTimer()
     disableStop.value = true
     disableRun.value = false
   }
+}
+
+const onTaskStop = async () => {
+  stopStatus.value = false
+  let res = await stopTask(props.projectCode, uuid.value)
+  if(res) {
+    message.info("停止成功")
+    runStatus.value = 'cancel'
+  }
+  stopTimer()
+  stopStatus.value = true
+  disableStop.value = true
 }
 
 const tabProps = (item, index) => {
