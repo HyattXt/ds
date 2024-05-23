@@ -13,7 +13,7 @@
     <n-split class="split_lower" direction="vertical" v-model:size="logHeight" @drag-move="handleOnDragMove" style="width: calc(100% - 36px)">
       <template #1>
         <div class="build-form">
-          <NForm :disabled="props.disabled" size="small" label-placement="left" label-align="right" label-width="100" :model="taskData" :rules="rules" ref="formRef">
+          <NForm :disabled="props.readOnly" size="small" label-placement="left" label-align="right" label-width="100" :model="taskData" :rules="rules" ref="formRef">
             <n-collapse :default-expanded-names="['1', '2', '3', '4']">
               <n-collapse-item  name="1">
                 <template #header>
@@ -40,7 +40,7 @@
                           <n-select v-model:value="taskData.dataSource" @update:value="updateSourceTableList" label-field="name" value-field="id" :options="dataSourceList"/>
                         </n-form-item-gi>
                         <n-form-item-gi :span="datasourceSpan" label="表名" path="sourceTable" key="sourceTable">
-                          <n-select v-model:value="taskData.sourceTable" @update:value="updateSplitPk" filterable :options="sourceTableList"/>
+                          <n-select v-model:value="taskData.sourceTable" @update:value="updateSplitPk" label-field="TABLE_NAME" value-field="TABLE_NAME" filterable :options="sourceTableList"/>
                         </n-form-item-gi>
                         <n-form-item-gi :span="12" label="读取模式" key="executeMode">
                           <n-radio-group v-model:value="taskData.executeMode" @update:value="initConstants">
@@ -73,6 +73,8 @@
                           <NSelect
                               v-model:value="taskData.splitPk"
                               :options="splitPkOption"
+                              label-field="TABLE_NAME"
+                              value-field="TABLE_NAME"
                               @click="updateSplitPk"
                               filterable
                           />
@@ -99,9 +101,9 @@
                           <n-select v-model:value="taskData.dataTarget" @update:value="updateTargetTableList" label-field="name" value-field="id" :options="dataTargetList"/>
                         </n-form-item-gi>
                         <n-form-item-gi :span="12" label="表名" path="targetTable" key="targetTable">
-                          <n-select v-model:value="taskData.targetTable" filterable :options="targetTableList"/>
+                          <n-select v-model:value="taskData.targetTable" label-field="TABLE_NAME" value-field="TABLE_NAME" filterable :options="targetTableList"/>
                         </n-form-item-gi>
-                        <n-form-item-gi :span="8" label="写入模式" key="writeMode">
+                        <n-form-item-gi :span="writeModeSpan" label="写入模式" key="writeMode">
                           <n-radio-group v-model:value="taskData.writeMode">
                             <n-space>
                               <n-radio key="insert" value="insert">
@@ -124,22 +126,22 @@
                             <p>控制写入数据到目标表采用 insert into 或者 replace into 或者 ON DUPLICATE KEY UPDATE 语句。</p>
                           </n-tooltip>
                         </n-form-item-gi>
-                        <n-form-item-gi :span="4"  key="createTable" style="display: flex; justify-content: flex-end;">
+                        <n-form-item-gi :span="12-writeModeSpan"  key="createTable" style="display: flex; justify-content: flex-end;">
                           <div>
                             <n-button quaternary type="info" @click="getTableSql">生成目标表</n-button>
                           </div>
                         </n-form-item-gi>
-                        <n-form-item-gi :span="12" label="前置SQL" key="preStatements">
+                        <n-form-item-gi :span="12" label="前置SQL" key="preSql">
                           <NInput
                               type="textarea"
-                              v-model:value="taskData.preStatements"
+                              v-model:value="taskData.preSql"
                               placeholder="请输入导入数据前执行的SQL脚本"
                           />
                         </n-form-item-gi>
-                        <n-form-item-gi :span="12" label="后置SQL" key="postStatements">
+                        <n-form-item-gi :span="12" label="后置SQL" key="postSql">
                           <NInput
                               type="textarea"
-                              v-model:value="taskData.postStatements"
+                              v-model:value="taskData.postSql"
                               placeholder="请输入导入数据后执行的SQL脚本"
                           />
                         </n-form-item-gi>
@@ -158,10 +160,10 @@
                   <NGrid :cols="12" :x-gap="20">
                     <n-form-item-gi :span="12">
                       <NSpace justify="start">
-                        <NButton type="info" size="small" @click="getTableColumn">获取字段</NButton>
-                        <NButton type="info" size="small" @click="sameLine">同行关联</NButton>
-                        <NButton type="info" size="small" @click="sameName">同名关联</NButton>
-                        <NButton type="info" size="small" @click="disassociate">取消关联</NButton>
+                        <NButton :disabled="props.readOnly" type="info" size="small" @click="getTableColumn">获取字段</NButton>
+                        <NButton :disabled="props.readOnly" type="info" size="small" @click="sameLine">同行关联</NButton>
+                        <NButton :disabled="props.readOnly" type="info" size="small" @click="sameName">同名关联</NButton>
+                        <NButton :disabled="props.readOnly" type="info" size="small" @click="disassociate">取消关联</NButton>
                       </NSpace>
                     </n-form-item-gi>
                     <n-gi :span="12">
@@ -176,6 +178,7 @@
                           :dsType="taskData.dsType"
                           :dtType="taskData.dtType"
                           :taskCode="props.taskCode"
+                          :disabled="props.readOnly"
                           @save-jsplumb="saveJsplumb"
                       />
                     </n-gi>
@@ -318,8 +321,13 @@
 </template>
 
 <script setup>
-import { inject, nextTick, onMounted, ref, watch, watchEffect} from "vue";
-import {querySqlColum, queryTaskDefinitionByCode, updateWithUpstream} from "@/service/modules/task-definition";
+import {computed, inject, nextTick, onMounted, ref, watch, watchEffect} from "vue";
+import {
+  querySqlColum,
+  queryTaskConnect,
+  queryTaskDefinitionByCode,
+  updateWithUpstream
+} from "@/service/modules/task-definition";
 import CrudWorkflowTooltip from "@/components/cue/crud-workflow-tooltip.vue";
 import UseTaskProperties from "@/views/projects/workflow/components/task/items/use-task-properties.vue";
 import UseParameterConfiguration from "@/views/projects/workflow/components/task/items/use-parameter-configuration.vue";
@@ -332,15 +340,12 @@ import {useAsyncState} from "@vueuse/core";
 import {
   ArrowMinimize28Filled,
   ArrowMinimizeVertical20Filled,
-  Circle24Filled,
   FullScreenMinimize24Filled
 } from "@vicons/fluent";
 import {
   QuestionCircleTwotone
 } from "@vicons/antd";
 import {
-  getDatasourceTableColumnsById,
-  getDatasourceTablesById,
   queryDataSourceList
 } from "@/service/modules/data-source";
 import {find, lowerCase} from "lodash";
@@ -399,7 +404,22 @@ const splitPkOption = ref()
 const sqlEditorSpan = ref(0)
 const datasourceSpan = ref(12)
 const splitPkSpan = ref(12)
+const writeModeSpan = computed(() => (taskData.value.dtType === 'MYSQL' && taskData.value.dataTarget ? 8 : 0))
 const showSqlModal = ref(false)
+const jdbcConnectInfo = ref({
+   sourceConnect : {
+     jdbcUrl: '',
+     password: '',
+     user: '',
+     database: ''
+   },
+   targetConnect : {
+     jdbcUrl: '',
+     password: '',
+     user: '',
+     database: ''
+   }
+})
 const SecondDevCreateUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_API_URL
     : window.webConfig.VITE_APP_PROD_API_URL
@@ -445,8 +465,10 @@ const taskData = ref({
   channel: 1,
   record: 0,
   percentage: 0,
-  preStatements: '',
-  postStatements: '',
+  preStatements: [],
+  postStatements: [],
+  preSql: '',
+  postSql: '',
   jsonConfig: false,
   json: '',
   xms: 1,
@@ -632,7 +654,9 @@ const datasourceTypes = [
 
 const onTaskSubmit = async (data) => {
   jsplumbRef.value.save()
+  taskData.value.json = formatJson()
   const params = formatData(data)
+  console.log(params)
   try {
     await updateWithUpstream(
         props.projectCode,
@@ -684,12 +708,15 @@ const getLogs = (row) => {
         skipLineNum: skipLineNum.value
       }).then((res) => {
         if (!'35679'.includes(res.state)) {
+          console.log('1')
           if(res?.message){
             logMessage.value += res.message
             limit.value += 100
             skipLineNum.value += res.lineNum
+            console.log('2')
           }
-          if(disableStop.value){
+          if(!disableStop.value){
+            console.log('3')
             setTimeout(()=>getLogs(row),3000)
           }
         } else {
@@ -717,6 +744,14 @@ const initConstants = () => {
   }
 }
 
+const getConnect = (id, type)=>{
+  queryTaskConnect(id).then(
+      (res) => {
+        if( type === 'dataSource' ){ jdbcConnectInfo.value.sourceConnect = res } else { jdbcConnectInfo.value.targetConnect = res }
+      }
+  )
+}
+
 async function updateDataSource(type) {
   dataSourceList.value = await queryDataSourceList({type: type || 'MYSQL'})
   if (!dataSourceList.value.length && taskData.value.dataSource) {
@@ -728,6 +763,7 @@ async function updateDataSource(type) {
     if (!item) {
       taskData.value.dataSource = null
       taskData.value.sourceTable = null
+      taskData.value.splitPk = null
     }
   }
 }
@@ -747,10 +783,24 @@ async function updateDataTarget(type) {
   }
 }
 
+async function getDatasourceTables(dataSource ,type) {
+  let url = SecondDevCreateUrl + '/HDataApi/apiService/getTableByDataSourceId'
+  let params = {
+    type: type,
+    id: dataSource
+  }
+  try {
+    const response = await axios.post(url, params);
+    return response.data.data;
+  } catch (error) {
+    message.error(error);
+  }
+}
+
 async function updateSourceTableList(dataSource) {
   if(dataSource) {
     try {
-      sourceTableList.value = await getDatasourceTablesById(dataSource)
+      sourceTableList.value = await getDatasourceTables(dataSource, datasourceTypes.find(datasource => datasource.value === taskData.value.dsType)?.id)
     } catch (err) {
       sourceTableList.value = []
     }
@@ -766,12 +816,24 @@ async function updateSourceTableList(dataSource) {
       taskData.value.splitPk = null
     }
   }
+  getConnect(dataSource, 'dataSource')
+}
+
+async function initSourceTableList(dataSource, type) {
+  if(dataSource) {
+    try {
+      sourceTableList.value = await getDatasourceTables(dataSource, type)
+    } catch (err) {
+      sourceTableList.value = []
+    }
+  }
+  getConnect(dataSource, 'dataSource')
 }
 
 async function updateTargetTableList(dataSource) {
     if(dataSource) {
       try {
-        targetTableList.value = await getDatasourceTablesById(dataSource)
+        targetTableList.value = await getDatasourceTables(dataSource, datasourceTypes.find(datasource => datasource.value === taskData.value.dtType)?.id)
       } catch (err) {
         targetTableList.value = []
       }
@@ -785,11 +847,38 @@ async function updateTargetTableList(dataSource) {
       taskData.value.targetTable = null
     }
   }
+  getConnect(dataSource, 'dataTarget')
+}
+
+async function initTargetTableList(dataSource, type) {
+  if(dataSource) {
+    try {
+      targetTableList.value = await getDatasourceTables(dataSource, type)
+    } catch (err) {
+      targetTableList.value = []
+    }
+  }
+  getConnect(dataSource, 'dataTarget')
+}
+
+async function getDatasourceTableColumns(dataSource, table) {
+  const url = SecondDevCreateUrl + '/HDataApi/apiService/getColumnsByTable'
+  const params = {
+    type: datasourceTypes.find(datasource => datasource.value === taskData.value.dsType)?.id,
+    id: dataSource,
+    tableName: table
+  }
+  try {
+    const response = await axios.post(url, params);
+    return response.data.data;
+  } catch (error) {
+    message.error(error);
+  }
 }
 
 async function updateSplitPk() {
   if(taskData.value.sourceTable){
-    splitPkOption.value = await getDatasourceTableColumnsById(
+    splitPkOption.value = await getDatasourceTableColumns(
         taskData.value.dataSource,
         taskData.value.sourceTable
     )
@@ -859,7 +948,11 @@ function executeTableSql() {
 }
 
 function getTableColumn() {
-  if( taskData.value.rightList.length) disassociate()
+  console.log(taskData.value)
+  if( taskData.value.rightData.length) {
+    disassociate()
+    console.log("disassociate")
+  }
   let getCol = SecondDevCreateUrl + '/HDataApi/apiService/getColumnsByTable'
   let targetBody = {
     id: taskData.value.dataTarget,
@@ -868,6 +961,8 @@ function getTableColumn() {
   }
   if ( (taskData.value.executeMode === '0' ? !!taskData.value.sourceTable : !!taskData.value.sql) && !!taskData.value.targetTable )
   {
+    taskData.value.leftData = []
+    taskData.value.rightData = []
     axios
         .post(getCol, targetBody)
         .then(async function (response) {
@@ -880,63 +975,63 @@ function getTableColumn() {
                     label: '',
                     type: ''
                   }
-                  res.id = 'T' + taskData.value.dtType + taskData.value.dataTarget + item.TABLE_NAME
+                  res.id = 'T' + props.taskCode + item.TABLE_NAME
                   res.label = item.TABLE_NAME
                   res.type = item.COLUMN_TYPE
                   return res
                 }
             )
-          }
 
-          if (taskData.value.executeMode === '0') {
-            let sourceBody = {
-              id: taskData.value.dataSource,
-              type: datasourceTypes.find(datasource => datasource.value === taskData.value.dsType)?.id,
-              tableName: taskData.value.sourceTable
-            }
-            axios
-                .post(getCol, sourceBody)
-                .then(function (response) {
-                  if (response.data.status === 0) {
-                    message.error(response.data.error)
-                  } else {
-                    taskData.value.leftData = response.data.data.map(item => {
-                          let res = {
-                            id: '',
-                            label: '',
-                            type: ''
+            if (taskData.value.executeMode === '0') {
+              let sourceBody = {
+                id: taskData.value.dataSource,
+                type: datasourceTypes.find(datasource => datasource.value === taskData.value.dsType)?.id,
+                tableName: taskData.value.sourceTable
+              }
+              axios
+                  .post(getCol, sourceBody)
+                  .then(function (response) {
+                    if (response.data.status === 0) {
+                      message.error(response.data.error)
+                    } else {
+                      taskData.value.leftData = response.data.data.map(item => {
+                            let res = {
+                              id: '',
+                              label: '',
+                              type: ''
+                            }
+                            res.id = 'S' + props.taskCode + item.TABLE_NAME
+                            res.label = item.TABLE_NAME
+                            res.type = item.COLUMN_TYPE
+                            return res
                           }
-                          res.id = 'S' + taskData.value.dsType + taskData.value.dataSource + item.TABLE_NAME
-                          res.label = item.TABLE_NAME
-                          res.type = item.COLUMN_TYPE
-                          return res
-                        }
-                    )
-                  }
-                  nextTick(()=>{
-                    jsplumbRef.value.init()
+                      )
+                    }
+                    setTimeout(()=>{
+                      jsplumbRef.value.init()
+                    },1)
                   })
-                })
-                .catch(function (error) {
-                  message.error(error)
-                })
-          } else {
-            const res = await querySqlColum(taskData.value.sql)
-            taskData.value.leftData = res.map((item) => {
-                  let res = {
-                    id: '',
-                    label: '',
-                    type: ''
+                  .catch(function (error) {
+                    message.error(error)
+                  })
+            } else {
+              const res = await querySqlColum(taskData.value.sql)
+              taskData.value.leftData = res.map((item) => {
+                    let res = {
+                      id: '',
+                      label: '',
+                      type: ''
+                    }
+                    res.id = 'S' + props.taskCode + item.TABLE_NAME
+                    res.label = item.TABLE_NAME
+                    res.type = item.COLUMN_TYPE
+                    return res
                   }
-                  res.id = 'S' + taskData.value.dsType + taskData.value.dataSource + item.TABLE_NAME
-                  res.label = item.TABLE_NAME
-                  res.type = item.COLUMN_TYPE
-                  return res
-                }
-            )
-            nextTick(()=>{
-              jsplumbRef.value.init()
-            },)
+              )
+              setTimeout(()=>{
+                jsplumbRef.value.init()
+              },1)
+            }
           }
         })
         .catch(function (error) {
@@ -944,6 +1039,9 @@ function getTableColumn() {
         })
 
   }else message.error('必须填写表名或查询语句以获取字段！')
+
+  console.log(taskData.value.rightData)
+  console.log("taskData.value.rightData")
 }
 
 function disassociate() {
@@ -970,9 +1068,15 @@ function sameLine() {
   }
 }
 
+function repaintPlumb() {
+  if (jsplumbRef.value && taskData.value.rightData.length) {
+    jsplumbRef.value.repaintPlumb()
+  }
+}
+
 function saveJsplumb(left, right) {
-  taskData.value.leftData = left
-  taskData.value.rightData = right
+  taskData.value.leftList = left
+  taskData.value.rightList = right
 }
 
 function formatJson() {
@@ -987,19 +1091,16 @@ function formatJson() {
               "connection": [
                 {
                   "jdbcUrl": [
-                    sourceConnect.value.jdbcUrl
+                    jdbcConnectInfo.value.sourceConnect.jdbcUrl
                   ],
                   "table": [
                     taskData.value.sourceTable
-                  ],
-                  "querySql": [
-                    taskData.value.sql
                   ]
                 }
               ],
-              "password": sourceConnect.value.password,
+              "password": jdbcConnectInfo.value.sourceConnect.password,
               "splitPk": taskData.value.splitPk,
-              "username": sourceConnect.value.user,
+              "username": jdbcConnectInfo.value.sourceConnect.user,
               "where": taskData.value.where
             }
           },
@@ -1009,16 +1110,16 @@ function formatJson() {
               "column": taskData.value.rightList,
               "connection": [
                 {
-                  "jdbcUrl": targetConnect.value.jdbcUrl,
+                  "jdbcUrl": jdbcConnectInfo.value.targetConnect.jdbcUrl,
                   "table": [
                     taskData.value.targetTable
                   ]
                 }
               ],
-              "password": targetConnect.value.password,
-              "postSql": taskData.value.postStatements,
-              "preSql": taskData.value.preStatements,
-              "username": targetConnect.value.user
+              "password": jdbcConnectInfo.value.targetConnect.password,
+              "username": jdbcConnectInfo.value.targetConnect.user,
+              "postSql": [taskData.value.postSql],
+              "preSql": [taskData.value.preSql]
             }
           }
         }
@@ -1036,8 +1137,9 @@ function formatJson() {
       }
     }
   }
-  if(taskData.value.dtType === 'MYSQL') json.job.content.writer.parameter['writeMode'] = [ taskData.value.writeMode ]
-
+  console.log(json)
+  if(taskData.value.dtType === 'MYSQL') json.job.content[0].writer.parameter['writeMode'] =  taskData.value.writeMode
+  if(taskData.value.executeMode === '1') json.job.content[0].reader.parameter['querySql'] = [ taskData.value.sql ]
   return JSON.stringify(json,null,4)
 }
 
@@ -1123,6 +1225,10 @@ async function initData() {
      await updateDataSource(params.dsType)
      await updateDataTarget(params.dtType)
   }
+  if(params.dataSource){
+    await initSourceTableList(params.dataSource, datasourceTypes.find(datasource => datasource.value === params.dsType)?.id)
+    await initTargetTableList(params.dataTarget, datasourceTypes.find(datasource => datasource.value === params.dtType)?.id)
+  }
 
   taskData.value = {
     ...taskData.value,
@@ -1135,12 +1241,9 @@ async function initData() {
     initTag.value = true
     console.log(taskData.value)
   },0)
-
-  if(params.dataSource){
-    await updateSourceTableList(params.dataSource)
-    await updateTargetTableList(params.dataTarget)
-  }
 }
+
+defineExpose({ repaintPlumb })
 
 watch(taskData, () => {
   if(initTag.value) {

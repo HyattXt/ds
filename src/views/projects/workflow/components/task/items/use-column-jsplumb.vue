@@ -2,7 +2,8 @@
 
 import jsPlumb from 'jsplumb'
 import {onMounted, ref, nextTick} from 'vue';
-import {useMessage} from "naive-ui";
+import {NIcon, useMessage} from "naive-ui";
+import {CancelOutlined} from "@vicons/material";
 
 const props = defineProps({
   leftData: {
@@ -46,6 +47,8 @@ const props = defineProps({
 const container = ref(null);
 const jsplumb = jsPlumb.jsPlumb
 let plumbins = null // 缓存实例化的jsplumb对象
+const showDeleteIcon = ref(false);
+const deleteIconStyle = ref({ top: '0px', left: '0px' });
 
 const message = useMessage()
 const emit = defineEmits(['save-jsplumb'])
@@ -76,18 +79,53 @@ function init()  {
           width: 8,
           length: 8,
           id: 'ARROW',
-        }],
+        }]
       ]
     });
-    // 双击删除连线
-    plumbins.bind("dblclick", (connection, originalEvent) => {
-      plumbins.deleteConnection(connection);
-      getConnection()
+    // 点击删除连线
+    plumbins.bind("click", (connection, originalEvent) => {
+      if(props.disabled) {
+        originalEvent.preventDefault();
+        originalEvent.stopPropagation();
+      } else {
+        plumbins.deleteConnection(connection);
+        showDeleteIcon.value = false;
+        getConnection()
+      }
     });
     plumbins.bind("connection", (conn, originEvent) => {
       // 数据存入
       getConnection()
     });
+
+    plumbins.bind("mouseover", (connectionInfo, originalEvent) => {
+      if(props.disabled) {
+        originalEvent.preventDefault();
+        originalEvent.stopPropagation();
+      } else {
+        const sourceElement = document.getElementById(connectionInfo.sourceId);
+        const targetElement = document.getElementById(connectionInfo.targetId);
+
+        const sourceRect = sourceElement.getBoundingClientRect();
+        const targetRect = targetElement.getBoundingClientRect();
+
+        // 你可以据此计算源和目标的中心位置（clientX, clientY）
+        const sourceClientX = sourceRect.left + window.scrollX + sourceRect.width / 2;
+        const sourceClientY = sourceRect.top + window.scrollY + sourceRect.height / 2;
+
+        const targetClientX = targetRect.left + window.scrollX + targetRect.width / 2;
+        const targetClientY = targetRect.top + window.scrollY + targetRect.height / 2;
+
+        deleteIconStyle.value.left = `${(sourceClientX+targetClientX-30)/2}px`;
+        deleteIconStyle.value.top = `${(sourceClientY+targetClientY-15)/2}px`;
+        showDeleteIcon.value = true;
+      }
+
+    });
+    plumbins.bind("mouseout", (c) => {
+      showDeleteIcon.value = false;
+    });
+
     plumbins.batch(() => {
       props.leftData.forEach((item, index) => {
         initNode(item.id, "source");
@@ -98,6 +136,13 @@ function init()  {
     });
   });
   window.addEventListener("resize", repaintPlumb);
+  //禁用连接的拖拽和删除
+  if(props.disabled){
+    plumbins.importDefaults({
+      ConnectionsDetachable: false,
+      ReattachConnections: false
+    });
+  }
 }
 
 function initNode(id, type) {
@@ -130,8 +175,9 @@ function initNode(id, type) {
         outlineWidth: 2,
       },
       connectorHoverStyle: {
-        // strokeWidth: 2,
-        stroke: '#216477',
+        strokeWidth: 3,
+        stroke: '#F0A020',
+        cursor: 'pointer',
       },
     });
   } else {
@@ -160,6 +206,7 @@ function repaintPlumb() {
 function disassociate() {
   console.log('disassociate')
   let activities = plumbins.getConnections();
+  console.log(activities)
   activities.forEach((activeitem, index) => {
     plumbins.deleteConnection(activeitem)
   })
@@ -211,18 +258,20 @@ function getConnection()  {
   {
     let sortData = props.leftData.map(item=>item.label)
     connections.sort((a, b) => {
-      return sortData.indexOf(a.sourceId.replace('S' + props.dsType + props.dataSource, '')) - sortData.indexOf(b.sourceId.replace('S' + props.dsType + props.dataSource, ''));
+      return sortData.indexOf(a.sourceId.replace('S' + props.taskCode, '')) - sortData.indexOf(b.sourceId.replace('S' + props.taskCode, ''));
     })
   }
   for (var i in connections) {
-    readColumn.push(connections[i].sourceId.replace('S' + props.dsType + props.dataSource, ''))
-    writerColumn.push(connections[i].targetId.replace('T' + props.dtType + props.dataTarget, ''))
+    readColumn.push(connections[i].sourceId.replace('S' + props.taskCode, ''))
+    writerColumn.push(connections[i].targetId.replace('T' + props.taskCode, ''))
   }
   leftList.value  = readColumn
   rightList.value  = writerColumn
+  console.log(leftList.value)
+  console.log(rightList.value)
 }
 
-defineExpose({save, disassociate, sameName, sameLine, init})
+defineExpose({save, disassociate, sameName, sameLine, init, repaintPlumb})
 
 /*watch(() => props.rightList, () => {
   if (container.value) {
@@ -231,19 +280,19 @@ defineExpose({save, disassociate, sameName, sameLine, init})
 }, { deep: true });*/
 
 onMounted( () => {
-  nextTick(()=>{
+  setTimeout(()=>{
     if( props.rightList.length && container.value){
       console.log('onMounted')
       init();
       props.leftList.forEach((item, index) => {
         let obj = {};
-        obj.source = 'S' + props.dsType + props.dataSource + item;
-        obj.target = 'T' + props.dtType + props.dataTarget + props.rightList[index]
+        obj.source = 'S' + props.taskCode + item;
+        obj.target = 'T' + props.taskCode + props.rightList[index]
         console.log(obj)
         plumbins.connect(obj);
       })
     }
-  })
+  },1000)
 
 })
 
@@ -252,58 +301,54 @@ onMounted( () => {
 <template>
   <div>
     <div ref="container" class="content" :id="`${props.taskCode}-plumbContent`">
-      <div class="cols">
-        <div class="top">来源表字段</div>
-        <ul class="bottom">
-          <li
-              v-for="(item, index) in props.leftData"
-              :key="index"
-              :title="item.label"
-          >
+      <n-table :single-line="false" size="small" style="width: 500px">
+        <thead>
+        <tr>
+          <th>来源表字段</th>
+          <th>字段类型</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr
+            v-for="(item, index) in props.leftData"
+            :key="index"
+            :title="item.label"
+        >
+          <td>
             {{ item.label }}
-          </li>
-        </ul>
-      </div>
-      <div class="cols">
-        <div class="top">字段类型</div>
-        <ul class="bottom sourcePoint" id="leftBottom">
-          <li
-              v-for="(item, index) in props.leftData"
-              :key="index"
-              :id="item.id"
-              name="source"
-          >
+          </td>
+          <td :id="item.id" class="data-cell">
             {{ item.type }}
-          </li>
-        </ul>
-      </div>
-      <div class="cols"></div>
-      <div class="cols"></div>
-      <div class="cols">
-        <div class="top">写入表字段</div>
-        <ul class="bottom" id="rightBottom">
-          <li
-              v-for="(item, index) in props.rightData"
-              :key="index"
-              :id="item.id"
-              name="target"
-              :title="item.label"
-          >
+          </td>
+        </tr>
+        </tbody>
+      </n-table>
+      <div class="spacer"></div>
+      <n-table :single-line="false" size="small" style="width: 500px">
+        <thead>
+        <tr>
+          <th>来源表字段</th>
+          <th>字段类型</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr
+            v-for="(item, index) in props.rightData"
+            :key="index"
+            :title="item.label"
+        >
+          <td :id="item.id">
             {{ item.label }}
-          </li>
-        </ul>
-      </div>
-      <div class="cols">
-        <div class="top">字段类型</div>
-        <ul class="bottom">
-          <li
-              v-for="(item, index) in props.rightData"
-              :key="index"
-          >
+          </td>
+          <td >
             {{ item.type }}
-          </li>
-        </ul>
-      </div>
+          </td>
+        </tr>
+        </tbody>
+      </n-table>
+    </div>
+    <div v-if="showDeleteIcon" class="delete-icon" :style="deleteIconStyle">
+      <n-icon color="#FF6347" size="16"><CancelOutlined/></n-icon>
     </div>
   </div>
 </template>
@@ -311,69 +356,43 @@ onMounted( () => {
 <style scoped>
 .content {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   user-select: none;
   padding: 1vw;
   position: relative;
   overflow: scroll;
 
-  .cols {
-    color: #000000;
-    width: 25%;
-    text-align: center;
-
-    .top {
-      border: none;
-      font-size: 0.8vw;
-      font-weight: 600;
-      color: #000000;
-    }
-
-    .bottom {
-      padding-right: 2vw;
-      margin-top: 0.5vw;
-
-    }
-  }
 }
 
-.sourcePoint {
-  cursor:crosshair;
+th, td {
+  text-align: center;
 }
 
-.container {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+thead, th {
+  background-color: #f1f1f1;
 }
 
-.table-wrapper {
-  width: 353px;
-  margin: 10px;
+.spacer {
+  width: 300px;
+  height: 100px; /* 与.box相同的高度 */
+  float: left; /* 与.box对齐 */
+  background-color: transparent; /* 透明背景 */
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  border-collapse: collapse; /* 类似表格的边框合并效果 */
-  width: 100%; /* 设置宽度，可按需调整 */
+.data-cell:hover {
+  cursor: crosshair;
 }
 
-/* 为列表项添加边框 */
-ul li {
-  border: 1px solid #666666; /* 设置边框样式、宽度和颜色 */
-  padding: 5px; /* 设置内边距，使内容不会紧贴着边框 */
-}
-
-/* 可选：如果需要，为第一个和最后一个列表项添加特殊的边框样式 */
-ul li:first-child {
-  border-top-left-radius: 5px; /* 左上角圆角 */
-  border-top-right-radius: 5px; /* 右上角圆角 */
-}
-
-ul li:last-child {
-  border-bottom-left-radius: 5px; /* 左下角圆角 */
-  border-bottom-right-radius: 5px; /* 右下角圆角 */
+.delete-icon {
+  position: fixed;
+  cursor: pointer;
+  width: 20px; /* 设定一个明确的宽度 */
+  height: 20px; /* 设定一个明确的高度 */
+  line-height: 20px; /* 垂直居中文字 */
+  text-align: center; /* 水平居中文字 */
+  top: 10px; /* 设定距离顶部的位置 */
+  right: 10px; /* 设定距离右侧的位置 */
+  transform: translate(50%, -50%); /* 根据元素的右上角定位，并向下和向左移动其宽度和高度的50%，以使其居中 */
+  z-index: 1000; /* 确保图标在其他元素之上 */
 }
 </style>
