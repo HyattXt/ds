@@ -2,20 +2,20 @@
   <div class="cue-workflow__header" >
     <div class="cue-workflow__header-left">
       <el-tooltip content="保存" placement="top">
-        <n-button text @click="$emit('saveEvent')">
+        <n-button text :disabled="showOnline" @click="$emit('saveEvent')">
           <n-icon size="18">
             <Save24Regular />
           </n-icon>
         </n-button>
       </el-tooltip>
       <el-tooltip content="执行" placement="top">
-        <n-button text tag="div" :disabled="disableRun" style="margin-right: 20px" @click="$emit('runEvent')">
+        <n-button v-if="showRun" text tag="div" :disabled="disableRun" style="margin-right: 20px" @click="$emit('runEvent')">
           <n-icon size="18">
             <PlayCircle20Regular />
           </n-icon>
         </n-button>
       </el-tooltip>
-      <el-tooltip content="停止" placement="top">
+      <el-tooltip v-if="showStop" content="停止" placement="top">
         <n-button text tag="div" :disabled="disableStop" style="margin-right: 20px" @click="$emit('stopEvent')">
           <n-icon size="18">
             <RecordStop24Regular />
@@ -23,7 +23,7 @@
         </n-button>
       </el-tooltip>
       <el-tooltip v-if="showFormat" content="格式化" placement="top">
-        <n-button text @click="$emit('formatEvent')">
+        <n-button text :disabled="showOnline" @click="$emit('formatEvent')">
           <n-icon size="18">
             <Broom16Filled />
           </n-icon>
@@ -59,6 +59,14 @@ defineProps({
   showOnline: {
     type: Boolean,
     default: false
+  },
+  showRun: {
+    type: Boolean,
+    default: true
+  },
+  showStop: {
+    type: Boolean,
+    default: true
   }
 })
 

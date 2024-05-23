@@ -15,10 +15,10 @@
 * limitations under the License.
 */
 
-import {defineComponent, onMounted, ref, unref, h, nextTick, VNode, provide} from 'vue'
+import {defineComponent, onMounted, ref, unref, h, nextTick, VNode, provide, markRaw} from 'vue'
 import {DropdownGroupOption, DropdownOption, NIcon, NPopconfirm, TreeOption, useMessage, NSplit} from 'naive-ui'
 import Detail from '../definition/detail'
-import {SqlBox, DataXBox, ShellBox, PythonBox } from '../components/task/index.js'
+import {SqlBox, DataXBox, ShellBox, PythonBox, SubProcessBox } from '../components/task/index.js'
 import { SearchOutlined } from '@vicons/antd';
 import {Circle24Filled, Add12Filled} from "@vicons/fluent";
 import { CaretUp, CaretDown } from "@vicons/fa";
@@ -75,10 +75,11 @@ export default defineComponent({
         const componentRefs = ref({})
 
         const taskDictionary = {
-            'SQL': SqlBox,
-            'DATAX': DataXBox,
-            'SHELL': ShellBox,
-            'PYTHON': PythonBox
+            'SQL': markRaw(SqlBox),
+            'DATAX': markRaw(DataXBox),
+            'SHELL': markRaw(ShellBox),
+            'PYTHON': markRaw(PythonBox),
+            'SUB_PROCESS': markRaw(SubProcessBox)
         };
 
         const rules = {
@@ -457,7 +458,7 @@ export default defineComponent({
             const tabs = workflowBox.value
             let activeName = activeTab.value
             if (activeName === targetName) {
-                tabs.forEach((tab, index) => {
+                tabs.forEach((tab: Object, index: Number) => {
                     if (tab.name === targetName) {
                         const nextTab = tabs[index + 1] || tabs[index - 1]
                         if (nextTab) {
@@ -468,11 +469,27 @@ export default defineComponent({
             }
 
             activeTab.value = activeName
-            workflowBox.value = tabs.filter((tab) => tab.name !== targetName)
+            if (typeof componentRefs.value[activeTab.value].refresh === 'function') {
+                componentRefs.value[activeTab.value].refresh(activeTab.value, projectCode)
+            }
+            workflowBox.value = tabs.filter((tab: Object) => tab.name !== targetName)
         }
 
-        function refresh(name) {
-            componentRefs.value[name].refresh(name, projectCode)
+        function refresh(name: String) {
+            if (typeof componentRefs.value[name].refresh === 'function') {
+                componentRefs.value[name]?.refresh(name, projectCode)
+            }
+            setTimeout(()=>{
+                if (typeof componentRefs.value[activeTab.value].repaintPlumb === 'function') {
+                    componentRefs.value[name]?.repaintPlumb()
+                }
+            },100)
+        }
+
+        function handleOnDragMove() {
+            if (typeof componentRefs.value[activeTab.value].repaintPlumb === 'function') {
+                componentRefs.value[activeTab.value]?.repaintPlumb()
+            }
         }
 
         const pushComponent = (type, taskCode, taskName, taskType, state, processCode)=> {
@@ -508,8 +525,8 @@ export default defineComponent({
             (
                 <div style={"height:100%; border: 0px"}>
                             <div class="cue-drag-layout flex-row">
-                                <NSplit default-size={0.2} min={0.07} max={0.9}
-                                    v-slots={{
+                                <NSplit default-size={0.2} min={0.07} max={0.9} onDragMove={handleOnDragMove}
+                                        v-slots={{
                                         1: () => (
                                             <div class="cue-drag-layout__mainview" style={"height: 100%"}>
                                                 <div class="tree-container" style={"width: 100%"}>
@@ -572,7 +589,7 @@ export default defineComponent({
                                                 {workflowBox.value.length === 0 ? (
                                                     <div class={Styles.backgroundDiv}/>
                                                 ) : (
-                                                    <ElTabs v-model={activeTab.value} closable type={"card"} onTabRemove={removeTab} onTabChange={refresh}>
+                                                    <ElTabs v-model={activeTab.value} closable type={"card"} onTabRemove={removeTab} onTabChange={refresh} >
                                                         {workflowBox.value.map((item: any) => (
                                                             <ElTabPane
                                                                 key={item.name}
