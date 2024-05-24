@@ -299,8 +299,8 @@ interface ITaskParams {
   jobSpeedRecord?: number
   xms?: number
   xmx?: number
-  indicatorStatus: number
-  indicatorCode: string
+  indicatorStatus?: number
+  indicatorCode?: string
   sparkParameters?: ISparkParameters
   ruleId?: number
   ruleInputParameter?: IRuleParameters
@@ -317,6 +317,9 @@ interface ITaskParams {
   udfs?: string
   connParams?: string
   targetJobName?: string
+  timeoutShowFlag?: boolean
+  preSql?: string
+  postSql?: string
 }
 
 interface INodeData
@@ -382,6 +385,7 @@ interface ITaskData
   timeoutFlag?: 'OPEN' | 'CLOSE'
   timeoutNotifyStrategy?: string | []
   taskParams?: ITaskParams
+  timeoutShowFlag?: boolean
 }
 
 export {

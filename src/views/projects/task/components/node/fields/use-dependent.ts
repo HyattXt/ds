@@ -229,6 +229,31 @@ export function useDependent(model: { [field: string]: any }): IJsonItem[] {
     )
   }
 
+  const init = (list) => {
+    list.forEach((item: IDependTask) => {
+      if (!item.dependItemList?.length) return
+
+      item.dependItemList?.forEach(async (dependItem: IDependpendItem) => {
+        if (dependItem.projectCode) {
+          dependItem.definitionCodeOptions = await getProcessList(
+              dependItem.projectCode
+          )
+        }
+        if (dependItem.projectCode && dependItem.definitionCode) {
+          dependItem.depTaskCodeOptions = await getTaskList(
+              dependItem.projectCode,
+              dependItem.definitionCode
+          )
+        }
+        if (dependItem.cycle) {
+          dependItem.dateOptions = DATE_LSIT[dependItem.cycle]
+        }
+      })
+    })
+  }
+  getProjectList()
+  init(model.dependTaskList)
+
   onMounted(() => {
     getProjectList()
   })
@@ -236,26 +261,7 @@ export function useDependent(model: { [field: string]: any }): IJsonItem[] {
   watch(
     () => model.dependTaskList,
     (value) => {
-      value.forEach((item: IDependTask) => {
-        if (!item.dependItemList?.length) return
-
-        item.dependItemList?.forEach(async (dependItem: IDependpendItem) => {
-          if (dependItem.projectCode) {
-            dependItem.definitionCodeOptions = await getProcessList(
-              dependItem.projectCode
-            )
-          }
-          if (dependItem.projectCode && dependItem.definitionCode) {
-            dependItem.depTaskCodeOptions = await getTaskList(
-              dependItem.projectCode,
-              dependItem.definitionCode
-            )
-          }
-          if (dependItem.cycle) {
-            dependItem.dateOptions = DATE_LSIT[dependItem.cycle]
-          }
-        })
-      })
+      init(model.dependTaskList)
     }
   )
 
