@@ -24,7 +24,7 @@ import type { IJsonItem } from '../types'
 export function useSwitch(
   model: { [field: string]: any },
   projectCode: number,
-  PorcessName?: number
+  ProcessName?: number
 ): IJsonItem[] {
   const { t } = useI18n()
   const taskStore = useTaskNodeStore()
@@ -36,7 +36,7 @@ export function useSwitch(
     loading.value = true
     branchFlowOptions.value = []
     const res = await queryProcessDefinitionByCode(
-        PorcessName || model.PorcessName,
+        ProcessName || model.PorcessName,
       projectCode
     )
     res?.taskDefinitionList.forEach((item: any) => {
