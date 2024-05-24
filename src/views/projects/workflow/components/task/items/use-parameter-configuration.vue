@@ -13,6 +13,10 @@ const props = defineProps({
   disabled: {
     type: Boolean,
     default: false
+  },
+  isSimple: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -23,7 +27,7 @@ const paramModel = ref ({
   localParams: []
 })
 
-const json = [  ...Fields.useCustomParams({ model: paramModel.value, field: 'localParams', isSimple: false })]
+const json = [  ...Fields.useCustomParams({ model: paramModel.value, field: 'localParams', isSimple: props.isSimple })]
 
 const { rules, elements } = getElementByJson(json, paramModel.value)
 
