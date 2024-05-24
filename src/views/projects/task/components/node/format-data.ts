@@ -282,6 +282,7 @@ export function formatParams(data: INodeData): {
       relation: data.relation,
       dependTaskList: dependTaskList
     }
+    taskParams.timeoutShowFlag = data.timeoutShowFlag
   }
   if (data.taskType === 'DATA_QUALITY') {
     taskParams.ruleId = data.ruleId
@@ -581,10 +582,13 @@ export function formatModel(data: ITaskData) {
     params.udfs = data.taskParams.udfs?.split(',')
   }
   if (data.taskParams?.customConfig !== void 0) {
-    params.customConfig = data.taskParams.customConfig === 1 ? true : false
+    params.customConfig = data.taskParams.customConfig === 1
   }
   if (data.taskParams?.jobType) {
     params.isCustomTask = data.taskParams.jobType === 'CUSTOM'
+  }
+  if (data.taskParams?.timeoutShowFlag) {
+    params.timeoutShowFlag = data.taskParams.timeoutShowFlag
   }
   return params
 }
