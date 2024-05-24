@@ -138,24 +138,30 @@ const rules = computed(() => {
 })
 
 const onTaskSubmit = async (data) => {
-  const params = formatData(data)
-  try {
-    await updateWithUpstream(
-        props.projectCode,
-        data.code,
-        {
-          upstreamCodes: params.upstreamCodes,
-          taskDefinitionJsonObj: JSON.stringify(params.taskDefinitionJsonObj)
-        }
-    )
-    message.success('成功')
-    await initData()
-    updateTab(data.code, data.name)
-    updateEdited(taskData.value.code, false)
-    return true
-  } catch (err) {
-    return false
-  }
+  formRef.value.validate(async (errors) => {
+    if (!errors) {
+      const params = formatData(data)
+      try {
+        await updateWithUpstream(
+            props.projectCode,
+            data.code,
+            {
+              upstreamCodes: params.upstreamCodes,
+              taskDefinitionJsonObj: JSON.stringify(params.taskDefinitionJsonObj)
+            }
+        )
+        message.success('成功')
+        await initData()
+        updateTab(data.code, data.name)
+        updateEdited(taskData.value.code, false)
+        return true
+      } catch (err) {
+        return false
+      }
+    } else {
+      message.error('验证失败，请填写完整任务属性')
+    }
+  })
 }
 
 function confirmTaskProperties() {

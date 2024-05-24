@@ -948,7 +948,6 @@ function executeTableSql() {
 }
 
 function getTableColumn() {
-  console.log(taskData.value)
   if( taskData.value.rightData.length) {
     disassociate()
     console.log("disassociate")
@@ -1239,7 +1238,6 @@ async function initData() {
 
   setTimeout(()=>{
     initTag.value = true
-    console.log(taskData.value)
   },0)
 }
 
