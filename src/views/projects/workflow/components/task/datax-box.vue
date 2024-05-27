@@ -199,7 +199,7 @@
                           :options="jobSpeedByteOptions"
                       />
                     </n-form-item-gi>
-                    <n-form-item-gi label-width="150" :span="6" label="错误记录数超过" key="record">
+                    <n-form-item-gi label-width="150" :span="8" label="错误记录数超过" key="record">
                       <NInputNumber
                           v-model:value="taskData.record"
                           :min="0"
@@ -214,7 +214,7 @@
                           :options="jobSpeedRecordOptions"
                       />
                     </n-form-item-gi>
-                    <n-form-item-gi label-width="150" :span="6" label="错误记录数超过" key="percentage">
+                    <n-form-item-gi label-width="150" :span="8" label="错误记录数超过" key="percentage">
                       <NInputNumber
                           v-model:value="taskData.percentage"
                           :min="0"
