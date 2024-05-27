@@ -31,18 +31,17 @@ export function useDatasource(
   const loading = ref(false)
 
   const getDataSource = async (type: IDataBase) => {
-    if (loading.value) return
-    loading.value = true
+
     const result = await queryDataSourceList({ type })
     dataSourceList.value = result.map((item: { name: string; id: number }) => ({
       label: item.name,
       value: item.id
     }))
-    loading.value = false
   }
-  onMounted(() => {
+
+/*  onMounted(() => {
     getDataSource('MYSQL')
-  })
+  })*/
 
   return [
     {
@@ -63,7 +62,7 @@ export function useDatasource(
       props: {
         placeholder: t('project.node.datasource_tips'),
         filterable: true,
-        loading
+        onClick: getDataSource('MYSQL')
       },
       options: dataSourceList,
       validate: {
