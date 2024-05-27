@@ -203,7 +203,7 @@ async function initData() {
   }
   setTimeout(()=>{
     initTag.value = true
-  },0)
+  },1000)//修改标志异常，增加等待时间
 }
 
 watch(taskData, () => {
