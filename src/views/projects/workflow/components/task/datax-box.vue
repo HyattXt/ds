@@ -656,7 +656,6 @@ const onTaskSubmit = async (data) => {
   jsplumbRef.value.save()
   taskData.value.json = formatJson()
   const params = formatData(data)
-  console.log(params)
   try {
     await updateWithUpstream(
         props.projectCode,
@@ -708,15 +707,12 @@ const getLogs = (row) => {
         skipLineNum: skipLineNum.value
       }).then((res) => {
         if (!'35679'.includes(res.state)) {
-          console.log('1')
           if(res?.message){
             logMessage.value += res.message
             limit.value += 100
             skipLineNum.value += res.lineNum
-            console.log('2')
           }
           if(!disableStop.value){
-            console.log('3')
             setTimeout(()=>getLogs(row),3000)
           }
         } else {
@@ -950,7 +946,6 @@ function executeTableSql() {
 function getTableColumn() {
   if( taskData.value.rightData.length) {
     disassociate()
-    console.log("disassociate")
   }
   let getCol = SecondDevCreateUrl + '/HDataApi/apiService/getColumnsByTable'
   let targetBody = {
@@ -1039,8 +1034,6 @@ function getTableColumn() {
 
   }else message.error('必须填写表名或查询语句以获取字段！')
 
-  console.log(taskData.value.rightData)
-  console.log("taskData.value.rightData")
 }
 
 function disassociate() {
@@ -1136,7 +1129,6 @@ function formatJson() {
       }
     }
   }
-  console.log(json)
   if(taskData.value.dtType === 'MYSQL') json.job.content[0].writer.parameter['writeMode'] =  taskData.value.writeMode
   if(taskData.value.executeMode === '1') json.job.content[0].reader.parameter['querySql'] = [ taskData.value.sql ]
   return JSON.stringify(json,null,4)

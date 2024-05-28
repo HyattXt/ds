@@ -60,7 +60,6 @@ function save() {
 }
 
 function init()  {
-  console.log('init')
   //   初始化实例
   jsplumb.ready(() => {
     plumbins = jsplumb.getInstance({
@@ -146,7 +145,6 @@ function init()  {
 }
 
 function initNode(id, type) {
-  console.log("initNode")
   // 初始化点使其可以连接
   const ins = plumbins;
   const elements = document.getElementById(id);
@@ -204,9 +202,7 @@ function repaintPlumb() {
 }
 
 function disassociate() {
-  console.log('disassociate')
   let activities = plumbins.getConnections();
-  console.log(activities)
   activities.forEach((activeitem, index) => {
     plumbins.deleteConnection(activeitem)
   })
@@ -214,7 +210,6 @@ function disassociate() {
 }
 
 function sameLine() {
-  console.log('sameLine')
   let activities = plumbins.getConnections();
   activities.forEach((activeitem, index) => {
     plumbins.deleteConnection(activeitem)
@@ -231,7 +226,6 @@ function sameLine() {
 }
 
 function sameName()  {
-  console.log('sameName')
   let activities = plumbins.getConnections();
   activities.forEach((activeitem, index) => {
     plumbins.deleteConnection(activeitem)
@@ -250,7 +244,6 @@ function sameName()  {
 
 // 保存连线关系
 function getConnection()  {
-  console.log('getConnection')
   let connections = plumbins.getConnections();
   let readColumn = []
   let writerColumn = []
@@ -267,8 +260,6 @@ function getConnection()  {
   }
   leftList.value  = readColumn
   rightList.value  = writerColumn
-  console.log(leftList.value)
-  console.log(rightList.value)
 }
 
 defineExpose({save, disassociate, sameName, sameLine, init, repaintPlumb})
@@ -282,13 +273,11 @@ defineExpose({save, disassociate, sameName, sameLine, init, repaintPlumb})
 onMounted( () => {
   setTimeout(()=>{
     if( props.rightList.length && container.value){
-      console.log('onMounted')
       init();
       props.leftList.forEach((item, index) => {
         let obj = {};
         obj.source = 'S' + props.taskCode + item;
         obj.target = 'T' + props.taskCode + props.rightList[index]
-        console.log(obj)
         plumbins.connect(obj);
       })
     }
