@@ -245,6 +245,9 @@ export function formatParams(data: INodeData): {
       taskParams.rightList = data.rightList
       taskParams.leftData = data.leftData
       taskParams.rightData = data.rightData
+      taskParams.splitPk = data.splitPk
+      taskParams.where = data.where
+      taskParams.writeMode = data.writeMode
       taskParams.sourceDatabase = data.sourceDatabase
       taskParams.targetDatabase = data.targetDatabase
       taskParams.jobSpeedByte = data.jobSpeedByte

@@ -295,6 +295,9 @@ interface ITaskParams {
   rightList?: string
   leftData?: string
   rightData?: string
+  splitPk?: string
+  where?: string
+  writeMode?: string
   jobSpeedByte?: number
   jobSpeedRecord?: number
   xms?: number
