@@ -34,6 +34,7 @@ import type {
 import type {TypeReq} from "@/service/modules/data-source/types";
 import {queryDataSourceList} from "@/service/modules/data-source";
 import {find} from "lodash";
+import {taskNameExist} from "@/service/modules/task-definition";
 
 const props = {
   show: {
@@ -79,6 +80,10 @@ const props = {
   saving: {
     type: Boolean,
     default: false
+  },
+  parentId: {
+    type: Number,
+    default: 0
   }
 }
 
@@ -194,15 +199,18 @@ const NodeInitModal = defineComponent({
     }
 
     const onConfirm = async () => {
-      fromRef.value.validate((errors: any) => {
+      fromRef.value.validate(async (errors: any) => {
         if (!errors) {
-          emit('submit',initForm.value.taskName,initForm.value.taskDescription, !!props.processCode ? props.processCode : Number(route.query.code), initForm.value.datasourceType, initForm.value.datasource)
-          setTimeout(()=>{
-            initForm.value.taskName = ''
-            initForm.value.taskDescription = ''
-            initForm.value.datasourceType = 'MYSQL'
-            initForm.value.datasource = null
-          },500)
+          let code = await taskNameExist(props.projectCode, initForm.value.taskName)
+          if (!code) {
+            emit('submit', initForm.value.taskName, initForm.value.taskDescription, !!props.processCode ? props.processCode : Number(route.query.code), initForm.value.datasourceType, initForm.value.datasource)
+            setTimeout(() => {
+              initForm.value.taskName = ''
+              initForm.value.taskDescription = ''
+              initForm.value.datasourceType = 'MYSQL'
+              initForm.value.datasource = null
+            }, 500)
+          }
         } else {
           message.error('验证失败，请填写完整信息')
         }

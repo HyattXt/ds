@@ -135,6 +135,7 @@ export default defineComponent({
               onRefresh={refresh}
               projectCode={props.projectCode}
               processCode={props.taskCode}
+              parentId={props.parentId}
               onSave={save}
               readonly={readonly.value}
           />

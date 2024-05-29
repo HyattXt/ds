@@ -80,7 +80,11 @@ const props = {
   processCode: {
     type: Number as PropType<number>,
     default: 0
-  }
+  },
+  parentId: {
+    type: Number as PropType<number>,
+    default: 0
+  },
 }
 
 export default defineComponent({
@@ -401,6 +405,7 @@ export default defineComponent({
             projectCode={props.projectCode}
             processCode={props.processCode}
             processInstance={props.instance}
+            parentId={props.parentId}
             type={dragged.value.type}
             taskInstance={currentTaskInstance.value}
             onViewLog={handleViewLog}

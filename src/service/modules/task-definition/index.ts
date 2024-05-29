@@ -190,3 +190,16 @@ export function updateWithUpstream(
     data
   })
 }
+
+export function taskNameExist(
+    projectCode: number,
+    name: String,
+): any {
+  return axios({
+    url: `/projects/${projectCode}/task-definition/taskNameExist`,
+    method: 'post',
+    params: {
+      name
+    }
+  })
+}
