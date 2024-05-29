@@ -4,6 +4,9 @@
         @save-event="onTaskSubmit(taskData)"
         @run-event="onTaskRun"
         @stop-event="onTaskStop"
+        @refresh="initData"
+        :version="taskData.version"
+        :task-code="props.taskCode"
         :disableRun="logLoadingRef"
         :disableStop="disableStop"
         :showOnline="props.readOnly"
@@ -74,7 +77,7 @@
 </template>
 
 <script setup>
-import {inject, nextTick, onMounted, ref, watch, watchEffect, h} from "vue";
+import {inject, nextTick, onMounted, ref, watch, watchEffect} from "vue";
 import {queryTaskDefinitionByCode, updateWithUpstream} from "@/service/modules/task-definition";
 import CrudWorkflowTooltip from "@/components/cue/crud-workflow-tooltip.vue";
 import UseTaskProperties from "@/views/projects/workflow/components/task/items/use-task-properties.vue";
@@ -91,15 +94,15 @@ import {ArrowMinimize28Filled, FullScreenMinimize24Filled, ArrowMinimizeVertical
 const props = defineProps({
   taskCode: {
     type: Number,
-    default: ''
+    default: 0
   },
   projectCode: {
     type: Number,
-    default: ''
+    default: 0
   },
   processCode: {
     type: Number,
-    default: ''
+    default: 0
   },
   readOnly: {
     type: Boolean,

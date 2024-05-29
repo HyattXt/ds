@@ -5,6 +5,9 @@
         @run-event="onTaskRun(taskData)"
         @stop-event="onTaskStop"
         @format-event="formatSql"
+        @refresh="initData"
+        :version="taskData.version"
+        :task-code="props.taskCode"
         :disableRun="disableRun"
         :disableStop="disableStop"
         showFormat

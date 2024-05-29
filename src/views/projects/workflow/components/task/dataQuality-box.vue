@@ -2,6 +2,9 @@
   <div class="m-data-quality-box">
     <CrudWorkflowTooltip
         @save-event="onTaskSubmit(taskData)"
+        @refresh="initData"
+        :version="taskData.version"
+        :task-code="props.taskCode"
         :showOnline="props.readOnly"
         :showRun="false"
         :showStop="false"

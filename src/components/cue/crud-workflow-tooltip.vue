@@ -34,14 +34,27 @@
       </n-tag>
     </div>
     <div class="cue-workflow__header-right">
+      <div style="padding-right: 10px">
+        <n-button strong secondary size="small" type="info" @click="showVersionModalRef = true">
+          版本: V{{version}}
+        </n-button>
+      </div>
       <slot name="right"></slot>
     </div>
   </div>
+  <VersionModal
+      :show="showVersionModalRef"
+      :row="{taskCode: taskCode, taskVersion: version}"
+      @confirm="showVersionModalRef = false"
+      @refresh="onRefresh"
+  />
 </template>
 
 <script setup>
 
 import { Save24Regular, PlayCircle20Regular, RecordStop24Regular, Broom16Filled } from '@vicons/fluent'
+import VersionModal from "@/views/projects/task/definition/components/version-modal";
+import { ref } from "vue";
 
 defineProps({
   disableRun: {
@@ -67,8 +80,24 @@ defineProps({
   showStop: {
     type: Boolean,
     default: true
+  },
+  version: {
+    type: Number,
+    default: 1
+  },
+  taskCode: {
+    type: Number,
+    default: 0
   }
 })
+
+const showVersionModalRef = ref(false)
+const emit = defineEmits(['refresh'])
+
+const onRefresh = () => {
+  showVersionModalRef.value = false
+  emit('refresh');
+}
 
 </script>
 
