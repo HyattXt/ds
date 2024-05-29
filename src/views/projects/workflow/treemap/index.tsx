@@ -18,7 +18,7 @@
 import {defineComponent, onMounted, ref, unref, h, nextTick, VNode, provide, markRaw} from 'vue'
 import {DropdownGroupOption, DropdownOption, NIcon, NPopconfirm, TreeOption, useMessage, NSplit} from 'naive-ui'
 import Detail from '../definition/detail'
-import {SqlBox, DataXBox, ShellBox, PythonBox, SubProcessBox } from '../components/task/index.js'
+import {SqlBox, DataXBox, ShellBox, PythonBox, SubProcessBox, DependentBox, DataQualityBox, HttpBox, SwitchBox, ConditionsBox, FlinkBox, SqoopBox} from '../components/task/index.js'
 import { SearchOutlined } from '@vicons/antd';
 import {Circle24Filled, Add12Filled} from "@vicons/fluent";
 import { CaretUp, CaretDown } from "@vicons/fa";
@@ -55,6 +55,8 @@ export default defineComponent({
         const reWorkflowModal = ref(false)
         const mvFolderModal = ref(false)
         const mvWorkflowModal = ref(false)
+        const closeTabModal = ref(false)
+        const closeTabName = ref('')
         const showDropdownRef = ref(false)
         const xRef = ref(0)
         const yRef = ref(0)
@@ -79,7 +81,14 @@ export default defineComponent({
             'DATAX': markRaw(DataXBox),
             'SHELL': markRaw(ShellBox),
             'PYTHON': markRaw(PythonBox),
-            'SUB_PROCESS': markRaw(SubProcessBox)
+            'SUB_PROCESS': markRaw(SubProcessBox),
+            'DEPENDENT': markRaw(DependentBox),
+            'DATA_QUALITY': markRaw(DataQualityBox),
+            'HTTP': markRaw(HttpBox),
+            'SWITCH': markRaw(SwitchBox),
+            'CONDITIONS': markRaw(ConditionsBox),
+            'FLINK': markRaw(FlinkBox),
+            'SQOOP': markRaw(SqoopBox)
         };
 
         const rules = {
@@ -326,11 +335,6 @@ export default defineComponent({
                         if(option.id === 57 || option.id === 58){
                             dropdownOption.value =[
                                 {
-                                    label: '新建文件夹',
-                                    key: 'menu',
-                                    disable: false
-                                },
-                                {
                                     label: '新建工作流',
                                     key: 'workflow',
                                     disable: false
@@ -454,8 +458,32 @@ export default defineComponent({
             }
         }
 
+        function getEditedByName(jsonData: array, name: string) {
+            const item = jsonData.find(item => item.name === name); // 使用 find 方法在数组中查找符合条件的第一个元素
+            if (item) {
+                return item.edited;
+            }
+            return null; // 若在数组中找不到，则返回 null
+        }
+
         const removeTab = (targetName: string) => {
             const tabs = workflowBox.value
+            if(getEditedByName(tabs, targetName)){
+                closeTabModal.value = true
+                closeTabName.value = targetName
+            } else {
+                delTab(tabs, targetName)
+            }
+
+        }
+
+        const forceRemoveTab = () => {
+            const tabs = workflowBox.value
+            delTab(tabs, closeTabName.value)
+            closeTabModal.value = false
+        }
+
+        function delTab(tabs: object, targetName) {
             let activeName = activeTab.value
             if (activeName === targetName) {
                 tabs.forEach((tab: Object, index: Number) => {
@@ -467,7 +495,6 @@ export default defineComponent({
                     }
                 })
             }
-
             activeTab.value = activeName
             if (typeof componentRefs.value[activeTab.value].refresh === 'function') {
                 componentRefs.value[activeTab.value].refresh(activeTab.value, projectCode)
@@ -510,10 +537,15 @@ export default defineComponent({
             };
 
             if (workflowBox.value.length === 0 || !workflowBox.value.some(item => item.key === taskCode)) {
-                workflowBox.value.push(newItem);
-                componentRefs.value[taskCode] = null;
-            }
-            activeTab.value = taskCode as string
+                if(workflowBox.value.length>=15) {
+                    message.info('打开窗口过多，请关掉一些')
+                } else {
+                    workflowBox.value.push(newItem);
+                    componentRefs.value[taskCode] = null;
+                    activeTab.value = taskCode as string
+                }
+            } else activeTab.value = taskCode as string
+
         }
 
         provide('pushComponent', pushComponent);
@@ -801,6 +833,20 @@ export default defineComponent({
                             <n-space justify="end">
                                 <n-button type="info" onClick={moveWorkflow} >确定</n-button>
                             </n-space>
+                    </el-dialog>
+                    <el-dialog
+                        v-model={closeTabModal.value}
+                        width={"600px"}
+                        v-slots={{header: () => (
+                                "提示"
+                            )}}
+                    >
+                        <div>当前任务未保存，强制关闭会丢失所做的操作！</div>
+                        <br/>
+                        <n-space justify="end">
+                            <n-button  onClick={() => (closeTabModal.value = !closeTabModal.value)}>取消</n-button>
+                            <n-button type="warning" onClick={forceRemoveTab}>强制关闭</n-button>
+                        </n-space>
                     </el-dialog>
                 </div>
             )
