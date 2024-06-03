@@ -15,7 +15,7 @@
 * limitations under the License.
 */
 
-import {defineComponent, onMounted, ref, unref, h, nextTick, VNode, provide, markRaw} from 'vue'
+import {defineComponent, onMounted, ref, unref, h, nextTick, VNode, provide, markRaw, computed} from 'vue'
 import {DropdownGroupOption, DropdownOption, NIcon, NPopconfirm, TreeOption, useMessage, NSplit} from 'naive-ui'
 import Detail from '../definition/detail'
 import {SqlBox, DataXBox, ShellBox, PythonBox, SubProcessBox, DependentBox, DataQualityBox, HttpBox, SwitchBox, ConditionsBox, FlinkBox, SqoopBox} from '../components/task/index.js'
@@ -42,6 +42,7 @@ export default defineComponent({
         const projectCode = Number(route.params.projectCode)
         const formRef: any = ref(null)
         const activeTab = ref('')
+        const contextMenuTab = ref(0)
         const workflowModel = ref({
             parentId: 1,
             type: 2,
@@ -60,7 +61,15 @@ export default defineComponent({
         const showDropdownRef = ref(false)
         const xRef = ref(0)
         const yRef = ref(0)
+        const contextMenuVisible = ref(false);
+        const menuTop = ref(0);
+        const menuLeft = ref(0);
         const dropdownOption = ref([{label: '', key: '',disable: false}])
+        const tabDropdownOption = [
+            {label: '关闭当前标签', key: '关闭当前标签'},
+            {label: '关闭其他标签', key: '关闭其他标签'},
+            {label: '关闭所有标签', key: '关闭所有标签'}
+        ]
         const { loginNew } = useLogin('')
         const addMenuOptions = ref([
             {
@@ -90,6 +99,13 @@ export default defineComponent({
             'FLINK': markRaw(FlinkBox),
             'SQOOP': markRaw(SqoopBox)
         };
+
+        const computedStyle = computed(() => ({
+            top: menuTop.value + 'px',
+            left: menuLeft.value + 'px',
+            zIndex: 1000,
+            position: 'fixed'
+        }));
 
         const rules = {
             value:{
@@ -312,6 +328,7 @@ export default defineComponent({
 
         function  onClickoutside () {
             showDropdownRef.value = false
+            contextMenuVisible.value = false
         }
         function handleSelect (key: string,option: TreeOption) {
             if(option.key !== 'deleteMenu' && option.key !== 'deleteWorkflow') {showDropdownRef.value = false}
@@ -322,6 +339,13 @@ export default defineComponent({
                 case 'renameWorkflow': {reWorkflowModal.value = true } break
                 case 'removeMenu': {mvFolderModal.value = true } break
                 case 'removeWorkflow': {mvWorkflowModal.value = true } break
+            }
+        }
+        function handleTabSelect (key: string,option: TreeOption) {
+            switch(option.key){
+                case '关闭当前标签': {contextMenuVisible.value = false; removeTab(contextMenuTab.value) } break
+                case '关闭其他标签': {contextMenuVisible.value = false; removeOtherTab(contextMenuTab.value) } break
+                case '关闭所有标签': {contextMenuVisible.value = false; removeAllTab() } break
             }
         }
         const menu = ({ option }: { option: TreeOption }) => {
@@ -459,11 +483,39 @@ export default defineComponent({
         }
 
         function getEditedByName(jsonData: array, name: string) {
-            const item = jsonData.find(item => item.name === name); // 使用 find 方法在数组中查找符合条件的第一个元素
+            const item = jsonData.find(item => item.name == name); // 使用 find 方法在数组中查找符合条件的第一个元素
             if (item) {
                 return item.edited;
             }
             return null; // 若在数组中找不到，则返回 null
+        }
+
+        const removeOtherTab = (targetName: string) => {
+            const tabs = workflowBox.value
+            for (const tab of tabs) {
+                if (tab.name != targetName) {
+                    if(getEditedByName(tabs, tab.name)){
+                        closeTabModal.value = true
+                        closeTabName.value = tab.name
+                        break
+                    } else {
+                        delTab(workflowBox.value, tab.name)
+                    }
+                }
+            }
+        }
+
+        const removeAllTab = () => {
+            const tabs = workflowBox.value
+            for (const tab of tabs) {
+                if(tab.edited){
+                    closeTabModal.value = true
+                    closeTabName.value = tab.name
+                    break
+                } else {
+                     delTab(workflowBox.value, tab.name)
+                }
+            }
         }
 
         const removeTab = (targetName: string) => {
@@ -474,7 +526,6 @@ export default defineComponent({
             } else {
                 delTab(tabs, targetName)
             }
-
         }
 
         const forceRemoveTab = () => {
@@ -485,9 +536,9 @@ export default defineComponent({
 
         function delTab(tabs: object, targetName) {
             let activeName = activeTab.value
-            if (activeName === targetName) {
+            if (activeName == targetName) {
                 tabs.forEach((tab: Object, index: Number) => {
-                    if (tab.name === targetName) {
+                    if (tab.name == targetName) {
                         const nextTab = tabs[index + 1] || tabs[index - 1]
                         if (nextTab) {
                             activeName = nextTab.name
@@ -499,7 +550,7 @@ export default defineComponent({
             if (typeof componentRefs.value[activeTab.value].refresh === 'function') {
                 componentRefs.value[activeTab.value].refresh(activeTab.value, projectCode)
             }
-            workflowBox.value = tabs.filter((tab: Object) => tab.name !== targetName)
+            workflowBox.value = tabs.filter((tab: Object) => tab.name != targetName)
         }
 
         function refresh(name: String) {
@@ -518,6 +569,16 @@ export default defineComponent({
                 componentRefs.value[activeTab.value]?.repaintPlumb()
             }
         }
+
+        const showContextMenu = (event: MouseEvent) => {
+            if(event.target.offsetParent?.id.startsWith("tab-")){
+                contextMenuTab.value = event.target.offsetParent.id.split("-")[1];
+                event.preventDefault(); // 手动阻止默认行为
+                contextMenuVisible.value = true;
+                menuTop.value = event.clientY;
+                menuLeft.value = event.clientX;
+            }
+        };
 
         const pushComponent = (type, taskCode, taskName, taskType, state, processCode)=> {
             const newItem = {
@@ -621,7 +682,7 @@ export default defineComponent({
                                                 {workflowBox.value.length === 0 ? (
                                                     <div class={Styles.backgroundDiv}/>
                                                 ) : (
-                                                    <ElTabs v-model={activeTab.value} closable type={"card"} onTabRemove={removeTab} onTabChange={refresh} >
+                                                    <ElTabs v-model={activeTab.value} closable type={"card"} onTabRemove={removeTab} onTabChange={refresh} onContextmenu={showContextMenu}>
                                                         {workflowBox.value.map((item: any) => (
                                                             <ElTabPane
                                                                 key={item.name}
@@ -651,6 +712,17 @@ export default defineComponent({
                                                         ))}
                                                     </ElTabs>
                                                 )}
+                                                    <n-dropdown
+                                                        style={"z-index: 1000; position: fixed"}
+                                                        placement="bottom-start"
+                                                        trigger="manual"
+                                                        x={menuLeft.value}
+                                                        y={menuTop.value}
+                                                        options={tabDropdownOption}
+                                                        show={contextMenuVisible.value}
+                                                        on-clickoutside={onClickoutside}
+                                                        on-select={handleTabSelect}
+                                                    />
                                             </div>
                                         )
                                     }}
