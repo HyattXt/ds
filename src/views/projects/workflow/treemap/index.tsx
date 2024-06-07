@@ -442,7 +442,7 @@ export default defineComponent({
                 ondblclick() {
                     //双击事件
                     if(option.type !== 1){
-                        pushComponent(option.type, option.taskCode, option.titleName, option.taskType, !!option.state, option.parentId)
+                        pushComponent(option.type, Number(option.taskCode), option.titleName, option.taskType, !!option.state, option.parentId)
                     }
                     }
                 }
