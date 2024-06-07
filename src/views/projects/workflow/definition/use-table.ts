@@ -94,7 +94,8 @@ export function useTable() {
             },
             {
               default: () => [
-                h(
+                h(NEllipsis, null, () => row.name),
+/*                h(
                   ButtonLink,
                   {
                     onClick: () =>
@@ -106,7 +107,7 @@ export function useTable() {
                   {
                     default: () => h(NEllipsis, null, () => row.name)
                   }
-                ),
+                ),*/
                 h(
                   NButton,
                   {

@@ -30,15 +30,14 @@ import {
 import {
   SearchOutlined,
   DownloadOutlined,
-  FullscreenOutlined,
-  FullscreenExitOutlined,
+  PlayCircleOutlined,
   InfoCircleOutlined,
   FormatPainterOutlined,
   CopyOutlined,
   DeleteOutlined,
   RightCircleOutlined,
   FundViewOutlined,
-  SyncOutlined
+  SyncOutlined, UploadOutlined, ClockCircleOutlined
 } from '@vicons/antd'
 import { useNodeSearch, useTextCopy } from './dag-hooks'
 import { DataUri } from '@antv/x6'
@@ -70,7 +69,7 @@ const props = {
 export default defineComponent({
   name: 'workflow-dag-toolbar',
   props,
-  emits: ['versionToggle', 'saveModelToggle', 'removeTasks', 'refresh'],
+  emits: ['versionToggle', 'saveModelToggle', 'removeTasks', 'refresh', 'online', 'timingToggle', 'startToggle'],
   setup(props, context) {
     const { t } = useI18n()
 
@@ -125,6 +124,14 @@ export default defineComponent({
      */
     const openVersionModal = () => {
       context.emit('versionToggle', true)
+    }
+
+    const openTimingModal = () => {
+      context.emit('timingToggle', true)
+    }
+
+    const handleStartWorkflow = () => {
+      context.emit('startToggle', true)
     }
 
     /**
@@ -329,7 +336,7 @@ export default defineComponent({
             />
           </div>
           {/* Download workflow PNG */}
-          <NTooltip
+{/*          <NTooltip
             v-slots={{
               trigger: () => (
                 <NButton
@@ -350,7 +357,7 @@ export default defineComponent({
               ),
               default: () => t('project.dag.download_png')
             }}
-          ></NTooltip>
+          ></NTooltip>*/}
           {/* Refresh */}
           {props.instance && (
             <NTooltip
@@ -379,7 +386,8 @@ export default defineComponent({
             ></NTooltip>
           )}
           {/* Delete */}
-          <NTooltip
+          {props.definition?.processDefinition?.releaseState  === 'OFFLINE' && !props.instance &&
+            (<NTooltip
             v-slots={{
               trigger: () => (
                 <NButton
@@ -389,6 +397,7 @@ export default defineComponent({
                   circle
                   type='info'
                   onClick={() => removeCells()}
+                  disabled={props.definition?.processDefinition?.releaseState  === 'ONLINE'}
                   v-slots={{
                     icon: () => (
                       <NIcon>
@@ -400,9 +409,9 @@ export default defineComponent({
               ),
               default: () => t('project.dag.delete_cell')
             }}
-          ></NTooltip>
+          ></NTooltip>)}
           {/* Toggle fullscreen */}
-          <NTooltip
+{/*          <NTooltip
             v-slots={{
               trigger: () => (
                 <NButton
@@ -430,9 +439,10 @@ export default defineComponent({
                   ? t('project.dag.fullscreen_close')
                   : t('project.dag.fullscreen_open')
             }}
-          ></NTooltip>
+          ></NTooltip>*/}
           {/* DAG Format */}
-          <NTooltip
+          {props.definition?.processDefinition?.releaseState  === 'OFFLINE' &&
+            (<NTooltip
             v-slots={{
               trigger: () => (
                 <NButton
@@ -453,9 +463,9 @@ export default defineComponent({
               ),
               default: () => t('project.dag.format')
             }}
-          ></NTooltip>
+          ></NTooltip>)}
           {/* Version info */}
-          {!!props.definition && (
+          {!!props.definition && props.definition?.processDefinition?.releaseState  === 'OFFLINE' && !props.instance && (
             <NTooltip
               v-slots={{
                 trigger: () => (
@@ -479,26 +489,102 @@ export default defineComponent({
               }}
             ></NTooltip>
           )}
-          {/* Save workflow */}
-          <NButton
-            class={[Styles['toolbar-right-item'], 'btn-save']}
-            type='info'
-            secondary
-            round
-            disabled={
-              props.definition?.processDefinition?.releaseState === 'ONLINE' &&
-              !props.instance
-            }
-            onClick={() => {
-              context.emit('saveModelToggle', true)
+          {!props.instance && (
+            <NTooltip trigger={'hover'}>
+            {{
+              default: () =>
+                  props.definition?.processDefinition?.releaseState === 'ONLINE'
+                      ? t('project.workflow.down_line')
+                      : t('project.workflow.up_line'),
+              trigger: () => (
+                  <NButton
+                      class={Styles['toolbar-right-item']}
+                      type={props.definition?.processDefinition?.releaseState === 'ONLINE' ? 'warning' : 'error'}
+                      strong
+                      secondary
+                      circle
+                      onClick={() => {
+                        context.emit('online')
+                      }}
+                  >
+                    <NIcon>
+                      {props.definition?.processDefinition?.releaseState === 'ONLINE' ? (
+                          <DownloadOutlined />
+                      ) : (
+                          <UploadOutlined />
+                      )}
+                    </NIcon>
+                  </NButton>
+              )
             }}
-          >
-            {t('project.dag.save')}
-          </NButton>
+          </NTooltip>
+          )}
+          {!props.instance && props.definition?.processDefinition?.releaseState  === 'ONLINE' && (
+              <NTooltip trigger={'hover'}>
+                {{
+                  default: () => t('project.workflow.timing'),
+                  trigger: () => (
+                      <NButton
+                          class={Styles['toolbar-right-item']}
+                          type='info'
+                          strong
+                          secondary
+                          circle
+                          onClick={openTimingModal}
+                          disabled={props.definition?.processDefinition?.releaseState  !== 'ONLINE' || !!props.definition?.processDefinition?.scheduleReleaseState }
+                      >
+                        <NIcon>
+                          <ClockCircleOutlined />
+                        </NIcon>
+                      </NButton>
+                  )
+                }}
+              </NTooltip>
+          )}
+          {!props.instance && props.definition?.processDefinition?.releaseState  === 'ONLINE' && (
+              <NTooltip trigger={'hover'}>
+                {{
+                  default: () => t('project.workflow.start'),
+                  trigger: () => (
+                      <NButton
+                          class={Styles['toolbar-right-item']}
+                          type='info'
+                          strong
+                          secondary
+                          circle
+                          onClick={handleStartWorkflow}
+                          disabled={props.definition?.processDefinition?.releaseState  !== 'ONLINE' || !!props.definition?.processDefinition?.scheduleReleaseState }
+                      >
+                        <NIcon>
+                          <PlayCircleOutlined />
+                        </NIcon>
+                      </NButton>
+                  )
+                }}
+              </NTooltip>
+          )}
+          {/* Save workflow */}
+          { !props.instance &&
+              (<NButton
+                class={[Styles['toolbar-right-item'], 'btn-save']}
+                type='info'
+                secondary
+                round
+                disabled={
+                  props.definition?.processDefinition?.releaseState === 'ONLINE' &&
+                  !props.instance
+                }
+                onClick={() => {
+                  context.emit('saveModelToggle', true)
+                }}
+              >
+                {t('project.dag.save')}
+              </NButton>
+            )}
           {/* Return to previous page */}
-          <NButton secondary round onClick={onClose} class='btn-close'>
+          {props.instance && (<NButton secondary round onClick={onClose} class='btn-close'>
             {t('project.dag.close')}
-          </NButton>
+          </NButton>)}
         </div>
       </div>
     )
