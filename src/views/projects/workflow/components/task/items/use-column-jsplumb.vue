@@ -1,7 +1,7 @@
 <script setup >
 
 import jsPlumb from 'jsplumb'
-import {onMounted, ref, nextTick} from 'vue';
+import {onMounted, ref, watch} from 'vue';
 import {NIcon, useMessage} from "naive-ui";
 import {CancelSharp} from "@vicons/material";
 
@@ -281,17 +281,24 @@ defineExpose({save, disassociate, sameName, sameLine, init, repaintPlumb})
 }, { deep: true });*/
 
 onMounted( () => {
-  setTimeout(()=>{
-    if( props.rightList.length && container.value){
-      init();
-      props.leftList.forEach((item, index) => {
-        let obj = {};
-        obj.source = 'S' + props.taskCode + item;
-        obj.target = 'T' + props.taskCode + props.rightList[index]
-        plumbins.connect(obj);
-      })
-    }
-  },1000)
+  let isFirstChange = true;
+  watch(
+      () => props.rightList,
+      (newRightList, oldRightList) => {
+        setTimeout(()=>{
+          if (isFirstChange && container.value && newRightList.length) {
+            init();
+            props.leftList.forEach((item, index) => {
+              let obj = {};
+              obj.source = 'S' + props.taskCode + item;
+              obj.target = 'T' + props.taskCode + newRightList[index];
+              plumbins.connect(obj);
+            });
+            isFirstChange = false;
+          }
+        },100)
+      }
+  );
 })
 
 </script>
