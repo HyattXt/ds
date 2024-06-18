@@ -73,7 +73,8 @@ export function runTask(
   return axios({
     url: `/projects/${projectCode}/task-definition/execute`,
     method: 'post',
-    data
+    data,
+    timeout: 30 * 60 * 1000, // 设置超时为 30 分钟
   })
 }
 
