@@ -3,7 +3,7 @@
 import jsPlumb from 'jsplumb'
 import {onMounted, ref, nextTick} from 'vue';
 import {NIcon, useMessage} from "naive-ui";
-import {CancelOutlined} from "@vicons/material";
+import {CancelSharp} from "@vicons/material";
 
 const props = defineProps({
   leftData: {
@@ -102,6 +102,8 @@ function init()  {
         originalEvent.preventDefault();
         originalEvent.stopPropagation();
       } else {
+        connectionInfo.canvas.style.cursor = 'pointer'
+
         const sourceElement = document.getElementById(connectionInfo.sourceId);
         const targetElement = document.getElementById(connectionInfo.targetId);
 
@@ -116,8 +118,16 @@ function init()  {
         const targetClientY = targetRect.top + window.scrollY + targetRect.height / 2;
 
         deleteIconStyle.value.left = `${(sourceClientX+targetClientX-30)/2}px`;
-        deleteIconStyle.value.top = `${(sourceClientY+targetClientY-15)/2}px`;
+        deleteIconStyle.value.top = `${(sourceClientY+targetClientY-4)/2}px`;
         showDeleteIcon.value = true;
+
+        const wheelHandler = (event) => {
+          showDeleteIcon.value = false;
+          // 移除滚轮事件监听
+          window.removeEventListener('wheel', wheelHandler);
+        };
+        window.addEventListener('wheel', wheelHandler, { once: true });
+
       }
 
     });
@@ -155,27 +165,27 @@ function initNode(id, type) {
       allowLoopback: false,
       maxConnections: 1, //一对一就把maxConnections设置为1，一对多就设置为-1
       paintStyle: {
-        stroke: '#00cdea',
+        stroke: '#33B5D4',
         fill: '#FFF',
         radius: 4,
         strokeWidth: 2,
       },
       hoverPaintStyle: {
-        stroke: '#00cdea',
-        fill: '#00cdea',
+        stroke: '#33B5D4',
+        fill: '#33B5D4',
+        cursor: 'pointer',
       },
       //   连线样式
       connectorStyle: {
         strokeWidth: 2,
-        stroke: '#b4bdc5',
+        stroke: '#33B5D4',
         joinstyle: 'round',
         outlineStroke: 'transparent',
         outlineWidth: 2,
       },
       connectorHoverStyle: {
         strokeWidth: 3,
-        stroke: '#F0A020',
-        cursor: 'pointer',
+        stroke: '#33B5D4',
       },
     });
   } else {
@@ -184,14 +194,14 @@ function initNode(id, type) {
       allowLoopback: false,
       maxConnections: 1, //一对一就把maxConnections设置为1，一对多就设置为-1
       paintStyle: {
-        stroke: '#00cdea',
+        stroke: '#33B5D4',
         fill: '#FFF',
         radius: 4,
         strokeWidth: 2,
       },
       hoverPaintStyle: {
-        stroke: '#00cdea',
-        fill: '#00cdea',
+        stroke: '#33B5D4',
+        fill: '#33B5D4',
       }
     });
   }
@@ -282,7 +292,6 @@ onMounted( () => {
       })
     }
   },1000)
-
 })
 
 </script>
@@ -302,6 +311,7 @@ onMounted( () => {
             v-for="(item, index) in props.leftData"
             :key="index"
             :title="item.label"
+            class="table-row"
         >
           <td>
             {{ item.label }}
@@ -325,8 +335,9 @@ onMounted( () => {
             v-for="(item, index) in props.rightData"
             :key="index"
             :title="item.label"
+            class="table-row"
         >
-          <td :id="item.id">
+          <td :id="item.id" class="data-cell">
             {{ item.label }}
           </td>
           <td >
@@ -337,7 +348,7 @@ onMounted( () => {
       </n-table>
     </div>
     <div v-if="showDeleteIcon" class="delete-icon" :style="deleteIconStyle">
-      <n-icon color="#FF6347" size="16"><CancelOutlined/></n-icon>
+      <n-icon color="#33B5D4" size="16"><CancelSharp/></n-icon>
     </div>
   </div>
 </template>
@@ -368,16 +379,24 @@ thead, th {
   background-color: transparent; /* 透明背景 */
 }
 
+.table-row:hover {
+  td {
+    background-color: #eefbff !important; /* 你可以设置你想要的背景色 */
+  }
+}
+
 .data-cell:hover {
   cursor: crosshair;
 }
 
 .delete-icon {
+  background-color: #FFFFFF;
+  pointer-events: none;
   position: fixed;
   cursor: pointer;
-  width: 20px; /* 设定一个明确的宽度 */
-  height: 20px; /* 设定一个明确的高度 */
-  line-height: 20px; /* 垂直居中文字 */
+  width: 16px; /* 设定一个明确的宽度 */
+  height: 16px; /* 设定一个明确的高度 */
+  line-height: 16px; /* 垂直居中文字 */
   text-align: center; /* 水平居中文字 */
   top: 10px; /* 设定距离顶部的位置 */
   right: 10px; /* 设定距离右侧的位置 */

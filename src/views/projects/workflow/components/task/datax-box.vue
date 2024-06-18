@@ -288,7 +288,7 @@
       <template #footer>
         <n-space justify="end">
           <NButton @click="showSqlModal = false">取消</NButton>
-          <NButton type="info" @click="executeTableSql">确定</NButton>
+          <NButton type="info" @click="executeTableSql">执行</NButton>
         </n-space>
       </template>
     </NCard>
