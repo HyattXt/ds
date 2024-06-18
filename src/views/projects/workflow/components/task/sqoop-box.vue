@@ -71,6 +71,7 @@ import * as Fields from "@/views/projects/task/components/node/fields";
 import getElementByJson from "@/components/form/get-elements-by-json";
 import UseParameterConfiguration from "@/views/projects/workflow/components/task/items/use-parameter-configuration.vue";
 import {useTask} from "@/views/projects/task/components/node/use-task";
+import {useHeightAdjustment} from "@/views/projects/workflow/components/task/useHeightAdjustment";
 
 const props = defineProps({
   taskCode: {
@@ -90,6 +91,7 @@ const props = defineProps({
     default: false
   }
 })
+useHeightAdjustment(false)
 //src/views/projects/workflow/treemap/index.tsx
 const updateTab = inject('updateTab')
 const updateEdited = inject('updateEdited')
@@ -249,7 +251,7 @@ onMounted( () => {
 
 .m-sqoop-box {
   width: 100%;
-  height: calc(100vh - 100px);
+  height: calc(100vh - var(--save-box-height-adjustment));
   position: relative;
   background: #FFFFFF;
 

@@ -64,6 +64,7 @@ import {useMessage} from "naive-ui";
 import {formatModel, formatParams as formatData} from "@/views/projects/task/components/node/format-data";
 import * as Fields from "@/views/projects/task/components/node/fields";
 import getElementByJson from "@/components/form/get-elements-by-json";
+import {useHeightAdjustment} from "@/views/projects/workflow/components/task/useHeightAdjustment";
 
 const props = defineProps({
   taskCode: {
@@ -83,6 +84,7 @@ const props = defineProps({
     default: false
   }
 })
+useHeightAdjustment(false)
 //src/views/projects/workflow/treemap/index.tsx
 const updateTab = inject('updateTab')
 const updateEdited = inject('updateEdited')
@@ -225,7 +227,7 @@ onMounted( () => {
 
 .m-sub-process-box {
   width: 100%;
-  height: calc(100vh - 100px);
+  height: calc(100vh - var(--save-box-height-adjustment));
   position: relative;
   background: #FFFFFF;
 

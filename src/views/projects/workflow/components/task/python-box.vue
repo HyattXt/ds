@@ -90,6 +90,7 @@ import {queryLog, startImmediateLog} from "@/service/modules/log";
 import {useAsyncState} from "@vueuse/core";
 import UseResources from "@/views/projects/workflow/components/task/items/use-resources.vue";
 import {ArrowMinimize28Filled, FullScreenMinimize24Filled, ArrowMinimizeVertical20Filled} from "@vicons/fluent";
+import {useHeightAdjustment} from "@/views/projects/workflow/components/task/useHeightAdjustment";
 
 const props = defineProps({
   taskCode: {
@@ -109,6 +110,7 @@ const props = defineProps({
     default: false
   }
 })
+useHeightAdjustment(true)
 //src/views/projects/workflow/treemap/index.tsx
 const updateTab = inject('updateTab')
 const updateEdited = inject('updateEdited')
@@ -342,7 +344,7 @@ onMounted( () => {
 
 .m-python-box {
   width: 100%;
-  height: calc(100vh - 100px);
+  height: calc(100vh - var(--run-box-height-adjustment));
   position: relative;
   background: #FFFFFF;
 

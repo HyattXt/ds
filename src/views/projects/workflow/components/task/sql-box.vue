@@ -113,6 +113,7 @@ import {
   Circle24Filled,
   FullScreenMinimize24Filled
 } from "@vicons/fluent";
+import {useHeightAdjustment} from "@/views/projects/workflow/components/task/useHeightAdjustment";
 
 const props = defineProps({
   taskCode: {
@@ -132,6 +133,7 @@ const props = defineProps({
     default: false
   }
 })
+useHeightAdjustment(true)
 //src/views/projects/workflow/treemap/index.tsx
 const updateTab = inject('updateTab')
 const updateEdited = inject('updateEdited')
@@ -391,7 +393,7 @@ onMounted( () => {
 
 .m-sql-box {
   width: 100%;
-  height: calc(100vh - 100px);
+  height: calc(100vh - var(--run-box-height-adjustment));
   position: relative;
   background: #FFFFFF;
 

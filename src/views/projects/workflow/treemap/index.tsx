@@ -618,7 +618,7 @@ export default defineComponent({
             (
                 <div style={"height:100%; border: 0px"}>
                             <div class="cue-drag-layout flex-row">
-                                <NSplit default-size={0.2} min={0.07} max={0.9} onDragMove={handleOnDragMove}
+                                <NSplit default-size={0.15} min={0.07} max={0.9} onDragMove={handleOnDragMove}
                                         v-slots={{
                                         1: () => (
                                             <div class="cue-drag-layout__mainview" style={"height: 100%"}>

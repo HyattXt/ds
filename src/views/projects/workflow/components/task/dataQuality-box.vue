@@ -73,6 +73,7 @@ import UseParameterConfiguration from "@/views/projects/workflow/components/task
 import {getDatasourceOptionsById, getRuleFormCreateJson, queryRuleList} from "@/service/modules/data-quality";
 import {useI18n} from 'vue-i18n'
 import {getDatasourceTableColumnsById, getDatasourceTablesById} from "@/service/modules/data-source";
+import {useHeightAdjustment} from "@/views/projects/workflow/components/task/useHeightAdjustment";
 
 const props = defineProps({
   taskCode: {
@@ -92,6 +93,7 @@ const props = defineProps({
     default: false
   }
 })
+useHeightAdjustment(false)
 //src/views/projects/workflow/treemap/index.tsx
 const updateTab = inject('updateTab')
 const updateEdited = inject('updateEdited')
@@ -459,7 +461,7 @@ onMounted( () => {
 
 .m-data-quality-box {
   width: 100%;
-  height: calc(100vh - 100px);
+  height: calc(100vh - var(--save-box-height-adjustment));
   position: relative;
   background: #FFFFFF;
 

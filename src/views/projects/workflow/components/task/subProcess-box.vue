@@ -26,6 +26,9 @@
               >
                 <component :is="element.widget" />
               </NFormItemGi>
+              <NFormItemGi span="24" style="display: flex; justify-content: flex-end">
+                  <n-button :disabled="!taskData.processDefinitionCode" text color="#288FFF" @click="enterNode">进入该子节点</n-button>
+              </NFormItemGi>
             </NGrid>
           </NForm>
         </div>
@@ -64,6 +67,8 @@ import {useMessage} from "naive-ui";
 import {formatModel, formatParams as formatData} from "@/views/projects/task/components/node/format-data";
 import * as Fields from "@/views/projects/task/components/node/fields";
 import getElementByJson from "@/components/form/get-elements-by-json";
+import {useHeightAdjustment} from "@/views/projects/workflow/components/task/useHeightAdjustment";
+import {queryProcessDefinitionByCode} from "@/service/modules/process-definition";
 
 const props = defineProps({
   taskCode: {
@@ -83,9 +88,11 @@ const props = defineProps({
     default: false
   }
 })
+useHeightAdjustment(false)
 //src/views/projects/workflow/treemap/index.tsx
 const updateTab = inject('updateTab')
 const updateEdited = inject('updateEdited')
+const pushComponent = inject('pushComponent')
 const message = useMessage()
 const formRef = ref()
 const configTabsVisible = ref(false)
@@ -161,6 +168,11 @@ const onTaskSubmit = async (data) => {
   })
 }
 
+async function enterNode() {
+  const res = await queryProcessDefinitionByCode(taskData.value.processDefinitionCode, props.projectCode)
+  pushComponent(2, taskData.value.processDefinitionCode, res.processDefinition.name, '', '', props.processCode)
+}
+
 function confirmTaskProperties() {
   tabData.value = []
   taskProperRef.value.save()
@@ -228,7 +240,7 @@ onMounted( () => {
 
 .m-sub-process-box {
   width: 100%;
-  height: calc(100vh - 100px);
+  height: calc(100vh - var(--save-box-height-adjustment));
   position: relative;
   background: #FFFFFF;
 
