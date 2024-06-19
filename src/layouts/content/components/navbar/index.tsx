@@ -98,7 +98,7 @@ const Navbar = defineComponent({
             onUpdateValue={this.handleMenuClick}
             style={"justify-content: flex-end;"}
           />
-          <Theme/>
+          {/*<Theme/>*/}
           <Project/>
           <User userDropdownOptions={this.userDropdownOptions} />
         </div>

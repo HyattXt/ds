@@ -134,7 +134,7 @@ export function useDataList() {
               }*/
             ]
           },
-          {
+/*          {
             label: t('menu.task'),
             key: 'task',
             icon: renderIcon(SettingOutlined),
@@ -143,12 +143,12 @@ export function useDataList() {
                 label: t('menu.task_definition'),
                 key: `/projects/${projectCode}/task/definitions`
               },
-              /*{
+              /!*{
                 label: t('menu.task_instance'),
                 key: `/projects/${projectCode}/task/instances`
-              }*/
+              }*!/
             ]
-          }
+          }*/
         ]
       },
       {
