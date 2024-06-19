@@ -263,22 +263,18 @@ const statusOptions = [
     value: '1'
   }
 ]
-const ip = ref(import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL
-    : window.webConfig.VITE_APP_PROD_API_URL)
+
 const getApiTreeUrl = import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getApiTreeFloder'
     : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getApiTreeFloder'
 const dataRef = ref([])
 const loadingRef = ref(false)
-const active = ref(false)
 const showModal = ref(false)
 const drawTitle = ref('')
 const drawId = ref('')
 const userList = ref([])
 const apiAuthorizer = ref([])
 const apiAuthorizerName = ref('')
-const basicInfo = ref({})
 const folderData = ref([])
 const actAuth = (row) => {
   showModal.value = true
