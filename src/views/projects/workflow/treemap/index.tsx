@@ -649,6 +649,7 @@ export default defineComponent({
                                                         }}
                                                     >
                                                     </n-input>
+                                                    <n-spin show={variables.value.loading} content-class={"tree-scrollbar"} style={"height: 100%"}>
                                                     <n-tree
                                                         class="tree-scrollbar"
                                                         block-line
@@ -663,6 +664,7 @@ export default defineComponent({
                                                         node-props={menu}
                                                         render-prefix={menuIcon}
                                                     />
+                                                    </n-spin>
                                                     <n-dropdown
                                                         placement="bottom-start"
                                                         trigger="manual"

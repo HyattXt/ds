@@ -22,6 +22,7 @@
                 <n-icon :component="SearchOutlined"/>
               </template>
             </n-input>
+            <n-spin :show="showSpin" style="height: 100%" content-class="tree-scrollbar">
               <n-tree
                   class="tree-scrollbar"
                   block-line
@@ -36,6 +37,7 @@
                   :render-prefix="menuIcon"
                   :nodeProps="nodeProps"
               />
+            </n-spin>
           </div>
         </div>
         <div class="cue-drag-layout__mainview" :style="{width: 'calc(100% - ' + (280 + 12) + 'px)'}">
@@ -134,6 +136,7 @@ const TableData = reactive({
     const router = useRouter()
     const loadingRef = ref(true)
     const loadingMeta = ref(false)
+    const showSpin = ref(false)
     const message = useMessage()
     const treeFolder = ref([])
     const expandedKeys = ref([]);
@@ -210,9 +213,11 @@ const TableData = reactive({
     }
 
     function getApiFolder ()  {
+      showSpin.value = true
       let params ={}
       axios.post(getApiFolderUrl,params).then((res) => {
         treeFolder.value = res.data.data
+        showSpin.value = false
       })
     }
 

@@ -22,6 +22,7 @@
               <n-icon :component="SearchOutlined"/>
             </template>
           </n-input>
+          <n-spin :show="showSpin" style="height: 100%" content-class="tree-scrollbar">
           <n-tree
               class="tree-scrollbar"
               block-line
@@ -37,6 +38,7 @@
               :render-suffix="renderSuffix"
               :nodeProps="nodeProps"
           />
+          </n-spin>
         </div>
       </div>
       <div class="cue-drag-layout__mainview" :style="{width: 'calc(100% - ' + (280 + 12) + 'px)'}">
@@ -553,7 +555,7 @@ const paginationReactive = reactive({
   indicatorDefiner: '',
   assetName: '',
   page: 1,
-  pageSize: 10,
+  pageSize: 30,
   timeDimension: null,
   indicatorName: '',
   indicatorCode: '',
@@ -564,7 +566,7 @@ const paginationReactive = reactive({
 function query(
     indicatorDefiner,
     page,
-    pageSize = 10,
+    pageSize = 30,
     timeDimension = '',
     indicatorName = '',
     indicatorCode = '',

@@ -6,6 +6,7 @@
           @add-event="showAddRef=!showAddRef"
           :tree-folder="treeFolder"
           :folder-data="treeFolder"
+          :show-spin="showSpin"
           :menuIcon="menuIcon"
           :nodeProps="nodeProps"
           :renderSuffix="renderSuffix"

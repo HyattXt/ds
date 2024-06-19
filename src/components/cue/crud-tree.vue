@@ -21,6 +21,7 @@
           <n-icon :component="SearchOutlined"/>
         </template>
       </n-input>
+      <n-spin :show="showSpin" style="height: 100%" content-class="tree-scrollbar">
       <n-tree
           class="tree-scrollbar"
           block-line
@@ -36,6 +37,7 @@
           :render-suffix="renderSuffix"
           :nodeProps="nodeProps"
       />
+      </n-spin>
     </div>
   </div>
   <el-dialog
@@ -121,6 +123,10 @@ const props = defineProps({
     default: false
   },
   showUpdateRef: {
+    type: Boolean,
+    default: false
+  },
+  showSpin: {
     type: Boolean,
     default: false
   },
