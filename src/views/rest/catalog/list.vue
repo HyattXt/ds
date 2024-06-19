@@ -1,57 +1,52 @@
 <template>
-  <n-space vertical>
-    <n-card size="small">
-      <n-space justify="space-between" style="height: 40px">
-        <router-link to="/devops/rest/rest-dev">
-        <n-button type="primary" > 新建接口</n-button>
-        </router-link>
-        <n-form ref="formRef" :model="pagination">
-          <n-grid :cols="10" :x-gap="12">
-            <n-form-item-gi
-                :span="8"
-                :show-label="false"
-                path="pagination.taskName"
-            >
-              <n-input
-                  size="small"
-                  v-model:value="pagination.taskName"
-                  placeholder="任务名"
-              />
-            </n-form-item-gi>
-            <n-form-item-gi :span="2" :show-label="false">
-              <n-button
-                  size="small"
-                  type="primary"
-                  @click="handlePageChange(1)"
-              >
-                <NIcon :component="SearchOutlined"></NIcon>
-              </n-button>
-            </n-form-item-gi>
-          </n-grid>
-        </n-form>
-      </n-space>
-    </n-card>
-    <n-card>
+  <CrudForm>
+    <template v-slot:header>
+      <CrudHeader title="接口管理" addButton @add-event="addRest"/>
+    </template>
+    <template v-slot:condition>
+      <n-form :show-feedback="false" :model="paginationReactive" label-placement="left" style="margin-bottom: 3px">
+        <n-grid :cols="22" :x-gap="12">
+          <n-form-item-gi :span="4" label="任务名:">
+            <n-input
+                size="small"
+                v-model:value="paginationReactive.taskName"
+            />
+          </n-form-item-gi>
+          <n-form-item-gi :span="2">
+            <el-button color="#0099CB" class="cue-crud__header-query" type="primary" size="default" style="margin-bottom: 0"
+                       :icon="Search" @click="handlePageChange(1, paginationReactive.pageSize)" >查询
+            </el-button>
+          </n-form-item-gi>
+        </n-grid>
+      </n-form>
+    </template>
+    <template v-slot:table>
       <n-data-table
           ref="table"
           remote
+          bordered
           flex-height
           style="height: 100%"
           :single-line="false"
           size="small"
-          :columns="columns"
-          :data="data"
-          :loading="loading"
-          :pagination="pagination"
+          :columns="columnsRef"
+          :data="dataRef"
+          :loading="loadingRef"
           :row-key="rowKey"
-          @update:page="handlePageChange"
+          class="cue-table"
       />
-    </n-card>
-  </n-space>
+    </template>
+    <template v-slot:page>
+      <CrudPage
+          :paginationReactive="paginationReactive"
+          @page-change="handlePageChange"
+      />
+    </template>
+  </CrudForm>
 </template>
 
-<script>
-import {defineComponent, ref, reactive, onMounted, h} from 'vue'
+<script setup>
+import {ref, reactive, onMounted, h} from 'vue'
 import axios from 'axios'
 import {
   DeleteOutlined,
@@ -60,6 +55,11 @@ import {
 } from '@vicons/antd'
 import {NButton, NIcon, NPopconfirm, NSpace, NTooltip, useMessage} from "naive-ui";
 import {useRoute, useRouter} from "vue-router";
+import {ElButton} from "element-plus";
+import CrudForm from "@/components/cue/crud-form.vue";
+import CrudPage from "@/components/cue/crud-page.vue";
+import CrudHeader from "@/components/cue/crud-header.vue";
+import {Search} from "@element-plus/icons-vue";
 
 const columns = ({ edit }, {del}) => {
   return [
@@ -175,9 +175,13 @@ const TableData = reactive({
   totalNum: 0
 })
 
+const rowKey = (rowData) => {
+  return rowData.apiId
+}
+
 function query(
     page,
-    pageSize = 10,
+    pageSize = 30,
     taskName = ''
 ) {
   return new Promise((resolve) => {
@@ -218,11 +222,10 @@ function query(
   })
 }
 
-export default defineComponent({
-  setup() {
+
     const dataRef = ref([])
     const router = useRouter()
-    const loadingRef = ref(true)
+    const loadingRef = ref(false)
     const message = useMessage()
     const columnsRef = ref(
         columns(
@@ -247,7 +250,7 @@ export default defineComponent({
                 axios.post(urlDel, delPar).then(function (response) {
 
                   message.info(response.data.info)
-                  refresh(paginationReactive.page)
+                  handlePageChange(paginationReactive.page, paginationReactive.pageSize)
                 })
               }
             }
@@ -256,7 +259,7 @@ export default defineComponent({
     const paginationReactive = reactive({
       page: 1,
       pageCount: 1,
-      pageSize: 10,
+      pageSize: 30,
       taskName: '',
       prefix({ itemCount }) {
         return `共${itemCount}条`
@@ -284,67 +287,49 @@ export default defineComponent({
       })
     }
 
-    onMounted(() => {
-      query(
-          paginationReactive.page,
-          paginationReactive.pageSize,
-          paginationReactive.taskName
-      ).then((data) => {
-        dataRef.value = data.data
-        dataRef.value.httpType = dataRef.value.forEach((item) => {
-          if (item.httpType === 1) {
-            item.httpType = 'POST'
-          }
-          if (item.httpType === 2) {
-            item.httpType = 'GET'
-          }
-        })
-        paginationReactive.pageCount = data.pageCount
-        paginationReactive.itemCount = data.total
-        loadingRef.value = false
-      })
-    })
-
-    return {
-      data: dataRef,
-      pagination: paginationReactive,
-      loading: loadingRef,
-      columns: columnsRef,
-      SearchOutlined,
-      rowKey(rowData) {
-        return rowData.colName
-      },
-      handlePageChange(currentPage) {
-        if (!loadingRef.value) {
-          loadingRef.value = true
-          query(
-              currentPage,
-              paginationReactive.pageSize,
-              paginationReactive.taskName
-          ).then((data) => {
-            dataRef.value = data.data
-            dataRef.value.httpType = dataRef.value.forEach((item) => {
-              if (item.httpType === 1) {
-                item.httpType = 'POST'
-              }
-              if (item.httpType === 2) {
-                item.httpType = 'GET'
-              }
-            })
-            paginationReactive.page = currentPage
-            paginationReactive.pageCount = data.pageCount
-            paginationReactive.itemCount = data.total
-            loadingRef.value = false
+    function handlePageChange(currentPage, pageSize) {
+      if (!loadingRef.value) {
+        loadingRef.value = true
+        paginationReactive.page = currentPage
+        paginationReactive.pageSize = pageSize
+        query(
+            paginationReactive.page,
+            paginationReactive.pageSize,
+            paginationReactive.taskName
+        ).then((data) => {
+          dataRef.value = data.data
+          dataRef.value.httpType = dataRef.value.forEach((item) => {
+            if (item.httpType === 1) {
+              item.httpType = 'POST'
+            }
+            if (item.httpType === 2) {
+              item.httpType = 'GET'
+            }
           })
-        }
+          paginationReactive.page = currentPage
+          paginationReactive.pageCount = data.pageCount
+          paginationReactive.itemCount = data.total
+          loadingRef.value = false
+        })
       }
     }
-  }
-})
+
+    function addRest() {
+      router.push({
+        path: '/devops/rest/rest-dev'
+      })
+    }
+
+    onMounted(() => {
+      handlePageChange(1, 30)
+    })
+
 </script>
 
-<style scoped>
-a {
-  text-decoration: none;
+<style lang="scss" scoped>
+.cue-table {
+  :deep(.n-data-table-td.n-data-table-td--last-row) {
+    border-bottom: 1px solid #efeff5;
+  }
 }
 </style>

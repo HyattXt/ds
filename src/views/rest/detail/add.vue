@@ -1,4 +1,5 @@
 <template>
+  <CrudHeader title="接口详情"/>
   <n-card title="选择数据源" :bordered="false" :segmented="{content: true}">
     <n-form
         ref="form1Ref"
@@ -195,6 +196,7 @@ import { useMessage } from 'naive-ui'
 import axios from 'axios'
 import {keys, values} from "lodash";
 import {useRouter} from "vue-router";
+import CrudHeader from "@/components/cue/crud-header.vue";
 const form1Ref: any = ref(null)
 const message = useMessage()
 const formValue = ref({
