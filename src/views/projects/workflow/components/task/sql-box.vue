@@ -1,4 +1,5 @@
 <template>
+  <NSpin :show="!initTag">
   <div class="m-sql-box">
     <CrudWorkflowTooltip
         @save-event="onTaskSubmit(taskData)"
@@ -91,6 +92,7 @@
       </n-drawer-content>
     </n-drawer>
   </div>
+  </NSpin>
 </template>
 
 <script setup>
