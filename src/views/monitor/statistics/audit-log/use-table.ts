@@ -30,11 +30,12 @@ export function useTable() {
     columns: [],
     tableData: [],
     page: ref(1),
-    pageSize: ref(10),
+    pageSize: ref(30),
     resourceType: ref(null),
     operationType: ref(null),
     userName: ref(null),
     datePickerRange: ref(null),
+    total: ref(0),
     totalPage: ref(1),
     loadingRef: ref(false)
   })
@@ -42,8 +43,9 @@ export function useTable() {
   const createColumns = (variables: any) => {
     variables.columns = [
       {
-        title: '#',
+        title: '序号',
         key: 'index',
+        width: '60',
         render: (row: any, index: number) => index + 1
       },
       {
@@ -89,6 +91,7 @@ export function useTable() {
     const { state } = useAsyncState(
       queryAuditLogListPaging(data).then((res: AuditListRes) => {
         variables.totalPage = res.totalPage
+        variables.total = res.total
         variables.tableData = res.totalList.map((item, unused) => {
           return {
             ...item

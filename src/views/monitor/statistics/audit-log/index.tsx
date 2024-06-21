@@ -25,13 +25,16 @@ import {
   NIcon,
   NDataTable,
   NPagination,
-  NCard
+  NCard, NForm, NGrid, NFormItemGi
 } from 'naive-ui'
 import { SearchOutlined } from '@vicons/antd'
 import { useTable } from './use-table'
 import { useI18n } from 'vue-i18n'
 import Card from '@/components/card'
 import styles from './index.module.scss'
+import CrudForm from "@/components/cue/crud-form.vue";
+import CrudHeader from "@/components/cue/crud-header.vue";
+import CrudPageDs from "@/components/cue/crud-page-ds.vue";
 
 const AuditLog = defineComponent({
   name: 'audit-log',
@@ -49,8 +52,14 @@ const AuditLog = defineComponent({
       })
     }
 
-    const onUpdatePageSize = () => {
+    const onUpdatePage = (page: number) => {
+      variables.page = page
+      requestTableData()
+    }
+
+    const onUpdatePageSize = (pageSize: number) => {
       variables.page = 1
+      variables.pageSize = pageSize
       requestTableData()
     }
 
@@ -72,91 +81,111 @@ const AuditLog = defineComponent({
       t,
       ...toRefs(variables),
       requestTableData,
+      onUpdatePage,
       onUpdatePageSize,
       onSearch
     }
   },
   render() {
-    const { t, requestTableData, onUpdatePageSize, onSearch, loadingRef } = this
+    const { t, requestTableData,onUpdatePage, onUpdatePageSize, onSearch, loadingRef } = this
 
     return (
       <>
-        <NCard>
-          <NSpace justify='end'>
-            <NInput
-              v-model={[this.userName, 'value']}
-              size='small'
-              placeholder={t('monitor.audit_log.user_name')}
-              clearable
-            />
-            <NSelect
-              v-model={[this.operationType, 'value']}
-              size='small'
-              options={[
-                { value: 'CREATE', label: t('monitor.audit_log.create') },
-                { value: 'UPDATE', label: t('monitor.audit_log.update') },
-                { value: 'DELETE', label: t('monitor.audit_log.delete') },
-                { value: 'READ', label: t('monitor.audit_log.read') }
-              ]}
-              placeholder={t('monitor.audit_log.operation_type')}
-              style={{ width: '180px' }}
-              clearable
-            />
-            <NSelect
-              v-model={[this.resourceType, 'value']}
-              size='small'
-              options={[
-                {
-                  value: 'USER_MODULE',
-                  label: t('monitor.audit_log.user_audit')
-                },
-                {
-                  value: 'PROJECT_MODULE',
-                  label: t('monitor.audit_log.project_audit')
-                }
-              ]}
-              placeholder={t('monitor.audit_log.resource_type')}
-              style={{ width: '180px' }}
-              clearable
-            />
-            <NDatePicker
-              v-model={[this.datePickerRange, 'value']}
-              type='datetimerange'
-              size='small'
-              start-placeholder={t('monitor.audit_log.start_time')}
-              end-placeholder={t('monitor.audit_log.end_time')}
-              clearable
-            />
-            <NButton size='small' type='primary' onClick={onSearch}>
-              {{
-                icon: () => (
-                  <NIcon>
-                    <SearchOutlined />
-                  </NIcon>
-                )
-              }}
-            </NButton>
-          </NSpace>
-        </NCard>
-        <Card class={styles['table-card']}>
-          <NDataTable
-            loading={loadingRef}
-            columns={this.columns}
-            data={this.tableData}
-          />
-          <div class={styles.pagination}>
-            <NPagination
-              v-model:page={this.page}
-              v-model:page-size={this.pageSize}
-              page-count={this.totalPage}
-              show-size-picker
-              page-sizes={[10, 30, 50]}
-              show-quick-jumper
-              onUpdatePage={requestTableData}
-              onUpdatePageSize={onUpdatePageSize}
-            />
-          </div>
-        </Card>
+        <CrudForm>
+          {{
+            header: () => (
+                <CrudHeader title="审计日志"/>
+            ),
+            condition: () => (
+                <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
+                  <NGrid cols="18" x-gap="16">
+                    <NFormItemGi label="用户" span="3">
+                      <NInput
+                          v-model={[this.userName, 'value']}
+                          size='small'
+                          placeholder={t('monitor.audit_log.user_name')}
+                          clearable
+                      />
+                    </NFormItemGi>
+                    <NFormItemGi label="操作类型" span="3">
+                      <NSelect
+                          v-model={[this.operationType, 'value']}
+                          size='small'
+                          options={[
+                            { value: 'CREATE', label: t('monitor.audit_log.create') },
+                            { value: 'UPDATE', label: t('monitor.audit_log.update') },
+                            { value: 'DELETE', label: t('monitor.audit_log.delete') },
+                            { value: 'READ', label: t('monitor.audit_log.read') }
+                          ]}
+                          placeholder={t('monitor.audit_log.operation_type')}
+                          style={{ width: '180px' }}
+                          clearable
+                      />
+                    </NFormItemGi>
+                    <NFormItemGi label="资源类型" span="3">
+                      <NSelect
+                          v-model={[this.resourceType, 'value']}
+                          size='small'
+                          options={[
+                            {
+                              value: 'USER_MODULE',
+                              label: t('monitor.audit_log.user_audit')
+                            },
+                            {
+                              value: 'PROJECT_MODULE',
+                              label: t('monitor.audit_log.project_audit')
+                            }
+                          ]}
+                          placeholder={t('monitor.audit_log.resource_type')}
+                          style={{ width: '180px' }}
+                          clearable
+                      />
+                    </NFormItemGi>
+                    <NFormItemGi label="时间" span="5">
+                      <NDatePicker
+                          v-model={[this.datePickerRange, 'value']}
+                          type='datetimerange'
+                          size='small'
+                          start-placeholder={t('monitor.audit_log.start_time')}
+                          end-placeholder={t('monitor.audit_log.end_time')}
+                          clearable
+                      />
+                    </NFormItemGi>
+                    <NFormItemGi span="2">
+                      <NButton size='small' color={'#0099CB'} type='primary' onClick={onSearch} style={"padding: 0 15px 0 15px"}>
+                        <NIcon>
+                          <SearchOutlined />
+                        </NIcon>
+                        <div style={"font-size: 12px"}>
+                          查询
+                        </div>
+                      </NButton>
+                    </NFormItemGi>
+                  </NGrid>
+                </NForm>
+            ),
+            table: () => (
+                <NDataTable
+                    loading={loadingRef}
+                    columns={this.columns}
+                    data={this.tableData}
+                    bordered
+                    flex-height
+                    single-line={false}
+                    class={"cue-table"}
+                />
+            ),
+            page: () => (
+                <CrudPageDs
+                    page={this.page}
+                    page-size={this.pageSize}
+                    item-count={this.total}
+                    onPageChange={onUpdatePage}
+                    onPageSizeChange={onUpdatePageSize}
+                />
+            )
+          }}
+        </CrudForm>
       </>
     )
   }
