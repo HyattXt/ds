@@ -5,8 +5,8 @@
     </template>
     <template v-slot:condition>
       <n-form :show-feedback="false" :model="paginationReactive" label-placement="left" style="margin-bottom: 3px">
-        <n-grid :cols="22" :x-gap="12">
-        <n-form-item-gi label="目录:" :span="4">
+        <n-grid :cols="22" :x-gap="16">
+        <n-form-item-gi label="目录" :span="4">
           <n-tree-select
               v-model:value="paginationReactive.apiTreeId"
               :options="folderData"
@@ -19,7 +19,7 @@
         </n-form-item-gi>
         <n-form-item-gi
             :span="4"
-            label="名称:"
+            label="名称"
             path="pagination.apiName"
         >
           <n-input
@@ -27,7 +27,7 @@
               v-model:value="paginationReactive.apiName"
           />
         </n-form-item-gi>
-        <n-form-item-gi :span="4" label="API类型:">
+        <n-form-item-gi :span="4" label="API类型">
           <n-select
               size="small"
               v-model:value="paginationReactive.apiFlag"
@@ -36,7 +36,7 @@
               placeholder="请选择"
           />
         </n-form-item-gi>
-        <n-form-item-gi :span="4" label="API状态:">
+        <n-form-item-gi :span="4" label="API状态">
           <n-select
               size="small"
               v-model:value="paginationReactive.apiStatus"
@@ -45,7 +45,7 @@
               placeholder="请选择"
           />
         </n-form-item-gi>
-        <n-form-item-gi :span="4" label="路径:">
+        <n-form-item-gi :span="4" label="路径">
           <n-input
               size="small"
               v-model:value="paginationReactive.apiPath"
@@ -512,10 +512,5 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.cue-table {
-  :deep(.n-data-table-td.n-data-table-td--last-row) {
-    border-bottom: 1px solid #efeff5;
-  }
-}
 
 </style>

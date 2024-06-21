@@ -18,7 +18,8 @@
 import { SearchOutlined } from '@vicons/antd'
 import {
   NGrid,
-  NGridItem,
+  NForm,
+  NFormItemGi,
   NInput,
   NButton,
   NDatePicker,
@@ -38,10 +39,7 @@ export default defineComponent({
     const executorNameRef = ref('')
     const hostRef = ref('')
     const stateTypeRef = ref('')
-    const startEndTimeRef = ref(
-        [new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 6 * 24 * 60 * 60 * 1000,
-          new Date(new Date().setHours(0, 0, 0, 0)).getTime() + 24 * 60 * 60 * 1000]
-    )
+    const startEndTimeRef = ref()
 
     const handleSearch = () => {
       let startDate = ''
@@ -80,47 +78,50 @@ export default defineComponent({
     const { t } = useI18n()
     const options = stateType(t)
     return (
-      <NGrid xGap={6} cols={24}>
-        <NGridItem offset={5} span={3}>
+      <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
+        <NGrid xGap={16} cols={24}>
+        <NFormItemGi label="名称" span={4}>
           <NInput
+            size='small'
             v-model:value={this.searchValRef}
             placeholder={t('project.workflow.name')}
           />
-        </NGridItem>
-        <NGridItem span={3}>
+        </NFormItemGi>
+        <NFormItemGi label="执行用户" span={4}>
           <NInput
+            size='small'
             v-model:value={this.executorNameRef}
             placeholder={t('project.workflow.executor')}
           />
-        </NGridItem>
-        <NGridItem span={3}>
-          <NInput
-            v-model:value={this.hostRef}
-            placeholder={t('project.workflow.host')}
-          />
-        </NGridItem>
-        <NGridItem span={3}>
+        </NFormItemGi>
+        <NFormItemGi label="状态" span={3}>
           <NSelect
+            size='small'
             options={options}
             defaultValue={''}
             v-model:value={this.stateTypeRef}
           />
-        </NGridItem>
-        <NGridItem span={6}>
+        </NFormItemGi>
+        <NFormItemGi label="时间" span={6}>
           <NDatePicker
+            size='small'
             type='datetimerange'
             clearable
             v-model:value={this.startEndTimeRef}
           />
-        </NGridItem>
-        <NGridItem span={1}>
-          <NButton type='primary' onClick={this.handleSearch}>
+        </NFormItemGi>
+        <NFormItemGi span={1}>
+          <NButton size='small' color={'#0099CB'} type='primary' onClick={this.handleSearch} style={"padding: 0 15px 0 15px"}>
             <NIcon>
               <SearchOutlined />
             </NIcon>
+            <div style={"font-size: 12px"}>
+              查询
+            </div>
           </NButton>
-        </NGridItem>
+        </NFormItemGi>
       </NGrid>
+      </NForm>
     )
   }
 })

@@ -31,7 +31,7 @@ import {
   DownloadOutlined
 } from '@vicons/antd'
 import { format } from 'date-fns'
-import { useRoute, useRouter } from 'vue-router'
+import {LocationQueryValue, useRoute, useRouter} from 'vue-router'
 import { parseTime, renderTableTime, tasksState } from '@/common/common'
 import {
   COLUMN_WIDTH_CONFIG,
@@ -46,40 +46,24 @@ export function useTable() {
   const router: Router = useRouter()
   const projectCode = Number(route.params.projectCode)
   const processInstanceId = Number(route.params.processInstanceId)
-  const stateType = ref()
-  stateType.value = route.query.stateType
-  const datePickerRange = ref([]);
-  const timeRangeParam = route.query.timeRange;
-
-  // 如果 timeRange 参数存在，则进行拆分处理
-  if (timeRangeParam) {
-    const [startTime, endTime] = timeRangeParam.split(',');
-    // 将拆分后的值存入 timeRangeArray
-    datePickerRange.value = [Number(startTime), Number(endTime)];
-  } else {
-    datePickerRange.value = [new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 6 * 24 * 60 * 60 * 1000,
-    new Date(new Date().setHours(0, 0, 0, 0)).getTime() + 24 * 60 * 60 * 1000]
-
-  }
+  const stateType = ref(route.query.stateType)
+  const timeRangeParam = route.query.timeRange as string;
 
   const variables = reactive({
     columns: [],
     tableWidth: DefaultTableWidth,
     tableData: [] as IRecord[],
     page: ref(1),
-    pageSize: ref(10),
+    pageSize: ref(30),
     searchVal: ref(null),
     processInstanceId: ref(processInstanceId ? processInstanceId : null),
     host: ref(null),
     stateType: stateType,
-    // datePickerRange: ref(
-    //   [new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 6 * 24 * 60 * 60 * 1000,
-    //   new Date(new Date().setHours(0, 0, 0, 0)).getTime() + 24 * 60 * 60 * 1000]
-    // ),
-    datePickerRange: datePickerRange,
+    datePickerRange: ref(null),
     executorName: ref(null),
     processInstanceName: ref(null),
     totalPage: ref(1),
+    total: ref(0),
     showModalRef: ref(false),
     row: {},
     loadingRef: ref(false),
@@ -88,6 +72,14 @@ export function useTable() {
     skipLineNum: ref(0),
     limit: ref(1000)
   })
+
+  // 如果 timeRange 参数存在，则进行拆分处理
+  if (timeRangeParam) {
+    const [startTime, endTime] = timeRangeParam.split(',');
+    // 将拆分后的值存入 timeRangeArray
+    // @ts-ignore
+    variables.datePickerRange = [Number(startTime), Number(endTime)];
+  }
 
   const createColumns = (variables: any) => {
     variables.columns = [
@@ -329,6 +321,7 @@ export function useTable() {
         (res: TaskInstancesRes) => {
           variables.tableData = res.totalList as IRecord[]
           variables.totalPage = res.totalPage
+          variables.total = res.total
           variables.loadingRef = false
         }
       ),
@@ -356,9 +349,6 @@ export function renderStateCell(state: ITaskState, t: Function) {
     {
       color: stateOption.color,
       class: stateOption.classNames,
-      style: {
-        display: 'flex'
-      },
       size: 20
     },
     () => h(stateOption.icon)

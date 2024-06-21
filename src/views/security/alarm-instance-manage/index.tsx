@@ -21,18 +21,19 @@ import {
   NInput,
   NIcon,
   NDataTable,
-  NPagination,
-  NSpace
+  NForm, NGrid, NFormItemGi
 } from 'naive-ui'
-import Card from '@/components/card'
 import DetailModal from './detail'
 import { SearchOutlined } from '@vicons/antd'
 import { useI18n } from 'vue-i18n'
 import { useUserInfo } from './use-userinfo'
 import { useColumns } from './use-columns'
 import { useTable } from './use-table'
-import styles from './index.module.scss'
 import type { IRecord } from './types'
+
+import CrudHeader from "@/components/cue/crud-header.vue";
+import CrudForm from "@/components/cue/crud-form.vue";
+import CrudPageDs from "@/components/cue/crud-page-ds.vue";
 
 const AlarmInstanceManage = defineComponent({
   name: 'alarm-instance-manage',
@@ -110,50 +111,58 @@ const AlarmInstanceManage = defineComponent({
 
     return (
       <>
-        <Card title=''>
+        <CrudForm>
           {{
-            default: () => (
-              <div class={styles['conditions']}>
-                {IS_ADMIN && (
-                  <NButton onClick={onCreate} type='primary'>
-                    {t('security.alarm_instance.create_alarm_instance')}
-                  </NButton>
-                )}
-                <NSpace
-                  class={styles['conditions-search']}
-                  justify='end'
-                  wrap={false}
-                >
-                  <div class={styles['conditions-search-input']}>
-                    <NInput
-                      v-model={[this.searchVal, 'value']}
-                      placeholder={`${t(
-                        'security.alarm_instance.search_input_tips'
-                      )}`}
-                    />
-                  </div>
-                  <NButton type='primary' onClick={onUpdatedList}>
-                    <NIcon>
-                      <SearchOutlined />
-                    </NIcon>
-                  </NButton>
-                </NSpace>
-              </div>
+            header: () => (
+                <CrudHeader title="告警实例管理" addButton={IS_ADMIN} onAddEvent={onCreate}/>
+            ),
+            condition: () => (
+                    <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
+                      <NGrid cols="22" x-gap="12">
+                        <NFormItemGi label="名称" span="4">
+                          <NInput
+                              size='small'
+                              v-model={[this.searchVal, 'value']}
+                              placeholder={`${t(
+                                  'security.alarm_instance.search_input_tips'
+                              )}`}
+                          />
+                        </NFormItemGi>
+                        <NFormItemGi span="2">
+                          <NButton size='small' color={'#0099CB'} type='primary' onClick={onUpdatedList} style={"padding: 0 15px 0 15px"}>
+                            <NIcon>
+                              <SearchOutlined />
+                            </NIcon>
+                            <div style={"font-size: 12px"}>
+                              查询
+                            </div>
+                          </NButton>
+                        </NFormItemGi>
+                      </NGrid>
+                    </NForm>
+            ),
+            table: () => (
+                  <NDataTable
+                      columns={columns}
+                      data={list}
+                      loading={loading}
+                      bordered
+                      flex-height
+                      single-line={false}
+                      class={"cue-table"}
+                  />
+            ),
+            page: () => (
+                <CrudPageDs
+                    page={page}
+                    page-size={pageSize}
+                    item-count={itemCount}
+                    onPageChange={changePage}
+                    onPageSizeChange={changePageSize}
+                />
             )
           }}
-        </Card>
-        <Card title='' class={styles['mt-8']}>
-          <NDataTable columns={columns} data={list} loading={loading} striped />
-          <NPagination
-            page={page}
-            page-size={pageSize}
-            item-count={itemCount}
-            show-quick-jumper
-            class={styles['pagination']}
-            on-update:page={changePage}
-            on-update:page-size={changePageSize}
-          />
-        </Card>
+        </CrudForm>
         {IS_ADMIN && (
           <DetailModal
             show={showDetailModal}

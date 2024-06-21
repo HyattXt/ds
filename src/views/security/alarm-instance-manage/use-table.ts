@@ -27,7 +27,7 @@ import type { IRecord } from './types'
 export function useTable() {
   const data = reactive({
     page: 1,
-    pageSize: 10,
+    pageSize: 30,
     itemCount: 0,
     searchVal: '',
     list: [],

@@ -562,6 +562,11 @@ dt {
           height: 28px;
           font-size: 12px
         }
+
+        .n-form-item .n-form-item-label {
+          font-size: 12px;
+          padding: 0 8px 0 0
+        }
       }
 
       .cue-crud__header-content {
@@ -715,3 +720,13 @@ dt {
   background-color: #ffffff;
   margin: 0;
 }
+
+.n-data-table .n-data-table-td {
+  text-align: center;
+  border-bottom: 1px solid var(--n-merged-border-color) !important;
+}
+
+.n-data-table .n-data-table-th .n-data-table-th__title-wrapper {
+  text-align: center;
+}
+

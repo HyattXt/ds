@@ -109,7 +109,7 @@ export default defineComponent({
       <NSpace>
         <NTooltip trigger={'hover'}>
           {{
-            default: () => t('project.workflow.edit'),
+            default: () => t('project.workflow.open'),
             trigger: () => (
               <NButton
                 tag='div'

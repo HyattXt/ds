@@ -52,8 +52,9 @@ export function useTable() {
     checkedRowKeys: [] as Array<RowKey>,
     tableData: [] as Array<IWorkflowInstance>,
     page: ref(1),
-    pageSize: ref(10),
+    pageSize: ref(30),
     totalPage: ref(1),
+    total: ref(0),
     searchVal: ref(),
     executorName: ref(),
     host: ref(),
@@ -249,6 +250,7 @@ export function useTable() {
     queryProcessInstanceListPaging({ ...params }, variables.projectCode).then(
       (res: any) => {
         variables.totalPage = res.totalPage
+        variables.total = res.total
         variables.tableData = res.totalList.map((item: any) => {
           return { ...item }
         })

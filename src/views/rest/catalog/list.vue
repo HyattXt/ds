@@ -5,8 +5,8 @@
     </template>
     <template v-slot:condition>
       <n-form :show-feedback="false" :model="paginationReactive" label-placement="left" style="margin-bottom: 3px">
-        <n-grid :cols="22" :x-gap="12">
-          <n-form-item-gi :span="4" label="任务名:">
+        <n-grid :cols="22" :x-gap="16">
+          <n-form-item-gi :span="4" label="任务名">
             <n-input
                 size="small"
                 v-model:value="paginationReactive.taskName"
@@ -23,12 +23,9 @@
     <template v-slot:table>
       <n-data-table
           ref="table"
-          remote
           bordered
           flex-height
-          style="height: 100%"
           :single-line="false"
-          size="small"
           :columns="columnsRef"
           :data="dataRef"
           :loading="loadingRef"
@@ -103,7 +100,7 @@ const columns = ({ edit }, {del}) => {
       key: 'actions',
       width: 132,
       render(row) {
-        return h(NSpace, null, {
+        return h(NSpace, {justify: "center"}, {
           default: () => [
             h(
                 NTooltip,
@@ -115,7 +112,7 @@ const columns = ({ edit }, {del}) => {
                           {
                             circle: true,
                             type: 'info',
-                            size: 'small',
+                            size: 'tiny',
                             class: 'edit',
                             onClick: () => {
                               edit(row)
@@ -148,7 +145,7 @@ const columns = ({ edit }, {del}) => {
                                     {
                                       circle: true,
                                       type: 'error',
-                                      size: 'small',
+                                      size: 'tiny',
                                       class: 'delete'
                                     },
                                     {
@@ -261,31 +258,7 @@ function query(
       pageCount: 1,
       pageSize: 30,
       taskName: '',
-      prefix({ itemCount }) {
-        return `共${itemCount}条`
-      }
     })
-
-    function refresh(currentPage) {
-      query(
-          currentPage,
-          paginationReactive.pageSize,
-          paginationReactive.taskName
-      ).then((data) => {
-        dataRef.value = data.data
-        dataRef.value.httpType = dataRef.value.forEach((item) => {
-          if (item.httpType === 1) {
-            item.httpType = 'POST'
-          }
-          if (item.httpType === 2) {
-            item.httpType = 'GET'
-          }
-        })
-        paginationReactive.pageCount = data.pageCount
-        paginationReactive.itemCount = data.total
-        loadingRef.value = false
-      })
-    }
 
     function handlePageChange(currentPage, pageSize) {
       if (!loadingRef.value) {
@@ -327,9 +300,5 @@ function query(
 </script>
 
 <style lang="scss" scoped>
-.cue-table {
-  :deep(.n-data-table-td.n-data-table-td--last-row) {
-    border-bottom: 1px solid #efeff5;
-  }
-}
+
 </style>
