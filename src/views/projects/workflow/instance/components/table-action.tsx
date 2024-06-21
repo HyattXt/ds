@@ -106,7 +106,7 @@ export default defineComponent({
     const state = this.row?.state
 
     return (
-      <NSpace>
+      <NSpace justify={'center'}>
         <NTooltip trigger={'hover'}>
           {{
             default: () => t('project.workflow.open'),

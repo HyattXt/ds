@@ -116,7 +116,7 @@ export default defineComponent({
     const scheduleReleaseState = this.row?.scheduleReleaseState
 
     return (
-      <NSpace>
+      <NSpace justify={'center'}>
         <NTooltip trigger={'hover'}>
           {{
             default: () => t('project.workflow.start'),

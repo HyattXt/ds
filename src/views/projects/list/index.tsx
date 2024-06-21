@@ -20,7 +20,7 @@ import { SearchOutlined } from '@vicons/antd'
 import {
   NButton,
   NCard,
-  NDataTable,
+  NDataTable, NForm, NFormItemGi, NGrid,
   NIcon,
   NInput,
   NPagination,
@@ -32,6 +32,9 @@ import ProjectModal from './components/project-modal'
 import styles from './index.module.scss'
 import { useTable } from './use-table'
 import {useLogin} from "@/views/login/use-login";
+import CrudForm from "@/components/cue/crud-form.vue";
+import CrudHeader from "@/components/cue/crud-header.vue";
+import CrudPageDs from "@/components/cue/crud-page-ds.vue";
 
 
 const list = defineComponent({
@@ -47,6 +50,11 @@ const list = defineComponent({
         pageNo: variables.page,
         searchVal: variables.searchVal
       })
+    }
+
+    const handlePageChange = (page: number) => {
+      variables.page = page
+      requestData()
     }
 
     const handleModalChange = () => {
@@ -68,8 +76,9 @@ const list = defineComponent({
       requestData()
     }
 
-    const handleChangePageSize = () => {
+    const handleChangePageSize = (pageSize: number) => {
       variables.page = 1
+      variables.pageSize = pageSize
       requestData()
     }
 
@@ -95,62 +104,66 @@ const list = defineComponent({
       handleSearch,
       onCancelModal,
       onConfirmModal,
+      handlePageChange,
       handleChangePageSize
     }
   },
   render() {
     const { t, loadingRef } = this
     return (
-      <div>
-        <NCard>
-          <div class={styles['search-card']}>
-            <NButton
-              size='small'
-              onClick={this.handleModalChange}
-              type='primary'
-              class='btn-create-project'
-            >
-              {t('project.list.create_project')}
-            </NButton>
-            <NSpace>
-              <NInput
-                size='small'
-                v-model={[this.searchVal, 'value']}
-                placeholder={t('project.list.project_tips')}
-                clearable
-              />
-              <NButton size='small' type='primary' onClick={this.handleSearch}>
-                <NIcon>
-                  <SearchOutlined />
-                </NIcon>
-              </NButton>
-            </NSpace>
-          </div>
-        </NCard>
-        <Card
-          title={t('project.list.project_list')}
-          class={styles['table-card']}
-        >
-          <NDataTable
-            loading={loadingRef}
-            columns={this.columns}
-            data={this.tableData}
-            scrollX={this.tableWidth}
-            row-class-name='items'
-          />
-          <div class={styles.pagination}>
-            <NPagination
-              v-model:page={this.page}
-              v-model:page-size={this.pageSize}
-              page-count={this.totalPage}
-              show-size-picker
-              page-sizes={[10, 30, 50]}
-              show-quick-jumper
-              onUpdatePage={this.requestData}
-              onUpdatePageSize={this.handleChangePageSize}
-            />
-          </div>
-        </Card>
+      <>
+        <CrudForm>
+          {{
+            header: () => (
+                <CrudHeader title="项目管理" addButton onAddEvent={this.handleModalChange}/>
+            ),
+            condition: () => (
+                <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
+                  <NGrid cols="22" x-gap="12">
+                    <NFormItemGi label="名称" span="4">
+                      <NInput
+                          size='small'
+                          v-model={[this.searchVal, 'value']}
+                          placeholder={t('project.list.project_tips')}
+                          clearable
+                      />
+                    </NFormItemGi>
+                    <NFormItemGi span="2">
+                      <NButton size='small' color={'#0099CB'} type='primary' onClick={this.handleSearch} style={"padding: 0 15px 0 15px"}>
+                        <NIcon>
+                          <SearchOutlined />
+                        </NIcon>
+                        <div style={"font-size: 12px"}>
+                          查询
+                        </div>
+                      </NButton>
+                    </NFormItemGi>
+                  </NGrid>
+                </NForm>
+            ),
+            table: () => (
+                <NDataTable
+                    loading={loadingRef}
+                    columns={this.columns}
+                    data={this.tableData}
+                    scrollX={this.tableWidth}
+                    bordered
+                    flex-height
+                    single-line={false}
+                    class={"cue-table"}
+                />
+            ),
+            page: () => (
+                <CrudPageDs
+                    page={this.page}
+                    page-size={this.pageSize}
+                    item-count={this.total}
+                    onPageChange={this.handlePageChange}
+                    onPageSizeChange={this.handleChangePageSize}
+                />
+            )
+          }}
+        </CrudForm>
         <ProjectModal
           showModalRef={this.showModalRef}
           statusRef={this.statusRef}
@@ -158,7 +171,7 @@ const list = defineComponent({
           onCancelModal={this.onCancelModal}
           onConfirmModal={this.onConfirmModal}
         />
-      </div>
+      </>
     )
   }
 })

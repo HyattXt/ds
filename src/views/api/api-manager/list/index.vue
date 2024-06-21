@@ -206,18 +206,18 @@ const columns = ({ play }, { pub }, { auth }) => {
         return h(NSpace, {justify: "center"}, {
           default: () => [
             h(NTooltip, {}, {trigger: () =>
-                  h(NButton, {circle: true, type: row.apiAuthorizer === null ? 'warning' : 'info', size: 'tiny', class: 'edit', onClick: () => {auth(row)}}, {icon: () =>
+                  h(NButton, {circle: true, type: row.apiAuthorizer === null ? 'warning' : 'info', size: 'small', class: 'edit', onClick: () => {auth(row)}}, {icon: () =>
                         h(NIcon, null, { default: () => h(UserOutlined) })}
                   ), default: () => '授权'}
             ),
             h(NTooltip, {}, {trigger: () =>
-                  h(NButton, {circle: true, type: 'info', size: 'tiny', class: 'edit', onClick: () => {play(row)}}, {icon: () =>
+                  h(NButton, {circle: true, type: 'info', size: 'small', class: 'edit', onClick: () => {play(row)}}, {icon: () =>
                         h(NIcon, null, { default: () => h(ProfileOutlined) })}
                   ), default: () => '查看'}
             ),
             h(NPopconfirm, {onPositiveClick: () => {pub(row)}}, {trigger: () =>
                   h(NTooltip, {}, {trigger: () =>
-                        h(NButton, {disabled: row.apiAuthorizer === null, circle: true, type: row.apiStatus === '待发布' ? 'info' : 'warning', size: 'tiny', class: 'edit'}, {icon: () =>
+                        h(NButton, {disabled: row.apiAuthorizer === null, circle: true, type: row.apiStatus === '待发布' ? 'info' : 'warning', size: 'small', class: 'edit'}, {icon: () =>
                               h(NIcon, null, {
                                 default: () => row.apiStatus === '待发布'
                                     ? h(ToTopOutlined)

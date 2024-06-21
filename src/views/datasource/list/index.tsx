@@ -22,7 +22,7 @@ import {
   NIcon,
   NDataTable,
   NPagination,
-  NSpace
+  NSpace, NForm, NGrid, NFormItemGi
 } from 'naive-ui'
 import Card from '@/components/card'
 import DetailModal from './detail'
@@ -34,6 +34,9 @@ import styles from './index.module.scss'
 import type { TableColumns } from './types'
 import { DefaultTableWidth } from '@/common/column-width-config'
 import axios from "axios";
+import CrudForm from "@/components/cue/crud-form.vue";
+import CrudHeader from "@/components/cue/crud-header.vue";
+import CrudPageDs from "@/components/cue/crud-page-ds.vue";
 
 const list = defineComponent({
   name: 'list',
@@ -103,59 +106,57 @@ const list = defineComponent({
 
     return (
       <>
-        <Card title=''>
+        <CrudForm>
           {{
-            default: () => (
-              <div class={styles['conditions']}>
-                <NButton
-                  onClick={onCreate}
-                  type='primary'
-                  class='btn-create-data-source'
-                >
-                  {t('datasource.create_datasource')}
-                </NButton>
-                <NSpace
-                  class={styles['conditions-search']}
-                  justify='end'
-                  wrap={false}
-                >
-                  <div class={styles['conditions-search-input']}>
-                    <NInput
-                      v-model={[this.searchVal, 'value']}
-                      placeholder={`${t('datasource.search_input_tips')}`}
-                    />
-                  </div>
-                  <NButton type='primary' onClick={onUpdatedList}>
-                    <NIcon>
-                      <SearchOutlined />
-                    </NIcon>
-                  </NButton>
-                </NSpace>
-              </div>
+            header: () => (
+                <CrudHeader title="数据源管理" addButton onAddEvent={onCreate}/>
+            ),
+            condition: () => (
+                <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
+                  <NGrid cols="22" x-gap="12">
+                    <NFormItemGi label="名称" span="4">
+                      <NInput
+                          size='small'
+                          v-model={[this.searchVal, 'value']}
+                          placeholder={`${t('datasource.search_input_tips')}`}
+                      />
+                    </NFormItemGi>
+                    <NFormItemGi span="2">
+                      <NButton size='small' color={'#0099CB'} type='primary' onClick={onUpdatedList} style={"padding: 0 15px 0 15px"}>
+                        <NIcon>
+                          <SearchOutlined />
+                        </NIcon>
+                        <div style={"font-size: 12px"}>
+                          查询
+                        </div>
+                      </NButton>
+                    </NFormItemGi>
+                  </NGrid>
+                </NForm>
+            ),
+            table: () => (
+                <NDataTable
+                    columns={columns.columns}
+                    data={list}
+                    loading={loading}
+                    bordered
+                    flex-height
+                    single-line={false}
+                    scrollX={columns.tableWidth}
+                    class={"cue-table"}
+                />
+            ),
+            page: () => (
+                <CrudPageDs
+                    page={page}
+                    page-size={pageSize}
+                    item-count={itemCount}
+                    onPageChange={changePage}
+                    onPageSizeChange={changePageSize}
+                />
             )
           }}
-        </Card>
-        <Card title='' class={styles['mt-8']}>
-          <NDataTable
-            row-class-name='data-source-items'
-            columns={columns.columns}
-            data={list}
-            loading={loading}
-            striped
-            scrollX={columns.tableWidth}
-          />
-          <NPagination
-            page={page}
-            page-size={pageSize}
-            item-count={itemCount}
-            show-quick-jumper
-            show-size-picker
-            page-sizes={[10, 30, 50]}
-            class={styles['pagination']}
-            on-update:page={changePage}
-            on-update:page-size={changePageSize}
-          />
-        </Card>
+        </CrudForm>
         <DetailModal
           show={showDetailModal}
           id={id}

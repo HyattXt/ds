@@ -73,7 +73,7 @@ export function useTable() {
         ...COLUMN_WIDTH_CONFIG['selection']
       },
       {
-        title: '#',
+        title: '序号',
         key: 'id',
         ...COLUMN_WIDTH_CONFIG['index'],
         render: (rowData: any, rowIndex: number) => rowIndex + 1

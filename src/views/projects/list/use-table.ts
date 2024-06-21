@@ -69,7 +69,7 @@ export function useTable() {
   const createColumns = (variables: any) => {
     variables.columns = [
       {
-        title: '#',
+        title: '序号',
         key: 'index',
         render: (unused: any, index: number) => index + 1,
         ...COLUMN_WIDTH_CONFIG['index']
@@ -140,7 +140,7 @@ export function useTable() {
         key: 'actions',
         ...COLUMN_WIDTH_CONFIG['operation'](2),
         render(row: any) {
-          return h(NSpace, null, {
+          return h(NSpace, {justify: 'center'}, {
             default: () => [
               h(
                 NTooltip,
@@ -216,8 +216,9 @@ export function useTable() {
     tableWidth: DefaultTableWidth,
     tableData: [],
     page: ref(1),
-    pageSize: ref(10),
+    pageSize: ref(30),
     searchVal: ref(null),
+    total: ref(0),
     totalPage: ref(1),
     showModalRef: ref(false),
     statusRef: ref(0),
@@ -231,6 +232,7 @@ export function useTable() {
     const { state } = useAsyncState(
       queryProjectListPaging(params).then((res: ProjectRes) => {
         variables.totalPage = res.totalPage
+        variables.total = res.total
         variables.tableData = res.totalList.map((item, unused) => {
           item.createTime = format(
             parseTime(item.createTime),

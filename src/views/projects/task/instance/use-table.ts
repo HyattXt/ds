@@ -84,7 +84,7 @@ export function useTable() {
   const createColumns = (variables: any) => {
     variables.columns = [
       {
-        title: '#',
+        title: '序号',
         key: 'index',
         render: (row: any, index: number) => index + 1,
         ...COLUMN_WIDTH_CONFIG['index']
@@ -184,7 +184,7 @@ export function useTable() {
         key: 'operation',
         ...COLUMN_WIDTH_CONFIG['operation'](3),
         render(row: any) {
-          return h(NSpace, null, {
+          return h(NSpace, {justify: 'center'}, {
             default: () => [
               h(
                 NTooltip,
