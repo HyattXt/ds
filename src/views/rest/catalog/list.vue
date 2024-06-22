@@ -9,6 +9,7 @@
           <n-form-item-gi :span="4" label="任务名">
             <n-input
                 size="small"
+                clearable
                 v-model:value="paginationReactive.taskName"
             />
           </n-form-item-gi>

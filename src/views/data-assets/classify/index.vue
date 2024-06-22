@@ -70,7 +70,7 @@
                     </el-select>
                   </el-form-item>
                   <el-form-item label="资产名称">
-                    <el-input type="text" v-model="paginationReactive.assetName"/>
+                    <el-input type="text" style="width: 180px" clearable v-model="paginationReactive.assetName"/>
                   </el-form-item>
                 </el-form>
               </div>

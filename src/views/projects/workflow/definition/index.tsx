@@ -139,6 +139,7 @@ export default defineComponent({
                             size='small'
                             placeholder={t('resource.function.enter_keyword_tips')}
                             v-model={[this.searchVal, 'value']}
+                            clearable
                         />
                       </NFormItemGi>
                       <NFormItemGi span="2">

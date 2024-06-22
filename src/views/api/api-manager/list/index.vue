@@ -23,6 +23,7 @@
             path="pagination.apiName"
         >
           <n-input
+              clearable
               size="small"
               v-model:value="paginationReactive.apiName"
           />
@@ -47,6 +48,7 @@
         </n-form-item-gi>
         <n-form-item-gi :span="4" label="路径">
           <n-input
+              clearable
               size="small"
               v-model:value="paginationReactive.apiPath"
           />

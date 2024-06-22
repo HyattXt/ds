@@ -32,9 +32,10 @@ export function useTable(viewRuleEntry = (unusedRuleJson: string): void => {}) {
   const variables = reactive({
     tableData: [],
     page: ref(1),
-    pageSize: ref(10),
+    pageSize: ref(30),
     state: ref(null),
     searchVal: ref(null),
+    total: ref(0),
     totalPage: ref(1),
     loadingRef: ref(false)
   })
@@ -111,6 +112,7 @@ export function useTable(viewRuleEntry = (unusedRuleJson: string): void => {}) {
     const { state } = useAsyncState(
       queryRuleListPaging(data).then((res: RuleRes) => {
         variables.totalPage = res.totalPage
+        variables.total = res.total
         variables.tableData = res.totalList.map((item, unused) => {
           const ruleName =
             'data_quality.rule.' + item.name.substring(3, item.name.length - 1)

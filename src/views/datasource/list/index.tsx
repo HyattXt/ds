@@ -119,6 +119,7 @@ const list = defineComponent({
                           size='small'
                           v-model={[this.searchVal, 'value']}
                           placeholder={`${t('datasource.search_input_tips')}`}
+                          clearable
                       />
                     </NFormItemGi>
                     <NFormItemGi span="2">

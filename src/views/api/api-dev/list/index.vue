@@ -31,7 +31,7 @@
     <template v-slot:condition>
       <el-form inline>
         <el-form-item label="名称">
-          <el-input type="text" v-model="paginationReactive.apiName"/>
+          <el-input type="text" style="width: 180px" clearable v-model="paginationReactive.apiName"/>
         </el-form-item>
         <el-form-item label="API类型">
           <el-select
@@ -64,7 +64,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="路径">
-          <el-input type="text" v-model="paginationReactive.apiPath"/>
+          <el-input type="text" style="width: 180px" clearable v-model="paginationReactive.apiPath"/>
         </el-form-item>
       </el-form>
     </template>

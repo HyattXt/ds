@@ -23,13 +23,16 @@ import {
   NIcon,
   NDataTable,
   NPagination,
-  NCard
+  NCard, NForm, NGrid, NFormItemGi, NSelect, NDatePicker
 } from 'naive-ui'
 import { SearchOutlined } from '@vicons/antd'
 import { useTable } from './use-table'
 import Card from '@/components/card'
 import styles from './index.module.scss'
 import RuleModal from './components/rule-modal'
+import CrudForm from "@/components/cue/crud-form.vue";
+import CrudHeader from "@/components/cue/crud-header.vue";
+import CrudPageDs from "@/components/cue/crud-page-ds.vue";
 
 const TaskResult = defineComponent({
   name: 'rule',
@@ -50,8 +53,14 @@ const TaskResult = defineComponent({
       })
     }
 
-    const onUpdatePageSize = () => {
+    const onUpdatePage = (page: number) => {
+      variables.page = page
+      requestTableData()
+    }
+
+    const onUpdatePageSize = (pageSize: number) => {
       variables.page = 1
+      variables.pageSize = pageSize
       requestTableData()
     }
 
@@ -81,6 +90,7 @@ const TaskResult = defineComponent({
       t,
       ...toRefs(variables),
       requestTableData,
+      onUpdatePage,
       onUpdatePageSize,
       showModalRef,
       onCancel,
@@ -95,6 +105,7 @@ const TaskResult = defineComponent({
       t,
       showModalRef,
       requestTableData,
+      onUpdatePage,
       onUpdatePageSize,
       onSearch,
       onCancel,
@@ -107,45 +118,58 @@ const TaskResult = defineComponent({
     const { columns } = useTable(viewRuleEntry)
 
     return (
-      <div>
-        <NCard>
-          <NSpace justify='end'>
-            <NInput
-              v-model={[this.searchVal, 'value']}
-              size='small'
-              placeholder={t('data_quality.rule.name')}
-              clearable
-            />
-            <NButton size='small' type='primary' onClick={onSearch}>
-              {{
-                icon: () => (
-                  <NIcon>
-                    <SearchOutlined />
-                  </NIcon>
-                )
-              }}
-            </NButton>
-          </NSpace>
-        </NCard>
-        <Card class={styles['table-card']}>
-          <NDataTable
-            loading={loadingRef}
-            columns={columns}
-            data={this.tableData}
-          />
-          <div class={styles.pagination}>
-            <NPagination
-              v-model:page={this.page}
-              v-model:page-size={this.pageSize}
-              page-count={this.totalPage}
-              show-size-picker
-              page-sizes={[10, 30, 50]}
-              show-quick-jumper
-              onUpdatePage={requestTableData}
-              onUpdatePageSize={onUpdatePageSize}
-            />
-          </div>
-        </Card>
+      <>
+        <CrudForm>
+          {{
+            header: () => (
+                <CrudHeader title="规则管理"/>
+            ),
+            condition: () => (
+                <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
+                  <NGrid cols="18" x-gap="16">
+                    <NFormItemGi label="名称" span="3">
+                      <NInput
+                          v-model={[this.searchVal, 'value']}
+                          size='small'
+                          placeholder={t('data_quality.rule.name')}
+                          clearable
+                      />
+                    </NFormItemGi>
+                    <NFormItemGi span="2">
+                      <NButton size='small' color={'#0099CB'} type='primary' onClick={onSearch} style={"padding: 0 15px 0 15px"}>
+                        <NIcon>
+                          <SearchOutlined />
+                        </NIcon>
+                        <div style={"font-size: 12px"}>
+                          查询
+                        </div>
+                      </NButton>
+                    </NFormItemGi>
+                  </NGrid>
+                </NForm>
+            ),
+            table: () => (
+                <NDataTable
+                    loading={loadingRef}
+                    columns={columns}
+                    data={this.tableData}
+                    bordered
+                    flex-height
+                    single-line={false}
+                    class={"cue-table"}
+                />
+            ),
+            page: () => (
+                <CrudPageDs
+                    page={this.page}
+                    page-size={this.pageSize}
+                    item-count={this.total}
+                    onPageChange={onUpdatePage}
+                    onPageSizeChange={onUpdatePageSize}
+                />
+            )
+          }}
+        </CrudForm>
         {showModalRef && (
           <RuleModal
             show={showModalRef}
@@ -154,7 +178,7 @@ const TaskResult = defineComponent({
             data={ruleEntryData}
           />
         )}
-      </div>
+      </>
     )
   }
 })

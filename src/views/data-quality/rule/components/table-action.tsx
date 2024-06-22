@@ -47,7 +47,7 @@ const TableAction = defineComponent({
     const { t, viewRuleEntryDetails } = this
 
     return (
-      <NSpace>
+      <NSpace justify={'center'}>
         <NTooltip trigger={'hover'}>
           {{
             default: () => t('data_quality.rule.view_input_item'),

@@ -55,10 +55,10 @@
               <div class="cue-crud__header-content">
                 <el-form inline>
                   <el-form-item label="编码/名称">
-                    <el-input type="text" v-model="paginationReactive.indicatorName"/>
+                    <el-input type="text" style="width: 180px" clearable v-model="paginationReactive.indicatorName"/>
                   </el-form-item>
                   <el-form-item label="创建人">
-                    <el-input type="text" v-model="paginationReactive.indicatorDefiner"/>
+                    <el-input type="text" style="width: 180px" clearable v-model="paginationReactive.indicatorDefiner"/>
                   </el-form-item>
                 </el-form>
               </div>

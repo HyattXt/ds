@@ -48,7 +48,7 @@
                 <div class="cue-crud__header-content">
                   <el-form inline>
                     <el-form-item label="表名/注释">
-                      <el-input type="text" v-model="paginationReactive.sqlLineageName"/>
+                      <el-input type="text" style="width: 180px" clearable v-model="paginationReactive.sqlLineageName"/>
                     </el-form-item>
                   </el-form>
                 </div>

@@ -83,6 +83,7 @@ export default defineComponent({
         <NFormItemGi label="名称" span={4}>
           <NInput
             size='small'
+            clearable
             v-model:value={this.searchValRef}
             placeholder={t('project.workflow.name')}
           />
@@ -90,6 +91,7 @@ export default defineComponent({
         <NFormItemGi label="执行用户" span={4}>
           <NInput
             size='small'
+            clearable
             v-model:value={this.executorNameRef}
             placeholder={t('project.workflow.executor')}
           />

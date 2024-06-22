@@ -123,6 +123,7 @@ const AlarmInstanceManage = defineComponent({
                           <NInput
                               size='small'
                               v-model={[this.searchVal, 'value']}
+                              clearable
                               placeholder={`${t(
                                   'security.alarm_instance.search_input_tips'
                               )}`}
