@@ -17,18 +17,14 @@
 
 import { defineComponent, onMounted, ref, toRefs } from 'vue'
 import {
-  NSpace,
   NInput,
   NButton,
   NIcon,
   NDataTable,
-  NPagination,
-  NCard, NForm, NGrid, NFormItemGi, NSelect, NDatePicker
+  NForm, NGrid, NFormItemGi
 } from 'naive-ui'
 import { SearchOutlined } from '@vicons/antd'
 import { useTable } from './use-table'
-import Card from '@/components/card'
-import styles from './index.module.scss'
 import RuleModal from './components/rule-modal'
 import CrudForm from "@/components/cue/crud-form.vue";
 import CrudHeader from "@/components/cue/crud-header.vue";

@@ -21,19 +21,15 @@ import {
   NInput,
   NIcon,
   NDataTable,
-  NPagination,
-  NSpace, NForm, NGrid, NFormItemGi
+  NForm, NGrid, NFormItemGi
 } from 'naive-ui'
-import Card from '@/components/card'
 import DetailModal from './detail'
 import { SearchOutlined } from '@vicons/antd'
 import { useI18n } from 'vue-i18n'
 import { useColumns } from './use-columns'
 import { useTable } from './use-table'
-import styles from './index.module.scss'
 import type { TableColumns } from './types'
 import { DefaultTableWidth } from '@/common/column-width-config'
-import axios from "axios";
 import CrudForm from "@/components/cue/crud-form.vue";
 import CrudHeader from "@/components/cue/crud-header.vue";
 import CrudPageDs from "@/components/cue/crud-page-ds.vue";

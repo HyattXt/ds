@@ -20,22 +20,21 @@ import {
   NButton,
   NIcon,
   NInput,
-  NCard,
   NDataTable,
-  NPagination,
   NSelect,
-  NSpace
+  NForm, NGrid, NFormItemGi
 } from 'naive-ui'
-import Card from '@/components/card'
 import { SearchOutlined } from '@vicons/antd'
 import { useI18n } from 'vue-i18n'
-import styles from './index.module.scss'
 import { useTable } from './use-table'
 import FormModal from '@/views/resource/task-group/queue/components/form-modal'
 import { queryTaskGroupListPaging } from '@/service/modules/task-group'
 import { TaskGroupRes } from '@/service/modules/task-group/types'
 import { SelectMixedOption } from 'naive-ui/lib/select/src/interface'
 import { Router, useRouter } from 'vue-router'
+import CrudHeader from "@/components/cue/crud-header.vue";
+import CrudPageDs from "@/components/cue/crud-page-ds.vue";
+import CrudForm from "@/components/cue/crud-form.vue";
 
 const taskGroupQueue = defineComponent({
   name: 'taskGroupQueue',
@@ -71,6 +70,11 @@ const taskGroupQueue = defineComponent({
       })
     }
 
+    const onUpdatePage = (page: number) => {
+      variables.page = page
+      resetTableData()
+    }
+
     const onCancel = () => {
       showModalRef.value = false
     }
@@ -84,8 +88,9 @@ const taskGroupQueue = defineComponent({
       resetTableData()
     }
 
-    const onUpdatePageSize = () => {
+    const onUpdatePageSize = (pageSize: number) => {
       variables.page = 1
+      variables.pageSize = pageSize
       resetTableData()
     }
 
@@ -128,6 +133,7 @@ const taskGroupQueue = defineComponent({
       onSearch,
       searchParamRef,
       resetTableData,
+      onUpdatePage,
       onUpdatePageSize,
       updatePriority,
       onCancel,
@@ -141,6 +147,7 @@ const taskGroupQueue = defineComponent({
     const {
       t,
       resetTableData,
+      onUpdatePage,
       onUpdatePageSize,
       updatePriority,
       onCancel,
@@ -155,65 +162,79 @@ const taskGroupQueue = defineComponent({
     const { columns } = useTable(updatePriority, resetTableData)
 
     return (
-      <div>
-        <NCard>
-          <div class={styles.toolbar}>
-            <NSpace>
-              <NSelect
-                size='small'
-                options={taskGroupOptions}
-                clearable
-                style={{ width: '180px' }}
-                v-model:value={this.searchParamRef.groupId}
-                placeholder={t('resource.task_group_queue.task_group_name')}
-              />
-              <NInput
-                size='small'
-                v-model={[this.searchParamRef.processName, 'value']}
-                placeholder={t(
-                  'resource.task_group_queue.workflow_instance_name'
-                )}
-              ></NInput>
-              <NInput
-                size='small'
-                v-model={[this.searchParamRef.instanceName, 'value']}
-                placeholder={t('resource.task_group_queue.task_instance_name')}
-              ></NInput>
-              <NButton size='small' type='primary' onClick={onSearch}>
-                <NIcon>
-                  <SearchOutlined />
-                </NIcon>
-              </NButton>
-            </NSpace>
-          </div>
-        </NCard>
-        <Card
-          class={styles['table-card']}
-          title={t('resource.task_group_queue.queue')}
-        >
-          <div>
-            <NDataTable
-              loading={loadingRef}
-              columns={columns}
-              size={'small'}
-              data={this.tableData}
-              striped
-              scrollX={this.tableWidth}
-            />
-            <div class={styles.pagination}>
-              <NPagination
-                v-model:page={this.page}
-                v-model:page-size={this.pageSize}
-                page-count={this.totalPage}
-                show-size-picker
-                page-sizes={[10, 30, 50]}
-                show-quick-jumper
-                onUpdatePage={resetTableData}
-                onUpdatePageSize={onUpdatePageSize}
-              />
-            </div>
-          </div>
-        </Card>
+      <>
+        <CrudForm>
+          {{
+            header: () => (
+                <CrudHeader title="任务组队列"/>
+            ),
+            condition: () => (
+                <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
+                  <NGrid cols="18" x-gap="16">
+                    <NFormItemGi label="任务组名称" span="3">
+                      <NSelect
+                          size='small'
+                          options={taskGroupOptions}
+                          clearable
+                          style={{ width: '180px' }}
+                          v-model:value={this.searchParamRef.groupId}
+                          placeholder={t('resource.task_group_queue.task_group_name')}
+                      />
+                    </NFormItemGi>
+                    <NFormItemGi label="工作流实例" span="3">
+                      <NInput
+                          size='small'
+                          clearable
+                          v-model={[this.searchParamRef.processName, 'value']}
+                          placeholder={t(
+                              'resource.task_group_queue.workflow_instance_name'
+                          )}
+                      />
+                    </NFormItemGi>
+                    <NFormItemGi label="任务实例" span="3">
+                      <NInput
+                          size='small'
+                          clearable
+                          v-model={[this.searchParamRef.instanceName, 'value']}
+                          placeholder={t('resource.task_group_queue.task_instance_name')}
+                      />
+                  </NFormItemGi>
+                    <NFormItemGi span="2">
+                      <NButton size='small' color={'#0099CB'} type='primary' onClick={onSearch} style={"padding: 0 15px 0 15px"}>
+                        <NIcon>
+                          <SearchOutlined />
+                        </NIcon>
+                        <div style={"font-size: 12px"}>
+                          查询
+                        </div>
+                      </NButton>
+                    </NFormItemGi>
+                  </NGrid>
+                </NForm>
+            ),
+            table: () => (
+                <NDataTable
+                    loading={loadingRef}
+                    columns={columns}
+                    data={this.tableData}
+                    scrollX={this.tableWidth}
+                    bordered
+                    flex-height
+                    single-line={false}
+                    class={"cue-table"}
+                />
+            ),
+            page: () => (
+                <CrudPageDs
+                    page={this.page}
+                    page-size={this.pageSize}
+                    item-count={this.total}
+                    onPageChange={onUpdatePage}
+                    onPageSizeChange={onUpdatePageSize}
+                />
+            )
+          }}
+        </CrudForm>
         {showModalRef && (
           <FormModal
             show={showModalRef}
@@ -222,7 +243,7 @@ const taskGroupQueue = defineComponent({
             data={updateItemData}
           />
         )}
-      </div>
+      </>
     )
   }
 })

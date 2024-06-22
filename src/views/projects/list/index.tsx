@@ -15,21 +15,16 @@
  * limitations under the License.
  */
 
-import Card from '@/components/card'
 import { SearchOutlined } from '@vicons/antd'
 import {
   NButton,
-  NCard,
   NDataTable, NForm, NFormItemGi, NGrid,
   NIcon,
-  NInput,
-  NPagination,
-  NSpace
+  NInput
 } from 'naive-ui'
 import { defineComponent, onMounted, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ProjectModal from './components/project-modal'
-import styles from './index.module.scss'
 import { useTable } from './use-table'
 import {useLogin} from "@/views/login/use-login";
 import CrudForm from "@/components/cue/crud-form.vue";

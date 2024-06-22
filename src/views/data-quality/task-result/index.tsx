@@ -17,21 +17,17 @@
 
 import { defineComponent, onMounted, toRefs, watch } from 'vue'
 import {
-  NSpace,
   NInput,
   NSelect,
   NDatePicker,
   NButton,
   NIcon,
   NDataTable,
-  NPagination,
-  NCard, NForm, NGrid, NFormItemGi
+  NForm, NGrid, NFormItemGi
 } from 'naive-ui'
 import { SearchOutlined } from '@vicons/antd'
 import { useTable } from './use-table'
 import { useI18n } from 'vue-i18n'
-import Card from '@/components/card'
-import styles from './index.module.scss'
 import CrudHeader from "@/components/cue/crud-header.vue";
 import CrudPageDs from "@/components/cue/crud-page-ds.vue";
 import CrudForm from "@/components/cue/crud-form.vue";

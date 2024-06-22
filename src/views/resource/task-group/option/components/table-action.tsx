@@ -81,7 +81,7 @@ const TableAction = defineComponent({
     const { t, handleEdit, handleViewQueue, handleSwitchStatus } = this
 
     return (
-      <NSpace>
+      <NSpace justify={'center'}>
         <NTooltip trigger={'hover'}>
           {{
             default: () => t('resource.task_group_option.switch_status'),
@@ -90,7 +90,7 @@ const TableAction = defineComponent({
                 v-model={[this.row.status, 'value']}
                 checkedValue={1}
                 uncheckedValue={0}
-                onUpdate:value={(value) =>
+                onUpdate:value={(value: any) =>
                   handleSwitchStatus(value, this.row.id)
                 }
               />

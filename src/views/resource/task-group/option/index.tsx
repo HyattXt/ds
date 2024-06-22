@@ -20,16 +20,16 @@ import {
   NButton,
   NIcon,
   NInput,
-  NCard,
   NDataTable,
-  NPagination
+  NForm, NGrid, NFormItemGi
 } from 'naive-ui'
-import Card from '@/components/card'
 import { SearchOutlined } from '@vicons/antd'
 import { useI18n } from 'vue-i18n'
-import styles from './index.module.scss'
 import { useTable } from './use-table'
 import FormModal from './components/form-modal'
+import CrudForm from "@/components/cue/crud-form.vue";
+import CrudHeader from "@/components/cue/crud-header.vue";
+import CrudPageDs from "@/components/cue/crud-page-ds.vue";
 
 const taskGroupOption = defineComponent({
   name: 'taskGroupOption',
@@ -66,6 +66,11 @@ const taskGroupOption = defineComponent({
       })
     }
 
+    const onUpdatePage = (page: number) => {
+      variables.page = page
+      requestData()
+    }
+
     const onCancel = () => {
       showModalRef.value = false
     }
@@ -75,8 +80,9 @@ const taskGroupOption = defineComponent({
       resetTableData()
     }
 
-    const onUpdatePageSize = () => {
+    const onUpdatePageSize = (pageSize: number) => {
       variables.page = 1
+      variables.pageSize = pageSize
       resetTableData()
     }
 
@@ -116,6 +122,7 @@ const taskGroupOption = defineComponent({
       onSearch,
       searchParamRef,
       resetTableData,
+      onUpdatePage,
       onUpdatePageSize,
       updateItem,
       showModalRef,
@@ -134,6 +141,7 @@ const taskGroupOption = defineComponent({
       onConfirm,
       updateItemData,
       resetTableData,
+      onUpdatePage,
       onUpdatePageSize,
       updateItem,
       onSearch,
@@ -143,61 +151,60 @@ const taskGroupOption = defineComponent({
     const { columns } = useTable(updateItem, resetTableData)
 
     return (
-      <div>
-        <NCard>
-          <div class={styles.toolbar}>
-            <div class={styles.left}>
-              <NButton
-                size='small'
-                type={'primary'}
-                onClick={() => this.onCreate()}
-              >
-                {t('resource.task_group_option.create')}
-              </NButton>
-            </div>
-            <div class={styles.right}>
-              <NInput
-                size='small'
-                v-model={[this.name, 'value']}
-                placeholder={t(
-                  'resource.task_group_option.please_enter_keywords'
-                )}
-              ></NInput>
-              <NButton size='small' type='primary' onClick={onSearch}>
-                <NIcon>
-                  <SearchOutlined />
-                </NIcon>
-              </NButton>
-            </div>
-          </div>
-        </NCard>
-        <Card
-          class={styles['table-card']}
-          title={t('resource.task_group_option.option')}
-        >
-          <div>
-            <NDataTable
-              loading={loadingRef}
-              columns={columns}
-              size={'small'}
-              data={this.tableData}
-              striped
-              scrollX={this.tableWidth}
-            />
-            <div class={styles.pagination}>
-              <NPagination
-                v-model:page={this.page}
-                v-model:page-size={this.pageSize}
-                page-count={this.totalPage}
-                show-size-picker
-                page-sizes={[10, 30, 50]}
-                show-quick-jumper
-                onUpdatePage={resetTableData}
-                onUpdatePageSize={onUpdatePageSize}
-              />
-            </div>
-          </div>
-        </Card>
+      <>
+        <CrudForm>
+          {{
+            header: () => (
+                <CrudHeader title="任务组配置" addButton onAddEvent={() => this.onCreate()}/>
+            ),
+            condition: () => (
+                <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
+                  <NGrid cols="18" x-gap="16">
+                    <NFormItemGi label="名称" span="3">
+                      <NInput
+                          size='small'
+                          clearable
+                          v-model={[this.name, 'value']}
+                          placeholder={t(
+                              'resource.task_group_option.please_enter_keywords'
+                          )}
+                      ></NInput>
+                    </NFormItemGi>
+                    <NFormItemGi span="2">
+                      <NButton size='small' color={'#0099CB'} type='primary' onClick={onSearch} style={"padding: 0 15px 0 15px"}>
+                        <NIcon>
+                          <SearchOutlined />
+                        </NIcon>
+                        <div style={"font-size: 12px"}>
+                          查询
+                        </div>
+                      </NButton>
+                    </NFormItemGi>
+                  </NGrid>
+                </NForm>
+            ),
+            table: () => (
+                <NDataTable
+                    loading={loadingRef}
+                    columns={columns}
+                    data={this.tableData}
+                    bordered
+                    flex-height
+                    single-line={false}
+                    class={"cue-table"}
+                />
+            ),
+            page: () => (
+                <CrudPageDs
+                    page={this.page}
+                    page-size={this.pageSize}
+                    item-count={this.total}
+                    onPageChange={onUpdatePage}
+                    onPageSizeChange={onUpdatePageSize}
+                />
+            )
+          }}
+        </CrudForm>
         {showModalRef && (
           <FormModal
             show={showModalRef}
@@ -207,7 +214,7 @@ const taskGroupOption = defineComponent({
             status={modelStatusRef}
           />
         )}
-      </div>
+      </>
     )
   }
 })
