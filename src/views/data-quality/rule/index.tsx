@@ -120,7 +120,8 @@ const TaskResult = defineComponent({
             header: () => (
                 <CrudHeader title="规则管理"/>
             ),
-            condition: () => (
+            //bug
+/*            condition: () => (
                 <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
                   <NGrid cols="18" x-gap="16">
                     <NFormItemGi label="名称" span="3">
@@ -143,7 +144,7 @@ const TaskResult = defineComponent({
                     </NFormItemGi>
                   </NGrid>
                 </NForm>
-            ),
+            ),*/
             table: () => (
                 <NDataTable
                     loading={loadingRef}

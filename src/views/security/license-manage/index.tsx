@@ -17,14 +17,14 @@
 
 import { defineComponent, onMounted, toRefs, watch } from 'vue'
 import {
-  NButton,
-  NCard,
   NDescriptions
 } from 'naive-ui'
+import Card from '@/components/card'
 import { useI18n } from 'vue-i18n'
 import { useTable } from './use-table'
 import LicenseModal from './components/license-modal'
 import styles from './index.module.scss'
+import CrudHeader from "@/components/cue/crud-header.vue";
 
 const licenseManager = defineComponent({
   name: 'license-manage',
@@ -73,23 +73,9 @@ const licenseManager = defineComponent({
     } = this
 
     return (
-      <div>
-        <NCard>
-          <div class={styles['search-card']}>
-            <div>
-              <NButton
-                size='small'
-                type='primary'
-                onClick={handleModalChange}
-                class='btn-create-queue'
-              >
-                {t('security.license.change_license')}
-              </NButton>
-            </div>
-          </div>
-        </NCard>
-        <NCard class={styles['table-card']}>
-          <NDescriptions label-placement="left" title="License管理" column={1} size="large">
+      <Card class={styles['scrollable-card']}>
+        <CrudHeader title="License管理" addButton onAddEvent={handleModalChange} style={'border-bottom: solid 1px #e8ecf0;'}/>
+          <NDescriptions bordered label-placement="left" column={1} size="large" style={'padding: 30px 30px 0 30px'}>
             <NDescriptions-item label="产品名称" label-style={{color: "#757575"}}>
               {this.tableData.productName}
             </NDescriptions-item>
@@ -106,13 +92,12 @@ const licenseManager = defineComponent({
               {this.tableData.dayDiff}
             </NDescriptions-item>
         </NDescriptions>
-        </NCard>
         <LicenseModal
           showModalRef={this.showModalRef}
           onCancelModal={onCancelModal}
           onConfirmModal={onConfirmModal}
         />
-      </div>
+      </Card>
     )
   }
 })

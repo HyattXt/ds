@@ -45,7 +45,7 @@ export function useColumns(onCallback: Function) {
   const createColumns = () => {
     const columns = [
       {
-        title: '#',
+        title: '序号',
         key: 'index',
         render: (rowData: InternalRowData, rowIndex: number) => rowIndex + 1,
         ...COLUMN_WIDTH_CONFIG['index']
@@ -143,7 +143,7 @@ export function useColumns(onCallback: Function) {
                       key: 'authorize_namespace'
                     }
                   ],
-                  onSelect: (key) =>
+                  onSelect: (key: any) =>
                     void onCallback({ rowData, key }, 'authorize')
                 },
                 () =>

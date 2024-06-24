@@ -30,7 +30,7 @@ export function useFileState(
     id = -1,
     searchVal = '',
     pageNo = 1,
-    pageSize = 10
+    pageSize = 30
   ) => {
     const { state } = useAsyncState(
       queryResourceListPaging({

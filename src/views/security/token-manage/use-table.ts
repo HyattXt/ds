@@ -37,8 +37,9 @@ export function useTable() {
   const createColumns = (variables: any) => {
     variables.columns = [
       {
-        title: '#',
+        title: '序号',
         key: 'index',
+        width: 60,
         render: (row: any, index: number) => index + 1
       },
       {
@@ -67,7 +68,7 @@ export function useTable() {
         title: t('security.token.operation'),
         key: 'operation',
         render(row: any) {
-          return h(NSpace, null, {
+          return h(NSpace, {justify: 'center'}, {
             default: () => [
               h(
                 NTooltip,
@@ -139,8 +140,9 @@ export function useTable() {
     columns: [],
     tableData: [],
     page: ref(1),
-    pageSize: ref(10),
+    pageSize: ref(30),
     searchVal: ref(null),
+    total: ref(0),
     totalPage: ref(1),
     showModalRef: ref(false),
     statusRef: ref(0),
@@ -184,6 +186,7 @@ export function useTable() {
           }
         }) as any
         variables.totalPage = res.totalPage
+        variables.total = res.total
         variables.loadingRef = false
       }),
       {}

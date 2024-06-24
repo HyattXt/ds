@@ -7,6 +7,7 @@
       {{ title }}
     </div>
     <div class="cue-crud__header-right">
+      <slot name="button-group"></slot>
       <el-button
           v-if="defineButton"
           class="show-text el-button--default"

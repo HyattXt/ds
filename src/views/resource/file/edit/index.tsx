@@ -24,6 +24,7 @@ import { useEdit } from './use-edit'
 import Card from '@/components/card'
 import MonacoEditor from '@/components/monaco-editor'
 import styles from '../index.module.scss'
+import CrudHeader from "@/components/cue/crud-header.vue";
 
 export default defineComponent({
   name: 'ResourceFileEdit',
@@ -63,7 +64,8 @@ export default defineComponent({
   render() {
     const { t } = useI18n()
     return (
-      <Card title={t('resource.file.file_details')}>
+      <Card class={styles['scrollable-card']}>
+        <CrudHeader title="文件详情" style={'border-bottom: solid 1px #e8ecf0;'}/>
         {this.resourceViewRef.isReady.value ? (
           <div class={styles['file-edit-content']}>
             <h2>

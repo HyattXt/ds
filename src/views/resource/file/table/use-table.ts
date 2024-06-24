@@ -50,7 +50,7 @@ export function useTable(renameResource: IRenameFile, updateList: () => void) {
 
   const columnsRef: TableColumns<any> = [
     {
-      title: '#',
+      title: '序号',
       key: 'id',
       ...COLUMN_WIDTH_CONFIG['index'],
       render: (_row, index) => index + 1
