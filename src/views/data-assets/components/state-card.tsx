@@ -21,7 +21,6 @@ import LineBox from '@/components/chart/modules/LineBox'
 import Card from '@/components/card'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
-// @ts-ignore
 import CrudHead from "@/components/cue/crud-header.vue"
 import {SelectMixedOption} from "naive-ui/lib/select/src/interface";
 import {RowData} from "naive-ui/es/data-table/src/interface";
@@ -33,7 +32,7 @@ const props = {
   date: {
     type: Array as PropType<Array<any>>
   },
-  RunSelect: {type: Array as PropType<SelectMixedOption[]>},
+  RunSelect: {type: Array },
   AssentsSelect: {type: Array as PropType<SelectMixedOption[]>},
   RunErrorSelectCurrent: {type: String},
   ApiSelectCurrent: {type: String},
@@ -95,7 +94,7 @@ const StateCard = defineComponent({
 
 
     const ApiTop10DataHeader = ref([
-      { title: '排名', key: '排名' },
+      { title: '排名', key: '排名', width: 60 },
       { title: '接口地址', key: '接口地址' },
       { title: '接口类型', key: '接口类型' },
       { title: '接口访问次数', key: '接口访问次数' },
@@ -196,6 +195,9 @@ const StateCard = defineComponent({
                   columns={ApiTop10DataHeader.value}
                   data={ApiTop10Data}
                   size='small'
+                  striped
+                  min-height={"150"}
+                  max-height={"150"}
               />
 
             </Card>

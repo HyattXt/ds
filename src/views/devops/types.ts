@@ -31,8 +31,19 @@ interface StateChartData {
 }
 
 interface StateData {
-  table: Array<StateTableData>
+  table?: { title: string; key: string }[]
+  processTable?: { number: number; state: string }[]
   chart: Array<StateChartData>
+  tableCount?: Record<string, number>[]
 }
 
-export { DefinitionChartData, StateTableData, StateChartData, StateData }
+interface TableDataType {
+  正在运行: number[],
+  失败: number[],
+  暂停: number[],
+  成功: number[],
+  停止: number[],
+  时间: number[]
+}
+
+export { DefinitionChartData, StateTableData, StateChartData, StateData,TableDataType }

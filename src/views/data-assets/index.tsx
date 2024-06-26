@@ -21,21 +21,13 @@ import {useLogin} from "@/views/login/use-login";
 import { useI18n } from 'vue-i18n'
 import { useTaskState } from './use-task-state'
 import StateCard from './components/state-card'
-import { useRoute, useRouter } from 'vue-router'
-import type { Component } from 'vue'
-import utils from '@/utils'
-
-const modules = import.meta.glob('/src/views/**/**.tsx')
-
-const components: { [key: string]: Component } = utils.mapping(modules)
-
-
+import { useRoute } from 'vue-router'
 
 export default defineComponent({
   name: 'assets',
   setup() {
     const { loginNew } = useLogin('')
-    const { t, locale } = useI18n()
+    const { t } = useI18n()
     const dateRef = ref(
       [[new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 6 * 24 * 60 * 60 * 1000,
       new Date(new Date().setHours(0, 0, 0, 0)).getTime() + 24 * 60 * 60 * 1000]]
@@ -51,8 +43,8 @@ export default defineComponent({
       {
         label: '昨天',
         value: [
-          new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 1 * 24 * 60 * 60 * 1000,
-          new Date(new Date().setHours(23, 59, 59, 999)).getTime() - 1 * 24 * 60 * 60 * 1000
+          new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 24 * 60 * 60 * 1000,
+          new Date(new Date().setHours(23, 59, 59, 999)).getTime() - 24 * 60 * 60 * 1000
         ]
       },
       {
@@ -84,9 +76,8 @@ export default defineComponent({
     const taskDevRef = ref()
     const Proj = ref()
 
-    const { getAssetOverviewLineData, getAssetOverviewData, getInterfaceTop10Data, taskVariables, getProjData } = useTaskState()
+    const { getAssetOverviewLineData, getAssetOverviewData, getInterfaceTop10Data, taskVariables } = useTaskState()
     const route = useRoute()
-    const router = useRouter()
     const ApiTop10 = ref()
     const AssetOverview = ref()
     const AssetOverviewLineData = ref()

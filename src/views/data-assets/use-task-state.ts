@@ -17,19 +17,12 @@
 
 import { useAsyncState } from '@vueuse/core'
 import { format } from 'date-fns'
-import { toLower } from 'lodash'
-import { useI18n } from 'vue-i18n'
-import { countTaskState } from '@/service/modules/projects-analysis'
-import type { TaskStateRes } from '@/service/modules/projects-analysis/types'
-import { getJobRunErrorTop10, getJobRuntimeTop10, getTaskStatisticsInfo, queryUnauthorizedProject, getDataByProjectCodeAndDate, getStatisticsDataByProjectCodeAndDate } from '@/service/modules/devops-analysis'
+import { queryUnauthorizedProject } from '@/service/modules/devops-analysis'
 import { getInterfaceTop10, getAssetOverview, getAssetOverviewLineChart } from '@/service/modules/assets-analysis'
-import { parseTime, renderTableTime, tasksState } from '@/common/common'
-
-import type { StateData } from './types'
 import { reactive, ref } from 'vue'
+import {TableDataType} from "@/views/data-assets/types";
 
 export function useTaskState() {
-  const { t } = useI18n()
   const taskVariables = reactive({
     taskLoadingRef: ref(false)
   })
@@ -40,9 +33,9 @@ export function useTaskState() {
     const { state } = useAsyncState(
       queryUnauthorizedProject({
         userId: 0
-      }).then(function (res) {
+      }).then(function (res: any) {
 
-        const table = res.map((item) => {
+        const table = res.map((item: any) => {
           return {
             label: item.name,
             value: item.code,
@@ -64,8 +57,8 @@ export function useTaskState() {
         startTime: !date ? '' : format(date[0], 'yyyy-MM-dd HH:mm:ss'),
         endTime: !date ? '' : format(date[1], 'yyyy-MM-dd HH:mm:ss'),
         projectCode: projectCode
-      }).then(function (res) {
-        const table = res.map((item, index) => {
+      }).then(function (res: any) {
+        const table = res.map((item: any, index: any) => {
           return {
             排名: index + 1,
             接口地址: item.interfaceUrl,
@@ -84,7 +77,7 @@ export function useTaskState() {
     const { state } = useAsyncState(
       getAssetOverview({
         projectCode: projectCode
-      }).then(function (res) {
+      }).then(function (res: any) {
 
         const table = [0, 0, 0, 0, 0]
         if (res[0] != null) {
@@ -92,7 +85,7 @@ export function useTaskState() {
           for (i = 0; i < res.length; i++) {
             table[0] = res[i].totalDataSource;
             table[1] = res[i].totalTables;
-            table[2] = (parseInt(res[i].dataSize) / 1024 / 1024).toFixed(2);
+            table[2] = Number((parseInt(res[i].dataSize) / 1024 / 1024).toFixed(2));
             table[3] = res[i].totalRecords;
             table[4] = res[i].totalApiInterface;
           }
@@ -104,30 +97,31 @@ export function useTaskState() {
 
     return state
   }
-  const getAssetOverviewLineData = (pageSize: Array<any>, projectCode: any) => {
+  const getAssetOverviewLineData = (pageSize: number, projectCode: any) => {
     const { state } = useAsyncState(
       getAssetOverviewLineChart({
         pageSize: pageSize,
         projectCode: projectCode
-      }).then(function (res) {
-        const tabledata = {}
-        tabledata['totalDataSource'] = [];
-        tabledata['totalTables'] = [];
-        tabledata['dataSize'] = [];
-        tabledata['totalRecords'] = [];
-        tabledata['totalApiInterface'] = [];
-        tabledata['time'] = [];
+      }).then(function (res: any) {
+        const tableData : TableDataType = {
+          totalDataSource: [],
+          totalTables: [],
+          dataSize: [],
+          totalRecords: [],
+          totalApiInterface: [],
+          time: [],
+        }
         let i = 0
         for (i = 0; i < res.length; i++) {
-          tabledata['totalDataSource'].push(parseInt(res[i].totalDataSource));
-          tabledata['totalTables'].push(parseInt(res[i].totalTables));
-          tabledata['dataSize'].push(parseInt(res[i].dataSize) / 1024 / 1024);
-          tabledata['totalRecords'].push(parseInt(res[i].totalRecords));
-          tabledata['totalApiInterface'].push(parseInt(res[i].totalApiInterface));
-          tabledata['time'].push(res[i].createTime.substring(5, 10));
+          tableData['totalDataSource'].push(parseInt(res[i].totalDataSource));
+          tableData['totalTables'].push(parseInt(res[i].totalTables));
+          tableData['dataSize'].push(parseInt(res[i].dataSize) / 1024 / 1024);
+          tableData['totalRecords'].push(parseInt(res[i].totalRecords));
+          tableData['totalApiInterface'].push(parseInt(res[i].totalApiInterface));
+          tableData['time'].push(res[i].createTime.substring(5, 10));
 
         };
-        const table = [tabledata]
+        const table = [tableData]
 
         return { table }
       }),

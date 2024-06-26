@@ -35,7 +35,7 @@ export function useDetail(getFormValues: Function) {
     values: { [field: string]: any } = {}
   ): string => {
     json?.forEach((item) => {
-      const mergedItem = isFunction(item) ? item() : item
+      const mergedItem :IJsonItemParams = isFunction(item) ? item() : item
       mergedItem.value = values[mergedItem.field]
     })
     return JSON.stringify(json)

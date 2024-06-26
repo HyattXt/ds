@@ -16,123 +16,41 @@
  */
 
 import { axios } from '@/service/service'
-import { CodeReq, StateReq, DateReq } from './types'
-
-export function countCommandState(): any {
-  return axios({
-    url: '/projects/analysis/command-state-count',
-    method: 'get'
-  })
-}
-
-export function countDefinitionByUser(params: CodeReq): any {
-  return axios({
-    url: '/projects/analysis/define-user-count',
-    method: 'get',
-    params
-  })
-}
-
-export function countProcessInstanceState(params: StateReq): any {
-  return axios({
-    url: '/projects/analysis/process-state-count',
-    method: 'get',
-    params
-  })
-}
-
-export function countQueueState(): any {
-  return axios({
-    url: '/projects/analysis/queue-count',
-    method: 'get'
-  })
-}
-
-export function countTaskState(params: StateReq): any {
-  return axios({
-    url: '/projects/analysis/task-state-count',
-    method: 'get',
-    params
-  })
-}
-export function queryUnauthorizedProject(params: UserIdReq): any {
-  return axios({
-    url: '/projects/unauth-project',
-    method: 'get',
-    params
-  })
-}
-export function getDataByProjectCodeAndDate(params: DateReq): any {
-  return axios({
-    url: '/taskInstanceStatistics/getDataByProjectCodeAndDate',
-    method: 'post',
-    data: JSON.stringify(params),
-    headers: { 'Content-Type': 'application/json' },
-    dataType: 'json'
-  })
-}
-export function getStatisticsDataByProjectCodeAndDate(params: DateReq): any {
-  return axios({
-    url: '/taskInstanceStatistics/getStatisticsDataByProjectCodeAndDate',
-    method: 'post',
-    data: JSON.stringify(params),
-    headers: { 'Content-Type': 'application/json' },
-    dataType: 'json'
-  })
-}
-export function getTaskStatisticsInfo(params): any {
-  return axios({
-    url: '/taskInstanceStatistics/getTaskStatisticsInfo',
-    method: 'POST',
-    data: JSON.stringify(params),
-    headers: { 'Content-Type': 'application/json' },
-    dataType: 'json'
-  })
-}
-export function getJobRuntimeTop10(params): any {
-  return axios({
-    url: '/taskInstanceStatistics/getJobRuntimeTop10',
-    method: 'POST',
-    data: JSON.stringify(params),
-    headers: { 'Content-Type': 'application/json' },
-    dataType: 'json'
-  })
-}
-export function getJobRunErrorTop10(params): any {
-  return axios({
-    url: '/taskInstanceStatistics/getJobRunErrorTop10',
-    method: 'POST',
-    data: JSON.stringify(params),
-    headers: { 'Content-Type': 'application/json' },
-    dataType: 'json'
-  })
-}
+import {
+  StateReq,
+  CodeReq,
+  LineChartReq
+} from './types'
 
 //资产概览接口
-export function getInterfaceTop10(params): any {
+export function getInterfaceTop10(data: StateReq): any {
   return axios({
     url: '/taskInstanceStatistics/getInterfaceTop10',
-    method: 'POST',
-    data: JSON.stringify(params),
-    headers: { 'Content-Type': 'application/json' },
-    dataType: 'json'
+    method: 'post',
+    data: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json'
+    },
   })
 }
-export function getAssetOverview(params): any {
+
+export function getAssetOverview(data: CodeReq): any {
   return axios({
     url: '/taskInstanceStatistics/getAssetOverviewStatistics',
-    method: 'POST',
-    data: JSON.stringify(params),
-    headers: { 'Content-Type': 'application/json' },
-    dataType: 'json'
+    method: 'post',
+    data: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json'
+    }
   })
 }
-export function getAssetOverviewLineChart(params): any {
+export function getAssetOverviewLineChart(data: LineChartReq): any {
   return axios({
     url: '/taskInstanceStatistics/getAssetOverviewLineChart',
-    method: 'POST',
-    data: JSON.stringify(params),
-    headers: { 'Content-Type': 'application/json' },
-    dataType: 'json'
+    method: 'post',
+    data: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json'
+    }
   })
 }
