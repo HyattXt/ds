@@ -15,10 +15,10 @@
 * limitations under the License.
 */
 
-import {defineComponent, onMounted, ref, unref, h, nextTick, VNode, provide, markRaw, computed} from 'vue'
-import {DropdownGroupOption, DropdownOption, NIcon, NPopconfirm, TreeOption, useMessage, NSplit} from 'naive-ui'
+import {defineComponent, onMounted, ref, unref, h, nextTick, VNode, provide, markRaw} from 'vue'
+import {DropdownGroupOption, DropdownOption, NPopconfirm, TreeOption, useMessage, NSplit} from 'naive-ui'
 import Detail from '../definition/detail'
-import {SqlBox, DataXBox, ShellBox, PythonBox, SubProcessBox, DependentBox, DataQualityBox, HttpBox, SwitchBox, ConditionsBox, FlinkBox, SqoopBox} from '../components/task/index.js'
+import {SqlBox, DataXBox, ShellBox, PythonBox, SubProcessBox, DependentBox, DataQualityBox, HttpBox, SwitchBox, ConditionsBox, FlinkBox, SqoopBox} from '../components/task'
 import { SearchOutlined } from '@vicons/antd';
 import {Circle24Filled, Add12Filled} from "@vicons/fluent";
 import { CaretUp, CaretDown } from "@vicons/fa";
@@ -29,6 +29,7 @@ import { createProcessDefinition } from '@/service/modules/process-definition'
 import {useI18n} from "vue-i18n";
 import {useLogin} from "@/views/login/use-login";
 import {ElTabs, ElTabPane} from 'element-plus'
+import {workflowBoxType, componentRefType} from "@/views/projects/workflow/treemap/types";
 
 export default defineComponent({
     name: 'WorkflowTreeMap',
@@ -38,10 +39,10 @@ export default defineComponent({
         const { variables, getTreeMenu, submitMenuModal, getTreeFolder, renameMenuModal, renameWorkflowModal, moveFolderModal, moveWorkflowModal, delFolderModal, deleteWorkflow} = useTreemap()
         const route = useRoute()
         const pattern = ref('');
-        const expandedKeys = ref([]);
+        const expandedKeys = ref([1]);
         const projectCode = Number(route.params.projectCode)
         const formRef: any = ref(null)
-        const activeTab = ref('')
+        const activeTab = ref(0)
         const contextMenuTab = ref(0)
         const workflowModel = ref({
             parentId: 1,
@@ -57,7 +58,7 @@ export default defineComponent({
         const mvFolderModal = ref(false)
         const mvWorkflowModal = ref(false)
         const closeTabModal = ref(false)
-        const closeTabName = ref('')
+        const closeTabName = ref(0)
         const showDropdownRef = ref(false)
         const xRef = ref(0)
         const yRef = ref(0)
@@ -83,9 +84,9 @@ export default defineComponent({
         ]);
 
         const workflowBox: any = ref([])
-        const componentRefs = ref({})
+        const componentRefs =  ref<Record<number, componentRefType>>({});
 
-        const taskDictionary = {
+        const taskDictionary : Record<string, object> = {
             'SQL': markRaw(SqlBox),
             'DATAX': markRaw(DataXBox),
             'SHELL': markRaw(ShellBox),
@@ -99,13 +100,6 @@ export default defineComponent({
             'FLINK': markRaw(FlinkBox),
             'SQOOP': markRaw(SqoopBox)
         };
-
-        const computedStyle = computed(() => ({
-            top: menuTop.value + 'px',
-            left: menuLeft.value + 'px',
-            zIndex: 1000,
-            position: 'fixed'
-        }));
 
         const rules = {
             value:{
@@ -180,7 +174,7 @@ export default defineComponent({
         function createMenu() {
             formRef.value.validate((errors: any) => {
                 if (!errors) {
-                    submitMenuModal().then(r => {
+                    submitMenuModal().then(() => {
                         setTimeout(()=>{
                             getTreeMenu(projectCode)
                             getTreeFolder(projectCode)
@@ -197,7 +191,7 @@ export default defineComponent({
         function renameMenu() {
             formRef.value.validate((errors: any) => {
                 if (!errors) {
-                    renameMenuModal(projectCode).then(r => {
+                    renameMenuModal(projectCode).then(() => {
                         setTimeout(()=>{
                             getTreeMenu(projectCode)
                             getTreeFolder(projectCode)
@@ -212,7 +206,7 @@ export default defineComponent({
         }
 
         function moveWorkflow() {
-            moveWorkflowModal(projectCode).then(r => {
+            moveWorkflowModal(projectCode).then(() => {
                 setTimeout(()=>{
                     getTreeMenu(projectCode)
                     getTreeFolder(projectCode)
@@ -223,7 +217,7 @@ export default defineComponent({
         }
 
         function moveMenu() {
-            moveFolderModal(projectCode).then(r => {
+            moveFolderModal(projectCode).then(() => {
                 setTimeout(()=>{
                     getTreeMenu(projectCode)
                     getTreeFolder(projectCode)
@@ -234,7 +228,7 @@ export default defineComponent({
         }
 
         function delMenu() {
-            delFolderModal().then(r => {
+            delFolderModal().then(() => {
                     showDropdownRef.value = false
                 setTimeout(()=>{
                     getTreeMenu(projectCode)
@@ -245,7 +239,7 @@ export default defineComponent({
         }
 
         function delWorkflow() {
-            deleteWorkflow(projectCode).then(r => {
+            deleteWorkflow(projectCode).then(() => {
                     showDropdownRef.value = false
                     setTimeout(()=>{
                         getTreeMenu(projectCode)
@@ -258,7 +252,7 @@ export default defineComponent({
         function renameWorkflow() {
             formRef.value.validate((errors: any) => {
                 if (!errors) {
-                    renameWorkflowModal(projectCode).then(r => {
+                    renameWorkflowModal(projectCode).then(() => {
                             getTreeMenu(projectCode)
                         }
                     )
@@ -280,7 +274,7 @@ export default defineComponent({
                             name: workflowModel.value.name,
                         },
                         projectCode
-                    ).then((ignored: any) => {
+                    ).then(() => {
                         message.success(t('project.dag.success'))
                         workflowModal.value = false
                         setTimeout(()=>{
@@ -326,7 +320,7 @@ export default defineComponent({
             key == 'menu' ? menuModal.value = true : workflowModal.value = true;
         }
 
-        function  onClickoutside () {
+        function  onClickOutside () {
             showDropdownRef.value = false
             contextMenuVisible.value = false
         }
@@ -442,7 +436,7 @@ export default defineComponent({
                 ondblclick() {
                     //双击事件
                     if(option.type !== 1){
-                        pushComponent(option.type, Number(option.taskCode), option.titleName, option.taskType, !!option.state, option.parentId)
+                        pushComponent(option.type as number, Number(option.taskCode), option.titleName as string, option.taskType as string, !!option.state, option.parentId as number)
                     }
                     }
                 }
@@ -453,9 +447,8 @@ export default defineComponent({
                  case 1 : return h(<svg class="icon" viewBox="0 0 1260 1024" xmlns="http://www.w3.org/2000/svg" width="19.688" height="16"><defs><style/></defs><path d="M1171.561 157.538H601.797L570.814 61.44A88.222 88.222 0 00486.794 0H88.747A88.747 88.747 0 000 88.747v846.506A88.747 88.747 0 0088.747 1024H1171.56a88.747 88.747 0 0088.747-88.747V246.285a88.747 88.747 0 00-88.747-88.747zm-1082.814 0V88.747h398.047l22.055 68.791z" fill="#0099CB"/></svg>)
                  case 2 : return h(<svg class="icon" viewBox="0 0 1260 1024" xmlns="http://www.w3.org/2000/svg" width="19.688" height="16"><defs><style/></defs><path d="M543.872 480h268.224c52.416 0 94.848 43.008 94.848 96v160h52.8a64 64 0 0 1 64 64V960a64 64 0 0 1-64 64H803.2a64 64 0 0 1-64-64v-160a64 64 0 0 1 64-64h40.512V576c0-17.664-14.144-32-31.616-32h-268.16v192h46.528a64 64 0 0 1 64 64V960a64 64 0 0 1-64 64H433.92a64 64 0 0 1-64-64v-160a64 64 0 0 1 64-64h46.72v-192H211.328a31.808 31.808 0 0 0-31.616 32v160h40.832a64 64 0 0 1 64 64V960a64 64 0 0 1-64 64H64a64 64 0 0 1-64-64v-160a64 64 0 0 1 64-64h52.48V576c0-52.992 42.496-96 94.848-96H480.64v-192h-46.72a64 64 0 0 1-64-64V64a64 64 0 0 1 64-64h156.544a64 64 0 0 1 64 64v160a64 64 0 0 1-64 64h-46.592v192z" fill="#0099CB"/></svg>)
                  default: {
-                     // @ts-ignore
-                     let url= '/HData/ui/images/task-icons/'+option.taskType.toLocaleLowerCase()+'_hover.png'
-                     return h(<img src={url} width="24" height="24"/>)
+                     let url= '/HData/ui/images/task-icons/'+(option.taskType as string).toLocaleLowerCase()+'_hover.png'
+                     return h(<img src={url} width="24" height="24" />)
                  }
             }
         }
@@ -482,15 +475,15 @@ export default defineComponent({
             }
         }
 
-        function getEditedByName(jsonData: array, name: string) {
-            const item = jsonData.find(item => item.name == name); // 使用 find 方法在数组中查找符合条件的第一个元素
+        function getEditedByName(jsonData: workflowBoxType[], name: number) {
+            const item = jsonData.find((item: workflowBoxType) => item.name == name); // 使用 find 方法在数组中查找符合条件的第一个元素
             if (item) {
                 return item.edited;
             }
             return null; // 若在数组中找不到，则返回 null
         }
 
-        const removeOtherTab = (targetName: string) => {
+        const removeOtherTab = (targetName: number) => {
             const tabs = workflowBox.value
             for (const tab of tabs) {
                 if (tab.name != targetName) {
@@ -518,7 +511,7 @@ export default defineComponent({
             }
         }
 
-        const removeTab = (targetName: string) => {
+        const removeTab = (targetName: number) => {
             const tabs = workflowBox.value
             if(getEditedByName(tabs, targetName)){
                 closeTabModal.value = true
@@ -534,10 +527,10 @@ export default defineComponent({
             closeTabModal.value = false
         }
 
-        function delTab(tabs: object, targetName) {
+        function delTab(tabs: workflowBoxType[], targetName: number) {
             let activeName = activeTab.value
             if (activeName == targetName) {
-                tabs.forEach((tab: Object, index: Number) => {
+                tabs.forEach((tab: workflowBoxType, index: number) => {
                     if (tab.name == targetName) {
                         const nextTab = tabs[index + 1] || tabs[index - 1]
                         if (nextTab) {
@@ -548,31 +541,32 @@ export default defineComponent({
             }
             activeTab.value = activeName
             if (typeof componentRefs.value[activeTab.value].refresh === 'function') {
-                componentRefs.value[activeTab.value].refresh(activeTab.value, projectCode)
+                (componentRefs.value[activeTab.value] as { refresh: (taskCode: number, projectCode: number) => void }).refresh(activeTab.value, projectCode)
             }
-            workflowBox.value = tabs.filter((tab: Object) => tab.name != targetName)
+            workflowBox.value = tabs.filter((tab: workflowBoxType) => tab.name != targetName)
         }
 
-        function refresh(name: String) {
+        function refresh(name: number) {
             if (typeof componentRefs.value[name].refresh === 'function') {
-                componentRefs.value[name]?.refresh(name, projectCode)
+                (componentRefs.value[name] as { refresh: (taskCode: number, projectCode: number) => void }).refresh(name, projectCode)
             }
             setTimeout(()=>{
                 if (typeof componentRefs.value[activeTab.value].repaintPlumb === 'function') {
-                    componentRefs.value[name]?.repaintPlumb()
+                    (componentRefs.value[name] as { repaintPlumb: () => void }).repaintPlumb()
                 }
             },100)
         }
 
         function handleOnDragMove() {
             if (typeof componentRefs.value[activeTab.value].repaintPlumb === 'function') {
-                componentRefs.value[activeTab.value]?.repaintPlumb()
+                (componentRefs.value[activeTab.value] as { repaintPlumb: () => void }).repaintPlumb()
             }
         }
 
         const showContextMenu = (event: MouseEvent) => {
-            if(event.target.offsetParent?.id.startsWith("tab-")){
-                contextMenuTab.value = event.target.offsetParent.id.split("-")[1];
+            const targetElement = event.target as HTMLElement;
+            if(targetElement?.offsetParent?.id.startsWith("tab-")){
+                contextMenuTab.value = Number(targetElement.offsetParent.id.split("-")[1]);
                 event.preventDefault(); // 手动阻止默认行为
                 contextMenuVisible.value = true;
                 menuTop.value = event.clientY;
@@ -580,7 +574,7 @@ export default defineComponent({
             }
         };
 
-        const pushComponent = (type, taskCode, taskName, taskType, state, processCode)=> {
+        const pushComponent = (type: number, taskCode: number, taskName: string, taskType: string, state: boolean, processCode: number)=> {
             const newItem = {
                 label: taskName,
                 name: taskCode,
@@ -597,15 +591,15 @@ export default defineComponent({
                 }
             };
 
-            if (workflowBox.value.length === 0 || !workflowBox.value.some(item => item.key === taskCode)) {
+            if (workflowBox.value.length === 0 || !workflowBox.value.some((item: workflowBoxType) => item.key === taskCode)) {
                 if(workflowBox.value.length>=15) {
                     message.info('打开窗口过多，请关掉一些')
                 } else {
                     workflowBox.value.push(newItem);
-                    componentRefs.value[taskCode] = null;
-                    activeTab.value = taskCode as string
+                    componentRefs.value[taskCode] = {};
+                    activeTab.value = taskCode
                 }
-            } else activeTab.value = taskCode as string
+            } else activeTab.value = taskCode
 
         }
 
@@ -672,7 +666,7 @@ export default defineComponent({
                                                         y={yRef.value}
                                                         options={dropdownOption.value}
                                                         show={showDropdownRef.value}
-                                                        on-clickoutside={onClickoutside}
+                                                        on-clickoutside={onClickOutside}
                                                         on-select={handleSelect}
                                                         render-option={dropdownConfirm}
                                                     />
@@ -684,6 +678,7 @@ export default defineComponent({
                                                 {workflowBox.value.length === 0 ? (
                                                     <div class={Styles.backgroundDiv}/>
                                                 ) : (
+                                                    // @ts-ignore
                                                     <ElTabs v-model={activeTab.value} closable type={"card"} onTabRemove={removeTab} onTabChange={refresh} onContextmenu={showContextMenu}>
                                                         {workflowBox.value.map((item: any) => (
                                                             <ElTabPane
@@ -709,7 +704,7 @@ export default defineComponent({
                                                                         }
                                                                 }}}
                                                             >
-                                                                <item.component ref={(ref) => { componentRefs.value[item.name] = ref }} {...item.props} />
+                                                                <item.component ref={(ref: componentRefType) => { componentRefs.value[item.name] = ref }} {...item.props} />
                                                             </ElTabPane>
                                                         ))}
                                                     </ElTabs>
@@ -722,7 +717,7 @@ export default defineComponent({
                                                         y={menuTop.value}
                                                         options={tabDropdownOption}
                                                         show={contextMenuVisible.value}
-                                                        on-clickoutside={onClickoutside}
+                                                        on-clickoutside={onClickOutside}
                                                         on-select={handleTabSelect}
                                                     />
                                             </div>
