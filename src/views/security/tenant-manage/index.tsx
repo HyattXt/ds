@@ -21,16 +21,15 @@ import {
   NInput,
   NIcon,
   NDataTable,
-  NPagination,
-  NCard,
-  NSpace
+  NForm, NGrid, NFormItemGi
 } from 'naive-ui'
-import styles from './index.module.scss'
 import { useTable } from './use-table'
 import { SearchOutlined } from '@vicons/antd'
 import TenantModal from './components/tenant-modal'
 import { useI18n } from 'vue-i18n'
-import Card from '@/components/card'
+import CrudForm from "@/components/cue/crud-form.vue";
+import CrudHeader from "@/components/cue/crud-header.vue";
+import CrudPageDs from "@/components/cue/crud-page-ds.vue";
 
 const tenementManage = defineComponent({
   name: 'tenement-manage',
@@ -60,8 +59,14 @@ const tenementManage = defineComponent({
       requestData()
     }
 
-    const handleChangePageSize = () => {
+    const handleChangePage = (page: number) => {
+      variables.page = page
+      requestData()
+    }
+
+    const handleChangePageSize = (pageSize: number) => {
       variables.page = 1
+      variables.pageSize = pageSize
       requestData()
     }
 
@@ -87,62 +92,66 @@ const tenementManage = defineComponent({
       onCancelModal,
       onConfirmModal,
       handleSearch,
+      handleChangePage,
       handleChangePageSize
     }
   },
   render() {
     const { t, loadingRef } = this
     return (
-      <div class={styles.container}>
-        <NCard>
-          <div class={styles.header}>
-            <NButton
-              size='small'
-              onClick={this.handleModalChange}
-              type='primary'
-              class='btn-create-tenant'
-            >
-              {t('security.tenant.create_tenant')}
-            </NButton>
-            <NSpace>
-              <NInput
-                size='small'
-                v-model={[this.searchVal, 'value']}
-                placeholder={t('security.tenant.search_tips')}
-                clearable
-              />
-              <NButton size='small' type='primary' onClick={this.handleSearch}>
-                <NIcon>
-                  <SearchOutlined />
-                </NIcon>
-              </NButton>
-            </NSpace>
-          </div>
-        </NCard>
-        <Card
-          title={t('security.tenant.tenant_manage')}
-          class={styles['table-card']}
-        >
-          <NDataTable
-            loading={loadingRef}
-            columns={this.columns}
-            data={this.tableData}
-            row-class-name='items'
-            scrollX={this.tableWidth}
-          />
-          <div class={styles.pagination}>
-            <NPagination
-              v-model:page={this.page}
-              v-model:page-size={this.pageSize}
-              page-count={this.totalPage}
-              show-size-picker
-              page-sizes={[10, 30, 50]}
-              show-quick-jumper
-              onUpdatePage={this.requestData}
-              onUpdatePageSize={this.handleChangePageSize}
-            />
-          </div>
-        </Card>
+      <>
+        <CrudForm>
+          {{
+            header: () => (
+                <CrudHeader title="租户管理" addButton onAddEvent={this.handleModalChange}/>
+            ),
+            condition: () => (
+                <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
+                  <NGrid cols="22" x-gap="16">
+                    <NFormItemGi label="名称" span="4">
+                      <NInput
+                          size='small'
+                          v-model={[this.searchVal, 'value']}
+                          placeholder={t('security.tenant.search_tips')}
+                          clearable
+                      />
+                    </NFormItemGi>
+                    <NFormItemGi span="2">
+                      <NButton size='small' color={'#0099CB'} type='primary' onClick={this.handleSearch} style={"padding: 0 15px 0 15px"}>
+                        <NIcon>
+                          <SearchOutlined />
+                        </NIcon>
+                        <div style={"font-size: 12px"}>
+                          查询
+                        </div>
+                      </NButton>
+                    </NFormItemGi>
+                  </NGrid>
+                </NForm>
+            ),
+            table: () => (
+                <NDataTable
+                    loading={loadingRef}
+                    columns={this.columns}
+                    data={this.tableData}
+                    scrollX={this.tableWidth}
+                    bordered
+                    flex-height
+                    single-line={false}
+                    class={"cue-table"}
+                />
+            ),
+            page: () => (
+                <CrudPageDs
+                    page={this.page}
+                    page-size={this.pageSize}
+                    item-count={this.total}
+                    onPageChange={this.handleChangePage}
+                    onPageSizeChange={this.handleChangePageSize}
+                />
+            )
+          }}
+        </CrudForm>
         <TenantModal
           showModalRef={this.showModalRef}
           statusRef={this.statusRef}
@@ -150,7 +159,7 @@ const tenementManage = defineComponent({
           onCancelModal={this.onCancelModal}
           onConfirmModal={this.onConfirmModal}
         />
-      </div>
+      </>
     )
   }
 })

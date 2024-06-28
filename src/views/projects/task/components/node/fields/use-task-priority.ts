@@ -76,6 +76,21 @@ export function useTaskPriority(): IJsonItem {
         option.label as string
       ]
     })
+
+  const renderLabel = (option: ITaskPriorityOption): VNodeChild =>
+      [
+        h(
+            NIcon,
+            {
+              color: option.color
+            },
+            {
+              default: () => h(option.icon)
+            }
+        ),
+        option.label as string
+      ];
+
   return {
     type: 'select',
     field: 'taskPriority',
@@ -85,7 +100,8 @@ export function useTaskPriority(): IJsonItem {
       required: true
     },
     props: {
-      renderOption
+      renderOption,
+      renderLabel
     },
     value: 'MEDIUM'
   }

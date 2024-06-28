@@ -30,7 +30,6 @@ import {
 import { execute } from '@/service/modules/executors'
 import TableAction from './components/table-action'
 import { renderTableTime, runningType } from '@/common/common'
-import styles from './index.module.scss'
 import { renderStateCell } from '../../task/instance/use-table'
 import {
   COLUMN_WIDTH_CONFIG,
@@ -52,8 +51,9 @@ export function useTable() {
     checkedRowKeys: [] as Array<RowKey>,
     tableData: [] as Array<IWorkflowInstance>,
     page: ref(1),
-    pageSize: ref(10),
+    pageSize: ref(30),
     totalPage: ref(1),
+    total: ref(0),
     searchVal: ref(),
     executorName: ref(),
     host: ref(),
@@ -72,7 +72,7 @@ export function useTable() {
         ...COLUMN_WIDTH_CONFIG['selection']
       },
       {
-        title: '#',
+        title: '序号',
         key: 'id',
         ...COLUMN_WIDTH_CONFIG['index'],
         render: (rowData: any, rowIndex: number) => rowIndex + 1
@@ -249,6 +249,7 @@ export function useTable() {
     queryProcessInstanceListPaging({ ...params }, variables.projectCode).then(
       (res: any) => {
         variables.totalPage = res.totalPage
+        variables.total = res.total
         variables.tableData = res.totalList.map((item: any) => {
           return { ...item }
         })

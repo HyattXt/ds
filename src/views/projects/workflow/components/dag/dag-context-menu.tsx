@@ -68,6 +68,7 @@ export default defineComponent({
     const graph = inject('graph', ref())
     const route = useRoute()
     const projectCode = Number(route.params.projectCode)
+    const hasInstancesPath = route.path.includes('/instances');
 
     const hide = () => {
       ctx.emit('hide', false)
@@ -78,7 +79,7 @@ export default defineComponent({
     }
 
     const handleEdit = () => {
-      ctx.emit('edit', Number(props.cell?.id))
+      ctx.emit('edit', Number(props.cell?.id),props.cell?.data.taskName, props.cell?.data.taskType)
     }
 
     const handleViewLog = () => {
@@ -119,7 +120,8 @@ export default defineComponent({
       handleEdit,
       handleCopy,
       handleDelete,
-      handleViewLog
+      handleViewLog,
+      hasInstancesPath
     }
   },
   render() {
@@ -138,27 +140,30 @@ export default defineComponent({
           >
             {t('project.node.start')}
           </NButton>
-          <NButton
-            class={`${styles['menu-item']}`}
-            disabled={this.menuReadonly}
-            onClick={this.handleEdit}
-          >
-            {t('project.node.edit')}
-          </NButton>
-          <NButton
-            class={`${styles['menu-item']}`}
-            disabled={this.menuReadonly}
-            onClick={this.handleCopy}
-          >
-            {t('project.node.copy')}
-          </NButton>
-          <NButton
-            class={`${styles['menu-item']}`}
-            disabled={this.menuReadonly}
-            onClick={this.handleDelete}
-          >
-            {t('project.node.delete')}
-          </NButton>
+          {!this.hasInstancesPath &&
+            (<NButton
+              class={`${styles['menu-item']}`}
+              disabled={this.menuReadonly}
+              onClick={this.handleEdit}
+            >
+              {t('project.node.edit')}
+            </NButton>)}
+          {!this.hasInstancesPath &&
+            (<NButton
+              class={`${styles['menu-item']}`}
+              disabled={this.menuReadonly}
+              onClick={this.handleCopy}
+            >
+              {t('project.node.copy')}
+            </NButton>)}
+          {!this.hasInstancesPath &&
+            (<NButton
+              class={`${styles['menu-item']}`}
+              disabled={this.menuReadonly}
+              onClick={this.handleDelete}
+            >
+              {t('project.node.delete')}
+            </NButton>)}
           {this.taskInstance && (
             <NButton
               class={`${styles['menu-item']}`}

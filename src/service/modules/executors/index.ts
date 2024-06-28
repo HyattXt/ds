@@ -65,3 +65,28 @@ export function startTaskInstance(
     data
   })
 }
+
+export function runTask(
+    projectCode: number,
+    data: Object,
+): any {
+  return axios({
+    url: `/projects/${projectCode}/task-definition/execute`,
+    method: 'post',
+    data,
+    timeout: 30 * 60 * 1000, // 设置超时为 30 分钟
+  })
+}
+
+export function stopTask(
+    projectCode: number,
+    threadName: String,
+): any {
+  return axios({
+    url: `/projects/${projectCode}/task-definition/stopExecute`,
+    method: 'post',
+    params: {
+      threadName
+    }
+  })
+}

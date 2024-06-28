@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import {format} from "date-fns";
+
 interface DateReq extends CodeReq {
   dayDate?: string
 }
@@ -22,8 +24,12 @@ interface CodeReq {
 }
 
 interface StateReq extends CodeReq {
-  endDate?: string
-  startDate?: string
+  endTime?: string
+  startTime?: string
+}
+
+interface LineChartReq extends CodeReq {
+  pageSize?: number
 }
 
 interface UserList {
@@ -64,5 +70,6 @@ export {
   ProcessDefinitionRes,
   TaskStateRes,
   TaskQueueRes,
-  CommandStateRes
+  CommandStateRes,
+  LineChartReq
 }

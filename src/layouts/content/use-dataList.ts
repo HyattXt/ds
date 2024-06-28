@@ -27,7 +27,6 @@ import {
   SafetyCertificateOutlined,
   UserOutlined,
   LogoutOutlined,
-  FundProjectionScreenOutlined,
   PartitionOutlined,
   SettingOutlined,
   FileSearchOutlined,
@@ -51,7 +50,10 @@ import {
   PieChartOutlined,
   BarChartOutlined,
   BoxPlotOutlined,
-  ProjectOutlined
+  ProjectOutlined,
+  FormOutlined,
+  RadarChartOutlined,
+  VerifiedOutlined
 } from '@vicons/antd'
 import { useRoute, RouterLink } from 'vue-router'
 import { useUserStore } from '@/store/user/user'
@@ -95,6 +97,7 @@ export function useDataList() {
   })
 
   const changeMenuOption = (state: any) => {
+    ProjectStore.$reset()
     const projectCode = ProjectStore.getCurrentProject
     state.menuOptions = [
       {
@@ -131,7 +134,7 @@ export function useDataList() {
               }*/
             ]
           },
-          {
+/*          {
             label: t('menu.task'),
             key: 'task',
             icon: renderIcon(SettingOutlined),
@@ -140,12 +143,12 @@ export function useDataList() {
                 label: t('menu.task_definition'),
                 key: `/projects/${projectCode}/task/definitions`
               },
-              /*{
+              /!*{
                 label: t('menu.task_instance'),
                 key: `/projects/${projectCode}/task/instances`
-              }*/
+              }*!/
             ]
-          }
+          }*/
         ]
       },
       {
@@ -307,6 +310,11 @@ export function useDataList() {
                 label: t('menu.token_manage'),
                 key: '/security/token-manage',
                 icon: renderIcon(SafetyOutlined)
+              },
+              {
+                label: t('menu.license_manage'),
+                key: '/security/license-manage',
+                icon: renderIcon(VerifiedOutlined)
               }
             ]
             : [
@@ -400,7 +408,7 @@ export function useDataList() {
           {
             label: t('menu.assets_overview'),
             key: '/data-assets/assets-overview',
-            icon: renderIcon(BarChartOutlined)
+            icon: renderIcon(PieChartOutlined)
           },
           {
             label: t('menu.assets_catalog'),
@@ -428,6 +436,16 @@ export function useDataList() {
                   ]
               )
             ])
+          },
+          {
+            label: t('menu.assets_classify'),
+            key: '/data-assets/assets-classify',
+            icon: renderIcon(FormOutlined)
+          },
+          {
+            label: t('menu.index_center'),
+            key: '/data-assets/index-center',
+            icon: renderIcon(RadarChartOutlined)
           }
         ]
       } ,

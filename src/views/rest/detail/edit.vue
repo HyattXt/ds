@@ -1,4 +1,5 @@
 <template>
+  <CrudHeader title="接口详情"/>
   <n-card title="选择数据源" :bordered="false" :segmented="{content: true}">
     <n-form
         ref="form1Ref"
@@ -196,6 +197,7 @@ import { useMessage } from 'naive-ui'
 import axios from 'axios'
 import {keys, values} from "lodash";
 import {useRoute, useRouter} from "vue-router";
+import CrudHeader from "@/components/cue/crud-header.vue";
 const form1Ref: any = ref(null)
 const message = useMessage()
 const formValue = ref({
@@ -292,9 +294,13 @@ const dataTokenTypeOptions = ref([
 
 function formSubmit() {
   let insUrl = httpInsertUrl+'/HDataApi/httpHandle/updateHttpData'
+  formValue.value.dataKey = {}
+  formValue.value.dataUser = {}
+  formValue.value.dataParam = {}
+  formValue.value.dynamicParameter = {}
 
   for(let i=0;i<dataKeyTmp.value.length; i++){
-    formValue.value.dataKey[dataKeyTmp.value[i].value]=dataKeyTmp.value[i].key
+    formValue.value.dataKey[dataKeyTmp.value[i].key]=dataKeyTmp.value[i].value
   }
 
   for(let i=0;i<dataUserTmp.value.length; i++){
@@ -311,9 +317,9 @@ function formSubmit() {
 
   if(ifDynamicParameter.value){
     formValue.value.dynamicParameterStatus=1
+  } else {
+    formValue.value.dynamicParameterStatus=2
   }
-
-
 
   axios
       .post(insUrl, formValue.value)
@@ -331,7 +337,6 @@ function formSubmit() {
       .catch(function (error) {
         message.error('修改失败，请咨询管理员')
       })
-
 }
 
 function queryDataSource() {

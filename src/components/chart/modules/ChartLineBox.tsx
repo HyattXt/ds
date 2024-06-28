@@ -38,7 +38,6 @@ const PieChart = defineComponent({
   props,
   setup(props) {
     const pieChartRef: Ref<HTMLDivElement | null> = ref(null)
-    //console.log(props.data)
     const option = {
       title: {
         show: false,//false
@@ -51,7 +50,8 @@ const PieChart = defineComponent({
       },
 
       tooltip: {              //设置tip提示
-        trigger: 'axis'
+        trigger: 'axis',
+        backgroundColor: 'rgb(255,255,255)'
       },
 
       legend: {               //设置区分（哪条线属于什么）
@@ -67,7 +67,7 @@ const PieChart = defineComponent({
         data: props.data[0].时间,
         name: '时间',           //X轴 name
         nameTextStyle: {        //坐标轴名称的文字样式
-          color: '#FA6F53',
+          color: '#000000',
           fontSize: 16,
           padding: [0, 0, 0, 20]
         },
@@ -83,14 +83,8 @@ const PieChart = defineComponent({
       yAxis: {
         name: '数量',
         minInterval: 1,
-        // min: function(value){
-        //   return value.min;
-        // },
-        // max:function(value){
-        //   return value.max;
-        // },
         nameTextStyle: {
-          color: '#FA6F53',
+          color: '#262626',
           fontSize: 16,
           padding: [0, 0, 10, 0]
         },

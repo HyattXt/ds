@@ -90,6 +90,14 @@ export function useSourceType(
     }
   }
 
+  const resetModelType = (modelType: ModelType) => {
+      sourceTypes.value = getSourceTypesByModelType(modelType)
+      if (!model.sourceType) {
+        model.sourceType = sourceTypes.value[0].value
+      }
+    resetSpan()
+    }
+
   watch(
     () => model.modelType,
     (modelType: ModelType) => {
@@ -127,7 +135,10 @@ export function useSourceType(
       field: 'sourceType',
       name: t('project.node.type'),
       span: unCustomSpan,
-      options: sourceTypes
+      options: sourceTypes,
+      props: {
+        onUpdateValue: resetModelType(model.modelType)
+      }
     },
     ...useDatasource(
       model,

@@ -22,7 +22,7 @@ import {
   NIcon,
   NSpace,
   NDataTable,
-  NPagination
+  NPagination, NForm, NGrid, NFormItemGi
 } from 'naive-ui'
 import Card from '@/components/card'
 import UserDetailModal from './components/user-detail-modal'
@@ -31,6 +31,9 @@ import { useI18n } from 'vue-i18n'
 import { SearchOutlined } from '@vicons/antd'
 import { useColumns } from './use-columns'
 import { useTable } from './use-table'
+import CrudForm from "@/components/cue/crud-form.vue";
+import CrudHeader from "@/components/cue/crud-header.vue";
+import CrudPageDs from "@/components/cue/crud-page-ds.vue";
 
 const UsersManage = defineComponent({
   name: 'user-manage',
@@ -66,50 +69,53 @@ const UsersManage = defineComponent({
   render() {
     return (
       <>
-        <NSpace vertical>
-          <Card>
-            <NSpace justify='space-between'>
-              <NButton
-                onClick={this.onAddUser}
-                type='primary'
-                class='btn-create-user'
-              >
-                {this.t('security.user.create_user')}
-              </NButton>
-              <NSpace>
-                <NInput v-model:value={this.searchVal} clearable />
-                <NButton type='primary' onClick={this.onUpdatedList}>
-                  <NIcon>
-                    <SearchOutlined />
-                  </NIcon>
-                </NButton>
-              </NSpace>
-            </NSpace>
-          </Card>
-          <Card>
-            <NSpace vertical>
-              <NDataTable
-                row-class-name='items'
-                columns={this.columnsRef.columns}
-                data={this.list}
-                loading={this.loading}
-                scrollX={this.columnsRef.tableWidth}
-              />
-              <NSpace justify='center'>
-                <NPagination
-                  v-model:page={this.page}
-                  v-model:page-size={this.pageSize}
-                  item-count={this.itemCount}
-                  show-size-picker
-                  page-sizes={[10, 30, 50]}
-                  show-quick-jumper
-                  on-update:page={this.changePage}
-                  on-update:page-size={this.changePageSize}
+        <CrudForm>
+          {{
+            header: () => (
+                <CrudHeader title="用户管理" addButton onAddEvent={this.onAddUser}/>
+            ),
+            condition: () => (
+                <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
+                  <NGrid cols="22" x-gap="16">
+                    <NFormItemGi label="名称" span="4">
+                      <NInput size='small' v-model:value={this.searchVal} clearable />
+                    </NFormItemGi>
+                    <NFormItemGi span="2">
+                      <NButton size='small' color={'#0099CB'} type='primary' onClick={this.onUpdatedList} style={"padding: 0 15px 0 15px"}>
+                        <NIcon>
+                          <SearchOutlined />
+                        </NIcon>
+                        <div style={"font-size: 12px"}>
+                          查询
+                        </div>
+                      </NButton>
+                    </NFormItemGi>
+                  </NGrid>
+                </NForm>
+            ),
+            table: () => (
+                <NDataTable
+                    columns={this.columnsRef.columns}
+                    data={this.list}
+                    loading={this.loading}
+                    scrollX={this.columnsRef.tableWidth}
+                    bordered
+                    flex-height
+                    single-line={false}
+                    class={"cue-table"}
                 />
-              </NSpace>
-            </NSpace>
-          </Card>
-        </NSpace>
+            ),
+            page: () => (
+                <CrudPageDs
+                    page={this.page}
+                    page-size={this.pageSize}
+                    item-count={this.itemCount}
+                    onPageChange={this.changePage}
+                    onPageSizeChange={this.changePageSize}
+                />
+            )
+          }}
+        </CrudForm>
         <UserDetailModal
           show={this.detailModalShow}
           currentRecord={this.currentRecord}

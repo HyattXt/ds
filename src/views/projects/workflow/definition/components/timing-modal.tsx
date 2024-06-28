@@ -44,7 +44,7 @@ import {
   NList,
   NListItem,
   NThing,
-  NPopover
+  NPopover, NTag
 } from 'naive-ui'
 import { ArrowDownOutlined, ArrowUpOutlined } from '@vicons/antd'
 import { timezoneList } from '@/common/timezone'
@@ -62,13 +62,21 @@ const props = {
   type: {
     type: String as PropType<String>,
     default: 'create'
+  },
+  definition: {
+    type: Boolean,
+    default: false
+  },
+  processCode: {
+    type: Number,
+    default: 0
   }
 }
 
 export default defineComponent({
   name: 'workflowDefinitionStart',
   props,
-  emits: ['update:show', 'update:row', 'updateList'],
+  emits: ['update:show', 'update:row', 'updateList', 'handleReleaseState'],
   setup(props, ctx) {
     const crontabRef = ref()
     const parallelismRef = ref(false)
@@ -96,11 +104,25 @@ export default defineComponent({
 
     const handleTiming = () => {
       if (props.type === 'create') {
-        handleCreateTiming(props.row.code as number)
+        handleCreateTiming(!!props.processCode ? props.processCode : props.row.code as number)
       } else {
         handleUpdateTiming(props.row.id)
       }
     }
+
+    const handleOnline = async () => {
+      if (props.type === 'create') {
+        await handleCreateTiming(!!props.processCode ? props.processCode : props.row.code as number)
+      } else {
+        await handleUpdateTiming(props.row.id)
+      }
+      ctx.emit('handleReleaseState', props.row)
+    }
+
+    const handleOffline = () => {
+      ctx.emit('handleReleaseState',props.row)
+    }
+
 
     const priorityOptions = [
       {
@@ -219,6 +241,8 @@ export default defineComponent({
       environmentOptions,
       hideModal,
       handleTiming,
+      handleOnline,
+      handleOffline,
       timezoneOptions,
       renderLabel,
       updateWorkerGroup,
@@ -240,151 +264,183 @@ export default defineComponent({
         onConfirm={this.handleTiming}
         confirmLoading={this.saving}
       >
-        <NForm ref='timingFormRef'>
-          <NFormItem
-            label={t('project.workflow.start_and_stop_time')}
-            path='startEndTime'
-          >
-            <NDatePicker
-              type='datetimerange'
-              clearable
-              v-model:value={this.timingForm.startEndTime}
-            />
-          </NFormItem>
-          <NFormItem label={t('project.workflow.timing')} path='crontab'>
-            <NInputGroup>
-              <NPopover
-                trigger='click'
-                showArrow={false}
-                placement='bottom'
-                style={{ width: '500px' }}
-              >
-                {{
-                  trigger: () => (
-                    <NInput
-                      style={{ width: '80%' }}
-                      readonly={true}
-                      v-model:value={this.timingForm.crontab}
-                    ></NInput>
-                  ),
-                  default: () => (
-                    <Crontab v-model:value={this.timingForm.crontab} />
-                  )
-                }}
-              </NPopover>
-              <NButton type='primary' ghost onClick={this.handlePreview}>
-                {t('project.workflow.execute_time')}
-              </NButton>
-            </NInputGroup>
-          </NFormItem>
-          <NFormItem
-            label={t('project.workflow.timezone')}
-            path='timezoneId'
-            showFeedback={false}
-          >
-            <NSelect
-              v-model:value={this.timingForm.timezoneId}
-              options={this.timezoneOptions()}
-              filterable
-            />
-          </NFormItem>
-          <NFormItem label=' ' showFeedback={false}>
-            <NList>
-              <NListItem>
-                <NThing
-                  description={t('project.workflow.next_five_execution_times')}
+        {{
+          'btn-middle': () => (
+              <div>
+                {this.row.releaseState === 'ONLINE' && (
+                    <NButton
+                        style={'margin-right: 15px'}
+                        type='warning'
+                        size='small'
+                        onClick={this.handleOffline}
+                    >
+                      {'下线'}
+                    </NButton>)}
+                <NButton
+                    type='info'
+                    size='small'
+                    onClick={this.handleOnline}
                 >
-                  {this.schedulePreviewList.map((item: string) => (
-                    <NSpace>
-                      {item}
-                      <br />
-                    </NSpace>
-                  ))}
-                </NThing>
-              </NListItem>
-            </NList>
-          </NFormItem>
-          <NFormItem
-            label={t('project.workflow.failure_strategy')}
-            path='failureStrategy'
-          >
-            <NRadioGroup v-model:value={this.timingForm.failureStrategy}>
-              <NSpace>
-                <NRadio value='CONTINUE'>
-                  {t('project.workflow.continue')}
-                </NRadio>
-                <NRadio value='END'>{t('project.workflow.end')}</NRadio>
-              </NSpace>
-            </NRadioGroup>
-          </NFormItem>
-          <NFormItem
-            label={t('project.workflow.notification_strategy')}
-            path='warningType'
-          >
-            <NSelect
-              options={[
-                {
-                  value: 'NONE',
-                  label: t('project.workflow.none_send')
-                },
-                {
-                  value: 'SUCCESS',
-                  label: t('project.workflow.success_send')
-                },
-                {
-                  value: 'FAILURE',
-                  label: t('project.workflow.failure_send')
-                },
-                {
-                  value: 'ALL',
-                  label: t('project.workflow.all_send')
-                }
-              ]}
-              v-model:value={this.timingForm.warningType}
-            />
-          </NFormItem>
-          <NFormItem
-            label={t('project.workflow.workflow_priority')}
-            path='processInstancePriority'
-          >
-            <NSelect
-              options={this.priorityOptions}
-              renderLabel={this.renderLabel}
-              v-model:value={this.timingForm.processInstancePriority}
-            />
-          </NFormItem>
-          <NFormItem
-            label={t('project.workflow.worker_group')}
-            path='workerGroup'
-          >
-            <NSelect
-              options={this.workerGroups}
-              onUpdateValue={this.updateWorkerGroup}
-              v-model:value={this.timingForm.workerGroup}
-            />
-          </NFormItem>
-          <NFormItem
-            label={t('project.workflow.environment_name')}
-            path='environmentCode'
-          >
-            <NSelect
-              options={this.environmentOptions}
-              v-model:value={this.timingForm.environmentCode}
-              clearable
-            />
-          </NFormItem>
-          <NFormItem
-            label={t('project.workflow.alarm_group')}
-            path='warningGroupId'
-          >
-            <NSelect
-              options={this.alertGroups}
-              placeholder={t('project.workflow.please_choose')}
-              v-model:value={this.timingForm.warningGroupId}
-              clearable
-            />
-          </NFormItem>
-        </NForm>
+                  {'确定并上线'}
+                </NButton>
+              </div>
+          ),
+          default: () => (
+            <NForm ref='timingFormRef'>
+              {this.definition &&
+                (<NFormItem
+                  label='状态'
+                  labelPlacement={'left'}
+              >
+                <NTag type={!!this.row.releaseState ? (this.row.releaseState === 'OFFLINE' ? 'warning' : 'success') : 'default'}>
+                  {!!this.row.releaseState ? (this.row.releaseState === 'OFFLINE' ? '已下线' : '已上线') : '当前未配置调度'}
+                </NTag>
+              </NFormItem>)}
+              <NFormItem
+                label={t('project.workflow.start_and_stop_time')}
+                path='startEndTime'
+              >
+                <NDatePicker
+                  type='datetimerange'
+                  clearable
+                  v-model:value={this.timingForm.startEndTime}
+                />
+              </NFormItem>
+              <NFormItem label={t('project.workflow.timing')} path='crontab'>
+                <NInputGroup>
+                  <NPopover
+                    trigger='click'
+                    showArrow={false}
+                    placement='bottom'
+                    style={{ width: '500px' }}
+                  >
+                    {{
+                      trigger: () => (
+                        <NInput
+                          style={{ width: '80%' }}
+                          readonly={true}
+                          v-model:value={this.timingForm.crontab}
+                        ></NInput>
+                      ),
+                      default: () => (
+                        <Crontab v-model:value={this.timingForm.crontab} />
+                      )
+                    }}
+                  </NPopover>
+                  <NButton type='primary' ghost onClick={this.handlePreview}>
+                    {t('project.workflow.execute_time')}
+                  </NButton>
+                </NInputGroup>
+              </NFormItem>
+              <NFormItem
+                label={t('project.workflow.timezone')}
+                path='timezoneId'
+                showFeedback={false}
+              >
+                <NSelect
+                  v-model:value={this.timingForm.timezoneId}
+                  options={this.timezoneOptions()}
+                  filterable
+                />
+              </NFormItem>
+              <NFormItem label=' ' showFeedback={false}>
+                <NList>
+                  <NListItem>
+                    <NThing
+                      description={t('project.workflow.next_five_execution_times')}
+                    >
+                      {this.schedulePreviewList.map((item: string) => (
+                        <NSpace>
+                          {item}
+                          <br />
+                        </NSpace>
+                      ))}
+                    </NThing>
+                  </NListItem>
+                </NList>
+              </NFormItem>
+              <NFormItem
+                label={t('project.workflow.failure_strategy')}
+                path='failureStrategy'
+              >
+                <NRadioGroup v-model:value={this.timingForm.failureStrategy}>
+                  <NSpace>
+                    <NRadio value='CONTINUE'>
+                      {t('project.workflow.continue')}
+                    </NRadio>
+                    <NRadio value='END'>{t('project.workflow.end')}</NRadio>
+                  </NSpace>
+                </NRadioGroup>
+              </NFormItem>
+              <NFormItem
+                label={t('project.workflow.notification_strategy')}
+                path='warningType'
+              >
+                <NSelect
+                  options={[
+                    {
+                      value: 'NONE',
+                      label: t('project.workflow.none_send')
+                    },
+                    {
+                      value: 'SUCCESS',
+                      label: t('project.workflow.success_send')
+                    },
+                    {
+                      value: 'FAILURE',
+                      label: t('project.workflow.failure_send')
+                    },
+                    {
+                      value: 'ALL',
+                      label: t('project.workflow.all_send')
+                    }
+                  ]}
+                  v-model:value={this.timingForm.warningType}
+                />
+              </NFormItem>
+              <NFormItem
+                label={t('project.workflow.workflow_priority')}
+                path='processInstancePriority'
+              >
+                <NSelect
+                  options={this.priorityOptions}
+                  renderLabel={this.renderLabel}
+                  v-model:value={this.timingForm.processInstancePriority}
+                />
+              </NFormItem>
+              <NFormItem
+                label={t('project.workflow.worker_group')}
+                path='workerGroup'
+              >
+                <NSelect
+                  options={this.workerGroups}
+                  onUpdateValue={this.updateWorkerGroup}
+                  v-model:value={this.timingForm.workerGroup}
+                />
+              </NFormItem>
+              <NFormItem
+                label={t('project.workflow.environment_name')}
+                path='environmentCode'
+              >
+                <NSelect
+                  options={this.environmentOptions}
+                  v-model:value={this.timingForm.environmentCode}
+                  clearable
+                />
+              </NFormItem>
+              <NFormItem
+                label={t('project.workflow.alarm_group')}
+                path='warningGroupId'
+              >
+                <NSelect
+                  options={this.alertGroups}
+                  placeholder={t('project.workflow.please_choose')}
+                  v-model:value={this.timingForm.warningGroupId}
+                  clearable
+                />
+              </NFormItem>
+            </NForm>)
+        }}
       </Modal>
     )
   }

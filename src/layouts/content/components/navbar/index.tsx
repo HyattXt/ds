@@ -59,7 +59,6 @@ const Navbar = defineComponent({
     const menuKey = ref(route.meta.activeMenu as string)
 
     const handleMenuClick = (key: string) => {
-      console.log(key)
       if(key == 'projects'){
         router.push({ path: `/projects/${ProjectStore.getCurrentProject}/workflow/relation` })
       }else if(key == 'devops'){
@@ -97,8 +96,9 @@ const Navbar = defineComponent({
             mode='horizontal'
             options={this.iconOptions}
             onUpdateValue={this.handleMenuClick}
+            style={"justify-content: flex-end;"}
           />
-          <Theme />
+          {/*<Theme/>*/}
           <Project/>
           <User userDropdownOptions={this.userDropdownOptions} />
         </div>

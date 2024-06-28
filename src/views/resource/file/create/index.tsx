@@ -29,6 +29,7 @@ import { fileTypeArr } from '@/common/common'
 import styles from '../index.module.scss'
 
 import type { Router } from 'vue-router'
+import CrudHeader from "@/components/cue/crud-header.vue";
 
 export default defineComponent({
   name: 'ResourceFileCreate',
@@ -64,7 +65,8 @@ export default defineComponent({
   render() {
     const { t } = useI18n()
     return (
-      <Card title={t('resource.file.file_details')}>
+      <Card class={styles['scrollable-card']}>
+        <CrudHeader title="文件详情" style={'border-bottom: solid 1px #e8ecf0;'}/>
         <NForm
           rules={this.rules}
           ref='fileFormRef'

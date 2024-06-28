@@ -7,19 +7,14 @@
       class="step-result"
     >
       <template #footer>
-        <div
-          class="flex justify-center"
-          style="margin-left: 150px; margin-top: 180px"
-        >
-          <n-space>
-            <n-button type="primary" class="mr-4" @click="finish"
-              >继续</n-button
-            >
-            <router-link to="/service/api-dev">
-              <n-button>退出</n-button>
-            </router-link>
-          </n-space>
-        </div>
+        <n-space justify="center" style="margin-top: 30px">
+          <router-link to="/service/api-register">
+            <n-button color="#0099CB" type="primary" class="mr-4">继续</n-button>
+          </router-link>
+          <router-link to="/service/api-dev">
+            <n-button tertiary>退出</n-button>
+          </router-link>
+        </n-space>
       </template>
     </n-result>
   </div>
@@ -41,7 +36,7 @@
     max-width: 560px;
     margin: 40px auto 0;
 
-    ::v-deep(.n-result-content) {
+    :deep(.n-result-content) {
       background-color: #fafafa;
       padding: 24px 40px;
     }

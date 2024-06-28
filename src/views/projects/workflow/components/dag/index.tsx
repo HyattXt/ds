@@ -24,7 +24,7 @@ import {
   toRef,
   watch,
   onBeforeUnmount,
-  computed
+  computed, inject
 } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
@@ -44,6 +44,7 @@ import {
 } from './dag-hooks'
 import { useThemeStore } from '@/store/theme/theme'
 import VersionModal from '../../definition/components/version-modal'
+import TimingModal from '../../definition/components/timing-modal'
 import { WorkflowDefinition, WorkflowInstance } from './types'
 import DagSaveModal from './dag-save-modal'
 import ContextMenuItem from './dag-context-menu'
@@ -57,6 +58,9 @@ import { useAsyncState } from '@vueuse/core'
 import utils from '@/utils'
 import {useTask} from "@/views/projects/task/definition/use-task";
 import {INodeData} from "@/views/projects/task/components/node/types";
+import graph from "@/views/projects/workflow/relation/components/Graph";
+import {release} from "@/service/modules/process-definition";
+import {useTable} from "@/views/projects/workflow/definition/timing/use-table";
 
 const props = {
   // If this prop is passed, it means from definition detail
@@ -79,7 +83,11 @@ const props = {
   processCode: {
     type: Number as PropType<number>,
     default: 0
-  }
+  },
+  parentId: {
+    type: Number as PropType<number>,
+    default: 0
+  },
 }
 
 export default defineComponent({
@@ -198,6 +206,8 @@ export default defineComponent({
 
     // version modal
     const versionModalShow = ref(false)
+    const timingModalShow = ref(false)
+    const startModalShow = ref(false)
     const versionToggle = (bool: boolean) => {
       if (typeof bool === 'boolean') {
         versionModalShow.value = bool
@@ -205,18 +215,34 @@ export default defineComponent({
         versionModalShow.value = !versionModalShow.value
       }
     }
+    const timingToggle = (bool: boolean) => {
+      if (typeof bool === 'boolean') {
+        requestData()
+        timingModalShow.value = bool
+      } else {
+        timingModalShow.value = !timingModalShow.value
+      }
+    }
+    const startToggle = (bool: boolean) => {
+      if (typeof bool === 'boolean') {
+        startModalShow.value = bool
+      } else {
+        startModalShow.value = !startModalShow.value
+      }
+    }
     const refreshDetail = () => {
       context.emit('refresh',!!props.processCode ? props.processCode : Number(route.query.code), props.projectCode)
       versionModalShow.value = false
+      timingModalShow.value = false
     }
 
     const refreshEdit = (code: number) => {
       refreshDetail()
-      editTask(code)
+      //editTask(code)
     }
 
-    const commitInitTaskAndVis = (taskName: string,taskDescription: string,processCode: number) => {
-      commitInitTask(taskName, taskDescription, processCode).then(r =>{
+    const commitInitTaskAndVis = (taskName: string,taskDescription: string,processCode: number,datasourceType: String, datasource: Number ) => {
+      commitInitTask(taskName, taskDescription, processCode, datasourceType, datasource).then(r =>{
         initTaskCancel()
       })
     }
@@ -225,6 +251,16 @@ export default defineComponent({
       const result = await onTaskSave(params.data)
       if (result) {
       }
+    }
+
+    //timing modal
+    const { variables, getTableData, handleReleaseState } = useTable()
+    const requestData = () => {
+      getTableData({
+        pageSize: variables.pageSize,
+        pageNo: variables.page,
+        searchVal: variables.searchVal
+      }, props.processCode)
     }
 
     // Save modal
@@ -314,6 +350,19 @@ export default defineComponent({
       }
     }
 
+    const releaseWorkflow = () => {
+      const data = {
+        name: props?.definition.processDefinition.name,
+        releaseState: (props?.definition.processDefinition.releaseState === 'ONLINE' ? 'OFFLINE' : 'ONLINE') as
+            | 'OFFLINE'
+            | 'ONLINE'
+      }
+      release(data, props.projectCode, props.processCode).then(() => {
+        window.$message.success(t('project.workflow.success'))
+        refreshDetail()
+      })
+    }
+
     watch(
       () => props.definition,
       () => {
@@ -351,9 +400,12 @@ export default defineComponent({
           instance={props.instance}
           definition={props.definition}
           onVersionToggle={versionToggle}
+          onTimingToggle={timingToggle}
           onSaveModelToggle={saveModelToggle}
+          onStartToggle={startToggle}
           onRemoveTasks={removeTasks}
           onRefresh={refreshTaskStatus}
+          onOnline={releaseWorkflow}
         />
         <div class={Styles.content}>
           <DagSidebar onDragStart={onDragStart} />
@@ -373,6 +425,22 @@ export default defineComponent({
             v-model:show={versionModalShow.value}
             onUpdateList={refreshDetail}
           />
+        )}
+        {!!props.definition && (
+            <TimingModal
+                type={variables.timingType}
+                definition={true}
+                processCode={props.processCode}
+                v-model:row={variables.tableData[0]}
+                v-model:show={timingModalShow.value}
+                onHandleReleaseState={handleReleaseState}
+            />
+        )}
+        {!!props.definition && (
+            <StartModal
+                v-model:row={props.definition.processDefinition}
+                v-model:show={startModalShow.value}
+            />
         )}
         <DagSaveModal
           v-model:show={saveModalShow.value}
@@ -400,6 +468,7 @@ export default defineComponent({
             projectCode={props.projectCode}
             processCode={props.processCode}
             processInstance={props.instance}
+            parentId={props.parentId}
             type={dragged.value.type}
             taskInstance={currentTaskInstance.value}
             onViewLog={handleViewLog}

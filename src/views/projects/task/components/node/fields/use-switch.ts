@@ -23,10 +23,12 @@ import type { IJsonItem } from '../types'
 
 export function useSwitch(
   model: { [field: string]: any },
-  projectCode: number
+  projectCode: number,
+  ProcessName?: number
 ): IJsonItem[] {
   const { t } = useI18n()
   const taskStore = useTaskNodeStore()
+  console.log(taskStore)
   const branchFlowOptions = ref(taskStore.postTaskOptions as any)
   const loading = ref(false)
   const getOtherTaskDefinitionList = async () => {
@@ -34,7 +36,7 @@ export function useSwitch(
     loading.value = true
     branchFlowOptions.value = []
     const res = await queryProcessDefinitionByCode(
-      model.processName,
+        ProcessName || model.PorcessName,
       projectCode
     )
     res?.taskDefinitionList.forEach((item: any) => {
@@ -85,7 +87,8 @@ export function useSwitch(
 
   onMounted(async () => {
     await nextTick()
-    clearUselessNode(branchFlowOptions.value)
+    //clearUselessNode(branchFlowOptions.value)
+    getOtherTaskDefinitionList()
   })
 
   return [
@@ -99,7 +102,7 @@ export function useSwitch(
           field: 'condition',
           span: 24,
           props: {
-            loading: loading,
+            loading: loading.value,
             type: 'textarea',
             autosize: { minRows: 2 }
           }
@@ -119,7 +122,7 @@ export function useSwitch(
       span: 24,
       name: t('project.node.switch_branch_flow'),
       props: {
-        loading: loading
+        loading: loading.value
       },
       options: branchFlowOptions
     }

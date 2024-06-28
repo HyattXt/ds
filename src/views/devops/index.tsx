@@ -15,42 +15,21 @@
  * limitations under the License.
  */
 
-import { defineAsyncComponent, defineComponent, onMounted, onBeforeMount, ref, toRefs, watch } from 'vue'
+import { defineComponent, ref, toRefs, watch } from 'vue'
 import { NGrid, NGi } from 'naive-ui'
-import { startOfToday, getTime } from 'date-fns'
 import { useI18n } from 'vue-i18n'
 import { useTaskState } from './use-task-state'
 import { useProcessState } from './use-process-state'
 import StateCard from './components/state-card'
-//import DefinitionCard from './components/definition-card'
-import { getUrlParam } from "@/service/service";
-import { login1 } from "@/service/modules/login";
-import { SessionIdRes } from "@/service/modules/login/types";
-import { UserInfoRes } from "@/service/modules/users/types";
-import { getUserInfo } from "@/service/modules/users";
-import { useUserStore } from "@/store/user/user";
-import { useTimezoneStore } from "@/store/timezone/timezone";
 import { useRoute, useRouter } from 'vue-router'
 import { useAsyncState } from '@vueuse/core'
-import type { Component } from 'vue'
-import utils from '@/utils'
-import { queryUnauthorizedProject, getDataByProjectCodeAndDate, getStatisticsDataByProjectCodeAndDate } from '@/service/modules/devops-analysis'
-
-const modules = import.meta.glob('/src/views/**/**.tsx')
-
-const components: { [key: string]: Component } = utils.mapping(modules)
-
-const DefinitionCard = defineAsyncComponent(() => import('./components/definition-card'))
-
+import { queryUnauthorizedProject } from '@/service/modules/devops-analysis'
 
 export default defineComponent({
   name: 'devops',
   setup() {
-    const userStore = useUserStore()
-    const timezoneStore = useTimezoneStore()
 
     const { t, locale } = useI18n()
-    // const dateRef = ref([[getTime(startOfToday()), Date.now()]])
     const dateRef = ref(
       [[new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 6 * 24 * 60 * 60 * 1000,
       new Date(new Date().setHours(0, 0, 0, 0)).getTime() + 24 * 60 * 60 * 1000]]
@@ -66,8 +45,8 @@ export default defineComponent({
       {
         label: '昨天',
         value: [
-          new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 1 * 24 * 60 * 60 * 1000,
-          new Date(new Date().setHours(23, 59, 59, 999)).getTime() - 1 * 24 * 60 * 60 * 1000
+          new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 24 * 60 * 60 * 1000,
+          new Date(new Date().setHours(23, 59, 59, 999)).getTime() - 24 * 60 * 60 * 1000
         ]
       },
       {
@@ -100,8 +79,8 @@ export default defineComponent({
     const Proj = ref()
     const ProjName = ref()
     const ProjSelect = ref()
-    const { getInterfaceTop10Data, getJobRunErrorTop10Data, getJobRuntimeTop10Data, getTaskStatisticsInfoData, getTaskState, taskVariables, getTaskData, getTaskDev, getProjData } = useTaskState()
-    const { getProcessState, processVariables } = useProcessState()
+    const { getInterfaceTop10Data, getJobRunErrorTop10Data, getJobRuntimeTop10Data, getTaskStatisticsInfoData, getTaskState, taskVariables, getTaskData, getTaskDev } = useTaskState()
+    const { processVariables } = useProcessState()
     const route = useRoute()
     const router = useRouter()
     const TaskPie = ref()
@@ -138,7 +117,7 @@ export default defineComponent({
       RunErrorTop10.value = getJobRunErrorTop10Data(val, Proj.value)
       RunErrorSelectCurrent.value = RunSelect.value.filter(item => item.value[0] === val[0])[0].label;
     }
-    const handlegetInterfaceTop10Data = (val: any) => {
+    const handleGetInterfaceTop10Data = (val: any) => {
       ApiTop10.value = getInterfaceTop10Data(val, Proj.value)
       ApiSelectCurrent.value = RunSelect.value.filter(item => item.value[0] === val[0])[0].label;
     }
@@ -162,7 +141,7 @@ export default defineComponent({
       currentRoute.params.projectCode = val;
       // 使用 router.replace() 替换当前路由
       router.replace(currentRoute);
-      ProjName.value = ProjSelect.value.filter(item => item.value === val).label;
+      ProjName.value = ProjSelect.value.filter((item: any)=> item.value === val).label;
 
     }
 
@@ -175,9 +154,6 @@ export default defineComponent({
       taskDevRef.value = getTaskDev(dateRef.value, Proj.value) || taskDevRef.value
 
       TaskPie.value = getTaskStatisticsInfoData(dateRef.value, Proj.value)
-      console.log('TaskPie')
-      console.log(TaskPie)
-
     }
 
 
@@ -188,31 +164,18 @@ export default defineComponent({
 
     const getProjData1 = async () => {
 
-      const { state } = await useAsyncState(
+      const { state } = useAsyncState(
         queryUnauthorizedProject({
           userId: 0
-        }).then(function (res) {
-          ;
+        }).then(function (res: any) {
 
-          const table = res.map((item) => {
+          const table = res.map((item: any) => {
             return {
               label: item.name,
               value: item.code,
             }
           });
-          const proj = table[0].value
-          if (route.params.projectCode == '123') {
-            const currentRoute = router.currentRoute.value; // 复制当前路由对象
-            // 修改参数
-            currentRoute.params.projectCode = table[0].value;
-            // 使用 router.replace() 替换当前路由
-            router.replace(currentRoute);
-            Proj.value = table[0].value;
-            ProjName.value = table[0].label
-          }
-          else {
-            ProjName.value = table.filter(item => item.value.toString() === route.params.projectCode).map(item => item.label)[0]
-          }
+          ProjName.value = table.filter((item: any) => item.value.toString() === route.params.projectCode).map((item: any) => item.label)[0]
           ProjSelect.value = table
           return { table, Proj }
         }),
@@ -224,11 +187,6 @@ export default defineComponent({
 
 
     getProjData1()
-
-    onMounted(() => {
-      // getProjData1()
-
-    })
 
     watch(
       () => locale.value,
@@ -243,7 +201,7 @@ export default defineComponent({
       handleProjData,
       handleRunTop10Data,
       handleRunErrorTop10Data,
-      handlegetInterfaceTop10Data,
+      handleGetInterfaceTop10Data,
       taskStateRef,
       processStateRef,
       taskDataRef,
@@ -266,15 +224,12 @@ export default defineComponent({
     const {
       t,
       dateRef,
-      taskDevRef,
       handleTaskData,
       handleProjData,
       handleRunTop10Data,
       handleRunErrorTop10Data,
-      handlegetInterfaceTop10Data,
-      taskLoadingRef,
-      processLoadingRef,
-      TaskPie
+      handleGetInterfaceTop10Data,
+      taskLoadingRef
     } = this
 
 
@@ -288,7 +243,7 @@ export default defineComponent({
               date={dateRef}
               tableData={this.taskDevRef?.value.header}
               chartData={this.taskDataRef?.value.table}
-              tablecount={this.taskDevRef?.value.table}
+              tableCount={this.taskDevRef?.value.table}
               ProjSelect={this.ProjSelect}
               ProjFirst={this.ProjName}
               RunSelectCurrent={this.RunSelectCurrent}
@@ -303,7 +258,7 @@ export default defineComponent({
               onUpdateProjPickerValue={handleProjData}
               onUpdateRunTop10DatePickerValue={handleRunTop10Data}
               onUpdateRunErrorTop10DatePickerValue={handleRunErrorTop10Data}
-              onUpdategetInterfaceTop10Data={handlegetInterfaceTop10Data}
+              onUpdateGetInterfaceTop10Data={handleGetInterfaceTop10Data}
               loadingRef={taskLoadingRef}
             />
           </NGi>

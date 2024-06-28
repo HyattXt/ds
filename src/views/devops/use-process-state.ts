@@ -39,7 +39,7 @@ export function useProcessState() {
         endDate: !date ? '' : format(date[1], 'yyyy-MM-dd HH:mm:ss'),
         projectCode: 0
       }).then((res: TaskStateRes): StateData => {
-        const table = res.taskCountDtos.map((item) => {
+        const processTable : { number: number; state: string }[] = res.taskCountDtos.map((item) => {
           return {
             state: t('home.' + toLower(item.taskStateType)),
             number: item.count
@@ -54,9 +54,9 @@ export function useProcessState() {
         })
 
         processVariables.processLoadingRef = false
-        return { table, chart }
+        return { processTable, chart }
       }),
-      { table: [], chart: [] }
+      { processTable: [], chart: [] }
     )
 
     return state

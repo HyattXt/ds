@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-import Card from '@/components/card'
 import { SearchOutlined } from '@vicons/antd'
 import {
   NButton,
@@ -25,7 +24,7 @@ import {
   NPagination,
   NSpace,
   NTooltip,
-  NPopconfirm
+  NPopconfirm, NForm, NGrid, NFormItemGi
 } from 'naive-ui'
 import { defineComponent, onMounted, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -38,6 +37,10 @@ import CopyModal from './components/copy-modal'
 import { useRouter, useRoute } from 'vue-router'
 import type { Router } from 'vue-router'
 import styles from './index.module.scss'
+
+import CrudHeader from "@/components/cue/crud-header.vue";
+import CrudForm from "@/components/cue/crud-form.vue";
+import CrudPageDs from "@/components/cue/crud-page-ds.vue";
 
 export default defineComponent({
   name: 'WorkflowDefinitionList',
@@ -63,6 +66,11 @@ export default defineComponent({
       })
     }
 
+    const handlePageChange = (page: number) => {
+      variables.page = page
+      requestData()
+    }
+
     const handleUpdateList = () => {
       requestData()
     }
@@ -77,8 +85,9 @@ export default defineComponent({
       requestData()
     }
 
-    const handleChangePageSize = () => {
+    const handleChangePageSize = (pageSize: number) => {
       variables.page = 1
+      variables.pageSize = pageSize
       requestData()
     }
 
@@ -102,6 +111,7 @@ export default defineComponent({
       handleSearch,
       handleUpdateList,
       createDefinition,
+      handlePageChange,
       handleChangePageSize,
       batchDeleteWorkflow,
       batchExportWorkflow,
@@ -115,127 +125,128 @@ export default defineComponent({
     const { loadingRef } = this
 
     return (
-      <div class={styles.content}>
-        <Card class={styles.card}>
-          <div class={styles.header}>
-            <NSpace>
-              <NButton
-                type='primary'
-                onClick={this.createDefinition}
-                class='btn-create-process'
-              >
-                {t('project.workflow.create_workflow')}
-              </NButton>
-            </NSpace>
-            <div class={styles.right}>
-              <div class={styles.search}>
-                <div class={styles.list}>
-                  <NButton type='primary' onClick={this.handleSearch}>
-                    <NIcon>
-                      <SearchOutlined />
-                    </NIcon>
-                  </NButton>
-                </div>
-                <div class={styles.list}>
-                  <NInput
-                    placeholder={t('resource.function.enter_keyword_tips')}
-                    v-model={[this.searchVal, 'value']}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </Card>
-        <Card title={t('project.workflow.workflow_manager')}>
-          <NDataTable
-            loading={loadingRef}
-            rowKey={(row) => row.code}
-            columns={this.columns}
-            data={this.tableData}
-            striped
-            class={styles.table}
-            v-model:checked-row-keys={this.checkedRowKeys}
-            row-class-name='items'
-            scrollX={this.tableWidth}
-          />
-          <div class={styles.pagination}>
-            <NPagination
-              v-model:page={this.page}
-              v-model:page-size={this.pageSize}
-              page-count={this.totalPage}
-              show-size-picker
-              page-sizes={[10, 30, 50]}
-              show-quick-jumper
-              onUpdatePage={this.requestData}
-              onUpdatePageSize={this.handleChangePageSize}
-            />
-          </div>
-          <div class={styles['batch-button']}>
-            <NTooltip>
-              {{
-                default: () => t('project.workflow.delete'),
-                trigger: () => (
-                  <NPopconfirm onPositiveClick={this.batchDeleteWorkflow}>
-                    {{
-                      default: () => t('project.workflow.delete_confirm'),
-                      trigger: () => (
-                        <NButton
-                          tag='div'
-                          type='primary'
-                          disabled={this.checkedRowKeys.length <= 0}
-                          class='btn-delete-all'
-                        >
-                          {t('project.workflow.delete')}
+        <>
+          <CrudForm>
+            {{
+              header: () => (
+                  <CrudHeader title="工作流管理" addButton onAddEvent={this.createDefinition}/>
+              ),
+              condition: () => (
+                  <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
+                    <NGrid cols="22" x-gap="16">
+                      <NFormItemGi label="名称" span="4">
+                        <NInput
+                            size='small'
+                            placeholder={t('resource.function.enter_keyword_tips')}
+                            v-model={[this.searchVal, 'value']}
+                            clearable
+                        />
+                      </NFormItemGi>
+                      <NFormItemGi span="2">
+                        <NButton size='small' color={'#0099CB'} type='primary' onClick={this.handleSearch} style={"padding: 0 15px 0 15px"}>
+                          <NIcon>
+                            <SearchOutlined />
+                          </NIcon>
+                          <div style={"font-size: 12px"}>
+                            查询
+                          </div>
                         </NButton>
-                      )
-                    }}
-                  </NPopconfirm>
-                )
-              }}
-            </NTooltip>
-            <NTooltip>
-              {{
-                default: () => t('project.workflow.export'),
-                trigger: () => (
-                  <NButton
-                    tag='div'
-                    type='primary'
-                    disabled={this.checkedRowKeys.length <= 0}
-                    onClick={this.batchExportWorkflow}
-                    class='btn-delete-all'
-                  >
-                    {t('project.workflow.export')}
-                  </NButton>
-                )
-              }}
-            </NTooltip>
-          </div>
-        </Card>
-        <ImportModal
-          v-model:show={this.showRef}
-          onUpdateList={this.handleUpdateList}
-        />
-        <StartModal
-          v-model:row={this.row}
-          v-model:show={this.startShowRef}
-          onUpdateList={this.handleUpdateList}
-        />
-        <TimingModal
-          v-model:row={this.row}
-          v-model:show={this.timingShowRef}
-          onUpdateList={this.handleUpdateList}
-        />
-        <VersionModal
-          v-model:row={this.row}
-          v-model:show={this.versionShowRef}
-          onUpdateList={this.handleUpdateList}
-        />
-        <CopyModal
-          v-model:codes={this.checkedRowKeys}
-          v-model:show={this.copyShowRef}
-          onUpdateList={this.handleCopyUpdateList}
-        />
-      </div>
+                      </NFormItemGi>
+                    </NGrid>
+                  </NForm>
+              ),
+              table: () => (
+                  <NDataTable
+                      loading={loadingRef}
+                      rowKey={(row: any) => row.code}
+                      columns={this.columns}
+                      data={this.tableData}
+                      v-model:checked-row-keys={this.checkedRowKeys}
+                      scrollX={this.tableWidth}
+                      bordered
+                      flex-height
+                      single-line={false}
+                      class={"cue-table"}
+                  />
+              ),
+              page: () => (
+                  <>
+                    <div class={styles['batch-button']}>
+                      <NTooltip>
+                        {{
+                          default: () => t('project.workflow.delete'),
+                          trigger: () => (
+                              <NPopconfirm onPositiveClick={this.batchDeleteWorkflow}>
+                                {{
+                                  default: () => t('project.workflow.delete_confirm'),
+                                  trigger: () => (
+                                      <NButton
+                                          tag='div'
+                                          type='primary'
+                                          disabled={this.checkedRowKeys.length <= 0}
+                                          class='btn-delete-all'
+                                      >
+                                        {t('project.workflow.delete')}
+                                      </NButton>
+                                  )
+                                }}
+                              </NPopconfirm>
+                          )
+                        }}
+                      </NTooltip>
+                      <NTooltip>
+                        {{
+                          default: () => t('project.workflow.export'),
+                          trigger: () => (
+                              <NButton
+                                  tag='div'
+                                  type='primary'
+                                  disabled={this.checkedRowKeys.length <= 0}
+                                  onClick={this.batchExportWorkflow}
+                                  class='btn-delete-all'
+                              >
+                                {t('project.workflow.export')}
+                              </NButton>
+                          )
+                        }}
+                      </NTooltip>
+                    </div>
+                    <CrudPageDs
+                        page={this.page}
+                        page-size={this.pageSize}
+                        item-count={this.total}
+                        onPageChange={this.handlePageChange}
+                        onPageSizeChange={this.handleChangePageSize}
+                    />
+                  </>
+              )
+            }}
+          </CrudForm>
+          <ImportModal
+            v-model:show={this.showRef}
+            onUpdateList={this.handleUpdateList}
+          />
+          <StartModal
+            v-model:row={this.row}
+            v-model:show={this.startShowRef}
+            onUpdateList={this.handleUpdateList}
+          />
+          <TimingModal
+            v-model:row={this.row}
+            v-model:show={this.timingShowRef}
+            onUpdateList={this.handleUpdateList}
+          />
+          <VersionModal
+            v-model:row={this.row}
+            v-model:show={this.versionShowRef}
+            onUpdateList={this.handleUpdateList}
+          />
+          <CopyModal
+            v-model:codes={this.checkedRowKeys}
+            v-model:show={this.copyShowRef}
+            onUpdateList={this.handleCopyUpdateList}
+          />
+        </>
     )
   }
 })

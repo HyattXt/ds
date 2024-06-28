@@ -18,19 +18,17 @@
 import { defineComponent, onMounted, toRefs, watch } from 'vue'
 import {
   NButton,
-  NCard,
-  NDataTable,
+  NDataTable, NForm, NFormItemGi, NGrid,
   NIcon,
-  NInput,
-  NPagination,
-  NSpace
+  NInput
 } from 'naive-ui'
 import { SearchOutlined } from '@vicons/antd'
 import { useI18n } from 'vue-i18n'
 import { useTable } from './use-table'
-import Card from '@/components/card'
 import K8sNamespaceModal from './components/k8s-namespace-modal'
-import styles from './index.module.scss'
+import CrudForm from "@/components/cue/crud-form.vue";
+import CrudHeader from "@/components/cue/crud-header.vue";
+import CrudPageDs from "@/components/cue/crud-page-ds.vue";
 
 const k8sNamespaceManage = defineComponent({
   name: 'k8s-namespace-manage',
@@ -46,8 +44,14 @@ const k8sNamespaceManage = defineComponent({
       })
     }
 
-    const onUpdatePageSize = () => {
+    const onUpdatePage = (page: number) => {
+      variables.page = page
+      requestData()
+    }
+
+    const onUpdatePageSize = (pageSize: number) => {
       variables.page = 1
+      variables.pageSize = pageSize
       requestData()
     }
 
@@ -85,6 +89,7 @@ const k8sNamespaceManage = defineComponent({
       requestData,
       onCancelModal,
       onConfirmModal,
+      onUpdatePage,
       onUpdatePageSize,
       handleModalChange,
       onSearch
@@ -94,6 +99,7 @@ const k8sNamespaceManage = defineComponent({
     const {
       t,
       requestData,
+      onUpdatePage,
       onUpdatePageSize,
       onCancelModal,
       onConfirmModal,
@@ -103,53 +109,59 @@ const k8sNamespaceManage = defineComponent({
     } = this
 
     return (
-      <div>
-        <NCard>
-          <div class={styles['search-card']}>
-            <div>
-              <NButton size='small' type='primary' onClick={handleModalChange}>
-                {t('security.k8s_namespace.create_namespace')}
-              </NButton>
-            </div>
-            <NSpace>
-              <NInput
-                size='small'
-                clearable
-                v-model={[this.searchVal, 'value']}
-                placeholder={t('security.k8s_namespace.search_tips')}
-              />
-              <NButton size='small' type='primary' onClick={onSearch}>
-                {{
-                  icon: () => (
-                    <NIcon>
-                      <SearchOutlined />
-                    </NIcon>
-                  )
-                }}
-              </NButton>
-            </NSpace>
-          </div>
-        </NCard>
-        <Card class={styles['table-card']}>
-          <NDataTable
-            loading={loadingRef}
-            columns={this.columns}
-            data={this.tableData}
-            scrollX={this.tableWidth}
-          />
-          <div class={styles.pagination}>
-            <NPagination
-              v-model:page={this.page}
-              v-model:page-size={this.pageSize}
-              page-count={this.totalPage}
-              show-size-picker
-              page-sizes={[10, 30, 50]}
-              show-quick-jumper
-              onUpdatePage={requestData}
-              onUpdatePageSize={onUpdatePageSize}
-            />
-          </div>
-        </Card>
+      <>
+        <CrudForm>
+          {{
+            header: () => (
+                <CrudHeader title="K8S命名空间管理" addButton onAddEvent={handleModalChange}/>
+            ),
+            condition: () => (
+                <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
+                  <NGrid cols="22" x-gap="16">
+                    <NFormItemGi label="名称" span="4">
+                      <NInput
+                          size='small'
+                          clearable
+                          v-model={[this.searchVal, 'value']}
+                          placeholder={t('security.k8s_namespace.search_tips')}
+                      />
+                    </NFormItemGi>
+                    <NFormItemGi span="2">
+                      <NButton size='small' color={'#0099CB'} type='primary' onClick={onSearch} style={"padding: 0 15px 0 15px"}>
+                        <NIcon>
+                          <SearchOutlined />
+                        </NIcon>
+                        <div style={"font-size: 12px"}>
+                          查询
+                        </div>
+                      </NButton>
+                    </NFormItemGi>
+                  </NGrid>
+                </NForm>
+            ),
+            table: () => (
+                <NDataTable
+                    loading={loadingRef}
+                    columns={this.columns}
+                    data={this.tableData}
+                    scrollX={this.tableWidth}
+                    bordered
+                    flex-height
+                    single-line={false}
+                    class={"cue-table"}
+                />
+            ),
+            page: () => (
+                <CrudPageDs
+                    page={this.page}
+                    page-size={this.pageSize}
+                    item-count={this.total}
+                    onPageChange={onUpdatePage}
+                    onPageSizeChange={onUpdatePageSize}
+                />
+            )
+          }}
+        </CrudForm>
         <K8sNamespaceModal
           showModalRef={this.showModalRef}
           statusRef={this.statusRef}
@@ -157,7 +169,7 @@ const k8sNamespaceManage = defineComponent({
           onCancelModal={onCancelModal}
           onConfirmModal={onConfirmModal}
         />
-      </div>
+      </>
     )
   }
 })

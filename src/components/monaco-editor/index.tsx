@@ -32,6 +32,7 @@ import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
+import { format } from 'sql-formatter'
 import type {
   MaybeArray,
   OnUpdateValue,
@@ -97,7 +98,9 @@ export default defineComponent({
           readOnly: formItem.mergedDisabledRef.value || props.options?.readOnly,
           value: props.defaultValue ?? props.value,
           automaticLayout: true,
-          theme: monacoEditorThemeRef.value
+          theme: monacoEditorThemeRef.value,
+          fixedOverflowWidgets: true,
+          scrollBeyondLastLine: false
         })
         editor.onDidChangeModelContent(() => {
           const { onUpdateValue, 'onUpdate:value': _onUpdateValue } = props
@@ -119,6 +122,28 @@ export default defineComponent({
           formItem.nTriggerFormFocus()
         })
       }
+    }
+
+    function getSelectionVal() {
+      const selection = editor?.getSelection() // 获取光标选中的值
+      //@ts-ignore
+      const { startLineNumber, endLineNumber, startColumn, endColumn } = selection
+      const model = editor?.getModel()
+
+      return model?.getValueInRange({
+        startLineNumber,
+        startColumn,
+        endLineNumber,
+        endColumn,
+      })
+    }
+
+    function sqlFormat() {
+      editor?.setValue(
+          format(editor?.getValue(), {
+            indentStyle: 'standard',
+          }),
+      )
     }
 
     onMounted(() => initMonacoEditor())
@@ -152,7 +177,7 @@ export default defineComponent({
       }
     )
 
-    ctx.expose({ getValue })
+    ctx.expose({ getValue, getSelectionVal, sqlFormat })
 
     return { editorRef }
   },

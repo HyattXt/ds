@@ -29,6 +29,21 @@ const light = {
     successColor: '#52c41a',
     warningColor: '#faad14',
     errorColor: '#ff4d4f'
+  },
+  DataTable: {
+    thColor: '#f1f1f1',
+    thPaddingSmall: '3px 0 3px 6px',
+    thPaddingMedium: '3px 0 3px 6px',
+    thPaddingLarge: '3px 0 3px 6px',
+    tdPaddingSmall: '3px 0 3px 6px',
+    tdPaddingMedium: '3px 0 3px 6px',
+    tdPaddingLarge: '3px 0 3px 6px',
+    fontSizeSmall: '13px',
+    fontSizeMedium: '13px',
+    fontSizeLarge: '13px',
+    thFontWeight: '550',
+    borderColor: '#e2e4e8',
+    borderRadius: '1px solid'
   }
 }
 

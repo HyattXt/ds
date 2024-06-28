@@ -19,18 +19,14 @@ import { useRouter } from 'vue-router'
 import { defineComponent, onMounted, ref, reactive, Ref } from 'vue'
 import {
   NIcon,
-  NSpace,
   NDataTable,
-  NButtonGroup,
   NButton,
-  NPagination,
   NInput,
   NBreadcrumb,
-  NBreadcrumbItem
+  NBreadcrumbItem, NForm, NGrid, NFormItemGi
 } from 'naive-ui'
 import { useI18n } from 'vue-i18n'
 import { SearchOutlined } from '@vicons/antd'
-import Card from '@/components/card'
 import { useTable } from './table/use-table'
 import { useFileState } from './use-file'
 import ResourceFolderModal from './folder'
@@ -45,6 +41,9 @@ import {
   queryResourceById
 } from '@/service/modules/resources'
 import { ResourceFile } from '@/service/modules/resources/types'
+import CrudForm from "@/components/cue/crud-form.vue";
+import CrudHeader from "@/components/cue/crud-header.vue";
+import CrudPageDs from "@/components/cue/crud-page-ds.vue";
 
 export default defineComponent({
   name: 'File',
@@ -252,96 +251,99 @@ export default defineComponent({
     } = this
 
     return (
-      <div>
-        <Card style={{ marginBottom: '8px' }}>
-          <div class={styles['conditions-model']}>
-            <NSpace>
-              <NButtonGroup>
-                <NButton
-                  onClick={handleCreateFolder}
-                  class='btn-create-directory'
-                >
-                  {t('resource.file.create_folder')}
-                </NButton>
-                <NButton onClick={handleCreateFile} class='btn-create-file'>
-                  {t('resource.file.create_file')}
-                </NButton>
-                <NButton onClick={handleUploadFile} class='btn-upload-file'>
-                  {t('resource.file.upload_files')}
-                </NButton>
-              </NButtonGroup>
-            </NSpace>
-            <div class={styles.right}>
-              <div class={styles['form-box']}>
-                <div class={styles.list}>
-                  <NButton onClick={handleConditions}>
-                    <NIcon>
-                      <SearchOutlined />
-                    </NIcon>
-                  </NButton>
-                </div>
-                <div class={styles.list}>
-                  <NInput
-                    placeholder={t('resource.file.enter_keyword_tips')}
-                    v-model={[this.searchRef, 'value']}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </Card>
-        <Card
-          title={t('resource.file.file_manage')}
-          class={styles['table-card']}
-        >
+      <>
+        <CrudForm>
           {{
-            'header-extra': () => (
-              <NBreadcrumb separator='>' class={styles['breadcrumb']}>
-                {this.breadcrumbItemsRef?.map((item: BreadcrumbItem) => {
-                  if (item.id === 0) {
-                    return (
-                      <NBreadcrumbItem>
-                        <span onClick={this.handleGoRoot}>{item.fullName}</span>
-                      </NBreadcrumbItem>
-                    )
-                  } else {
-                    return (
-                      <NBreadcrumbItem href={item.id.toString()}>
-                        {item.fullName}
-                      </NBreadcrumbItem>
-                    )
-                  }
-                })}
-              </NBreadcrumb>
+            header: () => (
+                <CrudHeader
+                    title="文件管理"
+                    addButton
+                    onAddEvent={handleCreateFolder}
+                >
+                  {{
+                    'button-group': () => (
+                        <div>
+                          <el-button
+                              class={"show-text el-button--default"}
+                              onClick={handleUploadFile}
+                          >
+                            上传文件
+                          </el-button>
+                          <el-button
+                              class={"show-text el-button--default"}
+                              onClick={handleCreateFile}
+                          >
+                            创建文件
+                          </el-button>
+                        </div>
+                    )}}
+                </CrudHeader>
             ),
-            default: () => (
-              <div>
-                <NDataTable
-                  remote
-                  columns={columnsRef}
-                  data={this.resourceListRef?.value.table}
-                  striped
-                  size={'small'}
-                  class={styles['table-box']}
-                  row-class-name='items'
-                  scrollX={tableWidth}
-                />
-                <div class={styles.pagination}>
-                  <NPagination
-                    v-model:page={this.pagination.page}
-                    v-model:pageSize={this.pagination.pageSize}
-                    pageSizes={this.pagination.pageSizes}
-                    item-count={this.pagination.itemCount}
-                    onUpdatePage={this.handleUpdatePage}
-                    onUpdatePageSize={this.handleUpdatePageSize}
-                    show-quick-jumper
-                    show-size-picker
-                  />
+            condition: () => (
+                <div style={'display: row'}>
+                  <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
+                    <NGrid cols="18" x-gap="16">
+                      <NFormItemGi label="名称" span="3">
+                        <NInput
+                            size={'small'}
+                            placeholder={t('resource.file.enter_keyword_tips')}
+                            v-model={[this.searchRef, 'value']}
+                        />
+                      </NFormItemGi>
+                      <NFormItemGi span="2">
+                        <NButton size='small' color={'#0099CB'} type='primary' onClick={handleConditions} style={"padding: 0 15px 0 15px"}>
+                          <NIcon>
+                            <SearchOutlined />
+                          </NIcon>
+                          <div style={"font-size: 12px"}>
+                            查询
+                          </div>
+                        </NButton>
+                      </NFormItemGi>
+                    </NGrid>
+                  </NForm>
+                  <NBreadcrumb separator='>' class={styles['breadcrumb']}>
+                    {this.breadcrumbItemsRef?.map((item: BreadcrumbItem) => {
+                      if (item.id === 0) {
+                        return (
+                            <NBreadcrumbItem>
+                              <span onClick={this.handleGoRoot}>{item.fullName}</span>
+                            </NBreadcrumbItem>
+                        )
+                      } else {
+                        return (
+                            <NBreadcrumbItem href={item.id.toString()}>
+                              {item.fullName}
+                            </NBreadcrumbItem>
+                        )
+                      }
+                    })}
+                  </NBreadcrumb>
                 </div>
-              </div>
+            ),
+            table: () => (
+                <NDataTable
+                    remote
+                    columns={columnsRef}
+                    data={this.resourceListRef?.value.table}
+                    scrollX={tableWidth}
+                    bordered
+                    flex-height
+                    single-line={false}
+                    class={"cue-table"}
+                />
+            ),
+            page: () => (
+                <CrudPageDs
+                    page={this.pagination.page}
+                    page-size={this.pagination.pageSize}
+                    item-count={this.pagination.itemCount}
+                    onPageChange={this.handleUpdatePage}
+                    onPageSizeChange={this.handleUpdatePageSize}
+                />
             )
           }}
-        </Card>
+        </CrudForm>
         <ResourceFolderModal
           v-model:show={this.folderShowRef}
           onUpdateList={this.updateList}
@@ -357,7 +359,7 @@ export default defineComponent({
           description={this.renameInfo.description}
           onUpdateList={this.updateList}
         />
-      </div>
+      </>
     )
   }
 })

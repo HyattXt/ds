@@ -15,40 +15,19 @@
  * limitations under the License.
  */
 
-import { defineAsyncComponent, defineComponent, onMounted, onBeforeMount, ref, toRefs, watch } from 'vue'
+import { defineComponent, onMounted, ref, toRefs } from 'vue'
 import { NGrid, NGi } from 'naive-ui'
-import { startOfToday, getTime } from 'date-fns'
+import {useLogin} from "@/views/login/use-login";
 import { useI18n } from 'vue-i18n'
 import { useTaskState } from './use-task-state'
 import StateCard from './components/state-card'
-//import DefinitionCard from './components/definition-card'
-import { getUrlParam } from "@/service/service";
-import { login1 } from "@/service/modules/login";
-import { SessionIdRes } from "@/service/modules/login/types";
-import { UserInfoRes } from "@/service/modules/users/types";
-import { getUserInfo } from "@/service/modules/users";
-import { useUserStore } from "@/store/user/user";
-import { useTimezoneStore } from "@/store/timezone/timezone";
-import { useRoute, useRouter } from 'vue-router'
-import { useAsyncState } from '@vueuse/core'
-import type { Component } from 'vue'
-import utils from '@/utils'
-import { queryUnauthorizedProject } from '@/service/modules/devops-analysis'
-
-const modules = import.meta.glob('/src/views/**/**.tsx')
-
-const components: { [key: string]: Component } = utils.mapping(modules)
-
-
+import { useRoute } from 'vue-router'
 
 export default defineComponent({
   name: 'assets',
   setup() {
-    const userStore = useUserStore()
-    const timezoneStore = useTimezoneStore()
-
-    const { t, locale } = useI18n()
-    // const dateRef = ref([[getTime(startOfToday()), Date.now()]])
+    const { loginNew } = useLogin('')
+    const { t } = useI18n()
     const dateRef = ref(
       [[new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 6 * 24 * 60 * 60 * 1000,
       new Date(new Date().setHours(0, 0, 0, 0)).getTime() + 24 * 60 * 60 * 1000]]
@@ -64,8 +43,8 @@ export default defineComponent({
       {
         label: '昨天',
         value: [
-          new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 1 * 24 * 60 * 60 * 1000,
-          new Date(new Date().setHours(23, 59, 59, 999)).getTime() - 1 * 24 * 60 * 60 * 1000
+          new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 24 * 60 * 60 * 1000,
+          new Date(new Date().setHours(23, 59, 59, 999)).getTime() - 24 * 60 * 60 * 1000
         ]
       },
       {
@@ -97,9 +76,8 @@ export default defineComponent({
     const taskDevRef = ref()
     const Proj = ref()
 
-    const { getAssetOverviewLineData, getAssetOverviewData, getInterfaceTop10Data, taskVariables, getProjData } = useTaskState()
+    const { getAssetOverviewLineData, getAssetOverviewData, getInterfaceTop10Data, taskVariables } = useTaskState()
     const route = useRoute()
-    const router = useRouter()
     const ApiTop10 = ref()
     const AssetOverview = ref()
     const AssetOverviewLineData = ref()
@@ -115,18 +93,19 @@ export default defineComponent({
       value: 30
     }
     ])
-    ApiTop10.value = getInterfaceTop10Data(
-      [new Date(new Date().setHours(0, 0, 0, 0)).getTime(),
-      new Date(new Date().setHours(23, 59, 59, 999)).getTime()]
-      , Proj.value
-    )
-    AssetOverview.value = getAssetOverviewData(Proj.value)
-    AssetOverviewLineData.value = getAssetOverviewLineData(7, Proj.value)
     const RunSelectCurrent = ref()
     const RunErrorSelectCurrent = ref()
     const ApiSelectCurrent = ref()
     const AssentsSelectCurrent = ref()
-
+    const initData = () =>{
+      ApiTop10.value = getInterfaceTop10Data(
+          [new Date(new Date().setHours(0, 0, 0, 0)).getTime(),
+            new Date(new Date().setHours(23, 59, 59, 999)).getTime()]
+          , Proj.value
+      )
+      AssetOverview.value = getAssetOverviewData(Proj.value)
+      AssetOverviewLineData.value = getAssetOverviewLineData(7, Proj.value)
+    }
 
     const handlegetInterfaceTop10Data = (val: any) => {
       ApiTop10.value = getInterfaceTop10Data(val, Proj.value)
@@ -136,31 +115,23 @@ export default defineComponent({
       AssetOverviewLineData.value = getAssetOverviewLineData(val, Proj.value)
       AssentsSelectCurrent.value = AssentsSelect.value.filter(item => item.value === val)[0].label;
     }
-
-    const initData = () => {
-
-
+    const ssoLogin = async () => {
+      await loginNew()
+      initData()
     }
 
+    onMounted(() => {
+      ssoLogin()
+    })
 
 
-
-    watch(
-      () => locale.value,
-      () => initData()
-
-
-    )
     return {
       t,
       dateRef,
-      handlegetInterfaceTop10Data,
-      handlegetAssetOverviewLineData,
       taskStateRef,
       processStateRef,
       taskDataRef,
       taskDevRef,
-
       RunSelectCurrent,
       RunSelect,
       AssentsSelect,
@@ -170,17 +141,17 @@ export default defineComponent({
       ApiTop10,
       AssetOverview,
       AssetOverviewLineData,
+      handlegetInterfaceTop10Data,
+      handlegetAssetOverviewLineData,
       ...toRefs(taskVariables),
     }
   },
   render() {
     const {
       t,
-      dateRef,
-      taskDevRef,
+      taskLoadingRef,
       handlegetInterfaceTop10Data,
       handlegetAssetOverviewLineData,
-      taskLoadingRef,
     } = this
 
 

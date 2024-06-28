@@ -118,6 +118,8 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
   const autoCreSpanShort = computed(() => (model.executeMode==0 && model.autoCreate ? 2 : 0))
   const autoCreSpanLong = computed(() => (model.executeMode==0 && model.autoCreate ? 24 : 0))
   const tips = computed(() => (model.dsType=='MYSQL' ? '表名' : '库名.表名'))
+  const targetDataBasePlaceHolder = computed(()=> model.dtType=='ORACLE' ? t('project.node.datax_ora_tips') : t('project.node.datax_sql_tips'))
+  const sourceDataBasePlaceHolder = computed(()=> model.dsType=='ORACLE' ? t('project.node.datax_ora_tips') : t('project.node.datax_sql_tips'))
   const sourceConnect = ref({
     jdbcUrl: '',
     password: '',
@@ -146,10 +148,10 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       customParameterSpan.value = 0
     } else {*/
       sqlEditorSpan.value = model.executeMode === '0' ? 0 : 24
-      sourceTableSpan.value = model.executeMode=== '1' ? 0 : (model.dsType=='ORACLE' || model.dsType=='SQLSERVER'? 6: 12)
-      sourceDatabaseSpan.value = model.executeMode === '0' && (model.dsType=='ORACLE' || model.dsType=='SQLSERVER') ? 6 : 0
-      targetTableSpan.value = model.dtType=='ORACLE' || model.dsType=='SQLSERVER'? 6: 12
-      targetDatabaseSpan.value = model.dtType=='ORACLE' || model.dsType=='SQLSERVER'? 6: 0
+      sourceTableSpan.value = model.executeMode=== '1' ? 0 : (model.dsType=='ORACLE' || model.dsType=='SQLSERVER' || model.dsType=='POSTGRESQL' ? 6: 12)
+      sourceDatabaseSpan.value = model.executeMode === '0' && (model.dsType=='ORACLE' || model.dsType=='SQLSERVER' || model.dsType=='POSTGRESQL' ) ? 6 : 0
+      targetTableSpan.value = model.dtType=='ORACLE' || model.dtType=='SQLSERVER' || model.dtType=='POSTGRESQL' ? 6: 12
+      targetDatabaseSpan.value = model.dtType=='ORACLE' || model.dtType=='SQLSERVER' || model.dtType=='POSTGRESQL' ? 6: 0
       datasourceSpan.value = 6
       jsonEditorSpan.value = model.jsonConfig ? 24 : 0
       destinationDatasourceSpan.value = 6
@@ -183,7 +185,7 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
                         sourceConnect.value.jdbcUrl
                       ],
                       "table": [
-                        model.dsType=='ORACLE' || model.dsType=='SQLSERVER' ? model.sourceDatabase+'.'+model.sourceTable : model.sourceTable
+                        model.dsType=='ORACLE' || model.dsType=='SQLSERVER' || model.dsType=='POSTGRESQL' ? model.sourceDatabase+'.'+model.sourceTable : model.sourceTable
                       ]
                     }
                   ],
@@ -205,7 +207,7 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
                     {
                       "jdbcUrl": targetConnect.value.jdbcUrl,
                       "table": [
-                        model.dtType=='ORACLE' || model.dtType=='SQLSERVER' ? model.targetDatabase+'.'+model.targetTable : model.targetTable
+                        model.dtType=='ORACLE' || model.dtType=='SQLSERVER' || model.dtType=='POSTGRESQL' ? model.targetDatabase+'.'+model.targetTable : model.targetTable
                       ]
                     }
                   ],
@@ -268,7 +270,7 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
                     {
                       "jdbcUrl": targetConnect.value.jdbcUrl,
                       "table": [
-                        model.dtType=='ORACLE' || model.dtType=='SQLSERVER' ? model.targetDatabase+'.'+model.targetTable : model.targetTable
+                        model.dtType=='ORACLE' || model.dtType=='SQLSERVER' || model.dtType=='POSTGRESQL'? model.targetDatabase+'.'+model.targetTable : model.targetTable
                       ]
                     }
                   ],
@@ -336,21 +338,21 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
   watch(
       () => [model.dsType],
       () => {
-        sourceTableSpan.value = model.executeMode=== '1' ? 0 : ( model.dsType=='ORACLE' || model.dsType=='SQLSERVER'? 6: 12)
-        sourceDatabaseSpan.value = model.executeMode === '0' && ( model.dsType=='ORACLE' || model.dsType=='SQLSERVER') ? 6 : 0
+        sourceTableSpan.value = model.executeMode=== '1' ? 0 : ( model.dsType=='ORACLE' || model.dsType=='SQLSERVER' || model.dsType=='POSTGRESQL'? 6: 12)
+        sourceDatabaseSpan.value = model.executeMode === '0' && ( model.dsType=='ORACLE' || model.dsType=='SQLSERVER' || model.dsType=='POSTGRESQL') ? 6 : 0
       }
   )
 
   watch(
       () => [model.dtType],
       () => {
-        targetTableSpan.value = model.dtType=='ORACLE' || model.dsType=='SQLSERVER'? 6: 12
-        targetDatabaseSpan.value = model.dtType=='ORACLE' || model.dsType=='SQLSERVER'? 6: 0
+        targetTableSpan.value = model.dtType=='ORACLE' || model.dtType=='SQLSERVER' || model.dtType=='POSTGRESQL' ? 6: 12
+        targetDatabaseSpan.value = model.dtType=='ORACLE' || model.dtType=='SQLSERVER' || model.dtType=='POSTGRESQL' ? 6: 0
       }
   )
 
   watch(
-      () => [model.leftList, model.rightList, sourceConnect.value, targetConnect.value],
+      () => [model.leftList, model.rightList, sourceConnect.value, targetConnect.value, model.sql],
       () => {
         if(!model.jsonConfig)saveJson()
       }
@@ -390,9 +392,19 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
     {
       type: 'radio',
       field: 'executeMode',
-      name: '读取模式',
+      name: '读取方式',
       span: executeModeSpan,
-      options: [{label:'表',value:'0'},{label:'查询',value:'1'}]
+      options: [{label:'表',value:'0'},{label:'查询',value:'1'}],
+      props: {
+        'on-update:value': () => {
+            if(model.executeMode === '0'){
+                model.sql = ''
+            }else{
+              model.sourceDatabase = ''
+              model.sourceTable = ''
+            }
+        }
+      }
     },
     {
       type: 'input',
@@ -400,7 +412,7 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       name: t('project.node.datax_target_database'),
       span: targetDatabaseSpan,
       props: {
-        placeholder: t('project.node.datax_target_database'),
+        placeholder: targetDataBasePlaceHolder,
         onBlur: saveJson
       },
       validate: {
@@ -428,7 +440,7 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
       name: t('project.node.datax_source_database'),
       span: sourceDatabaseSpan,
       props: {
-        placeholder: t('project.node.datax_source_database'),
+        placeholder: sourceDataBasePlaceHolder,
         onBlur: saveJson
       },
       validate: {

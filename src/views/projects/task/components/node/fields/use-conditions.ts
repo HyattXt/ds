@@ -19,10 +19,30 @@ import { useI18n } from 'vue-i18n'
 import { useTaskNodeStore } from '@/store/project/task-node'
 import { useRelationCustomParams, useTimeoutAlarm } from '.'
 import type { IJsonItem } from '../types'
+import {nextTick, onMounted, ref} from "vue";
+import {queryProcessDefinitionByCode} from "@/service/modules/process-definition";
 
-export function useConditions(model: { [field: string]: any }): IJsonItem[] {
+export function useConditions(
+    model: { [field: string]: any },
+    projectCode?: number,
+    ProcessName?: number): IJsonItem[] {
   const { t } = useI18n()
   const taskStore = useTaskNodeStore()
+  const branchFlowOptions = ref(taskStore.postTaskOptions as any)
+  const getOtherTaskDefinitionList = async () => {
+    branchFlowOptions.value = []
+    if(ProcessName && projectCode){
+      const res = await queryProcessDefinitionByCode(
+          ProcessName || model.PorcessName,
+          projectCode
+      )
+      res?.taskDefinitionList.forEach((item: any) => {
+        if (item.code != model.code) {
+          branchFlowOptions.value.push({ label: item.name, value: item.code })
+        }
+      })
+    } else return
+  }
 
   const preTaskOptions = taskStore.preTaskOptions.filter((option) =>
     taskStore.preTasks.includes(Number(option.value))
@@ -31,6 +51,12 @@ export function useConditions(model: { [field: string]: any }): IJsonItem[] {
     { label: t('project.node.success'), value: 'success' },
     { label: t('project.node.failed'), value: 'failed' }
   ]
+
+  onMounted(async () => {
+    await nextTick()
+    //clearUselessNode(branchFlowOptions.value)
+    getOtherTaskDefinitionList()
+  })
 
   return [
     {
@@ -59,7 +85,7 @@ export function useConditions(model: { [field: string]: any }): IJsonItem[] {
           }
         }
       },
-      options: taskStore.getPostTaskOptions
+      options: branchFlowOptions
     },
     {
       type: 'select',
@@ -87,9 +113,9 @@ export function useConditions(model: { [field: string]: any }): IJsonItem[] {
           }
         }
       },
-      options: taskStore.getPostTaskOptions
+      options: branchFlowOptions
     },
-    ...useTimeoutAlarm(model),
+    //...useTimeoutAlarm(model),
     ...useRelationCustomParams({
       model,
       children: {
@@ -101,7 +127,7 @@ export function useConditions(model: { [field: string]: any }): IJsonItem[] {
             type: 'select',
             field: 'depTaskCode',
             span: 10,
-            options: preTaskOptions
+            options: branchFlowOptions
           },
           {
             type: 'select',

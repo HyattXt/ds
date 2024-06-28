@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {defineComponent, nextTick, onMounted, PropType, ref} from 'vue'
+import {defineComponent, onMounted, PropType, ref} from 'vue'
 import { NIcon, NButton, NDropdown} from 'naive-ui'
 import {DownOutlined, ProfileOutlined, UserOutlined} from '@vicons/antd'
 import { useDropDown } from './use-dropdown'
@@ -46,7 +46,7 @@ const User = defineComponent({
     }
 
     onMounted(() => {
-      getProjectList()
+      setTimeout(()=> { getProjectList() }, 500)
     })
     return { handleSelect, projectOptions, ProjectStore }
   },

@@ -17,18 +17,18 @@
 
 import { defineComponent, onMounted, onUnmounted, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import Card from '@/components/card'
 import {
   NButton,
   NDataTable,
-  NPagination,
   NPopconfirm,
   NTooltip
 } from 'naive-ui'
 import { useTable } from './use-table'
 import ProcessInstanceCondition from './components/process-instance-condition'
 import { IWorkflowInstanceSearch } from './types'
-import styles from './index.module.scss'
+import CrudForm from "@/components/cue/crud-form.vue";
+import CrudHeader from "@/components/cue/crud-header.vue";
+import CrudPageDs from "@/components/cue/crud-page-ds.vue";
 
 export default defineComponent({
   name: 'WorkflowInstanceList',
@@ -39,6 +39,11 @@ export default defineComponent({
 
     const requestData = () => {
       getTableData()
+    }
+
+    const handlePageChange = (page: number) => {
+      variables.page = page
+      requestData()
     }
 
     const handleSearch = (params: IWorkflowInstanceSearch) => {
@@ -52,8 +57,9 @@ export default defineComponent({
       requestData()
     }
 
-    const handleChangePageSize = () => {
+    const handleChangePageSize = (pageSize: number) => {
       variables.page = 1
+      variables.pageSize = pageSize
       requestData()
     }
 
@@ -83,6 +89,7 @@ export default defineComponent({
       requestData,
       handleSearch,
       handleChangePageSize,
+      handlePageChange,
       handleBatchDelete,
       ...toRefs(variables)
     }
@@ -92,60 +99,63 @@ export default defineComponent({
     const { loadingRef } = this
 
     return (
-      <div class={styles.content}>
-        <Card class={styles.card}>
-          <div class={styles.header}>
-            <ProcessInstanceCondition onHandleSearch={this.handleSearch} />
-          </div>
-        </Card>
-        <Card title={t('project.workflow.workflow_instance')}>
-          <NDataTable
-            loading={loadingRef}
-            rowKey={(row) => row.id}
-            columns={this.columns}
-            data={this.tableData}
-            striped
-            size={'small'}
-            class={styles.table}
-            scrollX={this.tableWidth}
-            v-model:checked-row-keys={this.checkedRowKeys}
-            row-class-name='items-workflow-instances'
-          />
-          <div class={styles.pagination}>
-            <NPagination
-              v-model:page={this.page}
-              v-model:page-size={this.pageSize}
-              page-count={this.totalPage}
-              show-size-picker
-              page-sizes={[10, 30, 50]}
-              show-quick-jumper
-              onUpdatePage={this.requestData}
-              onUpdatePageSize={this.handleChangePageSize}
-            />
-          </div>
-          <NTooltip>
+        <>
+          <CrudForm>
             {{
-              default: () => t('project.workflow.delete'),
-              trigger: () => (
-                <NButton
-                  tag='div'
-                  type='primary'
-                  disabled={this.checkedRowKeys.length <= 0}
-                  style='position: absolute; bottom: 10px; left: 10px;'
-                  class='btn-delete-all'
-                >
-                  <NPopconfirm onPositiveClick={this.handleBatchDelete}>
-                    {{
-                      default: () => t('project.workflow.delete_confirm'),
-                      trigger: () => t('project.workflow.delete')
-                    }}
-                  </NPopconfirm>
-                </NButton>
+              header: () => (
+                  <CrudHeader title="工作流实例" />
+              ),
+              condition: () => (
+                  <ProcessInstanceCondition onHandleSearch={this.handleSearch} />
+              ),
+              table: () => (
+                    <NDataTable
+                        loading={loadingRef}
+                        rowKey={(row: any) => row.code}
+                        columns={this.columns}
+                        data={this.tableData}
+                        v-model:checked-row-keys={this.checkedRowKeys}
+                        scrollX={this.tableWidth}
+                        bordered
+                        flex-height
+                        single-line={false}
+                    />
+              ),
+              page: () => (
+                  <>
+                    <NTooltip>
+                      {{
+                        default: () => t('project.workflow.delete'),
+                        trigger: () => (
+                            <NButton
+                                tag='div'
+                                type='primary'
+                                disabled={this.checkedRowKeys.length <= 0}
+                                style='position: absolute; bottom: 5px; left: 10px;'
+                                class='btn-delete-all'
+                            >
+                              <NPopconfirm onPositiveClick={this.handleBatchDelete}>
+                                {{
+                                  default: () => t('project.workflow.delete_confirm'),
+                                  trigger: () => t('project.workflow.delete')
+                                }}
+                              </NPopconfirm>
+                            </NButton>
+                        )
+                      }}
+                    </NTooltip>
+                    <CrudPageDs
+                        page={this.page}
+                        page-size={this.pageSize}
+                        item-count={this.total}
+                        onPageChange={this.handlePageChange}
+                        onPageSizeChange={this.handleChangePageSize}
+                    />
+                  </>
               )
             }}
-          </NTooltip>
-        </Card>
-      </div>
+          </CrudForm>
+        </>
     )
   }
 })

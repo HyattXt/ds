@@ -27,8 +27,9 @@ export function useColumns(onCallback: Function) {
   const getColumns = (): TableColumns => {
     return [
       {
-        title: '#',
+        title: '序号',
         key: 'index',
+        width: 60,
         render: (rowData, rowIndex) => rowIndex + 1
       },
       {
@@ -52,7 +53,7 @@ export function useColumns(onCallback: Function) {
         key: 'operation',
         width: 150,
         render: (rowData) => {
-          return h(NSpace, null, {
+          return h(NSpace, {justify: "center"}, {
             default: () => [
               h(NTooltip, null, {
                 trigger: () =>

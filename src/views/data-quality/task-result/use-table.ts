@@ -43,11 +43,12 @@ export function useTable() {
     tableWidth: DefaultTableWidth,
     tableData: [],
     page: ref(1),
-    pageSize: ref(10),
+    pageSize: ref(30),
     ruleType: ref(null),
     state: ref(null),
     searchVal: ref(null),
     datePickerRange: ref(null),
+    total: ref(0),
     totalPage: ref(1),
     loadingRef: ref(false)
   })
@@ -55,7 +56,7 @@ export function useTable() {
   const createColumns = (variables: any) => {
     variables.columns = [
       {
-        title: '#',
+        title: '序号',
         key: 'index',
         render: (row: any, index: number) => index + 1,
         ...COLUMN_WIDTH_CONFIG['index']
@@ -264,6 +265,7 @@ export function useTable() {
     const { state } = useAsyncState(
       queryExecuteResultListPaging(data).then((res: ResultListRes) => {
         variables.totalPage = res.totalPage
+        variables.total = res.total
         variables.tableData = res.totalList.map((item, unused) => {
           return {
             ...item

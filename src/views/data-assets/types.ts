@@ -35,4 +35,13 @@ interface StateData {
   chart: Array<StateChartData>
 }
 
-export { DefinitionChartData, StateTableData, StateChartData, StateData }
+interface TableDataType {
+  totalDataSource: number[];
+  totalTables: number[]; // 假设你暂时不知道这个数组的确切类型
+  dataSize: number[];
+  totalRecords: number[];
+  totalApiInterface: number[];
+  time: string[];
+}
+
+export { DefinitionChartData, StateTableData, StateChartData, StateData, TableDataType }

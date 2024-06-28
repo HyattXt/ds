@@ -87,7 +87,7 @@ export default defineComponent({
   render() {
     const { t } = useI18n()
     return (
-      <NSpace>
+      <NSpace justify={'center'}>
         <NTooltip trigger={'hover'}>
           {{
             default: () => t('resource.file.edit'),

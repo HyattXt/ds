@@ -182,6 +182,8 @@ export function formatParams(data: INodeData): {
     taskParams.segmentSeparator = data.segmentSeparator
     taskParams.sendEmail = data.sendEmail
     taskParams.displayRows = data.displayRows
+    taskParams.indicatorStatus = data.indicatorStatus
+    taskParams.indicatorCode = data.indicatorCode
     if (data.sqlType === '0' && data.sendEmail) {
       taskParams.title = data.title
       taskParams.groupId = data.groupId
@@ -243,13 +245,18 @@ export function formatParams(data: INodeData): {
       taskParams.rightList = data.rightList
       taskParams.leftData = data.leftData
       taskParams.rightData = data.rightData
+      taskParams.splitPk = data.splitPk
+      taskParams.where = data.where
+      taskParams.writeMode = data.writeMode
       taskParams.sourceDatabase = data.sourceDatabase
       taskParams.targetDatabase = data.targetDatabase
       taskParams.jobSpeedByte = data.jobSpeedByte
       taskParams.jobSpeedRecord = data.jobSpeedRecord
       taskParams.preStatements = data.preStatements
       taskParams.postStatements = data.postStatements
-      
+      taskParams.preSql = data.preSql
+      taskParams.postSql = data.postSql
+
     //} else {
       taskParams.jsonConfig = data.jsonConfig
       taskParams.json = data.json
@@ -278,6 +285,7 @@ export function formatParams(data: INodeData): {
       relation: data.relation,
       dependTaskList: dependTaskList
     }
+    taskParams.timeoutShowFlag = data.timeoutShowFlag
   }
   if (data.taskType === 'DATA_QUALITY') {
     taskParams.ruleId = data.ruleId
@@ -577,10 +585,13 @@ export function formatModel(data: ITaskData) {
     params.udfs = data.taskParams.udfs?.split(',')
   }
   if (data.taskParams?.customConfig !== void 0) {
-    params.customConfig = data.taskParams.customConfig === 1 ? true : false
+    params.customConfig = data.taskParams.customConfig === 1
   }
   if (data.taskParams?.jobType) {
     params.isCustomTask = data.taskParams.jobType === 'CUSTOM'
+  }
+  if (data.taskParams?.timeoutShowFlag) {
+    params.timeoutShowFlag = data.taskParams.timeoutShowFlag
   }
   return params
 }

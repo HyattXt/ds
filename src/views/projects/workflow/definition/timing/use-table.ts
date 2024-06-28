@@ -48,14 +48,15 @@ export function useTable() {
     columns: [],
     tableWidth: DefaultTableWidth,
     row: {},
-    tableData: [],
+    tableData: ref([]),
     projectCode: ref(Number(router.currentRoute.value.params.projectCode)),
     page: ref(1),
     pageSize: ref(10),
     searchVal: ref(),
     totalPage: ref(1),
     showRef: ref(false),
-    loadingRef: ref(false)
+    loadingRef: ref(false),
+    timingType: ref('create')
   })
 
   const renderTime = (time: string, timeZone: string) => {
@@ -240,12 +241,10 @@ export function useTable() {
     variables.row = row
   }
 
-  const getTableData = (params: ISearchParam) => {
+  const getTableData = (params: ISearchParam, processCode?: number) => {
     if (variables.loadingRef) return
     variables.loadingRef = true
-    const definitionCode = Number(
-      router.currentRoute.value.params.definitionCode
-    )
+    const definitionCode = !!processCode ? processCode : Number(router.currentRoute.value.params.definitionCode)
     queryScheduleListPaging(
       { ...params, processDefinitionCode: definitionCode },
       variables.projectCode
@@ -254,6 +253,7 @@ export function useTable() {
       variables.tableData = res.totalList.map((item: any) => {
         return { ...item }
       })
+      if(variables.tableData.length) variables.timingType = 'update'
       variables.loadingRef = false
     })
   }
@@ -292,6 +292,7 @@ export function useTable() {
   return {
     variables,
     createColumns,
-    getTableData
+    getTableData,
+    handleReleaseState
   }
 }

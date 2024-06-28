@@ -32,7 +32,7 @@ export default {
     path: '/devops',
     name: 'devops',
     meta: { title: 'devops' },
-    redirect: { name: 'devops-overview', params: { projectCode: '123' } },
+    redirect: { name: 'devops-overview' },
     component: () => import('@/layouts/content'),
     children: [
         {

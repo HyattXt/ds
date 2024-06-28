@@ -25,7 +25,7 @@ import {
   NIcon,
   NDataTable,
   NPagination,
-  NCard
+  NCard, NTooltip, NPopconfirm, NFormItemGi, NGrid, NForm
 } from 'naive-ui'
 import { SearchOutlined } from '@vicons/antd'
 import { useTable } from './use-table'
@@ -36,6 +36,10 @@ import { useAsyncState } from '@vueuse/core'
 import { queryLog } from '@/service/modules/log'
 import { stateType } from '@/common/common'
 import styles from './index.module.scss'
+import CrudForm from "@/components/cue/crud-form.vue";
+import CrudHeader from "@/components/cue/crud-header.vue";
+import ProcessInstanceCondition from "@/views/projects/workflow/instance/components/process-instance-condition";
+import CrudPageDs from "@/components/cue/crud-page-ds.vue";
 
 const TaskInstance = defineComponent({
   name: 'task-instance',
@@ -56,8 +60,14 @@ const TaskInstance = defineComponent({
       })
     }
 
-    const onUpdatePageSize = () => {
+    const handlePageChange = (page: number) => {
+      variables.page = page
+      requestTableData()
+    }
+
+    const onUpdatePageSize = (pageSize: number) => {
       variables.page = 1
+      variables.pageSize = pageSize
       requestTableData()
     }
 
@@ -127,6 +137,7 @@ const TaskInstance = defineComponent({
       t,
       ...toRefs(variables),
       requestTableData,
+      handlePageChange,
       onUpdatePageSize,
       onSearch,
       onConfirmModal,
@@ -147,79 +158,93 @@ const TaskInstance = defineComponent({
 
     return (
       <>
-        <NCard>
-          <NSpace justify='end' wrap={false}>
-            <NInput
-              v-model={[this.searchVal, 'value']}
-              size='small'
-              placeholder={t('project.task.task_name')}
-              clearable
-            />
-            <NInput
-              v-model={[this.processInstanceName, 'value']}
-              size='small'
-              placeholder={t('project.task.workflow_instance')}
-              clearable
-            />
-            <NInput
-              v-model={[this.executorName, 'value']}
-              size='small'
-              placeholder={t('project.task.executor')}
-              clearable
-            />
-            <NInput
-              v-model={[this.host, 'value']}
-              size='small'
-              placeholder={t('project.task.host')}
-              clearable
-            />
-            <NSelect
-              v-model={[this.stateType, 'value']}
-              size='small'
-              options={stateType(t).slice(1)}
-              placeholder={t('project.task.state')}
-              style={{ width: '180px' }}
-              clearable
-            />
-            <NDatePicker
-              v-model={[this.datePickerRange, 'value']}
-              type='datetimerange'
-              size='small'
-              start-placeholder={t('project.task.start_time')}
-              end-placeholder={t('project.task.end_time')}
-              clearable
-            />
-            <NButton size='small' type='primary' onClick={onSearch}>
-              {{
-                icon: () => (
-                  <NIcon>
-                    <SearchOutlined />
-                  </NIcon>
-                )
-              }}
-            </NButton>
-          </NSpace>
-        </NCard>
-        <Card class={styles['table-card']}>
-          <NDataTable
-            loading={loadingRef}
-            columns={this.columns}
-            data={this.tableData}
-            scrollX={this.tableWidth}
-          />
-          <div class={styles.pagination}>
-            <NPagination
-              v-model:page={this.page}
-              v-model:page-size={this.pageSize}
-              page-count={this.totalPage}
-              show-size-picker
-              page-sizes={[10, 30, 50]}
-              show-quick-jumper
-              onUpdatePage={requestTableData}
-              onUpdatePageSize={onUpdatePageSize}
-            />
-          </div>
-        </Card>
+        <CrudForm>
+            {{
+              header: () => (
+                  <CrudHeader title="任务实例" />
+              ),
+              condition: () => (
+                  <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
+                    <NGrid cols="22" x-gap="16">
+                      <NFormItemGi label="任务名称" span="4">
+                        <NInput
+                            v-model={[this.searchVal, 'value']}
+                            size='small'
+                            placeholder={t('project.task.task_name')}
+                            clearable
+                        />
+                      </NFormItemGi>
+                      <NFormItemGi label="工作流名称" span="4">
+                        <NInput
+                            v-model={[this.processInstanceName, 'value']}
+                            size='small'
+                            placeholder={t('project.task.workflow_instance')}
+                            clearable
+                        />
+                      </NFormItemGi>
+                      <NFormItemGi label="执行用户" span="3">
+                        <NInput
+                            v-model={[this.executorName, 'value']}
+                            size='small'
+                            placeholder={t('project.task.executor')}
+                            clearable
+                        />
+                      </NFormItemGi>
+                      <NFormItemGi label="状态" span="3">
+                        <NSelect
+                            v-model={[this.stateType, 'value']}
+                            size='small'
+                            options={stateType(t).slice(1)}
+                            placeholder={t('project.task.state')}
+                            style={{ width: '180px' }}
+                            clearable
+                        />
+                      </NFormItemGi>
+                      <NFormItemGi label="时间" span="5">
+                        <NDatePicker
+                            v-model={[this.datePickerRange, 'value']}
+                            type='datetimerange'
+                            size='small'
+                            start-placeholder={t('project.task.start_time')}
+                            end-placeholder={t('project.task.end_time')}
+                            clearable
+                        />
+                      </NFormItemGi>
+                      <NFormItemGi span="2">
+                        <NButton size='small' color={'#0099CB'} type='primary' onClick={onSearch} style={"padding: 0 15px 0 15px"}>
+                          <NIcon>
+                            <SearchOutlined />
+                          </NIcon>
+                          <div style={"font-size: 12px"}>
+                            查询
+                          </div>
+                        </NButton>
+                      </NFormItemGi>
+                    </NGrid>
+                  </NForm>
+              ),
+              table: () => (
+                  <NDataTable
+                      loading={loadingRef}
+                      columns={this.columns}
+                      data={this.tableData}
+                      scrollX={this.tableWidth}
+                      bordered
+                      flex-height
+                      single-line={false}
+                  />
+              ),
+              page: () => (
+                    <CrudPageDs
+                        page={this.page}
+                        page-size={this.pageSize}
+                        item-count={this.total}
+                        onPageChange={requestTableData}
+                        onPageSizeChange={onUpdatePageSize}
+                    />
+              )
+            }}
+          </CrudForm>
         <LogModal
           showModalRef={this.showModalRef}
           logRef={this.logRef}

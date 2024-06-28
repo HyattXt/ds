@@ -15,16 +15,21 @@
 * limitations under the License.
 */
 
-import {defineComponent, onMounted, ref, unref, h, nextTick, VNode} from 'vue'
-import {DropdownGroupOption, DropdownOption, NIcon, NPopconfirm, TreeOption, useMessage} from 'naive-ui'
+import {defineComponent, onMounted, ref, unref, h, nextTick, VNode, provide, markRaw} from 'vue'
+import {DropdownGroupOption, DropdownOption, NPopconfirm, TreeOption, useMessage, NSplit} from 'naive-ui'
 import Detail from '../definition/detail'
-import {AlignLeftOutlined, DownOutlined, FolderTwotone, SearchOutlined, ApartmentOutlined, ConsoleSqlOutlined} from '@vicons/antd';
-import Styles from "@/views/projects/workflow/treemap/index.module.scss";
-import {useThemeStore} from "@/store/theme/theme";
+import {SqlBox, DataXBox, ShellBox, PythonBox, SubProcessBox, DependentBox, DataQualityBox, HttpBox, SwitchBox, ConditionsBox, FlinkBox, SqoopBox} from '../components/task'
+import { SearchOutlined } from '@vicons/antd';
+import {Circle24Filled, Add12Filled} from "@vicons/fluent";
+import { CaretUp, CaretDown } from "@vicons/fa";
+import Styles from "./index.module.scss";
 import {useRoute} from "vue-router";
 import {useTreemap} from "@/views/projects/workflow/treemap/use-treemap";
 import { createProcessDefinition } from '@/service/modules/process-definition'
 import {useI18n} from "vue-i18n";
+import {useLogin} from "@/views/login/use-login";
+import {ElTabs, ElTabPane} from 'element-plus'
+import {workflowBoxType, componentRefType} from "@/views/projects/workflow/treemap/types";
 
 export default defineComponent({
     name: 'WorkflowTreeMap',
@@ -34,15 +39,11 @@ export default defineComponent({
         const { variables, getTreeMenu, submitMenuModal, getTreeFolder, renameMenuModal, renameWorkflowModal, moveFolderModal, moveWorkflowModal, delFolderModal, deleteWorkflow} = useTreemap()
         const route = useRoute()
         const pattern = ref('');
-        const expandedKeys = ref([]);
-        const theme = useThemeStore()
+        const expandedKeys = ref([1]);
         const projectCode = Number(route.params.projectCode)
         const formRef: any = ref(null)
-        const linkage = ref({
-            code: 0,
-            type: 0,
-            parentId: 0
-        })
+        const activeTab = ref(0)
+        const contextMenuTab = ref(0)
         const workflowModel = ref({
             parentId: 1,
             type: 2,
@@ -56,11 +57,21 @@ export default defineComponent({
         const reWorkflowModal = ref(false)
         const mvFolderModal = ref(false)
         const mvWorkflowModal = ref(false)
+        const closeTabModal = ref(false)
+        const closeTabName = ref(0)
         const showDropdownRef = ref(false)
         const xRef = ref(0)
         const yRef = ref(0)
+        const contextMenuVisible = ref(false);
+        const menuTop = ref(0);
+        const menuLeft = ref(0);
         const dropdownOption = ref([{label: '', key: '',disable: false}])
-        const defaultFolder = ref(1)
+        const tabDropdownOption = [
+            {label: '关闭当前标签', key: '关闭当前标签'},
+            {label: '关闭其他标签', key: '关闭其他标签'},
+            {label: '关闭所有标签', key: '关闭所有标签'}
+        ]
+        const { loginNew } = useLogin('')
         const addMenuOptions = ref([
             {
                 label: '新建文件夹',
@@ -72,51 +83,102 @@ export default defineComponent({
             },
         ]);
 
+        const workflowBox: any = ref([])
+        const componentRefs =  ref<Record<number, componentRefType>>({});
+
+        const taskDictionary : Record<string, object> = {
+            'SQL': markRaw(SqlBox),
+            'DATAX': markRaw(DataXBox),
+            'SHELL': markRaw(ShellBox),
+            'PYTHON': markRaw(PythonBox),
+            'SUB_PROCESS': markRaw(SubProcessBox),
+            'DEPENDENT': markRaw(DependentBox),
+            'DATA_QUALITY': markRaw(DataQualityBox),
+            'HTTP': markRaw(HttpBox),
+            'SWITCH': markRaw(SwitchBox),
+            'CONDITIONS': markRaw(ConditionsBox),
+            'FLINK': markRaw(FlinkBox),
+            'SQOOP': markRaw(SqoopBox)
+        };
+
         const rules = {
-            model:{
-                titleName: {
-                    required: true,
-                    message: '请输入名称',
-                    trigger: 'blur'
-                }
-            },
             value:{
                 name:{
                     required: true,
                     message: '请输入名称',
                     trigger: 'blur'
+                },
+                model:{
+                    titleName: {
+                        required: true,
+                        message: '请输入名称',
+                        trigger: 'blur'
+                    }
+                },
+                renameFolderModel:{
+                    name:{
+                        required: true,
+                        message: '请输入名称',
+                        trigger: 'blur'
+                    }
+                },
+                renameWorkflowModel:{
+                    name:{
+                        required: true,
+                        message: '请输入名称',
+                        trigger: 'blur'
+                    }
                 }
             },
-            renameFolderModel:{
-                name:{
-                    required: true,
-                    message: '请输入名称',
-                    trigger: 'blur'
+        }
+
+        const ssoLogin = async () => {
+            await loginNew()
+            refreshTree()
+            // @ts-ignore
+            variables.value.model.projectCode = projectCode
+            if( typeof(route.query.code) != 'undefined' )tsxRef.value.refresh(route.query.code, projectCode)
+        }
+
+        const refreshTree = () => {
+            getTreeMenu(projectCode)
+            getTreeFolder(projectCode)
+        }
+
+        const updateTab = (taskCode: Number, taskName: string) => {
+                refreshTree()
+                updateLabel(taskCode, taskName)
+        }
+        const updateEdited = (taskCode: Number, tag: Boolean) => {
+            for (let i = 0; i < workflowBox.value.length; i++) {
+                if (workflowBox.value[i].key === taskCode) {
+                    workflowBox.value[i].edited = tag;
+                    break;
                 }
-            },
-            renameWorkflowModel:{
-                name:{
-                    required: true,
-                    message: '请输入名称',
-                    trigger: 'blur'
+            }
+        }
+
+        function updateLabel( key: Number, newLabel: string) {
+            for (let i = 0; i < workflowBox.value.length; i++) {
+                if (workflowBox.value[i].key === key) {
+                    workflowBox.value[i].label = newLabel;
+                    break;
                 }
             }
         }
 
         onMounted(() => {
-            getTreeMenu(projectCode)
-            getTreeFolder(projectCode)
-            // @ts-ignore
-            variables.model.projectCode = projectCode
-            if( typeof(route.query.code) != 'undefined' )tsxRef.value.refresh(route.query.code, projectCode)
+            ssoLogin()
         })
 
         function createMenu() {
             formRef.value.validate((errors: any) => {
                 if (!errors) {
-                    submitMenuModal().then(r => {
+                    submitMenuModal().then(() => {
+                        setTimeout(()=>{
                             getTreeMenu(projectCode)
                             getTreeFolder(projectCode)
+                        },200)
                         }
                     )
                     menuModal.value = false
@@ -129,9 +191,11 @@ export default defineComponent({
         function renameMenu() {
             formRef.value.validate((errors: any) => {
                 if (!errors) {
-                    renameMenuModal(projectCode).then(r => {
+                    renameMenuModal(projectCode).then(() => {
+                        setTimeout(()=>{
                             getTreeMenu(projectCode)
                             getTreeFolder(projectCode)
+                        },200)
                         }
                     )
                     reFolderModal.value = false
@@ -142,37 +206,45 @@ export default defineComponent({
         }
 
         function moveWorkflow() {
-            moveWorkflowModal(projectCode).then(r => {
+            moveWorkflowModal(projectCode).then(() => {
+                setTimeout(()=>{
                     getTreeMenu(projectCode)
                     getTreeFolder(projectCode)
+                },200)
                 }
             )
             mvWorkflowModal.value = false
         }
 
         function moveMenu() {
-            moveFolderModal(projectCode).then(r => {
+            moveFolderModal(projectCode).then(() => {
+                setTimeout(()=>{
                     getTreeMenu(projectCode)
                     getTreeFolder(projectCode)
+                },200)
                 }
             )
             mvFolderModal.value = false
         }
 
         function delMenu() {
-            delFolderModal().then(r => {
+            delFolderModal().then(() => {
                     showDropdownRef.value = false
+                setTimeout(()=>{
                     getTreeMenu(projectCode)
                     getTreeFolder(projectCode)
+                },200)
                 }
             )
         }
 
         function delWorkflow() {
-            deleteWorkflow(projectCode).then(r => {
+            deleteWorkflow(projectCode).then(() => {
                     showDropdownRef.value = false
-                    getTreeMenu(projectCode)
-                    getTreeFolder(projectCode)
+                    setTimeout(()=>{
+                        getTreeMenu(projectCode)
+                        getTreeFolder(projectCode)
+                    },200)
                 }
             )
         }
@@ -180,7 +252,7 @@ export default defineComponent({
         function renameWorkflow() {
             formRef.value.validate((errors: any) => {
                 if (!errors) {
-                    renameWorkflowModal(projectCode).then(r => {
+                    renameWorkflowModal(projectCode).then(() => {
                             getTreeMenu(projectCode)
                         }
                     )
@@ -202,11 +274,13 @@ export default defineComponent({
                             name: workflowModel.value.name,
                         },
                         projectCode
-                    ).then((ignored: any) => {
+                    ).then(() => {
                         message.success(t('project.dag.success'))
                         workflowModal.value = false
-                        getTreeMenu(projectCode)
-                        getTreeFolder(projectCode)
+                        setTimeout(()=>{
+                            getTreeMenu(projectCode)
+                            getTreeFolder(projectCode)
+                        },200)
                     })
                 } else {
                     message.error('验证失败，请填写完整信息')
@@ -219,8 +293,8 @@ export default defineComponent({
                 expandedKeys.value = [];
             } else {
                 // @ts-ignore
-                setId(unref(variables.treeData))
-                //expandedKeys.value = unref(variables.treeData).map((item: any) => item.id as string) as [];
+                setId(unref(variables.value.treeData))
+                //expandedKeys.value = unref(variables.value.treeData).map((item: any) => item.id as string) as [];
             }
         }
         function setId(datas: []) { //遍历树  获取id数组
@@ -240,14 +314,15 @@ export default defineComponent({
         }
 
         function ifShowModal(key: string){
-            variables.model.titleName = ''
-            variables.model.parentId = 1
+            variables.value.model.titleName = ''
+            variables.value.model.parentId = 1
             workflowModel.value.parentId = 1
             key == 'menu' ? menuModal.value = true : workflowModal.value = true;
         }
 
-        function  onClickoutside () {
+        function  onClickOutside () {
             showDropdownRef.value = false
+            contextMenuVisible.value = false
         }
         function handleSelect (key: string,option: TreeOption) {
             if(option.key !== 'deleteMenu' && option.key !== 'deleteWorkflow') {showDropdownRef.value = false}
@@ -260,41 +335,59 @@ export default defineComponent({
                 case 'removeWorkflow': {mvWorkflowModal.value = true } break
             }
         }
+        function handleTabSelect (key: string,option: TreeOption) {
+            switch(option.key){
+                case '关闭当前标签': {contextMenuVisible.value = false; removeTab(contextMenuTab.value) } break
+                case '关闭其他标签': {contextMenuVisible.value = false; removeOtherTab(contextMenuTab.value) } break
+                case '关闭所有标签': {contextMenuVisible.value = false; removeAllTab() } break
+            }
+        }
         const menu = ({ option }: { option: TreeOption }) => {
             return {
                 onContextmenu(e: MouseEvent) {
                     e.preventDefault()
                     showDropdownRef.value = false
-                    variables.delFolderModel.id = variables.moveFolderModel.id = variables.model.parentId = workflowModel.value.parentId = variables.renameFolderModel.id = option.id as number
-                    variables.moveWorkflowModel.taskCode = variables.taskCode = variables.renameWorkflowModel.taskCode = option.taskCode as number
-                    if(option.type == 1) {
-                        dropdownOption.value =[
-                            {
-                                label: '新建文件夹',
-                                key: 'menu',
-                                disable: false
-                            },
-                            {
-                                label: '新建工作流',
-                                key: 'workflow',
-                                disable: false
-                            },
-                            {
-                                label: '重命名',
-                                key: 'renameMenu',
-                                disable: false
-                            },
-                            {
-                                label: '移动',
-                                key: 'removeMenu',
-                                disable: false
-                            },
-                            {
-                                label: '删除',
-                                key: 'deleteMenu',
-                                disable: true
-                            },
-                        ]
+                    variables.value.delFolderModel.id = variables.value.moveFolderModel.id = variables.value.model.parentId = workflowModel.value.parentId = variables.value.renameFolderModel.id = option.id as number
+                    variables.value.moveWorkflowModel.taskCode = variables.value.taskCode = variables.value.renameWorkflowModel.taskCode = option.taskCode as number
+                    if(option.type == 1 ) {
+                        if(option.id === 57 || option.id === 58){
+                            dropdownOption.value =[
+                                {
+                                    label: '新建工作流',
+                                    key: 'workflow',
+                                    disable: false
+                                }
+                            ]
+                        } else {
+                            dropdownOption.value =[
+                                {
+                                    label: '新建文件夹',
+                                    key: 'menu',
+                                    disable: false
+                                },
+                                {
+                                    label: '新建工作流',
+                                    key: 'workflow',
+                                    disable: false
+                                },
+                                {
+                                    label: '重命名',
+                                    key: 'renameMenu',
+                                    disable: false
+                                },
+                                {
+                                    label: '移动',
+                                    key: 'removeMenu',
+                                    disable: false
+                                },
+                                {
+                                    label: '删除',
+                                    key: 'deleteMenu',
+                                    disable: true
+                                },
+                            ]
+                        }
+
                     }
                     if(option.type == 2){
                         dropdownOption.value = [
@@ -303,16 +396,6 @@ export default defineComponent({
                                 key: 'renameWorkflow',
                                 disable: false
                             },
-                            /*{
-                                label: '复制',
-                                key: 'copyWorkflow',
-                                disable: false
-                            },
-                            {
-                                label: '导出',
-                                key: 'exportWorkflow',
-                                disable: false
-                            },*/
                             {
                                 label: '移动',
                                 key: 'removeWorkflow',
@@ -338,11 +421,6 @@ export default defineComponent({
                                 disable: false
                             },
                             {
-                                label: '复制',
-                                key: 'copyTask',
-                                disable: false
-                            },
-                            {
                                 label: '删除',
                                 key: 'deleteTask',
                                 disable: true
@@ -357,24 +435,20 @@ export default defineComponent({
                 },
                 ondblclick() {
                     //双击事件
-                    linkage.value.type = 0
-                    linkage.value.code = option.taskCode as number
-                    linkage.value.type = option.type as number
-                    linkage.value.parentId = option.parentId as number
-                    if(option.type == 2) {tsxRef.value.refresh(linkage.value.code, projectCode) }
-                    if(option.type == null) {}//message.info("打开任务节点还在开发")
+                    if(option.type !== 1){
+                        pushComponent(option.type as number, Number(option.taskCode), option.titleName as string, option.taskType as string, !!option.state, option.parentId as number)
+                    }
                     }
                 }
         }
 
         const menuIcon = ({ option }: { option: TreeOption }) => {
              switch (option.type){
-                 case 1 : return h(<svg class="icon" viewBox="0 0 1260 1024" xmlns="http://www.w3.org/2000/svg" width="19.688" height="16"><defs><style/></defs><path d="M1171.561 157.538H601.797L570.814 61.44A88.222 88.222 0 00486.794 0H88.747A88.747 88.747 0 000 88.747v846.506A88.747 88.747 0 0088.747 1024H1171.56a88.747 88.747 0 0088.747-88.747V246.285a88.747 88.747 0 00-88.747-88.747zm-1082.814 0V88.747h398.047l22.055 68.791z" fill="#0099FF"/></svg>)
-                 case 2 : return h(<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><g data-name="矩形 256" stroke="#0099FF" fill="none"><rect width="24" height="24" rx="4" stroke="none"/><rect x=".5" y=".5" width="23" height="23" rx="3.5"/></g><path data-name="路径 735" d="M19.008 16.948a.2.2 0 01-.057.145.2.2 0 01-.142.061h-3.6a.2.2 0 01-.2-.2v-2.61a.2.2 0 01.057-.147.2.2 0 01.145-.059h3.59a.2.2 0 01.143.056.2.2 0 01.062.142v2.614zm-8.835-8.916a.2.2 0 01-.14-.058.2.2 0 01-.058-.142V5.215a.2.2 0 01.057-.146.2.2 0 01.142-.061h3.623a.2.2 0 01.141.061.2.2 0 01.055.145v2.618a.2.2 0 01-.053.142.194.194 0 01-.137.062h-3.63zm-1.39 6.09a.2.2 0 01.143.056.2.2 0 01.061.143v2.624a.223.223 0 01-.2.23H5.209a.224.224 0 01-.2-.23v-2.613a.2.2 0 01.056-.145.2.2 0 01.141-.062h3.577zm8.732-1.01v-2.604h-4.949V9.065h1.307c.675 0 1.129-.309 1.129-.992V5.216A1.136 1.136 0 0013.873 4H9.994c-.675 0-1.018.532-1.018 1.216v2.857c0 .683.344.992 1.018.992h1.412v1.443H6.48v2.608H4.988c-.673 0-.987.286-.987.967v2.867c0 .682.314 1.05.987 1.05h4.029c.675 0 .976-.369.976-1.051v-2.866c0-.683-.3-.967-.976-.967H7.5v-1.692h8.993v1.692h-1.6c-.674 0-.868.286-.868.967v2.867c0 .682.194 1.05.868 1.05h4.1A.916.916 0 0020 16.949v-2.866c0-.683-.331-.967-1.007-.967h-1.478z" fill="#0099FF"/></svg>)
+                 case 1 : return h(<svg class="icon" viewBox="0 0 1260 1024" xmlns="http://www.w3.org/2000/svg" width="19.688" height="16"><defs><style/></defs><path d="M1171.561 157.538H601.797L570.814 61.44A88.222 88.222 0 00486.794 0H88.747A88.747 88.747 0 000 88.747v846.506A88.747 88.747 0 0088.747 1024H1171.56a88.747 88.747 0 0088.747-88.747V246.285a88.747 88.747 0 00-88.747-88.747zm-1082.814 0V88.747h398.047l22.055 68.791z" fill="#0099CB"/></svg>)
+                 case 2 : return h(<svg class="icon" viewBox="0 0 1260 1024" xmlns="http://www.w3.org/2000/svg" width="19.688" height="16"><defs><style/></defs><path d="M543.872 480h268.224c52.416 0 94.848 43.008 94.848 96v160h52.8a64 64 0 0 1 64 64V960a64 64 0 0 1-64 64H803.2a64 64 0 0 1-64-64v-160a64 64 0 0 1 64-64h40.512V576c0-17.664-14.144-32-31.616-32h-268.16v192h46.528a64 64 0 0 1 64 64V960a64 64 0 0 1-64 64H433.92a64 64 0 0 1-64-64v-160a64 64 0 0 1 64-64h46.72v-192H211.328a31.808 31.808 0 0 0-31.616 32v160h40.832a64 64 0 0 1 64 64V960a64 64 0 0 1-64 64H64a64 64 0 0 1-64-64v-160a64 64 0 0 1 64-64h52.48V576c0-52.992 42.496-96 94.848-96H480.64v-192h-46.72a64 64 0 0 1-64-64V64a64 64 0 0 1 64-64h156.544a64 64 0 0 1 64 64v160a64 64 0 0 1-64 64h-46.592v192z" fill="#0099CB"/></svg>)
                  default: {
-                     // @ts-ignore
-                     let url= '/HData/ui/images/task-icons/'+option.taskType.toLocaleLowerCase()+'_hover.png'
-                     return h(<img src={url} width="24" height="24"/>)
+                     let url= '/HData/ui/images/task-icons/'+(option.taskType as string).toLocaleLowerCase()+'_hover.png'
+                     return h(<img src={url} width="24" height="24" />)
                  }
             }
         }
@@ -401,106 +475,298 @@ export default defineComponent({
             }
         }
 
+        function getEditedByName(jsonData: workflowBoxType[], name: number) {
+            const item = jsonData.find((item: workflowBoxType) => item.name == name); // 使用 find 方法在数组中查找符合条件的第一个元素
+            if (item) {
+                return item.edited;
+            }
+            return null; // 若在数组中找不到，则返回 null
+        }
+
+        const removeOtherTab = (targetName: number) => {
+            const tabs = workflowBox.value
+            for (const tab of tabs) {
+                if (tab.name != targetName) {
+                    if(getEditedByName(tabs, tab.name)){
+                        closeTabModal.value = true
+                        closeTabName.value = tab.name
+                        break
+                    } else {
+                        delTab(workflowBox.value, tab.name)
+                    }
+                }
+            }
+        }
+
+        const removeAllTab = () => {
+            const tabs = workflowBox.value
+            for (const tab of tabs) {
+                if(tab.edited){
+                    closeTabModal.value = true
+                    closeTabName.value = tab.name
+                    break
+                } else {
+                     delTab(workflowBox.value, tab.name)
+                }
+            }
+        }
+
+        const removeTab = (targetName: number) => {
+            const tabs = workflowBox.value
+            if(getEditedByName(tabs, targetName)){
+                closeTabModal.value = true
+                closeTabName.value = targetName
+            } else {
+                delTab(tabs, targetName)
+            }
+        }
+
+        const forceRemoveTab = () => {
+            const tabs = workflowBox.value
+            delTab(tabs, closeTabName.value)
+            closeTabModal.value = false
+        }
+
+        function delTab(tabs: workflowBoxType[], targetName: number) {
+            let activeName = activeTab.value
+            if (activeName == targetName) {
+                tabs.forEach((tab: workflowBoxType, index: number) => {
+                    if (tab.name == targetName) {
+                        const nextTab = tabs[index + 1] || tabs[index - 1]
+                        if (nextTab) {
+                            activeName = nextTab.name
+                        }
+                    }
+                })
+            }
+            activeTab.value = activeName
+            if (typeof componentRefs.value[activeTab.value].refresh === 'function') {
+                (componentRefs.value[activeTab.value] as { refresh: (taskCode: number, projectCode: number) => void }).refresh(activeTab.value, projectCode)
+            }
+            workflowBox.value = tabs.filter((tab: workflowBoxType) => tab.name != targetName)
+        }
+
+        function refresh(name: number) {
+            if (typeof componentRefs.value[name].refresh === 'function') {
+                (componentRefs.value[name] as { refresh: (taskCode: number, projectCode: number) => void }).refresh(name, projectCode)
+            }
+            setTimeout(()=>{
+                if (typeof componentRefs.value[activeTab.value].repaintPlumb === 'function') {
+                    (componentRefs.value[name] as { repaintPlumb: () => void }).repaintPlumb()
+                }
+            },100)
+        }
+
+        function handleOnDragMove() {
+            if (typeof componentRefs.value[activeTab.value].repaintPlumb === 'function') {
+                (componentRefs.value[activeTab.value] as { repaintPlumb: () => void }).repaintPlumb()
+            }
+        }
+
+        const showContextMenu = (event: MouseEvent) => {
+            const targetElement = event.target as HTMLElement;
+            if(targetElement?.offsetParent?.id.startsWith("tab-")){
+                contextMenuTab.value = Number(targetElement.offsetParent.id.split("-")[1]);
+                event.preventDefault(); // 手动阻止默认行为
+                contextMenuVisible.value = true;
+                menuTop.value = event.clientY;
+                menuLeft.value = event.clientX;
+            }
+        };
+
+        const pushComponent = (type: number, taskCode: number, taskName: string, taskType: string, state: boolean, processCode: number)=> {
+            const newItem = {
+                label: taskName,
+                name: taskCode,
+                component: type === 2 ? Detail : taskDictionary[taskType], // 2任务流 null节点
+                key: taskCode,
+                type: type,
+                taskType: taskType,
+                edited: false,
+                props: {
+                    projectCode: projectCode,
+                    taskCode: taskCode,
+                    processCode: processCode,
+                    readOnly: state
+                }
+            };
+
+            if (workflowBox.value.length === 0 || !workflowBox.value.some((item: workflowBoxType) => item.key === taskCode)) {
+                if(workflowBox.value.length>=15) {
+                    message.info('打开窗口过多，请关掉一些')
+                } else {
+                    workflowBox.value.push(newItem);
+                    componentRefs.value[taskCode] = {};
+                    activeTab.value = taskCode
+                }
+            } else activeTab.value = taskCode
+
+        }
+
+        provide('pushComponent', pushComponent);
+        provide('updateTab', updateTab);
+        provide('updateEdited', updateEdited);
+
 
         return () =>
             (
-                <div
-                    class={[
-                        theme.darkTheme ? Styles['dark'] : Styles['light'],
-                    ]}
-                >
-                    <n-grid x-gap="2" cols="6">
-                        <n-gi span="1">
-                            <div>
-                            <n-card
-                                v-slots={{
-                                    header: () => (
-                                        <div>
-                                            <n-grid x-gap="2" cols="2">
-                                                <n-gi span="1">
-                                                    <n-button type="info" ghost icon-placement="left" onClick={packHandle}>
-                                                    {expandedKeys.value.length ? '收起' : '展开'}
-                                                    <div>
-                                                        <n-icon size="14">
-                                                            <AlignLeftOutlined/>
-                                                        </n-icon>
+                <div style={"height:100%; border: 0px"}>
+                            <div class="cue-drag-layout flex-row">
+                                <NSplit default-size={0.15} min={0.07} max={0.9} onDragMove={handleOnDragMove}
+                                        v-slots={{
+                                        1: () => (
+                                            <div class="cue-drag-layout__mainview" style={"height: 100%"}>
+                                                <div class="tree-container" style={"width: 100%"}>
+                                                    <div class="add-buttons">
+                                                        <span class="title">分类</span>
+                                                        <div class="button-item-toggle" onClick={packHandle} title={expandedKeys.value.length ? '收起' : '展开'}>
+                                                            <n-icon size="16" style={"padding-top: 5px"}>{expandedKeys.value.length ? (<CaretUp/>) : (<CaretDown/>)}</n-icon>
+                                                        </div>
+                                                        <n-dropdown trigger="click" options={addMenuOptions.value} onSelect={ifShowModal}>
+                                                            <div class="button-item" title="添加">
+                                                                <n-icon size="16"><Add12Filled/></n-icon>
+                                                            </div>
+                                                        </n-dropdown>
+
                                                     </div>
-                                                    </n-button>
-                                                </n-gi>
-                                                <n-gi span="1">
-                                                    <n-dropdown trigger="click" options={addMenuOptions.value} onSelect={ifShowModal}>
-                                                        <n-button type="info" ghost icon-placement="right">
-                                                            新建
-                                                            <n-icon size="14">
-                                                                <DownOutlined/>
-                                                            </n-icon>
-                                                        </n-button>
-                                                    </n-dropdown>
-                                                </n-gi>
-                                            </n-grid>
-                                        </div>
-                                    )
-                                }}
-                            >
-                                <n-input
-                                    type="text"
-                                    v-model:value={pattern.value}
-                                    placeholder="输入菜单名称搜索"
-                                    v-slots={{
-                                        suffix: () => (
-                                            <n-icon size="14">
-                                                <SearchOutlined/>
-                                            </n-icon>
+                                                    <n-input
+                                                        type="text"
+                                                        placeholder="搜索"
+                                                        class="search-input"
+                                                        v-model:value={pattern.value}
+                                                        v-slots={{
+                                                            suffix: () => (
+                                                                <div>
+                                                                    <n-icon component={SearchOutlined}/>
+                                                                </div>
+                                                            )
+                                                        }}
+                                                    >
+                                                    </n-input>
+                                                    <n-spin show={variables.value.loading} content-class={"tree-scrollbar"} style={"height: 100%"}>
+                                                    <n-tree
+                                                        class="tree-scrollbar"
+                                                        block-line
+                                                        show-irrelevant-nodes={false}
+                                                        pattern={pattern.value}
+                                                        data={variables.value.treeData}
+                                                        key-field="id"
+                                                        label-field="titleName"
+                                                        children-field="children"
+                                                        onUpdate:expanded-keys={onExpandedKeys}
+                                                        expanded-keys={expandedKeys.value}
+                                                        node-props={menu}
+                                                        render-prefix={menuIcon}
+                                                    />
+                                                    </n-spin>
+                                                    <n-dropdown
+                                                        placement="bottom-start"
+                                                        trigger="manual"
+                                                        x={xRef.value}
+                                                        y={yRef.value}
+                                                        options={dropdownOption.value}
+                                                        show={showDropdownRef.value}
+                                                        on-clickoutside={onClickOutside}
+                                                        on-select={handleSelect}
+                                                        render-option={dropdownConfirm}
+                                                    />
+                                                </div>
+                                            </div>
+                                        ),
+                                        2: () => (
+                                            <div class="cue-drag-layout__mainview" style={"height: 100%"}>
+                                                {workflowBox.value.length === 0 ? (
+                                                    <div class={Styles.backgroundDiv}/>
+                                                ) : (
+                                                    // @ts-ignore
+                                                    <ElTabs v-model={activeTab.value} closable type={"card"} onTabRemove={removeTab} onTabChange={refresh} onContextmenu={showContextMenu}>
+                                                        {workflowBox.value.map((item: any) => (
+                                                            <ElTabPane
+                                                                key={item.name}
+                                                                label={item.label}
+                                                                name={item.name}
+                                                                lazy={true}
+                                                                v-slots={{
+                                                                    label: () => {
+                                                                        switch (item.type){
+                                                                            case 2 : return h(<div>
+                                                                                                <svg class="icon" viewBox="0 0 1260 1024" xmlns="http://www.w3.org/2000/svg" width="19.688" height="16"><defs><style/></defs><path d="M543.872 480h268.224c52.416 0 94.848 43.008 94.848 96v160h52.8a64 64 0 0 1 64 64V960a64 64 0 0 1-64 64H803.2a64 64 0 0 1-64-64v-160a64 64 0 0 1 64-64h40.512V576c0-17.664-14.144-32-31.616-32h-268.16v192h46.528a64 64 0 0 1 64 64V960a64 64 0 0 1-64 64H433.92a64 64 0 0 1-64-64v-160a64 64 0 0 1 64-64h46.72v-192H211.328a31.808 31.808 0 0 0-31.616 32v160h40.832a64 64 0 0 1 64 64V960a64 64 0 0 1-64 64H64a64 64 0 0 1-64-64v-160a64 64 0 0 1 64-64h52.48V576c0-52.992 42.496-96 94.848-96H480.64v-192h-46.72a64 64 0 0 1-64-64V64a64 64 0 0 1 64-64h156.544a64 64 0 0 1 64 64v160a64 64 0 0 1-64 64h-46.592v192z" fill="#0099CB"/></svg>
+                                                                                                <span>{item.label}</span>
+                                                                                              </div>
+                                                                                             )
+                                                                            default: {
+                                                                                let url= '/HData/ui/images/task-icons/'+item.taskType.toLocaleLowerCase()+'_hover.png'
+                                                                                return h(<div style={"display: flex; align-items: center"}><img src={url} width="24" height="24"/>
+                                                                                            <span>{item.label}</span>
+                                                                                    {item.edited && (<n-icon style={"margin: 0 -8px 0 16px"} color={"#ffd192"}><Circle24Filled/></n-icon>)}
+                                                                                        </div>)
+                                                                            }
+                                                                        }
+                                                                }}}
+                                                            >
+                                                                <item.component ref={(ref: componentRefType) => { componentRefs.value[item.name] = ref }} {...item.props} />
+                                                            </ElTabPane>
+                                                        ))}
+                                                    </ElTabs>
+                                                )}
+                                                    <n-dropdown
+                                                        style={"z-index: 1000; position: fixed"}
+                                                        placement="bottom-start"
+                                                        trigger="manual"
+                                                        x={menuLeft.value}
+                                                        y={menuTop.value}
+                                                        options={tabDropdownOption}
+                                                        show={contextMenuVisible.value}
+                                                        on-clickoutside={onClickOutside}
+                                                        on-select={handleTabSelect}
+                                                    />
+                                            </div>
                                         )
                                     }}
                                 />
-                                <div class={Styles.container}>
-                                    <n-spin show={variables.loading}>
-                                    <n-tree
-                                        block-line
-                                        show-irrelevant-nodes={false}
-                                        pattern={pattern.value}
-                                        data={variables.treeData}
-                                        key-field="id"
-                                        label-field="titleName"
-                                        children-field="children"
-                                        onUpdate:expanded-keys={onExpandedKeys}
-                                        expanded-keys={expandedKeys.value}
-                                        node-props={menu}
-                                        render-prefix={menuIcon}
-                                    />
-                                    </n-spin>
-                                </div>
-                                <n-dropdown
-                                    placement="bottom-start"
-                                    trigger="manual"
-                                    x={xRef.value}
-                                    y={yRef.value}
-                                    options={dropdownOption.value}
-                                    show={showDropdownRef.value}
-                                    on-clickoutside={onClickoutside}
-                                    on-select={handleSelect}
-                                    render-option={dropdownConfirm}
+                            </div>
+                    <el-dialog
+                        v-model={menuModal.value}
+                        width={"600px"}
+                        v-slots={{header: () => (
+                                "新建文件夹"
+                            )}}
+                    >
+                        <n-form
+                            ref={formRef}
+                            label-placement="left"
+                            label-width="auto"
+                            rules={rules}
+                            model={variables}
+                        >
+                            <n-form-item label="文件夹名称" path="value.model.titleName">
+                                <n-input
+                                    type="text"
+                                    v-model:value={variables.value.model.titleName}
+                                    placeholder="输入文件夹名称"
                                 />
-                            </n-card>
-                            </div>
-                        </n-gi>
-                        <n-gi span="5">
-                            <div>
-                            <Detail
-                               ref={tsxRef}
-                               projectCode={projectCode}
-                               code={Number(linkage.value.code)}
-                               parentId={linkage.value.parentId}
-                            />
-                            </div>
-                        </n-gi>
-                    </n-grid>
-                    <n-modal
-                        v-model:show={menuModal.value}
-                        class={Styles.menuModal}
+                            </n-form-item>
+                            <n-form-item label="目标文件夹" path="value.model.parentId">
+                                <n-tree-select
+                                    options={variables.value.folderData}
+                                    key-field="id"
+                                    label-field="titleName"
+                                    v-model:value={variables.value.model.parentId}
+                                    filterable
+                                />
+                            </n-form-item>
+                        </n-form>
+                        <n-space justify="end">
+                            <n-button type="info" onClick={createMenu} >确定</n-button>
+                        </n-space>
+                    </el-dialog>
+                    <el-dialog
+                        v-model={reFolderModal.value}
+                        width={"600px"}
+                        v-slots={{header: () => (
+                                "重命名文件夹"
+                            )}}
                     >
-                        <n-card title="新建文件夹" size="huge">
                             <n-form
                                 ref={formRef}
                                 label-placement="left"
@@ -508,44 +774,10 @@ export default defineComponent({
                                 rules={rules}
                                 model={variables}
                             >
-                                <n-form-item label="文件夹名称" path="model.titleName">
+                                <n-form-item label="文件夹名称" path="value.renameFolderModel.name">
                                     <n-input
                                         type="text"
-                                        v-model:value={variables.model.titleName}
-                                        placeholder="输入文件夹名称"
-                                    />
-                                </n-form-item>
-                                <n-form-item label="目标文件夹" path="inputValue">
-                                    <n-tree-select
-                                        options={variables.folderData}
-                                        key-field="id"
-                                        label-field="titleName"
-                                        v-model:value={variables.model.parentId}
-                                        filterable
-                                    />
-                                </n-form-item>
-                            </n-form>
-                            <n-space justify="end">
-                                <n-button type="info" onClick={createMenu} >确定</n-button>
-                            </n-space>
-                        </n-card>
-                    </n-modal>
-                    <n-modal
-                        v-model:show={reFolderModal.value}
-                        class={Styles.reName}
-                    >
-                        <n-card title="重命名文件夹" size="huge">
-                            <n-form
-                                ref={formRef}
-                                label-placement="left"
-                                label-width="auto"
-                                rules={rules}
-                                model={variables}
-                            >
-                                <n-form-item label="文件夹名称" path="renameFolderModel.name">
-                                    <n-input
-                                        type="text"
-                                        v-model:value={variables.renameFolderModel.name}
+                                        v-model:value={variables.value.renameFolderModel.name}
                                         placeholder="输入文件夹名称"
                                     />
                                 </n-form-item>
@@ -553,25 +785,26 @@ export default defineComponent({
                             <n-space justify="end">
                                 <n-button type="info" onClick={renameMenu}>确定</n-button>
                             </n-space>
-                        </n-card>
-                    </n-modal>
-                    <n-modal
-                        v-model:show={mvFolderModal.value}
-                        class={Styles.reName}
+                    </el-dialog>
+                    <el-dialog
+                        v-model={mvFolderModal.value}
+                        width={"600px"}
+                        v-slots={{header: () => (
+                                "移动文件夹"
+                            )}}
                     >
-                        <n-card title="移动文件夹" size="huge">
                             <n-form
                                 label-placement="left"
                                 label-width="auto"
                                 rules={rules}
                                 model={variables}
                             >
-                                <n-form-item label="目标文件夹" path="inputValue">
+                                <n-form-item label="目标文件夹" path="value.moveFolderModel.parentId">
                                     <n-tree-select
-                                        options={variables.folderData}
+                                        options={variables.value.folderData}
                                         key-field="id"
                                         label-field="titleName"
-                                        v-model:value={variables.moveFolderModel.parentId}
+                                        v-model:value={variables.value.moveFolderModel.parentId}
                                         filterable
                                     />
                                 </n-form-item>
@@ -579,13 +812,14 @@ export default defineComponent({
                             <n-space justify="end">
                                 <n-button type="info" onClick={moveMenu} >确定</n-button>
                             </n-space>
-                        </n-card>
-                    </n-modal>
-                    <n-modal
-                        v-model:show={workflowModal.value}
-                        class={Styles.workflowModal}
+                    </el-dialog>
+                    <el-dialog
+                        v-model={workflowModal.value}
+                        width={"600px"}
+                        v-slots={{header: () => (
+                                "新建工作流"
+                            )}}
                     >
-                        <n-card title="新建工作流" size="huge">
                             <n-space vertical>
                             <n-form
                                 ref={formRef}
@@ -603,7 +837,7 @@ export default defineComponent({
                                 </n-form-item>
                                 <n-form-item label="目标文件夹" path="value.parentId">
                                     <n-tree-select
-                                        options={variables.folderData}
+                                        options={variables.value.folderData}
                                         key-field="id"
                                         label-field="titleName"
                                         v-model:value={workflowModel.value.parentId}
@@ -615,13 +849,14 @@ export default defineComponent({
                             <n-space justify="end">
                                 <n-button type="info" onClick={createWorkFlow} >确定</n-button>
                             </n-space>
-                        </n-card>
-                    </n-modal>
-                    <n-modal
-                        v-model:show={reWorkflowModal.value}
-                        class={Styles.reName}
+                    </el-dialog>
+                    <el-dialog
+                        v-model={reWorkflowModal.value}
+                        width={"600px"}
+                        v-slots={{header: () => (
+                                "重命名工作流"
+                            )}}
                     >
-                        <n-card title="重命名工作流" size="huge">
                             <n-form
                                 ref={formRef}
                                 label-placement="left"
@@ -632,7 +867,7 @@ export default defineComponent({
                                 <n-form-item label="工作流名称" path="renameWorkflowModel.name">
                                     <n-input
                                         type="text"
-                                        v-model:value={variables.renameWorkflowModel.name}
+                                        v-model:value={variables.value.renameWorkflowModel.name}
                                         placeholder="输入工作流名称"
                                     />
                                 </n-form-item>
@@ -640,13 +875,14 @@ export default defineComponent({
                             <n-space justify="end">
                                 <n-button type="info" onClick={renameWorkflow}>确定</n-button>
                             </n-space>
-                        </n-card>
-                    </n-modal>
-                    <n-modal
-                        v-model:show={mvWorkflowModal.value}
-                        class={Styles.reName}
+                    </el-dialog>
+                    <el-dialog
+                        v-model={mvWorkflowModal.value}
+                        width={"600px"}
+                        v-slots={{header: () => (
+                                "移动工作流"
+                            )}}
                     >
-                        <n-card title="移动工作流" size="huge">
                             <n-form
                                 label-placement="left"
                                 label-width="auto"
@@ -655,10 +891,10 @@ export default defineComponent({
                             >
                                 <n-form-item label="目标文件夹" path="inputValue">
                                     <n-tree-select
-                                        options={variables.folderData}
+                                        options={variables.value.folderData}
                                         key-field="id"
                                         label-field="titleName"
-                                        v-model:value={variables.moveWorkflowModel.parentId}
+                                        v-model:value={variables.value.moveWorkflowModel.parentId}
                                         filterable
                                     />
                                 </n-form-item>
@@ -666,8 +902,21 @@ export default defineComponent({
                             <n-space justify="end">
                                 <n-button type="info" onClick={moveWorkflow} >确定</n-button>
                             </n-space>
-                        </n-card>
-                    </n-modal>
+                    </el-dialog>
+                    <el-dialog
+                        v-model={closeTabModal.value}
+                        width={"600px"}
+                        v-slots={{header: () => (
+                                "提示"
+                            )}}
+                    >
+                        <div>当前任务未保存，强制关闭会丢失所做的操作！</div>
+                        <br/>
+                        <n-space justify="end">
+                            <n-button  onClick={() => (closeTabModal.value = !closeTabModal.value)}>取消</n-button>
+                            <n-button type="warning" onClick={forceRemoveTab}>强制关闭</n-button>
+                        </n-space>
+                    </el-dialog>
                 </div>
             )
     }

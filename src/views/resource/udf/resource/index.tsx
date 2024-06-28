@@ -24,7 +24,7 @@ import {
   NPagination,
   NInput,
   NBreadcrumb,
-  NBreadcrumbItem
+  NBreadcrumbItem, NForm, NGrid, NFormItemGi
 } from 'naive-ui'
 import { useI18n } from 'vue-i18n'
 import { SearchOutlined } from '@vicons/antd'
@@ -33,6 +33,9 @@ import FolderModal from './components/folder-modal'
 import UploadModal from './components/upload-modal'
 import { useTable } from './use-table'
 import styles from './index.module.scss'
+import CrudForm from "@/components/cue/crud-form.vue";
+import CrudHeader from "@/components/cue/crud-header.vue";
+import CrudPageDs from "@/components/cue/crud-page-ds.vue";
 
 export default defineComponent({
   name: 'resource-manage',
@@ -49,12 +52,19 @@ export default defineComponent({
       })
     }
 
+
+    const onUpdatePage = (page: number) => {
+      variables.page = page
+      requestData()
+    }
+
     const handleUpdateList = () => {
       requestData()
     }
 
-    const handleChangePageSize = () => {
+    const handleChangePageSize = (pageSize: number) => {
       variables.page = 1
+      variables.pageSize = pageSize
       requestData()
     }
 
@@ -103,6 +113,7 @@ export default defineComponent({
       handleUpdateList,
       handleCreateFolder,
       handleUploadFile,
+      onUpdatePage,
       handleChangePageSize,
       ...toRefs(variables)
     }
@@ -112,95 +123,80 @@ export default defineComponent({
     const { loadingRef } = this
 
     return (
-      <div class={styles.content}>
-        <Card class={styles.card}>
-          <div class={styles.header}>
-            <NSpace>
-              <NButton
-                type='primary'
-                onClick={this.handleCreateFolder}
-                class='btn-create-directory'
-              >
-                {t('resource.udf.create_folder')}
-              </NButton>
-              <NButton
-                strong
-                secondary
-                onClick={this.handleUploadFile}
-                class='btn-upload-udf'
-              >
-                {t('resource.udf.upload_udf_resources')}
-              </NButton>
-            </NSpace>
-            <div class={styles.right}>
-              <div class={styles.search}>
-                <div class={styles.list}>
-                  <NButton type='primary' onClick={this.handleSearch}>
-                    <NIcon>
-                      <SearchOutlined />
-                    </NIcon>
-                  </NButton>
-                </div>
-                <div class={styles.list}>
-                  <NInput
-                    placeholder={t('resource.udf.enter_keyword_tips')}
-                    v-model={[this.searchVal, 'value']}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </Card>
-        <Card title={t('resource.udf.udf_resources')}>
+      <>
+        <CrudForm>
           {{
-            default: () => (
-              <div>
-                <NDataTable
-                  loading={loadingRef}
-                  columns={this.columns}
-                  data={this.tableData}
-                  striped
-                  size={'small'}
-                  class={styles.table}
-                  row-class-name='items'
-                  scrollX={this.tableWidth}
-                />
-                <div class={styles.pagination}>
-                  <NPagination
-                    v-model:page={this.page}
-                    v-model:page-size={this.pageSize}
-                    page-count={this.totalPage}
-                    show-size-picker
-                    page-sizes={[10, 30, 50]}
-                    show-quick-jumper
-                    onUpdatePage={this.requestData}
-                    onUpdatePageSize={this.handleChangePageSize}
-                  />
-                </div>
-              </div>
-            ),
             header: () => (
-              <NBreadcrumb separator='>'>
-                <NBreadcrumbItem>
-                  <NButton text onClick={() => this.goUdfManage()}>
-                    {t('resource.udf.udf_resources')}
-                  </NButton>
-                </NBreadcrumbItem>
-                {this.breadList.map((item, index) => (
-                  <NBreadcrumbItem>
-                    <NButton
-                      text
-                      disabled={index === this.breadList.length - 1}
-                      onClick={() => this.handleBread(index)}
-                    >
-                      {item}
-                    </NButton>
-                  </NBreadcrumbItem>
-                ))}
-              </NBreadcrumb>
+                <CrudHeader title="资源管理" addButton defineButton buttonTitle={'上传UDF'} onAddEvent={this.handleCreateFolder} onClickEvent={this.handleUploadFile}/>
+            ),
+            condition: () => (
+                <div style={'display: row'}>
+                  <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
+                    <NGrid cols="18" x-gap="16">
+                      <NFormItemGi label="名称" span="3">
+                        <NInput
+                          size={'small'}
+                          placeholder={t('resource.udf.enter_keyword_tips')}
+                          v-model={[this.searchVal, 'value']}
+                        />
+                    </NFormItemGi>
+                      <NFormItemGi span="2">
+                        <NButton size='small' color={'#0099CB'} type='primary' onClick={this.handleSearch} style={"padding: 0 15px 0 15px"}>
+                          <NIcon>
+                            <SearchOutlined />
+                          </NIcon>
+                          <div style={"font-size: 12px"}>
+                            查询
+                          </div>
+                        </NButton>
+                    </NFormItemGi>
+                  </NGrid>
+                  </NForm>
+                  <NBreadcrumb separator='>'>
+                    {this.breadList.length>0 && (
+                      <NBreadcrumbItem>
+                        <NButton text onClick={() => this.goUdfManage()}>
+                          {t('resource.udf.udf_resources')}
+                        </NButton>
+                      </NBreadcrumbItem>
+                    )}
+                    {this.breadList.map((item, index) => (
+                        <NBreadcrumbItem>
+                          <NButton
+                              text
+                              disabled={index === this.breadList.length - 1}
+                              onClick={() => this.handleBread(index)}
+                          >
+                            {item}
+                          </NButton>
+                        </NBreadcrumbItem>
+                    ))}
+                  </NBreadcrumb>
+                </div>
+            ),
+            table: () => (
+                <NDataTable
+                    loading={loadingRef}
+                    columns={this.columns}
+                    data={this.tableData}
+                    scrollX={this.tableWidth}
+                    bordered
+                    flex-height
+                    single-line={false}
+                    class={"cue-table"}
+                />
+            ),
+            page: () => (
+                <CrudPageDs
+                    page={this.page}
+                    page-size={this.pageSize}
+                    item-count={this.total}
+                    onPageChange={this.onUpdatePage}
+                    onPageSizeChange={this.handleChangePageSize}
+                />
             )
           }}
-        </Card>
+        </CrudForm>
         <FolderModal
           v-model:row={this.row}
           v-model:show={this.folderShowRef}
@@ -210,7 +206,7 @@ export default defineComponent({
           v-model:show={this.uploadShowRef}
           onUpdateList={this.handleUpdateList}
         />
-      </div>
+      </>
     )
   }
 })

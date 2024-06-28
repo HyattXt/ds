@@ -41,7 +41,7 @@ export function useColumns(onCallback: Function) {
   const getColumns = (): { columns: TableColumns; tableWidth: number } => {
     const columns = [
       {
-        title: '#',
+        title: '序号',
         key: 'index',
         render: (unused, rowIndex) => rowIndex + 1,
         ...COLUMN_WIDTH_CONFIG['index']
@@ -100,7 +100,7 @@ export function useColumns(onCallback: Function) {
         key: 'operation',
         ...COLUMN_WIDTH_CONFIG['operation'](2),
         render: (rowData) => {
-          return h(NSpace, null, {
+          return h(NSpace, {justify: "center"}, {
             default: () => [
               h(NTooltip, null, {
                 trigger: () =>
@@ -110,7 +110,7 @@ export function useColumns(onCallback: Function) {
                       circle: true,
                       type: 'info',
                       size: 'small',
-                      onClick: () => void onCallback(rowData.id, rowData.name, 'edit')
+                      onClick: () => void onCallback(rowData.id, 'edit')
                     },
                     {
                       default: () =>
@@ -125,7 +125,7 @@ export function useColumns(onCallback: Function) {
                     NPopconfirm,
                     {
                       onPositiveClick: () =>
-                        void onCallback(rowData.id, rowData.name, 'delete'),
+                          void onCallback(rowData.id, 'delete'),
                       negativeText: t('datasource.cancel'),
                       positiveText: t('datasource.confirm')
                     },

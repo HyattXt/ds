@@ -27,7 +27,7 @@
 }
 
 .form-content {
-  padding: 0 50px 0 50px;
+  padding: 30px 50px 0 50px;
 }
 
 .submit {
@@ -93,4 +93,14 @@
       }
     }
   }
+}
+
+.scrollable-card {
+  height: 100%; /* 或者你想要的任何高度 */
+  overflow-y: auto; /* 允许垂直滚动 */
+  /* 隐藏滚动条的 CSS 技巧，这里以 WebKit 为例 */
+}
+
+.scrollable-card::-webkit-scrollbar {
+  display: none; /* 注意：在某些情况下可能需要其他样式或!important */
 }

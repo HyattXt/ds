@@ -1,18 +1,18 @@
 <template>
-  <n-scrollbar style="max-height: 300px">
+  <n-scrollbar  style="height: 526px">
     <n-form :model="formValue" label-placement="top" :rules="rules" ref="form2Ref">
-      <n-form-item label="数据源类型" path="sourceType">
+      <n-form-item label="数据源类型" path="apiDatasourceType">
         <n-select
-          v-model:value="formValue.sourceType"
+          v-model:value="formValue.apiDatasourceType"
           size="small"
           placeholder="请选择"
           :options="[{ label: 'MYSQL', value: 0 },{ label: 'ORACLE', value: 5 },{ label: 'SQLSERVER', value: 6 }]"
           @update:value="queryDataSource"
         />
       </n-form-item>
-      <n-form-item label="数据源" path="source">
+      <n-form-item label="数据源" path="apiDatasourceId">
         <n-select
-            v-model:value="formValue.source"
+            v-model:value="formValue.apiDatasourceId"
             label-field="name"
             value-field="id"
             size="small"
@@ -21,16 +21,16 @@
             @update:value="submitValue"
         />
       </n-form-item>
-      <n-form-item label="数据表" path="table">
+      <n-form-item label="数据表" path="apiDatasourceTable">
         <n-select
-          v-model:value="formValue.table"
+          v-model:value="formValue.apiDatasourceTable"
           label-field="TABLE_NAME"
           value-field="TABLE_NAME"
           size="small"
           filterable
           :options="tList"
           @click="queryTab"
-          @update:value="queryCol(formValue.table)"
+          @update:value="queryCol(formValue.apiDatasourceTable)"
         />
       </n-form-item>
       <n-form-item label="字段预览">
@@ -38,8 +38,9 @@
           size="small"
           :single-line="false"
           :columns="[
-            { title: '字段名称', key: 'TABLE_NAME' },
-            { title: '字段类型', key: 'COLUMN_TYPE' }
+            { title: '字段名称', key: 'TABLE_NAME', align: 'center', ellipsis: { tooltip: true} },
+            { title: '字段类型', key: 'COLUMN_TYPE', align: 'center', ellipsis: { tooltip: true} },
+            { title: '字段注释', key: 'COLUMN_COMMENT', align: 'center', ellipsis: { tooltip: true} }
           ]"
           :data="colList"
         >
@@ -50,12 +51,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref} from 'vue'
+  import {onMounted, ref} from 'vue'
   import { useMessage } from 'naive-ui'
   import axios from 'axios'
+  import {useRoute} from "vue-router";
 
   const emit = defineEmits(['nextStep2_1'])
-
+  const route = useRoute()
   const form2Ref: any = ref(null)
   const message = useMessage()
   const tList = ref([])
@@ -66,19 +68,19 @@ import { ref} from 'vue'
     : window.webConfig.VITE_APP_PROD_API_URL
 
   const formValue = ref({
-    sourceType: '',
-    source: '',
-    table: ''
+    apiDatasourceType: '',
+    apiDatasourceId: '',
+    apiDatasourceTable: ''
   })
 
   const rules = {
-      sourceType: {
+      apiDatasourceType: {
           required: true,
           message: '请选择数据源类型',
           trigger: 'blur',
           type: 'number'
       },
-      source: {
+    apiDatasourceId: {
           required: true,
           message: '请选择数据源',
           trigger: 'blur',
@@ -87,8 +89,8 @@ import { ref} from 'vue'
   }
 
   function queryDataSource() {
-      formValue.value.source = ''
-      const url = SecondDevApiUrl+'/HDataApi/apiService/getDataSource?type='+formValue.value.sourceType
+      formValue.value.apiDatasourceId = ''
+      const url = SecondDevApiUrl+'/HDataApi/apiService/getDataSource?type='+formValue.value.apiDatasourceType
       axios.get(url).then(function (response) {
 
       sList.value = response.data.data
@@ -98,8 +100,8 @@ import { ref} from 'vue'
   function queryTab() {
     const url = SecondDevApiUrl+'/HDataApi/apiService/getTables'
     let params = {
-      type : formValue.value.sourceType,
-      id : formValue.value.source
+      type : formValue.value.apiDatasourceType,
+      id : formValue.value.apiDatasourceId
     }
     axios.post(url,params).then(function (response) {
 
@@ -110,8 +112,8 @@ import { ref} from 'vue'
   function queryCol(table: string) {
     const url = SecondDevApiUrl+'/HDataApi/apiService/getColumnsByTable'
     const params = {
-      type : formValue.value.sourceType,
-      id : formValue.value.source,
+      type : formValue.value.apiDatasourceType,
+      id : formValue.value.apiDatasourceId,
       tableName: table
     }
     axios.post(url, params).then(function (response) {
@@ -124,10 +126,37 @@ import { ref} from 'vue'
   function submitValue(){
     emit('nextStep2_1', formValue.value)
   }
+
+  function getInitData() {
+    let url = SecondDevApiUrl+'/HDataApi/interface/getInterfaceInfoById'
+    let params = { apiId: '' }
+    params.apiId = route.query.apiId
+
+    axios
+        .post(url, params)
+        .then(function (response) {
+          formValue.value.apiDatasourceType = response.data.obj.apiDatasourceType
+          queryDataSource()
+          formValue.value.apiDatasourceId = response.data.obj.apiDatasourceId
+          queryTab()
+          formValue.value.apiDatasourceTable = response.data.obj.apiDatasourceTable
+
+          queryCol(formValue.value.apiDatasourceTable)
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+  }
+
+  onMounted(() => {
+    if (route.query.apiId !== undefined) {
+      getInitData()
+    }
+  })
 </script>
 
 <style scoped>
   .n-data-table {
-    font-size: 5px;
+    font-size: 12px;
   }
 </style>

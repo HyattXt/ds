@@ -45,7 +45,7 @@ export function useTable(
 
   const columns: TableColumns<any> = [
     {
-      title: '#',
+      title: '序号',
       key: 'index',
       render: (row, index) => index + 1,
       ...COLUMN_WIDTH_CONFIG['index']
@@ -116,8 +116,9 @@ export function useTable(
     tableData: [],
     tableWidth: calculateTableWidth(columns) || DefaultTableWidth,
     page: ref(1),
-    pageSize: ref(10),
+    pageSize: ref(30),
     name: ref(null),
+    total: ref(0),
     totalPage: ref(1),
     loadingRef: ref(false)
   })
@@ -128,6 +129,7 @@ export function useTable(
     Promise.all([queryTaskGroupListPaging(params), queryAllProjectList()]).then(
       (values: any[]) => {
         variables.totalPage = values[0].totalPage
+        variables.total = values[0].total
         variables.tableData = values[0].totalList.map(
           (item: any, unused: number) => {
             let projectName = ''

@@ -61,7 +61,7 @@ export function useTable() {
   const createColumns = (variables: any) => {
     variables.columns = [
       {
-        title: '#',
+        title: '序号',
         key: 'index',
         render: (row: any, index: number) => index + 1,
         ...COLUMN_WIDTH_CONFIG['index']
@@ -111,7 +111,7 @@ export function useTable() {
         key: 'operation',
         ...COLUMN_WIDTH_CONFIG['operation'](2),
         render(row: NamespaceItem) {
-          return h(NSpace, null, {
+          return h(NSpace, {justify: 'center'}, {
             default: () => [
               h(
                 NTooltip,
@@ -185,8 +185,9 @@ export function useTable() {
     tableData: [],
     tableWidth: DefaultTableWidth,
     page: ref(1),
-    pageSize: ref(10),
+    pageSize: ref(30),
     searchVal: ref(null),
+    total: ref(0),
     totalPage: ref(1),
     showModalRef: ref(false),
     statusRef: ref(0),
@@ -213,6 +214,7 @@ export function useTable() {
           }
         }) as any
         variables.totalPage = res.totalPage
+        variables.total = res.total
         variables.loadingRef = false
       }),
       {}

@@ -21,5 +21,7 @@ export default {
   userName_tips: 'Please enter your username',
   userPassword: 'Password',
   userPassword_tips: 'Please enter your password',
+  captcha: 'captcha',
+  captcha_tips: 'Please enter your captcha',
   login: 'Login'
 }

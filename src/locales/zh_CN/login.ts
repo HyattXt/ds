@@ -21,5 +21,7 @@ export default {
   userName_tips: '请输入用户名',
   userPassword: '密码',
   userPassword_tips: '请输入密码',
+  captcha: '验证码',
+  captcha_tips: '请输入验证码',
   login: '登录'
 }

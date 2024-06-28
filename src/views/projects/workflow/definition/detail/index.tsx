@@ -35,7 +35,7 @@ import {
 import Styles from './index.module.scss'
 
 const props = {
-  code: {
+  taskCode: {
     type: Number as PropType<number>,
     default: 0
   },
@@ -80,11 +80,11 @@ export default defineComponent({
     context.expose({ refresh })
 
     const save = ({
-      taskDefinitions,
-      saveForm,
-      connects,
-      locations
-    }: SaveData) => {
+                    taskDefinitions,
+                    saveForm,
+                    connects,
+                    locations
+                  }: SaveData) => {
       const globalParams = saveForm.globalParams.map((p) => {
         return {
           prop: p.key,
@@ -95,55 +95,51 @@ export default defineComponent({
       })
 
       updateProcessDefinition(
-        {
-          parentId: props.parentId,
-          projectCode: props.projectCode,
-          type: 2,
-          taskDefinitionJson: JSON.stringify(taskDefinitions),
-          taskRelationJson: JSON.stringify(connects),
-          locations: JSON.stringify(locations),
-          name: saveForm.name,
-          tenantCode: saveForm.tenantCode,
-          executionType: saveForm.executionType,
-          description: saveForm.description,
-          globalParams: JSON.stringify(globalParams),
-          timeout: saveForm.timeoutFlag ? saveForm.timeout : 0,
-          releaseState: saveForm.release ? 'ONLINE' : 'OFFLINE'
-        },
-        !!props.code ? props.code : Number(route.query.code),
-        props.projectCode
+          {
+            parentId: props.parentId,
+            projectCode: props.projectCode,
+            type: 2,
+            taskDefinitionJson: JSON.stringify(taskDefinitions),
+            taskRelationJson: JSON.stringify(connects),
+            locations: JSON.stringify(locations),
+            name: saveForm.name,
+            tenantCode: saveForm.tenantCode,
+            executionType: saveForm.executionType,
+            description: saveForm.description,
+            globalParams: JSON.stringify(globalParams),
+            timeout: saveForm.timeoutFlag ? saveForm.timeout : 0,
+            releaseState: saveForm.release ? 'ONLINE' : 'OFFLINE'
+          },
+          !!props.taskCode ? props.taskCode : Number(route.query.code),
+          props.projectCode
       ).then((ignored: any) => {
         message.success(t('project.dag.success'))
-        router.push({ path: `/projects/${props.projectCode}/workflow-definition` })
+        router.push({ path: `/devops/${props.projectCode}/workflow-definition` })
       })
     }
 
-    /*onMounted(() => {
-      
-      
-
-      if (!props.code || !props.projectCode) return
-      refresh()
-    })*/
+    onMounted(() => {
+      if (!props.taskCode || !props.projectCode) return
+      refresh(props.taskCode, props.projectCode)
+    })
 
     return () => (
-      <div
-        class={[
-          Styles.container,
-          theme.darkTheme ? Styles['dark'] : Styles['light']
-        ]}
-      >
-        {!isLoading.value && (
-            <Dag
-                definition={definition.value}
-                onRefresh={refresh}
-                projectCode={props.projectCode}
-                processCode={props.code}
-                onSave={save}
-                readonly={readonly.value}
-            />
-        )}
-      </div>
+        <div
+            class={[
+              Styles.container,
+              theme.darkTheme ? Styles['dark'] : Styles['light']
+            ]}
+        >
+          <Dag
+              definition={definition.value}
+              onRefresh={refresh}
+              projectCode={props.projectCode}
+              processCode={props.taskCode}
+              parentId={props.parentId}
+              onSave={save}
+              readonly={readonly.value}
+          />
+        </div>
     )
   }
 })

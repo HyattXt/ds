@@ -17,21 +17,20 @@
 
 import { defineComponent, onMounted, toRefs, watch } from 'vue'
 import {
-  NSpace,
   NInput,
   NSelect,
   NDatePicker,
   NButton,
   NIcon,
   NDataTable,
-  NPagination,
-  NCard
+  NForm, NGrid, NFormItemGi
 } from 'naive-ui'
 import { SearchOutlined } from '@vicons/antd'
 import { useTable } from './use-table'
 import { useI18n } from 'vue-i18n'
-import Card from '@/components/card'
-import styles from './index.module.scss'
+import CrudHeader from "@/components/cue/crud-header.vue";
+import CrudPageDs from "@/components/cue/crud-page-ds.vue";
+import CrudForm from "@/components/cue/crud-form.vue";
 
 const TaskResult = defineComponent({
   name: 'task-result',
@@ -49,8 +48,14 @@ const TaskResult = defineComponent({
       })
     }
 
-    const onUpdatePageSize = () => {
+    const onUpdatePage = (page: number) => {
+      variables.page = page
+      requestTableData()
+    }
+
+    const onUpdatePageSize = (pageSize: number) => {
       variables.page = 1
+      variables.pageSize = pageSize
       requestTableData()
     }
 
@@ -71,109 +76,129 @@ const TaskResult = defineComponent({
     return {
       t,
       ...toRefs(variables),
+      onUpdatePage,
       requestTableData,
       onUpdatePageSize,
       onSearch
     }
   },
   render() {
-    const { t, requestTableData, onUpdatePageSize, onSearch, loadingRef } = this
+    const { t, requestTableData, onUpdatePage, onUpdatePageSize, onSearch, loadingRef } = this
 
     return (
       <>
-        <NCard>
-          <NSpace justify='end'>
-            <NInput
-              v-model={[this.searchVal, 'value']}
-              size='small'
-              placeholder={t('data_quality.task_result.task_name')}
-              clearable
-            />
-            <NSelect
-              v-model={[this.ruleType, 'value']}
-              size='small'
-              options={[
-                {
-                  value: 0,
-                  label: t('data_quality.task_result.single_table')
-                },
-                {
-                  value: 1,
-                  label: t('data_quality.task_result.single_table_custom_sql')
-                },
-                {
-                  value: 2,
-                  label: t('data_quality.task_result.multi_table_accuracy')
-                },
-                {
-                  value: 3,
-                  label: t('data_quality.task_result.multi_table_comparison')
-                }
-              ]}
-              placeholder={t('data_quality.task_result.rule_type')}
-              style={{ width: '180px' }}
-              clearable
-            />
-            <NSelect
-              v-model={[this.state, 'value']}
-              size='small'
-              options={[
-                {
-                  value: 0,
-                  label: t('data_quality.task_result.undone')
-                },
-                {
-                  value: 1,
-                  label: t('data_quality.task_result.success')
-                },
-                {
-                  value: 2,
-                  label: t('data_quality.task_result.failure')
-                }
-              ]}
-              placeholder={t('data_quality.task_result.state')}
-              style={{ width: '180px' }}
-              clearable
-            />
-            <NDatePicker
-              v-model={[this.datePickerRange, 'value']}
-              type='datetimerange'
-              size='small'
-              start-placeholder={t('monitor.audit_log.start_time')}
-              end-placeholder={t('monitor.audit_log.end_time')}
-              clearable
-            />
-            <NButton size='small' type='primary' onClick={onSearch}>
-              {{
-                icon: () => (
-                  <NIcon>
-                    <SearchOutlined />
-                  </NIcon>
-                )
-              }}
-            </NButton>
-          </NSpace>
-        </NCard>
-        <Card class={styles['table-card']}>
-          <NDataTable
-            loading={loadingRef}
-            columns={this.columns}
-            data={this.tableData}
-            scrollX={this.tableWidth}
-          />
-          <div class={styles.pagination}>
-            <NPagination
-              v-model:page={this.page}
-              v-model:page-size={this.pageSize}
-              page-count={this.totalPage}
-              show-size-picker
-              page-sizes={[10, 30, 50]}
-              show-quick-jumper
-              onUpdatePage={requestTableData}
-              onUpdatePageSize={onUpdatePageSize}
-            />
-          </div>
-        </Card>
+        <CrudForm>
+          {{
+            header: () => (
+                <CrudHeader title="任务结果"/>
+            ),
+            condition: () => (
+                <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
+                  <NGrid cols="18" x-gap="16">
+                    <NFormItemGi label="名称" span="3">
+                      <NInput
+                          v-model={[this.searchVal, 'value']}
+                          size='small'
+                          placeholder={t('data_quality.task_result.task_name')}
+                          clearable
+                      />
+                    </NFormItemGi>
+                    <NFormItemGi label="规则类型" span="3">
+                      <NSelect
+                          v-model={[this.ruleType, 'value']}
+                          size='small'
+                          options={[
+                            {
+                              value: 0,
+                              label: t('data_quality.task_result.single_table')
+                            },
+                            {
+                              value: 1,
+                              label: t('data_quality.task_result.single_table_custom_sql')
+                            },
+                            {
+                              value: 2,
+                              label: t('data_quality.task_result.multi_table_accuracy')
+                            },
+                            {
+                              value: 3,
+                              label: t('data_quality.task_result.multi_table_comparison')
+                            }
+                          ]}
+                          placeholder={t('data_quality.task_result.rule_type')}
+                          style={{ width: '180px' }}
+                          clearable
+                      />
+                    </NFormItemGi>
+                    <NFormItemGi label="任务状态" span="3">
+                      <NSelect
+                          v-model={[this.state, 'value']}
+                          size='small'
+                          options={[
+                            {
+                              value: 0,
+                              label: t('data_quality.task_result.undone')
+                            },
+                            {
+                              value: 1,
+                              label: t('data_quality.task_result.success')
+                            },
+                            {
+                              value: 2,
+                              label: t('data_quality.task_result.failure')
+                            }
+                          ]}
+                          placeholder={t('data_quality.task_result.state')}
+                          style={{ width: '180px' }}
+                          clearable
+                      />
+                    </NFormItemGi>
+                    <NFormItemGi label="时间" span="5">
+                      <NDatePicker
+                          v-model={[this.datePickerRange, 'value']}
+                          type='datetimerange'
+                          size='small'
+                          start-placeholder={t('monitor.audit_log.start_time')}
+                          end-placeholder={t('monitor.audit_log.end_time')}
+                          clearable
+                      />
+                    </NFormItemGi>
+                    <NFormItemGi span="2">
+                      <NButton size='small' color={'#0099CB'} type='primary' onClick={onSearch} style={"padding: 0 15px 0 15px"}>
+                        <NIcon>
+                          <SearchOutlined />
+                        </NIcon>
+                        <div style={"font-size: 12px"}>
+                          查询
+                        </div>
+                      </NButton>
+                    </NFormItemGi>
+                  </NGrid>
+                </NForm>
+            ),
+            table: () => (
+                <NDataTable
+                    loading={loadingRef}
+                    columns={this.columns}
+                    data={this.tableData}
+                    scrollX={this.tableWidth}
+                    bordered
+                    flex-height
+                    single-line={false}
+                    class={"cue-table"}
+                />
+            ),
+            page: () => (
+                <CrudPageDs
+                    page={this.page}
+                    page-size={this.pageSize}
+                    item-count={this.total}
+                    onPageChange={onUpdatePage}
+                    onPageSizeChange={onUpdatePageSize}
+                />
+            )
+          }}
+        </CrudForm>
       </>
     )
   }

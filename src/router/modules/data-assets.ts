@@ -88,6 +88,28 @@ export default {
         activeSide: '/data-assets/assets-catalog',
         auth: []
       }
+    },
+    {
+      path: '/data-assets/assets-classify',
+      name: 'assets-classify',
+      component: () => import('@/views/data-assets/classify/index.vue'),
+      meta: {
+        title: '数据编目-assets-classify',
+        activeMenu: 'data-assets',
+        showSide: true,
+        auth: []
+      }
+    },
+    {
+      path: '/data-assets/index-center',
+      name: 'index-center',
+      component: () => import('@/views/data-assets/index/index.vue'),
+      meta: {
+        title: '指标中心-index-center',
+        activeMenu: 'data-assets',
+        showSide: true,
+        auth: []
+      }
     }
   ]
 }

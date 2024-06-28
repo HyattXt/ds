@@ -18,18 +18,17 @@
 import { defineComponent, Ref, toRefs, onMounted, toRef, watch } from 'vue'
 import {
   NIcon,
-  NSpace,
   NDataTable,
   NButton,
-  NPagination,
-  NInput
+  NInput, NForm, NGrid, NFormItemGi
 } from 'naive-ui'
 import { useI18n } from 'vue-i18n'
 import { SearchOutlined } from '@vicons/antd'
-import Card from '@/components/card'
 import FolderModal from './components/function-modal'
 import { useTable } from './use-table'
-import styles from './index.module.scss'
+import CrudForm from "@/components/cue/crud-form.vue";
+import CrudHeader from "@/components/cue/crud-header.vue";
+import CrudPageDs from "@/components/cue/crud-page-ds.vue";
 
 export default defineComponent({
   name: 'function-manage',
@@ -45,12 +44,18 @@ export default defineComponent({
       })
     }
 
+    const onUpdatePage = (page: number) => {
+      variables.page = page
+      requestData()
+    }
+
     const handleUpdateList = () => {
       requestData()
     }
 
-    const handleChangePageSize = () => {
+    const handleChangePageSize = (pageSize: number) => {
       variables.page = 1
+      variables.pageSize = pageSize
       requestData()
     }
 
@@ -82,6 +87,7 @@ export default defineComponent({
       handleSearch,
       handleUpdateList,
       handleCreateFolder,
+      onUpdatePage,
       handleChangePageSize,
       ...toRefs(variables)
     }
@@ -91,67 +97,64 @@ export default defineComponent({
     const { loadingRef } = this
 
     return (
-      <div class={styles.content}>
-        <Card class={styles.card}>
-          <div class={styles.header}>
-            <NSpace>
-              <NButton
-                type='primary'
-                onClick={this.handleCreateFolder}
-                class='btn-create-udf-function'
-              >
-                {t('resource.function.create_udf_function')}
-              </NButton>
-            </NSpace>
-            <div class={styles.right}>
-              <div class={styles.search}>
-                <div class={styles.list}>
-                  <NButton type='primary' onClick={this.handleSearch}>
-                    <NIcon>
-                      <SearchOutlined />
-                    </NIcon>
-                  </NButton>
-                </div>
-                <div class={styles.list}>
-                  <NInput
-                    placeholder={t('resource.function.enter_keyword_tips')}
-                    v-model={[this.searchVal, 'value']}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </Card>
-        <Card title={t('resource.function.udf_function')}>
-          <NDataTable
-            loading={loadingRef}
-            columns={this.columns}
-            data={this.tableData}
-            striped
-            size={'small'}
-            class={styles.table}
-            row-class-name='items'
-            scrollX={this.tableWidth}
-          />
-          <div class={styles.pagination}>
-            <NPagination
-              v-model:page={this.page}
-              v-model:page-size={this.pageSize}
-              page-count={this.totalPage}
-              show-size-picker
-              page-sizes={[10, 30, 50]}
-              show-quick-jumper
-              onUpdatePage={this.requestData}
-              onUpdatePageSize={this.handleChangePageSize}
-            />
-          </div>
-        </Card>
-        <FolderModal
-          v-model:row={this.row}
-          v-model:show={this.showRef}
-          onUpdateList={this.handleUpdateList}
-        />
-      </div>
+      <>
+      <CrudForm>
+        {{
+          header: () => (
+              <CrudHeader title="函数管理" addButton onAddEvent={this.handleCreateFolder}/>
+          ),
+          condition: () => (
+              <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
+                <NGrid cols="18" x-gap="16">
+                  <NFormItemGi label="名称" span="3">
+                    <NInput
+                        size={'small'}
+                        placeholder={t('resource.function.enter_keyword_tips')}
+                        v-model={[this.searchVal, 'value']}
+                    />
+                  </NFormItemGi>
+                  <NFormItemGi span="2">
+                    <NButton size='small' color={'#0099CB'} type='primary' onClick={this.handleSearch} style={"padding: 0 15px 0 15px"}>
+                      <NIcon>
+                        <SearchOutlined />
+                      </NIcon>
+                      <div style={"font-size: 12px"}>
+                        查询
+                      </div>
+                    </NButton>
+                  </NFormItemGi>
+                </NGrid>
+              </NForm>
+          ),
+          table: () => (
+              <NDataTable
+                  loading={loadingRef}
+                  columns={this.columns}
+                  data={this.tableData}
+                  scrollX={this.tableWidth}
+                  bordered
+                  flex-height
+                  single-line={false}
+                  class={"cue-table"}
+              />
+          ),
+          page: () => (
+              <CrudPageDs
+                  page={this.page}
+                  page-size={this.pageSize}
+                  item-count={this.total}
+                  onPageChange={this.onUpdatePage}
+                  onPageSizeChange={this.handleChangePageSize}
+              />
+          )
+        }}
+      </CrudForm>
+      <FolderModal
+        v-model:row={this.row}
+        v-model:show={this.showRef}
+        onUpdateList={this.handleUpdateList}
+      />
+      </>
     )
   }
 })

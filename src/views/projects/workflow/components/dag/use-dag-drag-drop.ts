@@ -83,7 +83,7 @@ export function useDagDragAndDrop(options: Options) {
     }
   }
 
-  async function commitInitTask(name: string, description: string, processCode: number) {
+  async function commitInitTask(name: string, description: string, processCode: number, datasourceType: String, datasource: Number) {
     let locations = {
       taskCode: taskCode.value,
       x: location.value.x,
@@ -100,7 +100,9 @@ export function useDagDragAndDrop(options: Options) {
       "name": name,
       "taskParams": {
         "localParams": [],
-        "resourceList": []
+        "resourceList": [],
+        "type": datasourceType,
+        "datasource": datasource
       },
       "taskPriority": "MEDIUM",
       "taskType": dragged.value.type,

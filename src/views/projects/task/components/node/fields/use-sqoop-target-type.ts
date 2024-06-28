@@ -19,7 +19,7 @@ import { ref, h, watch, Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDatasource } from './use-sqoop-datasource'
 import styles from '../index.module.scss'
-import type { IJsonItem, IOption, SourceType } from '../types'
+import type {IJsonItem, IOption, ModelType, SourceType} from '../types'
 
 export function useTargetType(
   model: { [field: string]: any },
@@ -99,6 +99,14 @@ export function useTargetType(
     }
   }
 
+  const resetModelType = (sourceType: SourceType, srcQueryType: string) => {
+    targetTypes.value = getTargetTypesBySourceType(sourceType, srcQueryType)
+    if (!model.sourceType) {
+      model.targetType = targetTypes.value[0].value
+    }
+    resetSpan()
+  }
+
   watch(
     () => [model.sourceType, model.srcQueryType],
     ([sourceType, srcQueryType]) => {
@@ -132,7 +140,10 @@ export function useTargetType(
       field: 'targetType',
       name: t('project.node.type'),
       span: unCustomSpan,
-      options: targetTypes
+      options: targetTypes,
+      props: {
+        onUpdateValue: resetModelType(model.sourceType, model.srcQueryType)
+      }
     },
     {
       type: 'input',

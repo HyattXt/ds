@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { ref, onMounted, watch } from 'vue'
+import {ref, onMounted, watch, inject} from 'vue'
 import { remove, cloneDeep } from 'lodash'
 import { TaskType } from '@/views/projects/task/constants/task-type'
 import { formatParams } from '@/views/projects/task/components/node/format-data'
@@ -71,7 +71,6 @@ export function useTaskEdit(options: Options) {
   })
   const taskModalVisible = ref(false)
   const initModalVisible = ref(false)
-
   /**
    * Append a new task
    */
@@ -183,19 +182,17 @@ export function useTaskEdit(options: Options) {
     initModalVisible.value = false
   }
 
+  const pushComponent = inject('pushComponent') as Function
+
   /**
    * Edit task
    * @param {number} code
+   * @param taskName
+   * @param taskType
    */
-  function editTask(code: number) {
-    /*queryTaskDefinitionByCode(code, Number(route.params.projectCode)).then((res: any) => {
-      currTask.value = res
-      updatePreTasks(getSources(String(code)), code)
-      updatePostTasks(code)
-      taskModalVisible.value = true
-    })*/
-    //queryProcessDefinitionByCode(processDefinition.value.processDefinition.code, Number(route.params.projectCode)).then((res: any) => {
-    queryTaskDefinitionByCode(code, Number(route.params.projectCode)).then((res: any) => {
+  function editTask(code: number, taskName: String, taskType: String, readonly: Boolean, processCode: Number) {
+    pushComponent('', code, taskName, taskType, readonly, processCode)
+/*    queryTaskDefinitionByCode(code, Number(route.params.projectCode)).then((res: any) => {
       let versionId = res.id
       const definition = processDefinition.value.taskDefinitionList.find(
           (t) => t.code === code
@@ -207,7 +204,7 @@ export function useTaskEdit(options: Options) {
       updatePreTasks(getSources(String(code)), code)
       updatePostTasks(code)
       taskModalVisible.value = true
-    })
+    })*/
 
   }
 
@@ -300,7 +297,8 @@ export function useTaskEdit(options: Options) {
     if (graph.value) {
       graph.value.on('cell:dblclick', ({ cell }) => {
         const code = Number(cell.id)
-        editTask(code)
+        // @ts-ignore
+        editTask(code,cell.data.taskName, cell.data.taskType, definition.value.processDefinition.releaseState === 'ONLINE', definition.value.processDefinition.code)
       })
     }
   })

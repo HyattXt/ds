@@ -32,3 +32,10 @@ export function login1(data: any): any {
     data
   })
 }
+
+export function captchaUrl(): any {
+  return axios({
+    url: '/defaultKaptcha',
+    method: 'get'
+  })
+}

@@ -22,9 +22,8 @@ import { useI18n } from 'vue-i18n'
 import { countTaskState } from '@/service/modules/projects-analysis'
 import type { TaskStateRes } from '@/service/modules/projects-analysis/types'
 import { getInterfaceTop10, getJobRunErrorTop10, getJobRuntimeTop10, getTaskStatisticsInfo, queryUnauthorizedProject, getDataByProjectCodeAndDate, getStatisticsDataByProjectCodeAndDate } from '@/service/modules/devops-analysis'
-import { parseTime, renderTableTime, tasksState } from '@/common/common'
 
-import type { StateData } from './types'
+import type {StateData, TableDataType} from './types'
 import { reactive, ref } from 'vue'
 
 export function useTaskState() {
@@ -42,20 +41,20 @@ export function useTaskState() {
         endDate: !date ? '' : format(date[1], 'yyyy-MM-dd HH:mm:ss'),
         projectCode: 0
       }).then((res: TaskStateRes): StateData => {
-        const table = res.taskCountDtos.map((item, unused) => {
+        const table : { title: string; key: string }[] = res.taskCountDtos.map((item : any) => {
           return {
             title: t('home.' + toLower(item.taskStateType)),
             key: t('home.' + toLower(item.taskStateType)),
           }
         })
-        let tabledata = {}
+        let tableData: Record<string, number> = {}
         let i = 0
         for (i = 0; i < res.taskCountDtos.length; i++) {
-          tabledata[t('home.' + toLower(res.taskCountDtos[i].taskStateType))] = res.taskCountDtos[i].count;
+          tableData[t('home.' + toLower(res.taskCountDtos[i].taskStateType))] = res.taskCountDtos[i].count;
         }
-        const tablecount = [tabledata]
+        const tableCount = [tableData]
 
-        const chart = res.taskCountDtos.map((item) => {
+        const chart = res.taskCountDtos.map((item: any) => {
           return {
             value: item.count,
             name: t('home.' + toLower(item.taskStateType))
@@ -63,9 +62,9 @@ export function useTaskState() {
         })
         taskVariables.taskLoadingRef = false
 
-        return { table, chart, tablecount }
+        return { table, chart, tableCount }
       }),
-      { table: [], chart: [], tablecount: [] }
+      { table: [], chart: [], tableCount: [] }
     )
 
     return state
@@ -77,7 +76,7 @@ export function useTaskState() {
         startTime: !date ? '' : format(date[0][0], 'yyyy-MM-dd HH:mm:ss'),
         endTime: !date ? '' : format(date[0][1], 'yyyy-MM-dd HH:mm:ss'),
         projectCode: projectCode
-      }).then(function (res) {
+      }).then(function (res: any) {
 
         const table = [0, 0, 0, 0, 0, 0]
         if (res[0] != null) {
@@ -110,32 +109,32 @@ export function useTaskState() {
 
 
   const getTaskData = (date: Array<any>, projectCode: any) => {
-    console.log(date)
     const { state } = useAsyncState(
       getDataByProjectCodeAndDate({
         startTime: !date ? '' : format(date[0][0], 'yyyy-MM-dd HH:mm:ss'),
         endTime: !date ? '' : format(date[0][1], 'yyyy-MM-dd HH:mm:ss'),
         projectCode: projectCode
-      }).then(function (res) {
+      }).then(function (res: any) {
 
-        const tabledata = {}
-        tabledata['正在运行'] = [];
-        tabledata['失败'] = [];
-        tabledata['暂停'] = [];
-        tabledata['停止'] = [];
-        tabledata['成功'] = [];
-        tabledata['时间'] = [];
+        const tableData: TableDataType = {
+          正在运行: [],
+          失败: [],
+          暂停: [],
+          成功: [],
+          停止: [],
+          时间: []
+        }
         let i = 0
         for (i = 0; i < res.length; i++) {
-          tabledata['正在运行'].push(res[i].running);
-          tabledata['失败'].push(res[i].fail);
-          tabledata['暂停'].push(res[i].paused);
-          tabledata['停止'].push(res[i].stoped);
-          tabledata['成功'].push(res[i].succeed);
-          tabledata['时间'].push(res[i].dayTime);
+          tableData['正在运行'].push(res[i].running);
+          tableData['失败'].push(res[i].fail);
+          tableData['暂停'].push(res[i].paused);
+          tableData['停止'].push(res[i].stoped);
+          tableData['成功'].push(res[i].succeed);
+          tableData['时间'].push(res[i].dayTime);
 
-        };
-        const table = [tabledata]
+        }
+        const table = [tableData]
 
         return { table }
       }),
@@ -149,9 +148,9 @@ export function useTaskState() {
     const { state } = useAsyncState(
       queryUnauthorizedProject({
         userId: 0
-      }).then(function (res) {
+      }).then(function (res: any) {
 
-        const table = res.map((item) => {
+        const table = res.map((item: any) => {
           return {
             label: item.name,
             value: item.code,
@@ -177,17 +176,17 @@ export function useTaskState() {
         projectCode: projectCode
       }
       )
-        .then(function (res) {
-          const table = res.map((item) => {
+        .then(function (res: any) {
+          const table = res.map((item: any) => {
             return {
               value: item.taskNum,
               name: item.taskType,
-              ratio: item.ratio,
+              ratio: item.ratio !== null ? item.ratio : 0,
               taskTotalNum: item.taskTotalNum
             }
           })
 
-          const chart = res.map((item) => {
+          const chart = res.map((item: any) => {
             return {
               value: item.taskNum,
               name: item.taskType
@@ -209,8 +208,8 @@ export function useTaskState() {
         startTime: !date ? '' : format(date[0], 'yyyy-MM-dd HH:mm:ss'),
         endTime: !date ? '' : format(date[1], 'yyyy-MM-dd HH:mm:ss'),
         projectCode: projectCode
-      }).then(function (res) {
-        const table = res.map((item, index) => {
+      }).then(function (res: any) {
+        const table = res.map((item: any, index: any) => {
           return {
             排名: index + 1,
             任务名名称: item.taskName,
@@ -232,8 +231,8 @@ export function useTaskState() {
         startTime: !date ? '' : format(date[0], 'yyyy-MM-dd HH:mm:ss'),
         endTime: !date ? '' : format(date[1], 'yyyy-MM-dd HH:mm:ss'),
         projectCode: projectCode
-      }).then(function (res) {
-        const table = res.map((item, index) => {
+      }).then(function (res: any) {
+        const table = res.map((item: any, index: any) => {
           return {
             排名: index + 1,
             任务名: item.taskName,
@@ -254,8 +253,8 @@ export function useTaskState() {
         startTime: !date ? '' : format(date[0], 'yyyy-MM-dd HH:mm:ss'),
         endTime: !date ? '' : format(date[1], 'yyyy-MM-dd HH:mm:ss'),
         projectCode: projectCode
-      }).then(function (res) {
-        const table = res.map((item, index) => {
+      }).then(function (res: any) {
+        const table = res.map((item: any, index: any) => {
           return {
             排名: index + 1,
             接口地址: item.interfaceUrl,

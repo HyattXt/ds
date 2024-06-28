@@ -65,6 +65,7 @@ export function useTable() {
     page: ref(1),
     pageSize: ref(10),
     searchVal: ref(),
+    total: ref(0),
     totalPage: ref(1),
     folderShowRef: ref(false),
     uploadShowRef: ref(false),
@@ -74,7 +75,7 @@ export function useTable() {
   const createColumns = (variables: any) => {
     variables.columns = [
       {
-        title: '#',
+        title: '序号',
         key: 'id',
         ...COLUMN_WIDTH_CONFIG['index'],
         render: (_row, index) => index + 1
@@ -145,7 +146,7 @@ export function useTable() {
         key: 'operation',
         ...COLUMN_WIDTH_CONFIG['operation'](3),
         render: (row) => {
-          return h(NSpace, null, {
+          return h(NSpace, {justify: 'center'}, {
             default: () => [
               h(
                 NTooltip,
@@ -246,10 +247,11 @@ export function useTable() {
           variables.id === -1
             ? []
             : (fileStore.getCurrentDir.split('/') as Array<never>)
-        breadList.shift()
+        //breadList.shift()
 
         variables.breadList = breadList
         variables.totalPage = res.totalPage
+        variables.total = res.total
         variables.tableData = res.totalList.map((item: any) => {
           return { ...item }
         })

@@ -24,7 +24,7 @@ import type { IRecord, TAuthType } from './types'
 export function useTable() {
   const state = reactive({
     page: 1,
-    pageSize: 10,
+    pageSize: 30,
     itemCount: 0,
     searchVal: '',
     list: [],

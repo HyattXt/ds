@@ -54,18 +54,6 @@ export default {
       }
     },
     {
-      path: '/service/api-dev-step-edit',
-      name: 'api-dev-step-edit',
-      component: () => import('@/views/api/api-dev/edit/sql/stepForm.vue'),
-      meta: {
-        title: '服务开发-api-dev-step',
-        activeMenu: 'service',
-        showSide: true,
-        activeSide: '/service/api-dev',
-        auth: []
-      }
-    },
-    {
       path: '/service/api-register',
       name: 'api-register',
       component: () => import('@/views/api/api-dev/register/stepForm.vue'),
@@ -78,23 +66,22 @@ export default {
       }
     },
     {
-      path: '/service/api-register-edit',
-      name: 'api-register-edit',
-      component: () => import('@/views/api/api-dev/edit/register/stepForm.vue'),
-      meta: {
-        title: '服务注册-api-register-edit',
-        activeMenu: 'service',
-        showSide: true,
-        activeSide: '/service/api-dev',
-        auth: []
-      }
-    },
-    {
       path: '/service/api-manager',
       name: 'api-manager',
       component: () => import('@/views/api/api-manager/list/index.vue'),
       meta: {
         title: '服务开发-api-manager',
+        activeMenu: 'service',
+        showSide: true,
+        auth: []
+      }
+    },
+    {
+      path: '/service/api-detail',
+      name: 'api-detail',
+      component: () => import('@/views/api/api-manager/list/detail.vue'),
+      meta: {
+        title: '服务详情-api-detail',
         activeMenu: 'service',
         showSide: true,
         auth: []
