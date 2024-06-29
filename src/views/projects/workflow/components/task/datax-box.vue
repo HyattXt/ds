@@ -12,12 +12,21 @@
         :disableStop="disableStop"
         :showOnline="props.readOnly"
     >
+      <template #define-button>
+        <el-tooltip :content="taskData.jsonConfig ? '表单模式' : '脚本模式'" placement="top">
+          <n-button :disabled="props.readOnly" text @click="handleJsonConfig">
+            <n-icon size="18">
+              <Code16Filled />
+            </n-icon>
+          </n-button>
+        </el-tooltip>
+      </template>
     </CrudWorkflowTooltip>
     <div class="right-bar"><div @click="openTab('first')">任务属性</div><div @click="openTab('second')">参数配置</div></div>
     <n-split class="split_lower" direction="vertical" v-model:size="logHeight" @drag-move="handleOnDragMove" style="width: calc(100% - 36px)">
       <template #1>
         <div class="build-form">
-          <NForm :disabled="props.readOnly" size="small" label-placement="left" label-align="right" label-width="100" :model="taskData" :rules="rules" ref="formRef">
+          <NForm v-if="!taskData.jsonConfig" :disabled="props.readOnly" size="small" label-placement="left" label-align="right" label-width="100" :model="taskData" :rules="rules" ref="formRef">
             <n-collapse :default-expanded-names="['1', '2', '3', '4']">
               <n-collapse-item  name="1">
                 <template #header>
@@ -261,6 +270,14 @@
               </n-collapse-item>
             </n-collapse>
           </NForm>
+          <Editor
+              v-if="taskData.jsonConfig"
+              ref="editorRef"
+              :value="taskData.json"
+              :onUpdateValue = "(value) => taskData.json = value"
+              :options="{readOnly: props.readOnly, language: 'json'}"
+              style="height: 99%"
+          />
         </div>
       </template>
       <template #2>
@@ -345,7 +362,8 @@ import {useAsyncState} from "@vueuse/core";
 import {
   ArrowMinimize28Filled,
   ArrowMinimizeVertical20Filled,
-  FullScreenMinimize24Filled
+  FullScreenMinimize24Filled,
+  Code16Filled
 } from "@vicons/fluent";
 import {
   QuestionCircleTwotone
@@ -661,8 +679,10 @@ const datasourceTypes = [
 ]
 
 const onTaskSubmit = async (data) => {
-  jsplumbRef.value.save()
-  taskData.value.json = formatJson()
+  if(!taskData.value.jsonConfig) {
+    jsplumbRef.value.save()
+    taskData.value.json = formatJson()
+  }
   const params = formatData(data)
   try {
     await updateWithUpstream(
@@ -1141,6 +1161,16 @@ function formatJson() {
   if(taskData.value.dtType === 'MYSQL') json.job.content[0].writer.parameter['writeMode'] =  taskData.value.writeMode
   if(taskData.value.executeMode === '1') json.job.content[0].reader.parameter['querySql'] = [ taskData.value.sql ]
   return JSON.stringify(json,null,4)
+}
+
+async function handleJsonConfig() {
+  let jsonConfig = !taskData.value.jsonConfig
+  taskData.value.leftList = []
+  taskData.value.rightList = []
+  taskData.value.leftData = []
+  taskData.value.rightData = []
+  taskData.value.jsonConfig = jsonConfig
+  console.log(taskData.value.jsonConfig)
 }
 
 function VerticalLog () {

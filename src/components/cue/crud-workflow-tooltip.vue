@@ -29,6 +29,7 @@
           </n-icon>
         </n-button>
       </el-tooltip>
+      <slot name="define-button"></slot>
       <n-tag v-if="showOnline" type="info">
         已上线
       </n-tag>
