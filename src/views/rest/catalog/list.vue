@@ -49,10 +49,9 @@ import axios from 'axios'
 import {
   DeleteOutlined,
   EditOutlined,
-  SearchOutlined
 } from '@vicons/antd'
 import {NButton, NIcon, NPopconfirm, NSpace, NTooltip, useMessage} from "naive-ui";
-import {useRoute, useRouter} from "vue-router";
+import {useRouter} from "vue-router";
 import {ElButton} from "element-plus";
 import CrudForm from "@/components/cue/crud-form.vue";
 import CrudPage from "@/components/cue/crud-page.vue";

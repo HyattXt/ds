@@ -26,7 +26,6 @@ import { defineComponent, onMounted, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ProjectModal from './components/project-modal'
 import { useTable } from './use-table'
-import {useLogin} from "@/views/login/use-login";
 import CrudForm from "@/components/cue/crud-form.vue";
 import CrudHeader from "@/components/cue/crud-header.vue";
 import CrudPageDs from "@/components/cue/crud-page-ds.vue";
@@ -37,7 +36,6 @@ const list = defineComponent({
   setup() {
     const { t } = useI18n()
     const { variables, getTableData, createColumns } = useTable()
-    const { loginNew } = useLogin('')
 
     const requestData = () => {
       getTableData({
@@ -77,14 +75,9 @@ const list = defineComponent({
       requestData()
     }
 
-    const ssoLogin = async () => {
-      await loginNew()
+    onMounted(() => {
       createColumns(variables)
       requestData()
-    }
-
-    onMounted(() => {
-      ssoLogin()
     })
 
     watch(useI18n().locale, () => {

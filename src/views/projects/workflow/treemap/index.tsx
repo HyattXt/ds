@@ -27,7 +27,6 @@ import {useRoute} from "vue-router";
 import {useTreemap} from "@/views/projects/workflow/treemap/use-treemap";
 import { createProcessDefinition } from '@/service/modules/process-definition'
 import {useI18n} from "vue-i18n";
-import {useLogin} from "@/views/login/use-login";
 import {ElTabs, ElTabPane} from 'element-plus'
 import {workflowBoxType, componentRefType} from "@/views/projects/workflow/treemap/types";
 
@@ -71,7 +70,6 @@ export default defineComponent({
             {label: '关闭其他标签', key: '关闭其他标签'},
             {label: '关闭所有标签', key: '关闭所有标签'}
         ]
-        const { loginNew } = useLogin('')
         const addMenuOptions = ref([
             {
                 label: '新建文件夹',
@@ -132,14 +130,6 @@ export default defineComponent({
             },
         }
 
-        const ssoLogin = async () => {
-            await loginNew()
-            refreshTree()
-            // @ts-ignore
-            variables.value.model.projectCode = projectCode
-            if( typeof(route.query.code) != 'undefined' )tsxRef.value.refresh(route.query.code, projectCode)
-        }
-
         const refreshTree = () => {
             getTreeMenu(projectCode)
             getTreeFolder(projectCode)
@@ -168,7 +158,10 @@ export default defineComponent({
         }
 
         onMounted(() => {
-            ssoLogin()
+            refreshTree()
+            // @ts-ignore
+            variables.value.model.projectCode = projectCode
+            if( typeof(route.query.code) != 'undefined' )tsxRef.value.refresh(route.query.code, projectCode)
         })
 
         function createMenu() {
