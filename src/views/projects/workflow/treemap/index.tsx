@@ -162,6 +162,9 @@ export default defineComponent({
             // @ts-ignore
             variables.value.model.projectCode = projectCode
             if( typeof(route.query.code) != 'undefined' )tsxRef.value.refresh(route.query.code, projectCode)
+            if(history.state.taskCode) {
+                pushComponent(2, Number(history.state.taskCode), String(history.state.taskName), '', history.state.state, 0)
+            }
         })
 
         function createMenu() {
