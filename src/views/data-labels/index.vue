@@ -1,5 +1,6 @@
 <template>
   <div class="label-back">
+    <CrudHead title="用户画像" style="border-bottom: 1px solid rgb(239, 239, 245)"/>
     <n-grid :x-gap="12" :y-gap="8" :cols="9">
       <n-grid-item span="2">
         <div>
