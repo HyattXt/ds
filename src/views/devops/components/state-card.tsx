@@ -171,15 +171,15 @@ const StateCard = defineComponent({
       { title: '排名', key: '排名', width: 60 },
       { title: '任务名名称', key: '任务名名称' },
       { title: '工作流名称', key: '工作流名称' },
-      { title: '任务代码', key: '任务代码' },
-      { title: '最大运行时长', key: '最大运行时长' }
+      { title: '任务代码', key: '任务代码', width: 130 },
+      { title: '最大运行时长', key: '最大运行时长', width: 130 }
     ]);
 
     const RunErrorSelectHeader = ref([
       { title: '排名', key: '排名', width: 60 },
       { title: '任务名', key: '任务名' },
       { title: '业务流程', key: '业务流程' },
-      { title: '出错次数', key: '出错次数' },
+      { title: '出错次数', key: '出错次数', width: 100 },
     ]);
 
     const ApiTop10DataHeader = ref([
@@ -275,7 +275,7 @@ const StateCard = defineComponent({
               </Card>
             </NGi>
             <NGi span={2}>
-              <Card title={'实例运行时段分布'} style={{ height: '60vh', width: '100%', flexWrap: "nowrap" }}>
+              <Card title={'实例运行时段分布'} style={{ height: '400px', width: '100%', flexWrap: "nowrap" }}>
                 {chartData.length > 0 && <ChartLineBox data={chartData} />}
               </Card>
             </NGi>
@@ -283,7 +283,7 @@ const StateCard = defineComponent({
               <Card title={'实例类别占比'} style={{ border: 'none', height: '100%' }}>
                 <div style={{ border: 'none', display: 'flex', height: '100%',justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ width: '50%'  }}>
-                    {TaskPieData.chart.length > 0 && <TaskPie data={TaskPieData.chart} taskTotalNum={TaskPieData.table[0].taskTotalNum} colors={colors} />}
+                    {TaskPieData.chart.length > 0 && <TaskPie data={TaskPieData.chart} taskTotalNum={TaskPieData.table[0].taskTotalNum} colors={colors} height={'350px'}/>}
                   </div>
                   <div style={{ width: '50%' }}>
                     {progressElements}
@@ -309,6 +309,7 @@ const StateCard = defineComponent({
                     data={RunTop10Data}
                     size='small'
                     striped
+                    single-line={false}
                     min-height={"150"}
                     max-height={"150"}
                 />
@@ -332,6 +333,7 @@ const StateCard = defineComponent({
                     data={RunErrorTop10Data}
                     size='small'
                     striped
+                    single-line={false}
                     min-height={"150"}
                     max-height={"150"}
                 />
@@ -354,6 +356,7 @@ const StateCard = defineComponent({
                     columns={ApiTop10DataHeader.value}
                     data={ApiTop10Data}
                     striped
+                    single-line={false}
                     size='small'
                     min-height={"150"}
                     max-height={"150"}
