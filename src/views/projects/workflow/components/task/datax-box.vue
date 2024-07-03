@@ -16,7 +16,8 @@
         <el-tooltip :content="taskData.jsonConfig ? '表单模式' : '脚本模式'" placement="top">
           <n-button :disabled="props.readOnly" text @click="handleJsonConfig">
             <n-icon size="18">
-              <Code16Filled />
+              <Code16Filled v-if="!taskData.jsonConfig"/>
+              <FormatListBulletedOutlined v-if="taskData.jsonConfig"/>
             </n-icon>
           </n-button>
         </el-tooltip>
@@ -365,9 +366,8 @@ import {
   FullScreenMinimize24Filled,
   Code16Filled
 } from "@vicons/fluent";
-import {
-  QuestionCircleTwotone
-} from "@vicons/antd";
+import { QuestionCircleTwotone } from "@vicons/antd";
+import { FormatListBulletedOutlined } from "@vicons/material";
 import {
   queryDataSourceList
 } from "@/service/modules/data-source";
