@@ -149,7 +149,9 @@ export function useHttp(model: { [field: string]: any }): IJsonItem[] {
           span: 8,
           props: {
             placeholder: t('project.node.value_tips'),
-            maxLength: 256
+            maxLength: 256,
+            filterable: true,
+            tag: true
           },
           validate: {
             trigger: ['input', 'blur'],
