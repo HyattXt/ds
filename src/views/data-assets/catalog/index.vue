@@ -201,15 +201,22 @@ const TableData = reactive({
     }
 
     function handleMetadata() {
-
+      let url = import.meta.env.MODE === 'development'
+          ? import.meta.env.VITE_APP_DEV_ASSETS_URL+'/HDataApi/interface_lineage/sqlLineageExcute'
+          : window.webConfig.VITE_APP_PROD_ASSETS_URL+'/HDataApi/interface_lineage/sqlLineageExcute'
+      axios
+          .get(url)
+          .then(function (response) {
 
             loadingMeta.value = true
             message.info('采集中，请稍后查看')
             setTimeout(() => {
               loadingMeta.value = false
             }, 2000)
-
-
+          })
+          .catch(function () {
+            message.error('采集数据失败，请咨询管理员')
+          })
     }
 
     function getApiFolder ()  {
