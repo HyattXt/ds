@@ -16,7 +16,7 @@
  */
 
 import { useRouter } from 'vue-router'
-import {login, login1, captchaUrl} from '@/service/modules/login'
+import {login, captchaUrl} from '@/service/modules/login'
 import { getUserInfo } from '@/service/modules/users'
 import { useUserStore } from '@/store/user/user'
 import type { Router } from 'vue-router'
@@ -51,7 +51,7 @@ export function useLogin(state: any) {
     })
   }
 
-  const loginNew = async () => {
+/*  const loginNew = async () => {
 
     let uniwater_utoken = getUrlParam("uniwater_utoken") || ""
     if (uniwater_utoken){
@@ -68,7 +68,7 @@ export function useLogin(state: any) {
       //router.push({ path: path || 'home' })
     }
 
-  }
+  }*/
 
   const getCaptchaUrl = async () => {
       state.loginForm.captchaUrl = await captchaUrl()
@@ -76,7 +76,6 @@ export function useLogin(state: any) {
 
   return {
     handleLogin,
-    loginNew,
     getCaptchaUrl
   }
 }

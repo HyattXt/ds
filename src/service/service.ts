@@ -15,15 +15,21 @@
  * limitations under the License.
  */
 
-import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
+import axios, {AxiosRequestConfig, AxiosResponse, AxiosError, InternalAxiosRequestConfig} from 'axios'
 import { useUserStore } from '@/store/user/user'
 import qs from 'qs'
 import _ from 'lodash'
 import cookies from 'js-cookie'
 import router from '@/router'
 import utils from '@/utils'
+import type {SessionIdRes} from "@/service/modules/login/types";
+import {loginSso} from "@/service/modules/login";
+import type {UserInfoRes} from "@/service/modules/users/types";
+import {getUserInfo} from "@/service/modules/users";
+import {useTimezoneStore} from "@/store/timezone/timezone";
 
 const userStore = useUserStore()
+const timezoneStore = useTimezoneStore()
 
 /**
  * @description Log and display errors
@@ -73,12 +79,25 @@ const err = (err: AxiosError): Promise<AxiosError> => {
   return Promise.reject(err)
 }
 
-service.interceptors.request.use((config: AxiosRequestConfig<any>) => {
+service.interceptors.request.use( async (config: InternalAxiosRequestConfig<any>) => {
+  if (!userStore.getSessionId && !config.url?.includes('login')) {
+    let uniwater_utoken = getUrlParam("uniwater_utoken") || ""
+    if (uniwater_utoken) {
+      const loginRes: SessionIdRes = await loginSso({uniwater_utoken: uniwater_utoken})
+      await userStore.setSessionId(loginRes.sessionId)
+
+      const userInfoRes: UserInfoRes = await getUserInfo()
+      await userStore.setUserInfo(userInfoRes)
+
+      const timezone = userInfoRes.timeZone ? userInfoRes.timeZone : 'UTC'
+      await timezoneStore.setTimezone(timezone)
+
+    }
+  }
   config.headers && (config.headers.sessionId = userStore.getSessionId)
   const language = cookies.get('language')
   config.headers = config.headers || {}
   if (language) config.headers.language = language
-
 
   return config
 }, err)

@@ -173,14 +173,12 @@
 </template>
 <script setup>
 import {onMounted, ref} from "vue";
-import {useLogin} from "@/views/login/use-login";
 import {useUserStore} from "@/store/user/user";
 import {useRouter} from "vue-router";
 import {getDatasourceHome} from "@/service/modules/data-source";
 
 const userStore = useUserStore()
 const router = useRouter()
-const { loginNew } = useLogin(userStore)
 const data = ref({})
 const loopData0 = [
   {
@@ -320,15 +318,10 @@ const handleClick = (type) => {
   }
 }
 
-const ssoLogin = async () => {
-  await loginNew()
-  initData()
-}
-
 onMounted(() => {
   // @ts-ignore
   console.log(__APP_VERSION__)
-  ssoLogin()
+  initData()
 })
 
 </script>
