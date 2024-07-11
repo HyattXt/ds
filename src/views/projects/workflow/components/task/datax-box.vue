@@ -91,6 +91,7 @@
                               value-field="TABLE_NAME"
                               @click="updateSplitPk"
                               filterable
+                              clearable
                           />
                           <n-tooltip trigger="hover">
                             <template #trigger>
@@ -375,7 +376,7 @@ import {find, lowerCase} from "lodash";
 import Editor from "@/components/monaco-editor";
 import axios from "axios";
 import {useHeightAdjustment} from "@/views/projects/workflow/components/task/useHeightAdjustment";
-
+import utils from "@/utils";
 
 const props = defineProps({
   taskCode: {
@@ -446,9 +447,6 @@ const jdbcConnectInfo = ref({
      database: ''
    }
 })
-const SecondDevCreateUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL
-    : window.webConfig.VITE_APP_PROD_API_URL
 const taskData = ref({
   code: '',
   name: '',
@@ -683,25 +681,29 @@ const onTaskSubmit = async (data) => {
     jsplumbRef.value.save()
     taskData.value.json = formatJson()
   }
-  const params = formatData(data)
-  try {
-    await updateWithUpstream(
-        props.projectCode,
-        data.code,
-        {
-          upstreamCodes: params.upstreamCodes,
-          taskDefinitionJsonObj: JSON.stringify(params.taskDefinitionJsonObj)
-        }
-    )
-    message.success('成功')
-    await initData()
-    updateTab(data.code, data.name)
-    updateEdited(taskData.value.code, false)
-    saveBeforeRun.value = false
-    return true
-  } catch (err) {
-    message.error('保存出错，请联系系统维护人员')
-    return false
+  if(taskData.value.leftList.length){
+    const params = formatData(data)
+    try {
+      await updateWithUpstream(
+          props.projectCode,
+          data.code,
+          {
+            upstreamCodes: params.upstreamCodes,
+            taskDefinitionJsonObj: JSON.stringify(params.taskDefinitionJsonObj)
+          }
+      )
+      message.success('成功')
+      await initData()
+      updateTab(data.code, data.name)
+      updateEdited(taskData.value.code, false)
+      saveBeforeRun.value = false
+      return true
+    } catch (err) {
+      message.error('保存出错，请联系系统维护人员')
+      return false
+    }
+  } else {
+    message.error('保存前请先映射字段!')
   }
 }
 
@@ -809,7 +811,7 @@ async function updateDataTarget(type) {
 }
 
 async function getDatasourceTables(dataSource ,type) {
-  let url = SecondDevCreateUrl + '/HDataApi/apiService/getTableByDataSourceId'
+  let url = utils.getUrl('HDataApi/apiService/getTableByDataSourceId')
   let params = {
     type: type,
     id: dataSource
@@ -887,7 +889,7 @@ async function initTargetTableList(dataSource, type) {
 }
 
 async function getDatasourceTableColumns(dataSource, table) {
-  const url = SecondDevCreateUrl + '/HDataApi/apiService/getColumnsByTable'
+  const url = utils.getUrl('HDataApi/apiService/getColumnsByTable')
   const params = {
     type: datasourceTypes.find(datasource => datasource.value === taskData.value.dsType)?.id,
     id: dataSource,
@@ -927,7 +929,7 @@ function getTableSql() {
     message.error('请输入去向库')
   }
   else {
-    let getSql = SecondDevCreateUrl+'/HDataApi/createTable/getCreateSql'
+    let getSql = utils.getUrl('HDataApi/createTable/getCreateSql')
     let body = {
       id: taskData.value.dataSource,
       type : datasourceTypes.find(datasource => datasource.value === taskData.value.dsType)?.id,
@@ -950,7 +952,7 @@ function getTableSql() {
 }
 
 function executeTableSql() {
-  let getSql = SecondDevCreateUrl+'/HDataApi/createTable/excuteSql'
+  let getSql = utils.getUrl('HDataApi/createTable/excuteSql')
   let body = {
     id: taskData.value.dataTarget,
     sqlStr: taskData.value.createSql
@@ -976,7 +978,7 @@ function getTableColumn() {
   if( taskData.value.rightData.length) {
     disassociate()
   }
-  let getCol = SecondDevCreateUrl + '/HDataApi/apiService/getColumnsByTable'
+  let getCol = utils.getUrl('HDataApi/apiService/getColumnsByTable')
   let targetBody = {
     id: taskData.value.dataTarget,
     type: datasourceTypes.find(datasource => datasource.value === taskData.value.dtType)?.id,
@@ -1120,7 +1122,6 @@ function formatJson() {
                 }
               ],
               "password": jdbcConnectInfo.value.sourceConnect.password,
-              "splitPk": taskData.value.splitPk,
               "username": jdbcConnectInfo.value.sourceConnect.user,
               "where": taskData.value.where
             }
@@ -1160,6 +1161,7 @@ function formatJson() {
   }
   if(taskData.value.dtType === 'MYSQL') json.job.content[0].writer.parameter['writeMode'] =  taskData.value.writeMode
   if(taskData.value.executeMode === '1') json.job.content[0].reader.parameter['querySql'] = [ taskData.value.sql ]
+  if(taskData.value.splitPk)  json.job.content[0].reader.parameter['splitPk'] = taskData.value.splitPk
   return JSON.stringify(json,null,4)
 }
 

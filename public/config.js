@@ -1,20 +1,14 @@
 window.webConfig = {
     //系统logo替换images下的logo里的svg文件,亮色暗色各一张，图片可以找网站在线转换为svg
 
-    //DS
+    //DS 默认不用改
     VITE_APP_PROD_WEB_URL: '',
 
-    //服务开发
+    //API服务、数据资产、接口管理
     VITE_APP_PROD_API_URL:'http://192.168.100.8:8187',
-
-    //资产管理
-    VITE_APP_PROD_ASSETS_URL:'http://192.168.100.8:8187',
 
     //血缘管理
     VITE_APP_PROD_BLOOD_URL:'http://192.168.100.8:7777',
-
-    //接口开发
-    VITE_APP_PROD_REST_URL:'http://192.168.100.8:8187',
 
     //是否展示服务开发 0否 1是
     SHOW_API:1,

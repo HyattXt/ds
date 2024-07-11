@@ -52,7 +52,6 @@ import basic from './basic.vue'
 import overview from './overview.vue'
 import { onMounted, ref} from "vue";
 import { useRoute, useRouter} from "vue-router";
-import axios from "axios";
 import {useMessage} from "naive-ui";
 import CrudHead from "@/components/cue/crud-header.vue";
 

@@ -24,9 +24,6 @@ import axios from "axios";
 export function renderCreateSql( item: IJsonItem, fields: { [field: string]: any }) {
     const { props } = isFunction(item) ? item() : item
     const message = useMessage()
-    const SecondDevCreateUrl = import.meta.env.MODE === 'development'
-        ? import.meta.env.VITE_APP_DEV_API_URL
-        : window.webConfig.VITE_APP_PROD_API_URL
     const formValue = ref({
         id: '',
         type: 0,
@@ -34,7 +31,7 @@ export function renderCreateSql( item: IJsonItem, fields: { [field: string]: any
     })
 
     function execute() {
-        let getSql = SecondDevCreateUrl+'/HDataApi/createTable/getCreateSql'
+        let getSql = utils.getUrl('HDataApi/createTable/getCreateSql')
         formValue.value.id = fields.dataSource
         formValue.value.type = parseInt(fields.dsType.replace('MYSQL',0).replace('ORACLE',5))
         formValue.value.tableName = fields.dsType=='ORACLE' || fields.dsType=='SQLSERVER' ? fields.sourceDatabase+'.'+fields.sourceTable : fields.sourceTable
