@@ -25,16 +25,13 @@ import {DeleteOutlined} from "@vicons/antd";
 export function renderExecuteSql( item: IJsonItem, fields: { [field: string]: any }) {
     const { props } = isFunction(item) ? item() : item
     const message = useMessage()
-    const SecondDevCreateUrl = import.meta.env.MODE === 'development'
-        ? import.meta.env.VITE_APP_DEV_API_URL
-        : window.webConfig.VITE_APP_PROD_API_URL
     const formValue = ref({
         id: '',
         sqlStr: ''
     })
 
     function execute() {
-        let getSql = SecondDevCreateUrl+'/HDataApi/createTable/excuteSql'
+        let getSql = utils.getUrl('HDataApi/createTable/excuteSql')
         formValue.value.id = fields.dataTarget
         formValue.value.sqlStr = fields.tableSql
             axios

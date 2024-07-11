@@ -26,6 +26,8 @@
           label-field="titleName"
           children-field="children"
           placeholder="请选择API目录"
+          :default-expanded-keys="[1]"
+          :render-prefix="menuIcon"
       />
     </n-form-item>
     <n-form-item label="请求方式" path="apiMethod">
@@ -70,26 +72,37 @@
 <script lang="ts" setup>
   import {useRoute} from "vue-router";
 
-  import { onMounted, ref} from 'vue'
+  import {h, onMounted, ref} from 'vue'
   import { useMessage } from 'naive-ui'
   import axios from 'axios'
+  import utils from "@/utils";
   const emit = defineEmits(['nextStep'])
   const form1Ref: any = ref(null)
   const folderData = ref([])
   const message = useMessage()
   const isDisable = ref(false)
   const route = useRoute()
-  const SecondDevApiUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL
-    : window.webConfig.VITE_APP_PROD_API_URL
-  const getApiTreeUrl = import.meta.env.MODE === 'development'
-      ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getApiTreeFloder'
-      : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getApiTreeFloder'
+  const getApiTreeUrl = utils.getUrl('HDataApi/interface/getApiTreeFloder')
+
+  const menuIcon = () => {
+    return h('svg', {
+      class: 'icon',
+      viewBox: '0 0 1260 1024',
+      xmlns: 'http://www.w3.org/2000/svg',
+      width: '19.688',
+      height: '16'
+    }, [
+      h('path', {
+        d: 'M1171.561 157.538H601.797L570.814 61.44A88.222 88.222 0 00486.794 0H88.747A88.747 88.747 0 000 88.747v846.506A88.747 88.747 0 0088.747 1024H1171.56a88.747 88.747 0 0088.747-88.747V246.285a88.747 88.747 0 00-88.747-88.747zm-1082.814 0V88.747h398.047l22.055 68.791z',
+        fill: '#0099CB'
+      })
+    ])
+  }
 
   let validatePath = (rule: any, value: any, callback: any) => {
     if (route.query.apiId == undefined) {
       return new Promise<void>((resolve, reject) => {
-        let url = SecondDevApiUrl+'/HDataApi/interface/getApiPath'
+        let url = utils.getUrl('HDataApi/interface/getApiPath')
         let body = { apiPath: value }
 
         //0存在，1不存在
@@ -113,7 +126,7 @@
   let validateName = (rule: any, value: any, callback: any) => {
     if (route.query.apiId == undefined) {
       return new Promise<void>((resolve, reject) => {
-        let url = SecondDevApiUrl+'/HDataApi/interface/getInterfaceInfoByApiName'
+        let url = utils.getUrl('HDataApi/interface/getInterfaceInfoByApiName')
         let body = { apiName: value }
 
         //0存在，1不存在
@@ -211,7 +224,7 @@
   }
 
   function getInitData() {
-    let url = SecondDevApiUrl+'/HDataApi/interface/getInterfaceInfoById'
+    let url = utils.getUrl('/HDataApi/interface/getInterfaceInfoById')
     let params = { apiId: '' }
     params.apiId = route.query.apiId
 

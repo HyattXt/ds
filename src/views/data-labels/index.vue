@@ -134,10 +134,9 @@ import MyChart from "@/components/chart/modules/MyChart";
 import TimeLine from "@/components/chart/modules/timeLine.vue";
 import 'echarts-wordcloud';
 import axios from "axios";
+import utils from "@/utils";
 
-const getLabelUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/dataBaseLabel/userPortrait'
-    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/dataBaseLabel/userPortrait'
+const getLabelUrl = utils.getUrl('HDataApi/dataBaseLabel/userPortrait')
 const tabActive = ref(false)
 const route = useRoute()
 const tagId = route.query.tagId

@@ -11,7 +11,6 @@
 </template>
 <script setup>
 
-import axios from 'axios'
 import { onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
 import {useMessage} from "naive-ui";
@@ -51,9 +50,7 @@ const columnsRef =[
   ]
 
 onMounted(() => {
-
-  fieldInfo.value = JSON.parse(history.state.fieldArray)
-  console.log(fieldInfo.value)
+  fieldInfo.value = JSON.parse(history.state.fieldArray) || []
 })
 </script>
 

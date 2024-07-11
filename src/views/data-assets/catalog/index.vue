@@ -126,6 +126,7 @@ import {useRouter} from "vue-router";
 import { CaretUp, CaretDown } from "@vicons/fa";
 import CrudHead from "@/components/cue/crud-header.vue"
 import {Add12Filled} from "@vicons/fluent";
+import utils from "@/utils";
 
 const TableData = reactive({
   tableList: [],
@@ -139,11 +140,9 @@ const TableData = reactive({
     const showSpin = ref(false)
     const message = useMessage()
     const treeFolder = ref([])
-    const expandedKeys = ref([]);
+    const expandedKeys = ref([1]);
     const pattern = ref('');
-    const getApiFolderUrl = import.meta.env.MODE === 'development'
-        ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface_lineage/getTreeAll'
-        : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface_lineage/getTreeAll'
+    const getApiFolderUrl = utils.getUrl('HDataApi/interface_lineage/getTreeAll')
     const paginationReactive = reactive({
       page: 1,
       pageSize: 30,
@@ -158,9 +157,7 @@ const TableData = reactive({
         sqlLineageName = '',
         apiTreeId = 1
     ) {
-      const url = import.meta.env.MODE === 'development'
-          ? import.meta.env.VITE_APP_DEV_ASSETS_URL+'/HDataApi/interface_lineage/getSqlLineageListByParams'
-          : window.webConfig.VITE_APP_PROD_ASSETS_URL+'/HDataApi/interface_lineage/getSqlLineageListByParams'
+      const url = utils.getUrl('HDataApi/interface_lineage/getSqlLineageListByParams')
       const params = {
         'pageNum': page,
         'pageSize': pageSize,
@@ -201,12 +198,10 @@ const TableData = reactive({
     }
 
     function handleMetadata() {
-      let url = import.meta.env.MODE === 'development'
-          ? import.meta.env.VITE_APP_DEV_ASSETS_URL+'/HDataApi/interface_lineage/sqlLineageExcute'
-          : window.webConfig.VITE_APP_PROD_ASSETS_URL+'/HDataApi/interface_lineage/sqlLineageExcute'
+      let url = utils.getUrl('/HDataApi/interface_lineage/sqlLineageExcute')
       axios
           .get(url)
-          .then(function (response) {
+          .then(function () {
 
             loadingMeta.value = true
             message.info('采集中，请稍后查看')
@@ -271,26 +266,46 @@ const TableData = reactive({
       }
     }
 
-    function menuIcon({ option }) {
-      switch (option.type) {
-        case 1 : return  h(NIcon, {
-          color: '#0099CB'
-        }, [
-          h('svg', {
-            xmlns: 'http://www.w3.org/2000/svg',
-            viewBox: '0 0 1260 1024',
-            width: ' 19.688',
-            height: '16'
-          }, [
-            h('path', {
-              d: 'M1171.561 157.538H601.797L570.814 61.44A88.222 88.222 0 00486.794 0H88.747A88.747 88.747 0 000 88.747v846.506A88.747 88.747 0 0088.747 1024H1171.56a88.747 88.747 0 0088.747-88.747V246.285a88.747 88.747 0 00-88.747-88.747zm-1082.814 0V88.747h398.047l22.055 68.791z'
-            })
-          ])
-        ])
-        case 2 : return h(NIcon, {color: '#0099CB'}, { default: () => h(ApartmentOutlined) })
-        default : return h(NIcon, {color: '#0099CB'}, { default: () => h(TableOutlined) })
-      }
-    }
+function menuIcon({ option }) {
+  switch (option.type) {
+    case 1:
+      return h(
+          NIcon,
+          {
+            color: '#0099CB'
+          },
+          {
+            default: () =>
+                h(
+                    'svg',
+                    {
+                      xmlns: 'http://www.w3.org/2000/svg',
+                      viewBox: '0 0 1260 1024',
+                      width: ' 19.688',
+                      height: '16'
+                    },
+                    [
+                      h('path', {
+                        d: 'M1171.561 157.538H601.797L570.814 61.44A88.222 88.222 0 00486.794 0H88.747A88.747 88.747 0 000 88.747v846.506A88.747 88.747 0 0088.747 1024H1171.56a88.747 88.747 0 0088.747-88.747V246.285a88.747 88.747 0 00-88.747-88.747zm-1082.814 0V88.747h398.047l22.055 68.791z'
+                      })
+                    ]
+                )
+          }
+      )
+    case 2:
+      return h(
+          NIcon,
+          { color: '#0099CB' },
+          { default: () => h(ApartmentOutlined) }
+      )
+    default:
+      return h(
+          NIcon,
+          { color: '#0099CB' },
+          { default: () => h(TableOutlined) }
+      )
+  }
+}
 
     onMounted(() => {
       getApiFolder()

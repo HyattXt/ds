@@ -20,6 +20,7 @@ import type { IJsonItem } from '../types'
 import { onMounted, ref} from "vue";
 import axios from "axios";
 import {useMessage} from "naive-ui";
+import utils from "@/utils";
 
 export function useHttp(model: { [field: string]: any }): IJsonItem[] {
   const { t } = useI18n()
@@ -44,12 +45,9 @@ export function useHttp(model: { [field: string]: any }): IJsonItem[] {
   ]
 
   const restOptions = ref([] as { label: string; value: number }[])
-  const restUrl = import.meta.env.MODE === 'development'
-      ? import.meta.env.VITE_APP_DEV_REST_URL
-      : window.webConfig.VITE_APP_PROD_REST_URL
 
   function queryRestSourceList() {
-    let restOptionUrl = restUrl+'/HDataApi/httpHandle/getHttpDataListByParams'
+    let restOptionUrl =utils.getUrl('HDataApi/httpHandle/getHttpDataListByParams')
     const params = {
       'pageNum': 1,
       'pageSize': 100,

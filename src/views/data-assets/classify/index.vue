@@ -149,6 +149,7 @@
               check-strictly
               style="width: 240px"
               popper-class="form-item-select"
+              :render-content="renderContent"
           />
         </el-form-item>
       </el-form>
@@ -208,6 +209,7 @@
                     check-strictly
                     style="width: 240px"
                     popper-class="form-item-select"
+                    :render-content="renderContent"
                 />
               </el-form-item>
               <el-button color="#0099CB" type="primary" size="default" style="height: 24px;font-size: 12px;margin-bottom: 8px;"
@@ -265,6 +267,7 @@
                     check-strictly
                     style="width: 240px"
                     popper-class="form-item-select"
+                    :render-content="renderContent"
                 />
               </el-form-item>
               <el-button color="#0099CB" type="primary" size="default" style="height: 24px;font-size: 12px;margin-bottom: 8px;"
@@ -329,6 +332,7 @@ import {Search} from "@element-plus/icons-vue";
 import {ElMessageBox} from "element-plus";
 import { CaretUp, CaretDown, PencilAlt, TrashAlt } from '@vicons/fa'
 import {Add12Filled} from "@vicons/fluent";
+import utils from '@/utils'
 
 const TableData = reactive({
   tableList: [],
@@ -374,24 +378,12 @@ const activeName = ref('first')
 const currentRow = ref()
 const showAssetOperation = ref(false)
 const ifDisableDelete = ref(true)
-const getCatalogFolderUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/dataCatalog/getDataCatalogTreeFloder'
-    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/dataCatalog/getDataCatalogTreeFloder'
-const addCatalogTreeUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/dataCatalog/insertDataCatalogTree'
-    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/dataCatalog/insertDataCatalogTree'
-const updateCatalogTreeUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/dataCatalog/updateDataCatalogFolderRename'
-    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/dataCatalog/updateDataCatalogFolderRename'
-const delCatalogTreeUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/dataCatalog/deleteDataCatalogTree'
-    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/dataCatalog/deleteDataCatalogTree'
-const insertCatalogDetailUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/dataCatalog/insert'
-    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/dataCatalog/insert'
-const delCatalogDetailUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/dataCatalog/delete'
-    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/dataCatalog/delete'
+const getCatalogFolderUrl = utils.getUrl('HDataApi/dataCatalog/getDataCatalogTreeFloder')
+const addCatalogTreeUrl = utils.getUrl('HDataApi/dataCatalog/insertDataCatalogTree')
+const updateCatalogTreeUrl = utils.getUrl('HDataApi/dataCatalog/updateDataCatalogFolderRename')
+const delCatalogTreeUrl = utils.getUrl('HDataApi/dataCatalog/deleteDataCatalogTree')
+const insertCatalogDetailUrl = utils.getUrl('HDataApi/dataCatalog/insert')
+const delCatalogDetailUrl = utils.getUrl('HDataApi/dataCatalog/delete')
 const  folderProps = {
   children: 'children',
   label: 'titleName',
@@ -477,6 +469,31 @@ const initialApiDetailPagination = {
   applicationScenarios: '',
   selectedMenu: 1
 }
+const renderContent = (h, { data }) => {
+  return h('div',{style: {display: 'flex', alignItems: 'center'}},[
+    h('svg', {
+      class: 'icon',
+      viewBox: '0 0 1260 1024',
+      xmlns: 'http://www.w3.org/2000/svg',
+      width: '16',
+      height: '16'
+    }, [
+      h('path', {
+        d: 'M1171.561 157.538H601.797L570.814 61.44A88.222 88.222 0 00486.794 0H88.747A88.747 88.747 0 000 88.747v846.506A88.747 88.747 0 0088.747 1024H1171.56a88.747 88.747 0 0088.747-88.747V246.285a88.747 88.747 0 00-88.747-88.747zm-1082.814 0V88.747h398.047l22.055 68.791z',
+        fill: '#0099CB'
+      })
+    ]),
+    h(
+        'span',
+        {
+          style: {
+            'padding-left': '5px',
+          },
+        },
+        data.titleName
+    )
+  ])
+}
 function query(
     page,
     pageSize = 30,
@@ -484,9 +501,7 @@ function query(
     assetType = '',
     apiTreeId = 1
 ) {
-  const url = import.meta.env.MODE === 'development'
-      ? import.meta.env.VITE_APP_DEV_ASSETS_URL+'/HDataApi/dataCatalog/getList'
-      : window.webConfig.VITE_APP_PROD_ASSETS_URL+'/HDataApi/dataCatalog/getList'
+  const url = utils.getUrl('HDataApi/dataCatalog/getList')
   const params = {
     'pageNum': page,
     'pageSize': pageSize,
@@ -539,9 +554,7 @@ function detailQuery(
     tableDataRow = '',
     tableUpdateTime = ''
 ) {
-  const url = import.meta.env.MODE === 'development'
-      ? import.meta.env.VITE_APP_DEV_ASSETS_URL+'/HDataApi/dataCatalog/queryDataSet'
-      : window.webConfig.VITE_APP_PROD_ASSETS_URL+'/HDataApi/dataCatalog/queryDataSet'
+  const url = utils.getUrl('HDataApi/dataCatalog/queryDataSet')
   const params = {
     'apiName':apiName,
     'tableDataRow':tableDataRow,
@@ -594,9 +607,7 @@ function apiDetailQuery(
     apiTimeConsuming= '',
     interfaceNum= ''
 ) {
-  const url = import.meta.env.MODE === 'development'
-      ? import.meta.env.VITE_APP_DEV_ASSETS_URL+'/HDataApi/dataCatalog/queryApiService'
-      : window.webConfig.VITE_APP_PROD_ASSETS_URL+'/HDataApi/dataCatalog/queryApiService'
+  const url = utils.getUrl('HDataApi/dataCatalog/queryApiService')
   const params = {
     'apiName': apiName,
     'dataCatalogType': dataCatalogType,

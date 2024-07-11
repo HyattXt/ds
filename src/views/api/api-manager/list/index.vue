@@ -15,6 +15,8 @@
               children-field="children"
               placeholder="请选择"
               size="small"
+              :default-expanded-keys="[1]"
+              :render-prefix="menuIcon"
           />
         </n-form-item-gi>
         <n-form-item-gi
@@ -143,6 +145,7 @@ import CrudForm from "@/components/cue/crud-form.vue";
 import CrudSplit from "@/components/cue/crud-split.vue";
 import router from "@/router";
 import CrudPage from "@/components/cue/crud-page.vue";
+import utils from "@/utils";
 
 hljs.registerLanguage('javascript', javascript)
 
@@ -266,9 +269,7 @@ const statusOptions = [
   }
 ]
 
-const getApiTreeUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getApiTreeFloder'
-    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getApiTreeFloder'
+const getApiTreeUrl = utils.getUrl('HDataApi/interface/getApiTreeFloder')
 const dataRef = ref([])
 const loadingRef = ref(false)
 const showModal = ref(false)
@@ -285,13 +286,25 @@ const actAuth = (row) => {
   queryUser()
 }
 const message = useMessage()
+
+const menuIcon = () => {
+  return h('svg', {
+    class: 'icon',
+    viewBox: '0 0 1260 1024',
+    xmlns: 'http://www.w3.org/2000/svg',
+    width: '19.688',
+    height: '16'
+  }, [
+    h('path', {
+      d: 'M1171.561 157.538H601.797L570.814 61.44A88.222 88.222 0 00486.794 0H88.747A88.747 88.747 0 000 88.747v846.506A88.747 88.747 0 0088.747 1024H1171.56a88.747 88.747 0 0088.747-88.747V246.285a88.747 88.747 0 00-88.747-88.747zm-1082.814 0V88.747h398.047l22.055 68.791z',
+      fill: '#0099CB'
+    })
+  ])
+}
+
 function queryUser() {
-  const listUrl = import.meta.env.MODE === 'development'
-      ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getUser'
-      : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getUser'
-  const authListUrl = import.meta.env.MODE === 'development'
-      ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getAuthorizeInfo'
-      : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getAuthorizeInfo'
+  const listUrl = utils.getUrl('HDataApi/interface/getUser')
+  const authListUrl = utils.getUrl('HDataApi/interface/getAuthorizeInfo')
   axios.get(listUrl).then(function (response) {
     userList.value = response.data.data
     userList.value = userList.value.map((item) => {
@@ -376,9 +389,7 @@ function handlePageChange(currentPage, pageSize) {
 
 function query(page, pageSize = 10, apiName = '', apiFlag = '', apiStatus = '', apiPath = '', apiTreeId = '') {
   return new Promise((resolve) => {
-    const url = import.meta.env.MODE === 'development'
-        ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getList'
-        : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getList'
+    const url = utils.getUrl('HDataApi/interface/getList')
     const params = {
       pageNum: page, 'pageSize': pageSize, 'apiName': apiName, 'apiFlag': apiFlag, 'apiStatus': apiStatus, 'apiPath': apiPath, 'apiTreeId': apiTreeId,
       order: 'api_create_time', 'sort': 'desc'
@@ -401,9 +412,7 @@ function query(page, pageSize = 10, apiName = '', apiFlag = '', apiStatus = '', 
 }
 
 function subAuth() {
-  let subUrl = import.meta.env.MODE === 'development'
-      ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/insertAuthorizeInfo'
-      : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/insertAuthorizeInfo'
+  let subUrl = utils.getUrl('HDataApi/interface/insertAuthorizeInfo')
   let requestBody = {
     apiId: drawId.value,
     'authorizeId': apiAuthorizer.value
@@ -435,9 +444,7 @@ const columnsRef = ref(
           pub(row) {
             if (row.apiStatus === '待发布') {
               if (row.apiFlag === '接口开发') {
-                let urlPub = import.meta.env.MODE === 'development'
-                    ? import.meta.env.VITE_APP_DEV_API_URL+`/HDataApi/interface-ui/api/publish?id=${row.apiId}`
-                    : window.webConfig.VITE_APP_PROD_API_URL+`/HDataApi/interface-ui/api/publish?id=${row.apiId}`
+                let urlPub = utils.getUrl(`HDataApi/interface-ui/api/publish?id=${row.apiId}`)
                 let pubPar = {
                   id: ''
                 }
@@ -450,9 +457,7 @@ const columnsRef = ref(
                   console.log(error)
                 })
               } else {
-                let urlPub = import.meta.env.MODE === 'development'
-                    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/upAndDownLines'
-                    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/upAndDownLines'
+                let urlPub = utils.getUrl('HDataApi/interface/upAndDownLines')
                 let pubPar = {
                   apiId: '',
                   apiStatus: 1
@@ -467,9 +472,7 @@ const columnsRef = ref(
                 })
               }
             } else {
-              let urlPub = import.meta.env.MODE === 'development'
-                  ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/upAndDownLines'
-                  : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/upAndDownLines'
+              let urlPub = utils.getUrl('HDataApi/interface/upAndDownLines')
               let pubPar = {
                 apiId: '',
                 apiStatus: 0

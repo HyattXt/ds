@@ -22,6 +22,7 @@ import styles from "../index.module.scss";
 import jsPlumb from 'jsplumb'
 import axios from "axios";
 import { querySqlColum } from '@/service/modules/task-definition'
+import utils from "@/utils";
 
 export function useColumnJsplumb(
   model: { [field: string]: any },
@@ -35,17 +36,8 @@ export function useColumnJsplumb(
 
     const message = useMessage()
     const jsplumb = jsPlumb.jsPlumb
-    const SecondDevQueryUrl = import.meta.env.MODE === 'development'
-        ? import.meta.env.VITE_APP_DEV_API_URL
-        : window.webConfig.VITE_APP_PROD_API_URL
     let plumbins = null // 缓存实例化的jsplumb对象
-    let connection = []
-    let connectionList = [] //手动维护一个关系
-    let info = {}
 
-    const state = reactive({
-        formRef: ref()
-    })
     const formSource = ref({
         id: 1,
         type: 0,
@@ -66,7 +58,7 @@ export function useColumnJsplumb(
     function execute() {
         Disassociate()
         init()
-        let getCol = SecondDevQueryUrl + '/HDataApi/apiService/getColumnsByTable'
+        let getCol = utils.getUrl('HDataApi/apiService/getColumnsByTable')
         formTarget.value.id = model['dataTarget']
         formTarget.value.type = parseInt(model['dtType'].replace('MYSQL', 0).replace('ORACLE', 5).replace('SQLSERVER', 6).replace('POSTGRESQL', 1))
         formTarget.value.tableName = model['dtType'] == 'ORACLE' || model['dtType'] == 'SQLSERVER' || model['dtType'] == 'POSTGRESQL' ? model['targetDatabase'] + '.' + model['targetTable'] : model['targetTable']

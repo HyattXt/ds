@@ -749,6 +749,8 @@ export default defineComponent({
                                     label-field="titleName"
                                     v-model:value={variables.value.model.parentId}
                                     filterable
+                                    default-expanded-keys={[1]}
+                                    render-prefix={menuIcon}
                                 />
                             </n-form-item>
                         </n-form>
@@ -802,6 +804,8 @@ export default defineComponent({
                                         label-field="titleName"
                                         v-model:value={variables.value.moveFolderModel.parentId}
                                         filterable
+                                        default-expanded-keys={[1]}
+                                        render-prefix={menuIcon}
                                     />
                                 </n-form-item>
                             </n-form>
@@ -838,6 +842,8 @@ export default defineComponent({
                                         label-field="titleName"
                                         v-model:value={workflowModel.value.parentId}
                                         filterable
+                                        default-expanded-keys={[1]}
+                                        render-prefix={menuIcon}
                                     />
                                 </n-form-item>
                             </n-form>
@@ -892,6 +898,8 @@ export default defineComponent({
                                         label-field="titleName"
                                         v-model:value={variables.value.moveWorkflowModel.parentId}
                                         filterable
+                                        default-expanded-keys={[1]}
+                                        render-prefix={menuIcon}
                                     />
                                 </n-form-item>
                             </n-form>

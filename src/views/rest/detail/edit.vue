@@ -198,6 +198,8 @@ import axios from 'axios'
 import {keys, values} from "lodash";
 import {useRoute, useRouter} from "vue-router";
 import CrudHeader from "@/components/cue/crud-header.vue";
+import utils from "@/utils";
+
 const form1Ref: any = ref(null)
 const message = useMessage()
 const formValue = ref({
@@ -228,9 +230,6 @@ const ifDynamicParameter =ref()
 const listSource = ref([])
 const route = useRoute()
 const router = useRouter()
-const httpInsertUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_REST_URL
-    : window.webConfig.VITE_APP_PROD_REST_URL
 
 const rules = {
   taskName: {
@@ -293,7 +292,7 @@ const dataTokenTypeOptions = ref([
 ])
 
 function formSubmit() {
-  let insUrl = httpInsertUrl+'/HDataApi/httpHandle/updateHttpData'
+  let insUrl = utils.getUrl('HDataApi/httpHandle/updateHttpData')
   formValue.value.dataKey = {}
   formValue.value.dataUser = {}
   formValue.value.dataParam = {}
@@ -340,7 +339,7 @@ function formSubmit() {
 }
 
 function queryDataSource() {
-  let queryUrl = httpInsertUrl+'/HDataApi/httpHandle/getDataSource?type=0'
+  let queryUrl = utils.getUrl('HDataApi/httpHandle/getDataSource?type=0')
 
   axios.get(queryUrl).then(function (response) {
 
@@ -349,7 +348,7 @@ function queryDataSource() {
 }
 
 onMounted(() => {
-  let url = httpInsertUrl+'/HDataApi/httpHandle/getHttpDataById'
+  let url = utils.getUrl(+'HDataApi/httpHandle/getHttpDataById')
   let params = { id: '' }
   params.id = route.query.id
   formValue.value.id = route.query.id

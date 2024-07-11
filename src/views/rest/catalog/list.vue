@@ -57,6 +57,7 @@ import CrudForm from "@/components/cue/crud-form.vue";
 import CrudPage from "@/components/cue/crud-page.vue";
 import CrudHeader from "@/components/cue/crud-header.vue";
 import {Search} from "@element-plus/icons-vue";
+import utils from "@/utils";
 
 const columns = ({ edit }, {del}) => {
   return [
@@ -112,7 +113,7 @@ const columns = ({ edit }, {del}) => {
                           {
                             circle: true,
                             type: 'info',
-                            size: 'tiny',
+                            size: 'small',
                             class: 'edit',
                             onClick: () => {
                               edit(row)
@@ -145,7 +146,7 @@ const columns = ({ edit }, {del}) => {
                                     {
                                       circle: true,
                                       type: 'error',
-                                      size: 'tiny',
+                                      size: 'small',
                                       class: 'delete'
                                     },
                                     {
@@ -182,9 +183,7 @@ function query(
     taskName = ''
 ) {
   return new Promise((resolve) => {
-    const url = import.meta.env.MODE === 'development'
-        ? import.meta.env.VITE_APP_DEV_REST_URL+'/HDataApi/httpHandle/getHttpDataListByParams'
-        : window.webConfig.VITE_APP_PROD_REST_URL+'/HDataApi/httpHandle/getHttpDataListByParams'
+    const url = utils.getUrl('HDataApi/httpHandle/getHttpDataListByParams')
     const params = {
       'pageNum': page,
       'pageSize': pageSize,
@@ -237,9 +236,7 @@ function query(
             },
             {
               del(row) {
-                let urlDel = import.meta.env.MODE === 'development'
-                    ? import.meta.env.VITE_APP_DEV_REST_URL+'/HDataApi/httpHandle/deleteHttpDataById'
-                    : window.webConfig.VITE_APP_PROD_REST_URL+'/HDataApi/httpHandle/deleteHttpDataById'
+                let urlDel = utils.getUrl('HDataApi/httpHandle/deleteHttpDataById')
                 let delPar = {
                   id: null
                 }

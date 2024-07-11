@@ -24,6 +24,7 @@ import axios from 'axios'
 import { onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
 import {useMessage} from "naive-ui";
+import utils from "@/utils";
 
 const dataInfo =ref([])
 const route = useRoute()
@@ -31,9 +32,7 @@ const message = useMessage()
 const tableName = ref(history.state.tableName)
 
 onMounted(() => {
-  const url = import.meta.env.MODE === 'development'
-      ? import.meta.env.VITE_APP_DEV_ASSETS_URL+'/HDataApi/interface_lineage/getTableDataByTableName'
-      : window.webConfig.VITE_APP_PROD_ASSETS_URL+'/HDataApi/interface_lineage/getTableDataByTableName'
+  const url = utils.getUrl('HDataApi/interface_lineage/getTableDataByTableName')
   let params ={
     tableName: history.state.tableName
   }

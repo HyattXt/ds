@@ -197,6 +197,8 @@ import axios from 'axios'
 import {keys, values} from "lodash";
 import {useRouter} from "vue-router";
 import CrudHeader from "@/components/cue/crud-header.vue";
+import utils from "@/utils";
+
 const form1Ref: any = ref(null)
 const message = useMessage()
 const formValue = ref({
@@ -225,13 +227,10 @@ const dynamicParameterTmp = ref([])
 const ifDynamicParameter =ref(false)
 const listSource = ref([])
 const router = useRouter()
-const httpInsertUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_REST_URL
-    : window.webConfig.VITE_APP_PROD_REST_URL
 
 let validatePath = (rule: any, value: any, callback: any) => {
   return new Promise<void>((resolve, reject) => {
-    let url = httpInsertUrl+'/HDataApi/httpHandle/getHttpDataByTaskName'
+    let url = utils.getUrl('HDataApi/httpHandle/getHttpDataByTaskName')
     let body = { taskName: value }
 
     //0存在，1不存在
@@ -318,7 +317,7 @@ const dataTokenTypeOptions = ref([
 ])
 
 function formSubmit() {
-  let insUrl = httpInsertUrl+'/HDataApi/httpHandle/insertHttpData'
+  let insUrl = utils.getUrl('HDataApi/httpHandle/insertHttpData')
 
   for(let i=0;i<dataKeyTmp.value.length; i++){
     formValue.value.dataKey[dataKeyTmp.value[i].value]=dataKeyTmp.value[i].key
@@ -363,7 +362,7 @@ function formSubmit() {
 
 
 function queryDataSource() {
-  let queryUrl = httpInsertUrl+'/HDataApi/httpHandle/getDataSource?type=0'
+  let queryUrl = utils.getUrl('HDataApi/httpHandle/getDataSource?type=0')
 
   axios.get(queryUrl).then(function (response) {
 

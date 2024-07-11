@@ -29,12 +29,11 @@
   import CrudHeader from "@/components/cue/crud-header.vue";
   import {useRoute} from "vue-router";
   import {useMessage} from "naive-ui";
-
+  import utils from "@/utils";
 
   const currentTab = ref(1)
   const currentStatus = ref('process')
   const message = useMessage()
-  const SecondDevApiUrl = import.meta.env.MODE === 'development' ? import.meta.env.VITE_APP_DEV_API_URL : window.webConfig.VITE_APP_PROD_API_URL
   const params = ref({
     apiName: '',
     apiPath: '',
@@ -66,7 +65,7 @@
   }
 
   function nextStep2(responseDemo, responseStatusArray) {
-    let insUrl = SecondDevApiUrl+ (!!route.query.apiId ? '/HDataApi/interface/update' : '/HDataApi/interface/insert')
+    let insUrl = utils.getUrl( (!!route.query.apiId ? '/HDataApi/interface/update' : '/HDataApi/interface/insert') )
     params.value.responseDemo = responseDemo
     params.value.responseStatusArray = responseStatusArray
 
