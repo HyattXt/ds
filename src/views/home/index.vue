@@ -8,7 +8,7 @@
             referrerpolicy="no-referrer"
         />
         <div class="text-wrapper flex-col justify-between">
-          <span class="text_number" @click="handleClick('datasource')">16</span> <span class="text_title">数据连接</span>
+          <span class="text_number" @click="handleClick('datasource')">{{ data.dataSourceNum }}</span> <span class="text_title">数据连接</span>
         </div>
         <img
             :src="topImagePath.two"
@@ -16,7 +16,7 @@
             referrerpolicy="no-referrer"
         />
         <div class="text-wrapper flex-col justify-between">
-          <span class="text_number" @click="handleClick('api')">8</span> <span class="text_title">数据服务</span>
+          <span class="text_number" @click="handleClick('api')">{{ data.interfaceNum }}</span> <span class="text_title">数据服务</span>
         </div>
         <img
             :src="topImagePath.three"
@@ -24,7 +24,7 @@
             referrerpolicy="no-referrer"
         />
         <div class="text-wrapper flex-col justify-between">
-          <span class="text_number" @click="handleClick('dataElement')">1</span> <span class="text_title">数据元</span>
+          <span class="text_number" @click="handleClick('dataElement')">{{ data.dataElementNum }}</span> <span class="text_title">数据元</span>
         </div>
         <img
             :src="topImagePath.four"
@@ -32,7 +32,7 @@
             referrerpolicy="no-referrer"
         />
         <div class="text-wrapper flex-col justify-between">
-          <span class="text_number" @click="handleClick('dataModel')">8</span> <span class="text_title">数据模型</span>
+          <span class="text_number" @click="handleClick('dataModel')">{{ data.dataModel }}</span> <span class="text_title">数据模型</span>
         </div>
         <img
             :src="topImagePath.five"
@@ -40,7 +40,7 @@
             referrerpolicy="no-referrer"
         />
         <div class="text-wrapper flex-col justify-between">
-          <span class="text_number" @click="handleClick('workFlow')">8</span> <span class="text_title">任务流</span>
+          <span class="text_number" @click="handleClick('workFlow')">{{ data.processNum }}</span> <span class="text_title">任务流</span>
         </div>
         <img
             :src="topImagePath.six"
@@ -48,7 +48,7 @@
             referrerpolicy="no-referrer"
         />
         <div class="text-wrapper flex-col justify-between">
-          <span class="text_number" @click="handleClick('workInstance')">1</span> <span class="text_title">任务实例</span>
+          <span class="text_number" @click="handleClick('workInstance')">{{ data.taskNum }}</span> <span class="text_title">任务实例</span>
         </div>
         <img
             :src="topImagePath.seven"
@@ -56,7 +56,7 @@
             referrerpolicy="no-referrer"
         />
         <div class="text-wrapper flex-col justify-between">
-          <span class="text_number" @click="handleClick('dataAsset')">1</span> <span class="text_title">数据资产</span>
+          <span class="text_number" @click="handleClick('dataAsset')">{{ data.assetsNum }}</span> <span class="text_title">数据资产</span>
         </div>
         <div class="box_4 flex-col"></div>
       </div>
@@ -172,14 +172,16 @@
   </div>
 </template>
 <script setup>
-import {onMounted} from "vue";
+import {onMounted, ref} from "vue";
 import {useLogin} from "@/views/login/use-login";
 import {useUserStore} from "@/store/user/user";
 import {useRouter} from "vue-router";
+import {getDatasourceHome} from "@/service/modules/data-source";
 
 const userStore = useUserStore()
 const router = useRouter()
 const { loginNew } = useLogin(userStore)
+const data = ref({})
 const loopData0 = [
   {
     lanhuimage0:
@@ -267,7 +269,9 @@ const topImagePath = {
   seven: `${import.meta.env.BASE_URL}images/home/7.png`
 }
 
-const initData = () => {}
+const initData = async () => {
+  data.value = await getDatasourceHome()
+}
 
 const handleClick = (type) => {
   switch (type) {
@@ -285,13 +289,13 @@ const handleClick = (type) => {
       break
     case 'dataElement':
       router.push({
-        path: '/data-assets/assets-catalog',
+        path: '/data-assets/data-standard/standard-list',
         query: {back: true}
       })
       break
     case 'dataModel':
       router.push({
-        path: '/data-assets/assets-classify',
+        path: '/data-assets/data-standard/model-list',
         query: {back: true}
       })
       break
@@ -318,9 +322,7 @@ const handleClick = (type) => {
 
 const ssoLogin = async () => {
   await loginNew()
-  if (userStore.sessionId){
-    initData()
-  }
+  initData()
 }
 
 onMounted(() => {
