@@ -731,6 +731,7 @@ export default defineComponent({
                         <n-form
                             ref={formRef}
                             label-placement="left"
+                            require-mark-placement="left"
                             label-width="auto"
                             rules={rules}
                             model={variables}
@@ -768,6 +769,7 @@ export default defineComponent({
                             <n-form
                                 ref={formRef}
                                 label-placement="left"
+                                require-mark-placement="left"
                                 label-width="auto"
                                 rules={rules}
                                 model={variables}
@@ -793,6 +795,7 @@ export default defineComponent({
                     >
                             <n-form
                                 label-placement="left"
+                                require-mark-placement="left"
                                 label-width="auto"
                                 rules={rules}
                                 model={variables}
@@ -824,6 +827,7 @@ export default defineComponent({
                             <n-form
                                 ref={formRef}
                                 label-placement="left"
+                                require-mark-placement="left"
                                 label-width="auto"
                                 rules={rules}
                                 model={workflowModel}
@@ -862,6 +866,7 @@ export default defineComponent({
                             <n-form
                                 ref={formRef}
                                 label-placement="left"
+                                require-mark-placement="left"
                                 label-width="auto"
                                 rules={rules}
                                 model={variables}
@@ -887,6 +892,7 @@ export default defineComponent({
                     >
                             <n-form
                                 label-placement="left"
+                                require-mark-placement="left"
                                 label-width="auto"
                                 rules={rules}
                                 model={variables}

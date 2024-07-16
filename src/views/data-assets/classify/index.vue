@@ -835,8 +835,8 @@ function renderSuffix({ option }) {
               ),
           default: () =>
               h('div', [
-                h('div', h(NButton, { onClick: () => updateTree(option.id, option.parentId), quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h(NIcon,{ text: true ,size: '12'}, h(PencilAlt) ),default: () =>"修改"} )),
-                h('div', h(NButton, { onClick: () => delTreeConfirm(option.id, option.titleName), disabled: option.children.length !== 0, quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h(NIcon,{ text: true ,size: '12'}, h(TrashAlt) ),default: () =>"删除"} ))
+                h('div', h(NButton, { onClick: () => updateTree(option.id, option.parentId), quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h(NIcon,{ text: true ,size: '12'}, {default: () => h(PencilAlt)} ),default: () =>"修改"} )),
+                h('div', h(NButton, { onClick: () => delTreeConfirm(option.id, option.titleName), disabled: option.children.length !== 0, quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h(NIcon,{ text: true ,size: '12'}, {default: () => h(TrashAlt)} ),default: () =>"删除"} ))
               ])
         }
     )
@@ -1019,7 +1019,7 @@ function menuIcon({ option }) {
   switch (option.type) {
     case 1 : return  h(NIcon, {
       color: '#0099CB'
-    }, [
+    }, { default: () => [
       h('svg', {
         xmlns: 'http://www.w3.org/2000/svg',
         viewBox: '0 0 1260 1024',
@@ -1030,7 +1030,7 @@ function menuIcon({ option }) {
           d: 'M1171.561 157.538H601.797L570.814 61.44A88.222 88.222 0 00486.794 0H88.747A88.747 88.747 0 000 88.747v846.506A88.747 88.747 0 0088.747 1024H1171.56a88.747 88.747 0 0088.747-88.747V246.285a88.747 88.747 0 00-88.747-88.747zm-1082.814 0V88.747h398.047l22.055 68.791z'
         })
       ])
-    ])
+    ]})
     case 2 : return h(NIcon, {color: '#0099CB'}, { default: () => h(ApartmentOutlined) })
     default : return h(NIcon, {color: '#0099CB'}, { default: () => h(TableOutlined) })
   }

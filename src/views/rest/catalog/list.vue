@@ -255,6 +255,7 @@ function query(
       pageCount: 1,
       pageSize: 30,
       taskName: '',
+      itemCount: 0
     })
 
     function handlePageChange(currentPage, pageSize) {

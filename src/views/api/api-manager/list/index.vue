@@ -503,7 +503,9 @@ const paginationReactive = reactive({
   apiFlag: null,
   apiStatus: null,
   apiPath: '',
-  apiTreeId: ''
+  apiTreeId: '',
+  itemCount: 0
+
 })
 function getTreeFolder ()  {
   axios.get(getApiTreeUrl).then((res) => {

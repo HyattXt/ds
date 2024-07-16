@@ -5,6 +5,7 @@
     :model="formValue"
     :rules="rules"
     label-placement="left"
+    require-mark-placement="left"
     style="margin: 40px 80px 0 80px"
   >
     <n-form-item label="服务名称" path="apiName">

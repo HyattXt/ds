@@ -237,7 +237,7 @@
       prop: 'addFlag',
       width: 120,
       slots: (row) => {
-        return row.addFlag === 2 ? '否' : '是'
+        return h('span',row.addFlag === 2 ? '否' : '是')
       }
     },
     {
@@ -504,7 +504,7 @@
                   },
                   {
                     icon: () =>
-                      h(NIcon, { text: true, size: '12' }, h(PencilAlt)),
+                      h(NIcon, { text: true, size: '12' }, {default: () => h(PencilAlt)}),
                     default: () => '修改'
                   }
                 )
@@ -827,9 +827,7 @@
     apiStatus: null,
     apiPath: '',
     apiTreeId: '',
-    prefix({ itemCount }) {
-      return `共${itemCount}条`
-    }
+    itemCount: 0
   })
   onMounted(() => {
     getTreeFolder()

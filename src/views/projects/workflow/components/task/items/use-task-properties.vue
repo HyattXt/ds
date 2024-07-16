@@ -83,7 +83,7 @@ onMounted( () => {
 </script>
 
 <template>
-  <NForm :disabled="props.disabled" size="small" label-placement="left" label-align="right" label-width="120" :rules="rules" :model="taskProperModel" ref="formRef">
+  <NForm :disabled="props.disabled" size="small" label-placement="left" require-mark-placement="left" label-align="right" label-width="120" :rules="rules" :model="taskProperModel" ref="formRef">
   <NGrid x-gap="10">
     <NFormItemGi
         v-for="element in elements"

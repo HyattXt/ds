@@ -7,6 +7,7 @@
         :model="formValue"
         :rules="rules"
         label-placement="left"
+        require-mark-placement="left"
         style="max-width: 1000px; margin: 40px auto 0 80px"
     >
       <n-space justify="space-between">
@@ -67,6 +68,7 @@
         :model="formValue"
         :rules="rules"
         label-placement="left"
+        require-mark-placement="left"
         style="max-width: 1000px; margin: 40px auto 0 80px"
     >
       <n-space justify="space-between">
@@ -134,6 +136,7 @@
         :model="formValue"
         :rules="rules"
         label-placement="left"
+        require-mark-placement="left"
         style="max-width: 1000px; margin: 40px auto 0 80px"
     >
       <n-space justify="space-between">
@@ -169,6 +172,7 @@
         :model="formValue"
         :rules="rules"
         label-placement="left"
+        require-mark-placement="left"
         style="max-width: 1000px; margin: 40px auto 0 80px"
     >
       <n-form-item path="dataKey">

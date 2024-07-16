@@ -147,12 +147,13 @@
         </div>
       </template>
     </el-dialog>
-    <el-dialog :before-close="metaDialogVisible" v-model="active" append-to-body>
+    <el-dialog :before-close="metaDialogVisible" v-model="active" append-to-body class="model-form-wrapper">
       <template #header> {{ indexFormValue.opperate }} </template>
         <n-form
             :size="'small'"
             :model='indexFormValue'
             label-placement="left"
+            require-mark-placement="left"
             :label-width="100"
             ref="formRef"
             :rules="rules"
@@ -320,6 +321,7 @@
         <n-form
             ref="formRef"
             label-placement="left"
+            require-mark-placement="left"
             label-width="auto"
             :rules="rules"
             :model="indexFormValue"
@@ -572,7 +574,8 @@ const paginationReactive = reactive({
   indicatorCode: '',
   indicatorTargetTable: '',
   indicatorLatitude: '',
-  apiTreeId: 1
+  apiTreeId: 1,
+  itemCount: 0
 })
 function query(
     indicatorDefiner,
@@ -816,8 +819,8 @@ function renderSuffix({ option }) {
               ),
           default: () =>
               h('div', [
-                h('div', h(NButton, { onClick: () => updateTree(option.id, option.parentId), quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h(NIcon,{ text: true ,size: '12'}, h(PencilAlt) ),default: () =>"修改"} )),
-                h('div', h(NButton, { onClick: () => delTreeConfirm(option.id, option.titleName), disabled: option.children.length !== 0, quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h(NIcon,{ text: true ,size: '12'}, h(TrashAlt) ),default: () =>"删除"} ))
+                h('div', h(NButton, { onClick: () => updateTree(option.id, option.parentId), quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h(NIcon,{ text: true ,size: '12'}, {default: () => h(PencilAlt)} ),default: () =>"修改"} )),
+                h('div', h(NButton, { onClick: () => delTreeConfirm(option.id, option.titleName), disabled: option.children.length !== 0, quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h(NIcon,{ text: true ,size: '12'}, {default: () => h(TrashAlt)} ),default: () =>"删除"} ))
               ])
         }
     )

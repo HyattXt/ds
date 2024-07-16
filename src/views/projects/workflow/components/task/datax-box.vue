@@ -27,7 +27,7 @@
     <n-split class="split_lower" direction="vertical" v-model:size="logHeight" @drag-move="handleOnDragMove" style="width: calc(100% - 36px)">
       <template #1>
         <div class="build-form">
-          <NForm v-if="!taskData.jsonConfig" :disabled="props.readOnly" size="small" label-placement="left" label-align="right" label-width="100" :model="taskData" :rules="rules" ref="formRef">
+          <NForm v-if="!taskData.jsonConfig" :disabled="props.readOnly" size="small" label-placement="left" require-mark-placement="left" label-align="right" label-width="100" :model="taskData" :rules="rules" ref="formRef">
             <n-collapse :default-expanded-names="['1', '2', '3', '4']">
               <n-collapse-item  name="1">
                 <template #header>
@@ -1172,7 +1172,6 @@ async function handleJsonConfig() {
   taskData.value.leftData = []
   taskData.value.rightData = []
   taskData.value.jsonConfig = jsonConfig
-  console.log(taskData.value.jsonConfig)
 }
 
 function VerticalLog () {
