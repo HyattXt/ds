@@ -102,7 +102,7 @@ dt {
   }
 
   .el-dialog__body {
-    padding: 26px 16px 14px 26px;
+    padding: 26px 26px 14px 26px;
     min-width: 600px;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
@@ -216,7 +216,6 @@ dt {
 .page-select {
   .el-select-dropdown__item {
     font: 12px/1.5 "Microsoft YaHei","Arial","Hiragino Sans GB","PingFang SC","Helvetica","Verdana","微软雅黑","Verdana",sans-serif;
-    padding: 0 20px;
     position: relative;
     white-space: nowrap;
     overflow: hidden;
@@ -238,7 +237,6 @@ dt {
 .form-item-select {
   .el-select-dropdown__item {
     font-size: 12px;
-    padding: 0 20px;
     position: relative;
     white-space: nowrap;
     overflow: hidden;
@@ -694,7 +692,7 @@ dt {
           width: 100%;
           overflow-x: auto;
           /*float: left;*/
-          margin-top: 6px;
+          margin-top: 8.5px;
         }
       }
 
@@ -732,4 +730,44 @@ dt {
 
 .n-input__placeholder, .n-base-selection-placeholder__inner{
   font-size: 12px !important;
+}
+
+.el-radio-button__inner {
+  color: #000000;
+  padding: 7px 12px;
+  font-size: 12px;
+
+  &:hover {
+    color: #0099CB;
+  }
+}
+
+.el-radio-button {
+  --el-radio-button-checked-bg-color:  #0099CB;
+
+  &:first-child .el-radio-button__inner {
+    border-left: 1px solid #cbd5dd;
+    border-radius: 2px 0 0 2px;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+  }
+
+  &:last-child .el-radio-button__inner {
+    border-radius: 0 2px 2px 0;
+  }
+
+}
+
+.v-binder-follower-content {
+  font-size: 13px;
+}
+
+.el-switch {
+  height: 20px
+}
+
+.model-form-wrapper {
+  .n-form-item-feedback-wrapper {
+    min-height: 14px;
+  }
 }
