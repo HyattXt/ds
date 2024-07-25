@@ -4,7 +4,7 @@
       <div class="group_5 flex-row">
         <img
             :src="topImagePath.one"
-            class="image"
+            class="image hover_image"
             referrerpolicy="no-referrer"
         />
         <div class="text-wrapper flex-col justify-between">
@@ -12,7 +12,7 @@
         </div>
         <img
             :src="topImagePath.two"
-            class="image"
+            class="image hover_image"
             referrerpolicy="no-referrer"
         />
         <div class="text-wrapper flex-col justify-between">
@@ -20,7 +20,7 @@
         </div>
         <img
             :src="topImagePath.three"
-            class="image"
+            class="image hover_image"
             referrerpolicy="no-referrer"
         />
         <div class="text-wrapper flex-col justify-between">
@@ -28,7 +28,7 @@
         </div>
         <img
             :src="topImagePath.four"
-            class="image"
+            class="image hover_image"
             referrerpolicy="no-referrer"
         />
         <div class="text-wrapper flex-col justify-between">
@@ -36,7 +36,7 @@
         </div>
         <img
             :src="topImagePath.five"
-            class="image"
+            class="image hover_image"
             referrerpolicy="no-referrer"
         />
         <div class="text-wrapper flex-col justify-between">
@@ -44,7 +44,7 @@
         </div>
         <img
             :src="topImagePath.six"
-            class="image"
+            class="image hover_image"
             referrerpolicy="no-referrer"
         />
         <div class="text-wrapper flex-col justify-between">
@@ -52,7 +52,7 @@
         </div>
         <img
             :src="topImagePath.seven"
-            class="image"
+            class="image hover_image"
             referrerpolicy="no-referrer"
         />
         <div class="text-wrapper flex-col justify-between">
@@ -71,7 +71,7 @@
             >
               <img
                   :src="item.lanhuimage0"
-                  class="label_1"
+                  class="label_1 hover_image"
                   referrerpolicy="no-referrer"
               />
               <div
@@ -105,7 +105,7 @@
         </div>
         <img
             :src='mainImagePath'
-            class="image_9"
+            class="image_9 hover_image_large"
             referrerpolicy="no-referrer"
         />
       </div>
