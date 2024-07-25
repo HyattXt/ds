@@ -110,6 +110,51 @@ export default {
         showSide: true,
         auth: []
       }
+    },
+    {
+      path: '/data-assets/data-standard/data-statistic',
+      name: 'data-statistic',
+      component: () => import('@/views/data-assets/data-standard/data-statistic/index.vue'),
+      meta: {
+        title: '标准概览-data-statistic',
+        activeMenu: 'data-assets',
+        showSide: true,
+        auth: []
+      }
+    },
+    {
+      path: '/data-assets/data-standard/standard-list',
+      name: 'standard-list',
+      component: () => import('@/views/data-assets/data-standard/standard-list/index.vue'),
+      meta: {
+        title: '标准列表-standard-list',
+        activeMenu: 'data-assets',
+        showSide: true,
+        auth: []
+      }
+    },
+    {
+      path: '/data-assets/data-standard/model-list',
+      name: 'model-list',
+      component: () => import('@/views/data-assets/data-standard/model-list/index.vue'),
+      meta: {
+        title: '模型列表-model-list',
+        activeMenu: 'data-assets',
+        showSide: true,
+        auth: []
+      }
+    },
+    {
+      path: '/data-assets/data-standard/model-detail',
+      name: 'model-detail',
+      component: () => import('@/views/data-assets/data-standard/model-list/detail.vue'),
+      meta: {
+        title: '模型明细-model-detail',
+        activeMenu: 'data-assets',
+        activeSide: '/data-assets/data-standard/model-list',
+        showSide: true,
+        auth: []
+      }
     }
   ]
 }
