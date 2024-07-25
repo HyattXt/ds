@@ -48,7 +48,8 @@ const basePage: RouteRecordRaw[] = [
       {
         path: '/home',
         name: 'home',
-        component: components['home'],
+        //component: components['home'],
+        component: () => import('@/views/home/index.vue'),
         meta: {
           title: '首页',
           activeMenu: 'home',

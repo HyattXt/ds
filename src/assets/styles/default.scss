@@ -261,6 +261,9 @@ dt {
   z-index: 2000!important;
 }
 
+.el-loading-mask {
+  z-index: 1999;
+}
 .el-overlay-message-box {
   text-align: center;
   position: fixed;
@@ -685,6 +688,7 @@ dt {
 
       .cue-crud__footer-tab {
         overflow: hidden;
+        display: flex;
 
         > .el-button-group {
           display: flex;
@@ -732,6 +736,10 @@ dt {
   font-size: 12px !important;
 }
 
+.n-base-selection .n-base-selection-overlay .n-base-selection-overlay__wrapper {
+  font-size: 12px !important;
+}
+
 .el-radio-button__inner {
   color: #000000;
   padding: 7px 12px;
@@ -769,5 +777,26 @@ dt {
 .model-form-wrapper {
   .n-form-item-feedback-wrapper {
     min-height: 14px;
+  }
+}
+
+.hover_image {
+  transition: transform 0.3s ease;
+  &:hover {
+    transform: scale(1.1); /* 当鼠标悬停时，放大10% */
+  }
+}
+
+.hover_image_large {
+  transition: transform 0.3s ease;
+  &:hover {
+    transform: scale(1.03); /* 当鼠标悬停时，放大3% */
+  }
+}
+
+.hover_div {
+  transition: border-color 0.3s, box-shadow 0.3s;
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 }

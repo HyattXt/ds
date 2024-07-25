@@ -722,7 +722,7 @@ function updateMenu(ruleFormRef) {
   })
 }
 function editMetadata() {
-  indexFormValue.value = currentRow.value
+  indexFormValue.value = { ...currentRow.value }
   indexFormValue.value.treeId = Number(currentRow.value.treeId)
   currentRow.value.indicatorLabels === '已上架' ? indexFormValue.value.opperate = '查看' : indexFormValue.value.opperate = '编辑'
   operaSpan.value = 12

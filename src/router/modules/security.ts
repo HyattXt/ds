@@ -138,6 +138,16 @@ export default {
         showSide: true,
         auth: ['ADMIN_USER']
       }
+    },
+    {
+      path: '/security/desensitization-manage',
+      name: 'desensitization-manage',
+      component: () => import('@/views/security/desensitization-manage/index.vue'),
+      meta: {
+        title: '脱敏管理',
+        activeMenu: 'security',
+        showSide: true
+      }
     }
   ]
 }

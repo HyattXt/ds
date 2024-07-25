@@ -269,7 +269,7 @@
 
   function query(
     page,
-    pageSize = 10,
+    pageSize = 30,
     apiName = '',
     apiFlag = '',
     apiStatus = '',

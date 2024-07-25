@@ -387,7 +387,7 @@ function handlePageChange(currentPage, pageSize) {
   }
 }
 
-function query(page, pageSize = 10, apiName = '', apiFlag = '', apiStatus = '', apiPath = '', apiTreeId = '') {
+function query(page, pageSize = 30, apiName = '', apiFlag = '', apiStatus = '', apiPath = '', apiTreeId = '') {
   return new Promise((resolve) => {
     const url = utils.getUrl('HDataApi/interface/getList')
     const params = {
