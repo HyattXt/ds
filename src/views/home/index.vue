@@ -111,12 +111,12 @@
       </div>
       <span style="margin: 28px 0 0 10px;">资源规划</span>
       <div class="group_8 flex-row">
-        <div v-for="(item, index) in firstListData" :key="index" :class="{'text-wrapper flex-col': item.abutmentStatus === '1', 'disable-text-wrapper flex-col': item.abutmentStatus === '0'}">
+        <div v-for="(item, index) in firstListData" :key="index" :class="{'text-wrapper flex-col hover_div': item.abutmentStatus === '1', 'disable-text-wrapper flex-col hover_div': item.abutmentStatus === '0'}">
           <span :class="{'text': item.abutmentStatus === '1', 'disable-text': item.abutmentStatus === '0'}">{{item.systemName}}</span>
         </div>
       </div>
       <div class="group_8 flex-row">
-        <div v-for="(item, index) in secondListData" :key="index" :class="{'text-wrapper flex-col': item.abutmentStatus === '1', 'disable-text-wrapper flex-col': item.abutmentStatus === '0'}">
+        <div v-for="(item, index) in secondListData" :key="index" :class="{'text-wrapper flex-col hover_div': item.abutmentStatus === '1', 'disable-text-wrapper flex-col hover_div': item.abutmentStatus === '0'}">
           <span :class="{'text': item.abutmentStatus === '1', 'disable-text': item.abutmentStatus === '0'}">{{item.systemName}}</span>
         </div>
       </div>
