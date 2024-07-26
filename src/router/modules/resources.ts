@@ -155,6 +155,17 @@ export default {
         showSide: true,
         auth: []
       }
-    }
+    },
+    {
+      path: '/resource/resource-plan',
+      name: 'resource-plan',
+      component: () => import('@/views/resource/plan/index.vue'),
+      meta: {
+        title: '资源规划',
+        activeMenu: 'resource',
+        showSide: true,
+        auth: []
+      }
+    },
   ]
 }

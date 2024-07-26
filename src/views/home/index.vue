@@ -111,61 +111,13 @@
       </div>
       <span style="margin: 28px 0 0 10px;">资源规划</span>
       <div class="group_8 flex-row">
-        <div class="text-wrapper flex-col">
-          <span class="text">档案系统</span>
-        </div>
-        <div class="text-wrapper flex-col">
-          <span class="text">企业管理域</span>
-        </div>
-        <div class="text-wrapper flex-col">
-          <span class="text">协调办公</span>
-        </div>
-        <div class="text-wrapper flex-col">
-          <span class="text">仓储管理</span>
-        </div>
-        <div class="text-wrapper flex-col">
-          <span class="text">设备管理</span>
-        </div>
-        <div class="text-wrapper flex-col">
-          <span class="text">水利模型</span>
-        </div>
-        <div class="text-wrapper flex-col">
-          <span class="text">生产调度</span>
-        </div>
-        <div class="text-wrapper flex-col">
-          <span class="text">应急指挥</span>
-        </div>
-        <div class="text-wrapper flex-col">
-          <span class="text">科学调度</span>
+        <div v-for="(item, index) in firstListData" :key="index" :class="{'text-wrapper flex-col': item.abutmentStatus === '1', 'disable-text-wrapper flex-col': item.abutmentStatus === '0'}">
+          <span :class="{'text': item.abutmentStatus === '1', 'disable-text': item.abutmentStatus === '0'}">{{item.systemName}}</span>
         </div>
       </div>
       <div class="group_8 flex-row">
-        <div class="text-wrapper flex-col">
-          <span class="text">热线服务</span>
-        </div>
-        <div class="text-wrapper flex-col">
-          <span class="text">二供管理系统</span>
-        </div>
-        <div class="text-wrapper flex-col">
-          <span class="text">营业服务</span>
-        </div>
-        <div class="text-wrapper flex-col">
-          <span class="text">地理信息系统</span>
-        </div>
-        <div class="text-wrapper flex-col">
-          <span class="text">表务管理</span>
-        </div>
-        <div class="text-wrapper flex-col">
-          <span class="text">漏损管理系统</span>
-        </div>
-        <div class="text-wrapper flex-col">
-          <span class="text">工程报表</span>
-        </div>
-        <div class="text-wrapper flex-col">
-          <span class="text">管网管理域</span>
-        </div>
-        <div class="text-wrapper flex-col">
-          <span class="text">工单管理系统</span>
+        <div v-for="(item, index) in secondListData" :key="index" :class="{'text-wrapper flex-col': item.abutmentStatus === '1', 'disable-text-wrapper flex-col': item.abutmentStatus === '0'}">
+          <span :class="{'text': item.abutmentStatus === '1', 'disable-text': item.abutmentStatus === '0'}">{{item.systemName}}</span>
         </div>
       </div>
     </div>
@@ -176,10 +128,13 @@ import {onMounted, ref} from "vue";
 import {useUserStore} from "@/store/user/user";
 import {useRouter} from "vue-router";
 import {getDatasourceHome} from "@/service/modules/data-source";
+import {resourcePlanningList} from "@/service/modules/resources";
 
 const userStore = useUserStore()
 const router = useRouter()
 const data = ref({})
+const firstListData = ref([])
+const secondListData = ref([])
 const loopData0 = [
   {
     lanhuimage0:
@@ -269,6 +224,34 @@ const topImagePath = {
 
 const initData = async () => {
   data.value = await getDatasourceHome()
+  const list = await resourcePlanningList({})
+  if(list.length) {
+    firstListData.value = list.slice(0, 9)
+    secondListData.value = list.slice(9)
+  } else {
+    firstListData.value = [
+      { systemName: "档案系统", abutmentStatus: '1', remarks: '' },
+      { systemName: "企业管理域", abutmentStatus: '1', remarks: '' },
+      { systemName: "协调办公", abutmentStatus: '1', remarks: '' },
+      { systemName: "仓储管理", abutmentStatus: '1', remarks: '' },
+      { systemName: "设备管理", abutmentStatus: '1', remarks: '' },
+      { systemName: "水利模型", abutmentStatus: '1', remarks: '' },
+      { systemName: "生产调度", abutmentStatus: '1', remarks: '' },
+      { systemName: "应急指挥", abutmentStatus: '1', remarks: '' },
+      { systemName: "科学调度", abutmentStatus: '1', remarks: '' }
+    ]
+    secondListData.value =[
+      { systemName: "热线服务", abutmentStatus: '1', remarks: '' },
+      { systemName: "二供管理系统", abutmentStatus: '1', remarks: '' },
+      { systemName: "营业服务", abutmentStatus: '1', remarks: '' },
+      { systemName: "地理信息系统", abutmentStatus: '1', remarks: '' },
+      { systemName: "表务管理", abutmentStatus: '1', remarks: '' },
+      { systemName: "漏损管理系统", abutmentStatus: '1', remarks: '' },
+      { systemName: "工程报表", abutmentStatus: '1', remarks: '' },
+      { systemName: "管网管理域", abutmentStatus: '1', remarks: '' },
+      { systemName: "工单管理系统", abutmentStatus: '1', remarks: '' }
+    ]
+  }
 }
 
 const handleClick = (type) => {
@@ -470,6 +453,26 @@ onMounted(() => {
           line-height: 17px;
         }
       }
+    .disable-text-wrapper {
+      border-radius: 4px;
+      height: 100%;
+      width: 10%;
+      .disable-text {
+        height: 100%;
+        overflow-wrap: break-word;
+        font-size: 15px;
+        font-weight: bold;
+        color: #000000;
+        display: flex;
+        justify-content: center; /* 水平居中 */
+        align-items: center; /* 垂直居中 */
+        white-space: nowrap;
+        line-height: 17px;
+        background: #F7F7F7;
+        border-radius: 4px;
+        opacity: 0.58;
+      }
+    }
     }
   }
 }

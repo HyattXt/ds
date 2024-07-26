@@ -75,5 +75,6 @@ export default {
   rest: 'Http manager',
   rest_dev: 'Http development',
   rest_manager: 'Http manager',
-  project_manager: 'Project manager'
+  project_manager: 'Project manager',
+  resource_plan: 'Resource_Plan'
 }

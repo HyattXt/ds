@@ -80,5 +80,6 @@ export default {
   devops_task: '离线运维',
   devops_rest: '接口运维',
   devops_api: 'API运维',
-  project_manager: '项目中心'
+  project_manager: '项目中心',
+  resource_plan: '资源规划'
 }

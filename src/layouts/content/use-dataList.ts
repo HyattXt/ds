@@ -55,7 +55,7 @@ import {
   RadarChartOutlined,
   VerifiedOutlined
 } from '@vicons/antd'
-import {SecurityFilled} from '@vicons/material'
+import {SecurityFilled, DesignServicesFilled} from '@vicons/material'
 import { RuleDraft } from '@vicons/carbon'
 import { RouterLink } from 'vue-router'
 import { useUserStore } from '@/store/user/user'
@@ -191,6 +191,11 @@ export function useDataList() {
                 key: '/resource/task-group-queue'
               }
             ]
+          },
+          {
+            label: t('menu.resource_plan'),
+            key: '/resource/resource-plan',
+            icon: renderIcon(DesignServicesFilled)
           }
         ]
       },

@@ -260,3 +260,29 @@ export function updateUdfFunc(
     data
   })
 }
+
+export function resourcePlanningList(data) {
+  return axios({
+    url: '/ModelField/resourcePlanningList',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    transformRequest: (params) => JSON.stringify(params)
+  })
+}
+
+export function resourcePlanningUpdate(data) {
+  return axios({
+    url: '/ModelField/resourcePlanningUpdate',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    transformRequest: (params) => JSON.stringify(params)
+  })
+}
+
+
