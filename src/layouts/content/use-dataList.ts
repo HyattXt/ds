@@ -294,8 +294,22 @@ export function useDataList() {
                 },
                 {
                   label: t('menu.desensitization_manage'),
-                  key: '/security/desensitization-manage',
-                  icon: renderIcon(SecurityFilled)
+                  key: '/security/desensitization/rule-manage',
+                  icon: renderIcon(SecurityFilled),
+                  children: [
+                    {
+                      label: t('menu.desensitization_rule'),
+                      key: '/security/desensitization/rule-manage'
+                    },
+                    {
+                      label: t('menu.secret_key_manage'),
+                      key: '/security/desensitization/secret-key-manage'
+                    },
+                    {
+                      label: t('menu.desensitization_list'),
+                      key: '/security/desensitization/list-manage'
+                    }
+                  ]
                 },
                 {
                   label: t('menu.worker_group_manage'),

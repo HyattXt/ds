@@ -140,11 +140,31 @@ export default {
       }
     },
     {
-      path: '/security/desensitization-manage',
-      name: 'desensitization-manage',
-      component: () => import('@/views/security/desensitization-manage/index.vue'),
+      path: '/security/desensitization/rule-manage',
+      name: 'rule-manage',
+      component: () => import('@/views/security/desensitization-manage/rule/index.vue'),
       meta: {
-        title: '脱敏管理',
+        title: '脱敏规则',
+        activeMenu: 'security',
+        showSide: true
+      }
+    },
+    {
+      path: '/security/desensitization/secret-key-manage',
+      name: 'secret-key-manage',
+      component: () => import('@/views/security/desensitization-manage/secret-key/index.vue'),
+      meta: {
+        title: '密钥管理',
+        activeMenu: 'security',
+        showSide: true
+      }
+    },
+    {
+      path: '/security/desensitization/list-manage',
+      name: 'list-manage',
+      component: () => import('@/views/security/desensitization-manage/list/index.vue'),
+      meta: {
+        title: '脱敏台账',
         activeMenu: 'security',
         showSide: true
       }
