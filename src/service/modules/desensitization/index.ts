@@ -247,3 +247,16 @@ export function queryDesensitizationUsedList(data): any {
     transformRequest: (params) => JSON.stringify(params)
   })
 }
+
+export function runDataProcess(data): any {
+  return axios({
+    url: '/DataSecurityDataLedger/dataProcessDataLedgerId',
+    method: 'post',
+    data,
+    timeout: 5 * 60 * 1000,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    transformRequest: (params) => JSON.stringify(params)
+  })
+}

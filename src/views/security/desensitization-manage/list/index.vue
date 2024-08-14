@@ -188,10 +188,17 @@ import axios from "axios";
 import {
   dataLedgerExists,
   deleteDataLedger,
-  effectiveDataLedger, getDataLedgerFiled,
+  effectiveDataLedger,
+  getDataLedgerFiled,
   insertDataLedger,
-  queryDataSecurityDataLedger, queryDataSecurityDesensitizationRules, queryDataSecurityEncryption, ruleNameExists,
-  updateDataLedger, verifyDesensitizationRules, verifyEncryptionRules
+  queryDataSecurityDataLedger,
+  queryDataSecurityDesensitizationRules,
+  queryDataSecurityEncryption,
+  ruleNameExists,
+  runDataProcess,
+  updateDataLedger,
+  verifyDesensitizationRules,
+  verifyEncryptionRules
 } from "@/service/modules/desensitization";
 import {QuestionCircleTwotone} from "@vicons/antd";
 
@@ -204,6 +211,8 @@ const currentRow = ref()
 const ifDisableDelete = ref(true)
 const ifNameUpdate = ref(false)
 const ifUpdate = ref(false)
+const runFlag = ref(false)
+const runFlagId = ref(null)
 const demoData = ref('')
 const verifyValue = ref('')
 const checkedRowKeysRef = ref([])
@@ -274,6 +283,24 @@ const columns =  [
   {
     label: '更新时间',
     prop: 'updateTime'
+  },
+  {
+    label: '操作',
+    prop: 'actions',
+    width: 132,
+    slots: (row) => {
+      return [h(
+          ElButton,
+          {
+            class: 'el-button--text',
+            size: 'small',
+            loading: runFlag.value && row.id === runFlagId.value,
+            disabled: runFlag.value && row.id !== runFlagId.value,
+            onClick: () => runProcess(row)
+          },
+          { default: ()=> '执行' }
+      )]
+    }
   }
 ]
 
@@ -551,6 +578,24 @@ const updateBindingRuleId = () => {
   const item = bindRuleList.value.find(item => item.id === detailFrom.value.bindingRuleId)
   detailFrom.value.bindingRuleName = item.name
 }
+
+const runProcess = async (row) => {
+  let params = {
+    id: row.id
+  }
+  if(row.effectiveStatus) {
+    runFlag.value = true
+    runFlagId.value = row.id
+    message.info('开始执行')
+    await runDataProcess(params)
+    runFlag.value = false
+    runFlagId.value = null
+    message.success('执行成功')
+  } else {
+    message.warning('执行前需处于生效状态')
+  }
+}
+
 
 const createDataLedger = () => {
   formRef.value.validate(async (errors) => {
