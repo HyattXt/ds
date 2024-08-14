@@ -85,6 +85,7 @@
         :label-width="110"
         ref="formRef"
         :rules="rules"
+        :disabled="ifUpdate"
     >
       <n-form-item label="数据元目录:" path="treeId">
         <n-tree-select
@@ -94,7 +95,6 @@
             label-field="titleName"
             children-field="children"
             placeholder="选择目标指标目录"
-            :disabled="ifUpdate"
             :render-prefix="menuIcon"
         />
       </n-form-item>
@@ -103,55 +103,55 @@
           <n-input v-model:value="indexFormValue.chineseName" :disabled="ifNameUpdate"/>
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="数据类型:" path="dataType">
-          <n-select v-model:value="indexFormValue.dataType" :options="dataTypeOptions" clearable :disabled="ifUpdate"/>
+          <n-select v-model:value="indexFormValue.dataType" :options="dataTypeOptions" clearable />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="英文名称:" path="englishName">
           <n-input v-model:value="indexFormValue.englishName" :disabled="ifNameUpdate"/>
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="字段类型:" path="dataTypeEn">
-          <n-select v-model:value="indexFormValue.dataTypeEn" :options="typeOptions" :disabled="ifUpdate"/>
+          <n-select v-model:value="indexFormValue.dataTypeEn" :options="typeOptions" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="数据定义:" path="dataDefinition">
-          <n-input v-model:value="indexFormValue.dataDefinition" :disabled="ifUpdate"/>
+          <n-input v-model:value="indexFormValue.dataDefinition" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="数据元分类:" path="dataElementClass">
-          <n-input v-model:value="indexFormValue.dataElementClass" :disabled="ifUpdate"/>
+          <n-input v-model:value="indexFormValue.dataElementClass" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="数据元别名:" path="dataElementAlias">
-          <n-input v-model:value="indexFormValue.dataElementAlias" :disabled="ifUpdate"/>
+          <n-input v-model:value="indexFormValue.dataElementAlias" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="数据元口径:" path="dataElementCaliber">
-          <n-input v-model:value="indexFormValue.dataElementCaliber" :disabled="ifUpdate"/>
+          <n-input v-model:value="indexFormValue.dataElementCaliber" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="更新频率:" path="updateFrequency">
-          <n-input v-model:value="indexFormValue.updateFrequency" :disabled="ifUpdate"/>
+          <n-input v-model:value="indexFormValue.updateFrequency" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="单位:" path="company">
-          <n-input v-model:value="indexFormValue.company" :disabled="ifUpdate"/>
+          <n-input v-model:value="indexFormValue.company" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="数据元维度:" path="dataElementDimension">
-          <n-input v-model:value="indexFormValue.dataElementDimension" :disabled="ifUpdate"/>
+          <n-input v-model:value="indexFormValue.dataElementDimension" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="数据元版本:" path="dataElementVersion">
-          <n-input v-model:value="indexFormValue.dataElementVersion" :disabled="ifUpdate"/>
+          <n-input v-model:value="indexFormValue.dataElementVersion" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="数据元来源表:" path="dataElementSourceTable">
-          <n-input v-model:value="indexFormValue.dataElementSourceTable" :disabled="ifUpdate"/>
+          <n-input v-model:value="indexFormValue.dataElementSourceTable" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="数据元创建人:" path="dataElementCreator">
-          <n-input v-model:value="indexFormValue.dataElementCreator" :disabled="ifUpdate"/>
+          <n-input v-model:value="indexFormValue.dataElementCreator" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="数据元维护人:" path="dataElementMaintainer">
-        <n-input v-model:value="indexFormValue.dataElementMaintainer" :disabled="ifUpdate"/>
+        <n-input v-model:value="indexFormValue.dataElementMaintainer" />
       </n-form-item-gi>
         <n-form-item-gi :span="24" label="备注:" path="dataElementRemarks">
-          <n-input v-model:value="indexFormValue.dataElementRemarks" type="textarea" :disabled="ifUpdate"/>
+          <n-input v-model:value="indexFormValue.dataElementRemarks" type="textarea" />
         </n-form-item-gi>
 
       </n-grid>
     </n-form>
     <template #footer>
-      <n-button color="#0099CB" type="primary" size="small" :disabled="ifUpdate" @click="handleCreateDataElement">确定</n-button>
+      <n-button color="#0099CB" type="primary" size="small"  @click="handleCreateDataElement">确定</n-button>
     </template>
   </el-dialog>
 </template>
@@ -471,6 +471,7 @@ async function getTreeFolder ()  {
 
 function metaDialogVisible () {
   active.value = false
+  formRef.value?.restoreValidation()
   Object.keys(indexFormValue.value).forEach(key => {
     indexFormValue.value[key] = ''; // 将表单的所有响应式属性设置为空字符串
   });

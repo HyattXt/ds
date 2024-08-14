@@ -491,6 +491,7 @@ function renderSuffix({ option }) {
 
 function metaDialogVisible () {
   active.value = false
+  formRef.value?.restoreValidation()
   Object.keys(indexFormValue.value).forEach(key => {
     indexFormValue.value[key] = ''; // 将表单的所有响应式属性设置为空字符串
   });

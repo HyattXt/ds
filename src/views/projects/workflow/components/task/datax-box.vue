@@ -837,7 +837,7 @@ async function updateSourceTableList(dataSource) {
     taskData.value.splitPk = null
   }
   if (sourceTableList.value.length && taskData.value.sourceTable) {
-    const item = find(sourceTableList.value, { value: taskData.value.sourceTable })
+    const item = find(sourceTableList.value, { TABLE_NAME: taskData.value.sourceTable })
     if (!item) {
       taskData.value.sourceTable = null
       taskData.value.splitPk = null
@@ -869,7 +869,7 @@ async function updateTargetTableList(dataSource) {
     taskData.value.targetTable = null
   }
   if (targetTableList.value.length && taskData.value.targetTable) {
-    const item = find(targetTableList.value, { value: taskData.value.targetTable })
+    const item = find(targetTableList.value, { TABLE_NAME: taskData.value.targetTable })
     if (!item) {
       taskData.value.targetTable = null
     }

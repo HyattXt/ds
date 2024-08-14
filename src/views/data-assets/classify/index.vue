@@ -848,12 +848,11 @@ function dialogVisible () {
   ifChecked.value = true
   Object.assign(detailPaginationReactive, initialDetailPagination)
   Object.assign(apiDetailPaginationReactive, initialApiDetailPagination)
-  dataSetRef.value.clearSelection()
-  apiRef.value.clearSelection()
+  ruleFormRef.value?.resetFields()
 }
 function addDialogVisible () {
   showAddRef.value = false
-  formValue.value.titleName = ''
+  ruleFormRef.value?.resetFields()
 }
 function submitSelect(ruleFormRef, ruleApiFormRef) {
   ruleFormRef.validate((valid) => {
