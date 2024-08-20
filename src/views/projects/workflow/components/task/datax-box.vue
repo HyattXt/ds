@@ -1040,7 +1040,10 @@ function getTableColumn() {
                     message.error(error)
                   })
             } else {
-              const res = await querySqlColum(taskData.value.sql)
+              let params = {
+                sql: taskData.value.sql
+              }
+              const res = await querySqlColum(params)
               taskData.value.leftData = res.map((item) => {
                     let res = {
                       id: '',
