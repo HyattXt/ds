@@ -681,7 +681,7 @@ const onTaskSubmit = async (data) => {
     jsplumbRef.value.save()
     taskData.value.json = formatJson()
   }
-  if(taskData.value.leftList.length){
+  if(taskData.value.leftList.length || taskData.value.jsonConfig){
     const params = formatData(data)
     try {
       await updateWithUpstream(
