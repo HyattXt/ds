@@ -1118,9 +1118,6 @@ function formatJson() {
                 {
                   "jdbcUrl": [
                     jdbcConnectInfo.value.sourceConnect.jdbcUrl
-                  ],
-                  "table": [
-                    taskData.value.sourceTable
                   ]
                 }
               ],
@@ -1163,7 +1160,7 @@ function formatJson() {
     }
   }
   if(taskData.value.dtType === 'MYSQL') json.job.content[0].writer.parameter['writeMode'] =  taskData.value.writeMode
-  if(taskData.value.executeMode === '1') json.job.content[0].reader.parameter['querySql'] = [ taskData.value.sql ]
+  taskData.value.executeMode === '1' ? json.job.content[0].reader.parameter.connection[0].querySql = [ taskData.value.sql ] : json.job.content[0].reader.parameter.connection[0].table = [taskData.value.sourceTable]
   if(taskData.value.splitPk)  json.job.content[0].reader.parameter['splitPk'] = taskData.value.splitPk
   return JSON.stringify(json,null,4)
 }
