@@ -192,7 +192,7 @@ const taskData = ref({
   postStatements: [],
   segmentSeparator: '',
   displayRows: 1000,
-  indicatorStatus: null,
+  indicatorStatus: 2,
   indicatorCode: ''
 })
 
