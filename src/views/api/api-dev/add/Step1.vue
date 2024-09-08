@@ -83,7 +83,7 @@
   const message = useMessage()
   const isDisable = ref(false)
   const route = useRoute()
-  const getApiTreeUrl = utils.getUrl('HDataApi/interface/getApiTreeFloder')
+  const getApiTreeUrl = utils.getUrl('interface/getApiTreeFloder')
 
   const menuIcon = () => {
     return h('svg', {
@@ -103,7 +103,7 @@
   let validatePath = (rule: any, value: any, callback: any) => {
     if (route.query.apiId == undefined) {
       return new Promise<void>((resolve, reject) => {
-        let url = utils.getUrl('HDataApi/interface/getApiPath')
+        let url = utils.getUrl('interface/getApiPath')
         let body = { apiPath: value }
 
         //0存在，1不存在
@@ -127,7 +127,7 @@
   let validateName = (rule: any, value: any, callback: any) => {
     if (route.query.apiId == undefined) {
       return new Promise<void>((resolve, reject) => {
-        let url = utils.getUrl('HDataApi/interface/getInterfaceInfoByApiName')
+        let url = utils.getUrl('interface/getInterfaceInfoByApiName')
         let body = { apiName: value }
 
         //0存在，1不存在
@@ -225,7 +225,7 @@
   }
 
   function getInitData() {
-    let url = utils.getUrl('/HDataApi/interface/getInterfaceInfoById')
+    let url = utils.getUrl('interface/getInterfaceInfoById')
     let params = { apiId: '' }
     params.apiId = route.query.apiId
 

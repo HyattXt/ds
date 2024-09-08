@@ -47,8 +47,8 @@ const handleError = (res: AxiosResponse<any, any>) => {
 const baseRequestConfig: AxiosRequestConfig = {
   baseURL:
     import.meta.env.MODE === 'development'
-      ? '/HData'
-      : window.webConfig.VITE_APP_PROD_WEB_URL + '/HData',
+      ? '/HData/Dev'
+      : window.webConfig.VITE_APP_PROD_WEB_URL + '/HData/Dev',
   timeout: 15000,
   headers: {"X-Content-Type-Options" : "nosniff",
             "X-XSS-Protection" : "1",

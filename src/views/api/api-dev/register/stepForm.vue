@@ -57,7 +57,7 @@
   function nextStep1(value) {
     params.value = value
     if(route.query.apiId === undefined){
-      params.value.apiPath = '/HDataApi/proxy' + params.value.apiPath
+      params.value.apiPath = '/HData/DevApi/proxy' + params.value.apiPath
     }
     if (currentTab.value < 2) {
       currentTab.value += 1
@@ -65,7 +65,7 @@
   }
 
   function nextStep2(responseDemo, responseStatusArray) {
-    let insUrl = utils.getUrl( (!!route.query.apiId ? '/HDataApi/interface/update' : '/HDataApi/interface/insert') )
+    let insUrl = utils.getUrl( (!!route.query.apiId ? 'interface/update' : 'interface/insert') )
     params.value.responseDemo = responseDemo
     params.value.responseStatusArray = responseStatusArray
 

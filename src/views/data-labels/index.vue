@@ -136,7 +136,7 @@ import 'echarts-wordcloud';
 import axios from "axios";
 import utils from "@/utils";
 
-const getLabelUrl = utils.getUrl('HDataApi/dataBaseLabel/userPortrait')
+const getLabelUrl = utils.getUrl('dataBaseLabel/userPortrait')
 const tabActive = ref(false)
 const route = useRoute()
 const tagId = route.query.tagId

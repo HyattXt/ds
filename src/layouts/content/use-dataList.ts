@@ -53,10 +53,10 @@ import {
   ProjectOutlined,
   FormOutlined,
   RadarChartOutlined,
-  VerifiedOutlined
+  VerifiedOutlined, UnorderedListOutlined, TagsOutlined, AppstoreTwotone
 } from '@vicons/antd'
 import {SecurityFilled, DesignServicesFilled} from '@vicons/material'
-import { RuleDraft } from '@vicons/carbon'
+import { RuleDraft, UserAvatarFilled, UserMultiple } from '@vicons/carbon'
 import { RouterLink } from 'vue-router'
 import { useUserStore } from '@/store/user/user'
 import { timezoneList } from '@/common/timezone'
@@ -350,7 +350,6 @@ export function useDataList() {
                 }
               ]
       },
-
       {
         label: () => h(NEllipsis, null, { default: () => t('menu.devops') }),
         key: 'devops',
@@ -422,8 +421,7 @@ export function useDataList() {
         ]
       },
       {
-        label: () =>
-          h(NEllipsis, null, { default: () => t('menu.data_assets') }),
+        label: () => h(NEllipsis, null, { default: () => t('menu.data_assets') }),
         key: 'data-assets',
         icon: renderIcon(PieChartOutlined),
         children: [
@@ -498,10 +496,40 @@ export function useDataList() {
           }
         ]
       },
-
       {
-        label: () =>
-          h(NEllipsis, null, { default: () => t('menu.project_manager') }),
+        label: () => h(NEllipsis, null, { default: () => t('menu.data_business') }),
+        key: 'data-business',
+        icon: renderIcon(ApiOutlined),
+        children: [
+          {
+            label: t('menu.data_property'),
+            key: '/data-business/property',
+            icon: renderIcon(UnorderedListOutlined)
+          },
+          {
+            label: t('menu.data_dataTags'),
+            key: '/data-business/dataTags',
+            icon: renderIcon(TagsOutlined)
+          },
+          {
+            label: t('menu.data_userGroup'),
+            key: '/data-business/userGroup',
+            icon: renderIcon(UserMultiple)
+          },
+          {
+            label: t('menu.data_customAnalyse'),
+            key: '/data-business/customAnalyse',
+            icon: renderIcon(AppstoreTwotone)
+          },
+          {
+            label: t('menu.data_userPortrayal'),
+            key: '/data-business/userPortrayal',
+            icon: renderIcon(UserAvatarFilled)
+          },
+        ]
+      },
+      {
+        label: () => h(NEllipsis, null, { default: () => t('menu.project_manager') }),
         key: 'project',
         icon: renderIcon(ProjectOutlined),
         children: [
@@ -515,11 +543,9 @@ export function useDataList() {
     ]
     let keyToHidden = new Set()
     window.webConfig.SHOW_DATA_ASSETS ? null : keyToHidden.add('data-assets')
-    !!window.webConfig.VITE_APP_PROD_ASSETS_HOME_URL ? null : keyToHidden.add('/data-assets/assets-overview')
     !!window.webConfig.VITE_APP_PROD_ASSETS_QUERY_URL ? null : keyToHidden.add('/data-assets/assets-query')
-    window.webConfig.SHOW_REST ? null : keyToHidden.add('/devops/rest/rest-manager')
+    window.webConfig.SHOW_BUSINESS ? null : keyToHidden.add('data-business')
     window.webConfig.SHOW_API ? null : keyToHidden.add('/devops/service/api-manager').add('/service/api-manager').add('service')
-    !window.webConfig.SHOW_REST && !window.webConfig.SHOW_API ? keyToHidden.add('devops_rest') : null
 
     function deleteItemsWithKey(options: any, condition: any) {
       for (let i = options.length - 1; i >= 0; i--) {

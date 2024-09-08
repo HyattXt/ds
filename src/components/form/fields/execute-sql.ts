@@ -31,7 +31,7 @@ export function renderExecuteSql( item: IJsonItem, fields: { [field: string]: an
     })
 
     function execute() {
-        let getSql = utils.getUrl('HDataApi/createTable/excuteSql')
+        let getSql = utils.getUrl('createTable/excuteSql')
         formValue.value.id = fields.dataTarget
         formValue.value.sqlStr = fields.tableSql
             axios

@@ -378,12 +378,12 @@ const activeName = ref('first')
 const currentRow = ref()
 const showAssetOperation = ref(false)
 const ifDisableDelete = ref(true)
-const getCatalogFolderUrl = utils.getUrl('HDataApi/dataCatalog/getDataCatalogTreeFloder')
-const addCatalogTreeUrl = utils.getUrl('HDataApi/dataCatalog/insertDataCatalogTree')
-const updateCatalogTreeUrl = utils.getUrl('HDataApi/dataCatalog/updateDataCatalogFolderRename')
-const delCatalogTreeUrl = utils.getUrl('HDataApi/dataCatalog/deleteDataCatalogTree')
-const insertCatalogDetailUrl = utils.getUrl('HDataApi/dataCatalog/insert')
-const delCatalogDetailUrl = utils.getUrl('HDataApi/dataCatalog/delete')
+const getCatalogFolderUrl = utils.getUrl('dataCatalog/getDataCatalogTreeFloder')
+const addCatalogTreeUrl = utils.getUrl('dataCatalog/insertDataCatalogTree')
+const updateCatalogTreeUrl = utils.getUrl('dataCatalog/updateDataCatalogFolderRename')
+const delCatalogTreeUrl = utils.getUrl('dataCatalog/deleteDataCatalogTree')
+const insertCatalogDetailUrl = utils.getUrl('dataCatalog/insert')
+const delCatalogDetailUrl = utils.getUrl('dataCatalog/delete')
 const  folderProps = {
   children: 'children',
   label: 'titleName',
@@ -501,7 +501,7 @@ function query(
     assetType = '',
     apiTreeId = 1
 ) {
-  const url = utils.getUrl('HDataApi/dataCatalog/getList')
+  const url = utils.getUrl('dataCatalog/getList')
   const params = {
     'pageNum': page,
     'pageSize': pageSize,
@@ -554,7 +554,7 @@ function detailQuery(
     tableDataRow = '',
     tableUpdateTime = ''
 ) {
-  const url = utils.getUrl('HDataApi/dataCatalog/queryDataSet')
+  const url = utils.getUrl('dataCatalog/queryDataSet')
   const params = {
     'apiName':apiName,
     'tableDataRow':tableDataRow,
@@ -607,7 +607,7 @@ function apiDetailQuery(
     apiTimeConsuming= '',
     interfaceNum= ''
 ) {
-  const url = utils.getUrl('HDataApi/dataCatalog/queryApiService')
+  const url = utils.getUrl('dataCatalog/queryApiService')
   const params = {
     'apiName': apiName,
     'dataCatalogType': dataCatalogType,

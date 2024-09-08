@@ -269,7 +269,7 @@ const statusOptions = [
   }
 ]
 
-const getApiTreeUrl = utils.getUrl('HDataApi/interface/getApiTreeFloder')
+const getApiTreeUrl = utils.getUrl('interface/getApiTreeFloder')
 const dataRef = ref([])
 const loadingRef = ref(false)
 const showModal = ref(false)
@@ -303,8 +303,8 @@ const menuIcon = () => {
 }
 
 function queryUser() {
-  const listUrl = utils.getUrl('HDataApi/interface/getUser')
-  const authListUrl = utils.getUrl('HDataApi/interface/getAuthorizeInfo')
+  const listUrl = utils.getUrl('interface/getUser')
+  const authListUrl = utils.getUrl('interface/getAuthorizeInfo')
   axios.get(listUrl).then(function (response) {
     userList.value = response.data.data
     userList.value = userList.value.map((item) => {
@@ -389,7 +389,7 @@ function handlePageChange(currentPage, pageSize) {
 
 function query(page, pageSize = 30, apiName = '', apiFlag = '', apiStatus = '', apiPath = '', apiTreeId = '') {
   return new Promise((resolve) => {
-    const url = utils.getUrl('HDataApi/interface/getList')
+    const url = utils.getUrl('interface/getList')
     const params = {
       pageNum: page, 'pageSize': pageSize, 'apiName': apiName, 'apiFlag': apiFlag, 'apiStatus': apiStatus, 'apiPath': apiPath, 'apiTreeId': apiTreeId,
       order: 'api_create_time', 'sort': 'desc'
@@ -412,7 +412,7 @@ function query(page, pageSize = 30, apiName = '', apiFlag = '', apiStatus = '', 
 }
 
 function subAuth() {
-  let subUrl = utils.getUrl('HDataApi/interface/insertAuthorizeInfo')
+  let subUrl = utils.getUrl('interface/insertAuthorizeInfo')
   let requestBody = {
     apiId: drawId.value,
     'authorizeId': apiAuthorizer.value
@@ -444,7 +444,7 @@ const columnsRef = ref(
           pub(row) {
             if (row.apiStatus === '待发布') {
               if (row.apiFlag === '接口开发') {
-                let urlPub = utils.getUrl(`HDataApi/interface-ui/api/publish?id=${row.apiId}`)
+                let urlPub = utils.getUrl(`interface-ui/api/publish?id=${row.apiId}`)
                 let pubPar = {
                   id: ''
                 }
@@ -457,7 +457,7 @@ const columnsRef = ref(
                   console.log(error)
                 })
               } else {
-                let urlPub = utils.getUrl('HDataApi/interface/upAndDownLines')
+                let urlPub = utils.getUrl('interface/upAndDownLines')
                 let pubPar = {
                   apiId: '',
                   apiStatus: 1
@@ -472,7 +472,7 @@ const columnsRef = ref(
                 })
               }
             } else {
-              let urlPub = utils.getUrl('HDataApi/interface/upAndDownLines')
+              let urlPub = utils.getUrl('interface/upAndDownLines')
               let pubPar = {
                 apiId: '',
                 apiStatus: 0

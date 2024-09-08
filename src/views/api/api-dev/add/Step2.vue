@@ -249,7 +249,7 @@ function formSubmit() {
 }
 
 function getInitData() {
-  let url = utils.getUrl('HDataApi/interface/getInterfaceInfoById')
+  let url = utils.getUrl('interface/getInterfaceInfoById')
   let params = { apiId: '' }
   params.apiId = route.query.apiId
   axios

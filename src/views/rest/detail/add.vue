@@ -234,7 +234,7 @@ const router = useRouter()
 
 let validatePath = (rule: any, value: any, callback: any) => {
   return new Promise<void>((resolve, reject) => {
-    let url = utils.getUrl('HDataApi/httpHandle/getHttpDataByTaskName')
+    let url = utils.getUrl('httpHandle/getHttpDataByTaskName')
     let body = { taskName: value }
 
     //0存在，1不存在
@@ -321,7 +321,7 @@ const dataTokenTypeOptions = ref([
 ])
 
 function formSubmit() {
-  let insUrl = utils.getUrl('HDataApi/httpHandle/insertHttpData')
+  let insUrl = utils.getUrl('httpHandle/insertHttpData')
 
   for(let i=0;i<dataKeyTmp.value.length; i++){
     formValue.value.dataKey[dataKeyTmp.value[i].value]=dataKeyTmp.value[i].key
@@ -366,7 +366,7 @@ function formSubmit() {
 
 
 function queryDataSource() {
-  let queryUrl = utils.getUrl('HDataApi/httpHandle/getDataSource?type=0')
+  let queryUrl = utils.getUrl('httpHandle/getDataSource?type=0')
 
   axios.get(queryUrl).then(function (response) {
 

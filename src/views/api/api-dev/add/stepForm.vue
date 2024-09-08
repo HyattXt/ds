@@ -134,7 +134,7 @@
   }
 
   function updateApi(apiId) {
-    const urlUpdate = utils.getUrl('HDataApi/interface/update')
+    const urlUpdate = utils.getUrl('interface/update')
     params2.value.apiId = apiId
     axios
         .post(urlUpdate, params2.value)
@@ -148,7 +148,7 @@
 
   function nextStep3() {
     return new Promise((resolve) => {
-      const url = utils.getUrl('HDataApi/interface-ui/api/save-api?id=-1')
+      const url = utils.getUrl('interface-ui/api/save-api?id=-1')
       if (route.query.apiId === undefined) {
         let apiId = ''
         axios

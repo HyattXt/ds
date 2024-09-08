@@ -183,7 +183,7 @@ function query(
     taskName = ''
 ) {
   return new Promise((resolve) => {
-    const url = utils.getUrl('HDataApi/httpHandle/getHttpDataListByParams')
+    const url = utils.getUrl('httpHandle/getHttpDataListByParams')
     const params = {
       'pageNum': page,
       'pageSize': pageSize,
@@ -236,7 +236,7 @@ function query(
             },
             {
               del(row) {
-                let urlDel = utils.getUrl('HDataApi/httpHandle/deleteHttpDataById')
+                let urlDel = utils.getUrl('httpHandle/deleteHttpDataById')
                 let delPar = {
                   id: null
                 }

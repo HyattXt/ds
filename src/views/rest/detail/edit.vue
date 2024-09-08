@@ -296,7 +296,7 @@ const dataTokenTypeOptions = ref([
 ])
 
 function formSubmit() {
-  let insUrl = utils.getUrl('HDataApi/httpHandle/updateHttpData')
+  let insUrl = utils.getUrl('httpHandle/updateHttpData')
   formValue.value.dataKey = {}
   formValue.value.dataUser = {}
   formValue.value.dataParam = {}
@@ -343,7 +343,7 @@ function formSubmit() {
 }
 
 function queryDataSource() {
-  let queryUrl = utils.getUrl('HDataApi/httpHandle/getDataSource?type=0')
+  let queryUrl = utils.getUrl('httpHandle/getDataSource?type=0')
 
   axios.get(queryUrl).then(function (response) {
 
@@ -352,7 +352,7 @@ function queryDataSource() {
 }
 
 onMounted(() => {
-  let url = utils.getUrl(+'HDataApi/httpHandle/getHttpDataById')
+  let url = utils.getUrl('httpHandle/getHttpDataById')
   let params = { id: '' }
   params.id = route.query.id
   formValue.value.id = route.query.id

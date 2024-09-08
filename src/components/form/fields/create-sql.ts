@@ -31,7 +31,7 @@ export function renderCreateSql( item: IJsonItem, fields: { [field: string]: any
     })
 
     function execute() {
-        let getSql = utils.getUrl('HDataApi/createTable/getCreateSql')
+        let getSql = utils.getUrl('createTable/getCreateSql')
         formValue.value.id = fields.dataSource
         formValue.value.type = parseInt(fields.dsType.replace('MYSQL',0).replace('ORACLE',5))
         formValue.value.tableName = fields.dsType=='ORACLE' || fields.dsType=='SQLSERVER' ? fields.sourceDatabase+'.'+fields.sourceTable : fields.sourceTable

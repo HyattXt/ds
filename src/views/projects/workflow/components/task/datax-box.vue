@@ -811,7 +811,7 @@ async function updateDataTarget(type) {
 }
 
 async function getDatasourceTables(dataSource ,type) {
-  let url = utils.getUrl('HDataApi/apiService/getTableByDataSourceId')
+  let url = utils.getUrl('apiService/getTableByDataSourceId')
   let params = {
     type: type,
     id: dataSource
@@ -889,7 +889,7 @@ async function initTargetTableList(dataSource, type) {
 }
 
 async function getDatasourceTableColumns(dataSource, table) {
-  const url = utils.getUrl('HDataApi/apiService/getColumnsByTable')
+  const url = utils.getUrl('apiService/getColumnsByTable')
   const params = {
     type: datasourceTypes.find(datasource => datasource.value === taskData.value.dsType)?.id,
     id: dataSource,
@@ -929,7 +929,7 @@ function getTableSql() {
     message.error('请输入去向库')
   }
   else {
-    let getSql = utils.getUrl('HDataApi/createTable/getCreateSql')
+    let getSql = utils.getUrl('createTable/getCreateSql')
     let body = {
       id: taskData.value.dataSource,
       type : datasourceTypes.find(datasource => datasource.value === taskData.value.dsType)?.id,
@@ -952,7 +952,7 @@ function getTableSql() {
 }
 
 function executeTableSql() {
-  let getSql = utils.getUrl('HDataApi/createTable/excuteSql')
+  let getSql = utils.getUrl('createTable/excuteSql')
   let body = {
     id: taskData.value.dataTarget,
     sqlStr: taskData.value.createSql
@@ -978,7 +978,7 @@ function getTableColumn() {
   if( taskData.value.rightData.length) {
     disassociate()
   }
-  let getCol = utils.getUrl('HDataApi/apiService/getColumnsByTable')
+  let getCol = utils.getUrl('apiService/getColumnsByTable')
   let targetBody = {
     id: taskData.value.dataTarget,
     type: datasourceTypes.find(datasource => datasource.value === taskData.value.dtType)?.id,

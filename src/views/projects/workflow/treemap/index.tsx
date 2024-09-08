@@ -443,7 +443,7 @@ export default defineComponent({
                  case 1 : return h(<svg class="icon" viewBox="0 0 1260 1024" xmlns="http://www.w3.org/2000/svg" width="19.688" height="16"><defs><style/></defs><path d="M1171.561 157.538H601.797L570.814 61.44A88.222 88.222 0 00486.794 0H88.747A88.747 88.747 0 000 88.747v846.506A88.747 88.747 0 0088.747 1024H1171.56a88.747 88.747 0 0088.747-88.747V246.285a88.747 88.747 0 00-88.747-88.747zm-1082.814 0V88.747h398.047l22.055 68.791z" fill="#0099CB"/></svg>)
                  case 2 : return h(<svg class="icon" viewBox="0 0 1260 1024" xmlns="http://www.w3.org/2000/svg" width="19.688" height="16"><defs><style/></defs><path d="M543.872 480h268.224c52.416 0 94.848 43.008 94.848 96v160h52.8a64 64 0 0 1 64 64V960a64 64 0 0 1-64 64H803.2a64 64 0 0 1-64-64v-160a64 64 0 0 1 64-64h40.512V576c0-17.664-14.144-32-31.616-32h-268.16v192h46.528a64 64 0 0 1 64 64V960a64 64 0 0 1-64 64H433.92a64 64 0 0 1-64-64v-160a64 64 0 0 1 64-64h46.72v-192H211.328a31.808 31.808 0 0 0-31.616 32v160h40.832a64 64 0 0 1 64 64V960a64 64 0 0 1-64 64H64a64 64 0 0 1-64-64v-160a64 64 0 0 1 64-64h52.48V576c0-52.992 42.496-96 94.848-96H480.64v-192h-46.72a64 64 0 0 1-64-64V64a64 64 0 0 1 64-64h156.544a64 64 0 0 1 64 64v160a64 64 0 0 1-64 64h-46.592v192z" fill="#0099CB"/></svg>)
                  default: {
-                     let url= '/HData/ui/images/task-icons/'+(option.taskType as string).toLocaleLowerCase()+'_hover.png'
+                     let url= '/HData/Dev/ui/images/task-icons/'+(option.taskType as string).toLocaleLowerCase()+'_hover.png'
                      return h(<img src={url} width="24" height="24" />)
                  }
             }
@@ -691,7 +691,7 @@ export default defineComponent({
                                                                                               </div>
                                                                                              )
                                                                             default: {
-                                                                                let url= '/HData/ui/images/task-icons/'+item.taskType.toLocaleLowerCase()+'_hover.png'
+                                                                                let url= '/HData/Dev/ui/images/task-icons/'+item.taskType.toLocaleLowerCase()+'_hover.png'
                                                                                 return h(<div style={"display: flex; align-items: center"}><img src={url} width="24" height="24"/>
                                                                                             <span>{item.label}</span>
                                                                                     {item.edited && (<n-icon style={"margin: 0 -8px 0 16px"} color={"#ffd192"}><Circle24Filled/></n-icon>)}

@@ -492,7 +492,7 @@ async function updateSourceTableList(dataSource) {
 }
 
 async function getDatasourceTables(dataSource ,type) {
-  let url = utils.getUrl('HDataApi/apiService/getTableByDataSourceId')
+  let url = utils.getUrl('apiService/getTableByDataSourceId')
   let params = {
     type: type,
     id: dataSource
@@ -506,7 +506,7 @@ async function getDatasourceTables(dataSource ,type) {
 }
 
 async function getDatasourceTableColumns(dataSource, table) {
-  const url = utils.getUrl('HDataApi/apiService/getColumnsByTable')
+  const url = utils.getUrl('apiService/getColumnsByTable')
   const params = {
     type: detailFrom.value.dataSourceType,
     id: dataSource,

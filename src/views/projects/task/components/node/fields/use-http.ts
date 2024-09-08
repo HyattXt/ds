@@ -47,7 +47,7 @@ export function useHttp(model: { [field: string]: any }): IJsonItem[] {
   const restOptions = ref([] as { label: string; value: number }[])
 
   function queryRestSourceList() {
-    let restOptionUrl =utils.getUrl('HDataApi/httpHandle/getHttpDataListByParams')
+    let restOptionUrl =utils.getUrl('httpHandle/getHttpDataListByParams')
     const params = {
       'pageNum': 1,
       'pageSize': 100,
@@ -77,7 +77,7 @@ export function useHttp(model: { [field: string]: any }): IJsonItem[] {
       type: 'input',
       field: 'url',
       name: t('project.node.http_url'),
-      value: 'http://localhost:8187/HDataApi/httpHandle/schedulerHttpDataHandle',
+      value: 'http://localhost:8187/HData/DevApi/httpHandle/schedulerHttpDataHandle',
       props: {
         placeholder: t('project.node.http_url_tips')
       },

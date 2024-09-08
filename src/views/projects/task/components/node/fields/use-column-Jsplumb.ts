@@ -58,7 +58,7 @@ export function useColumnJsplumb(
     function execute() {
         Disassociate()
         init()
-        let getCol = utils.getUrl('HDataApi/apiService/getColumnsByTable')
+        let getCol = utils.getUrl('apiService/getColumnsByTable')
         formTarget.value.id = model['dataTarget']
         formTarget.value.type = parseInt(model['dtType'].replace('MYSQL', 0).replace('ORACLE', 5).replace('SQLSERVER', 6).replace('POSTGRESQL', 1))
         formTarget.value.tableName = model['dtType'] == 'ORACLE' || model['dtType'] == 'SQLSERVER' || model['dtType'] == 'POSTGRESQL' ? model['targetDatabase'] + '.' + model['targetTable'] : model['targetTable']

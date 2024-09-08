@@ -397,15 +397,15 @@ const currentRow = ref()
 const ifDisableDelete = ref(true)
 const showUpdateRef = ref(false)
 const updateFormValue = ref({})
-const getCatalogFolderUrl = utils.getUrl('HDataApi/indicatorCenter/getIndicatorCenterTreeFloder')
-const addCatalogTreeUrl = utils.getUrl('HDataApi/indicatorCenter/insertIndicatorCenterTree')
-const delCatalogTreeUrl = utils.getUrl('HDataApi/indicatorCenter/deleteIndicatorCenterTree')
-const updateIndexTreeUrl = utils.getUrl('HDataApi/indicatorCenter/updateIndicatorCenterFloderRename')
-const insertIndexUrl = utils.getUrl('HDataApi/indicatorCenter/insert')
-const updateIndexUrl = utils.getUrl('HDataApi/indicatorCenter/update')
-const deleteIndexUrl = utils.getUrl('HDataApi/indicatorCenter/delete')
-const pubIndexUrl = utils.getUrl('HDataApi/indicatorCenter/indicatorOnline')
-const offIndexUrl = utils.getUrl('HDataApi/indicatorCenter/indicatorOffline')
+const getCatalogFolderUrl = utils.getUrl('indicatorCenter/getIndicatorCenterTreeFloder')
+const addCatalogTreeUrl = utils.getUrl('indicatorCenter/insertIndicatorCenterTree')
+const delCatalogTreeUrl = utils.getUrl('indicatorCenter/deleteIndicatorCenterTree')
+const updateIndexTreeUrl = utils.getUrl('indicatorCenter/updateIndicatorCenterFloderRename')
+const insertIndexUrl = utils.getUrl('indicatorCenter/insert')
+const updateIndexUrl = utils.getUrl('indicatorCenter/update')
+const deleteIndexUrl = utils.getUrl('indicatorCenter/delete')
+const pubIndexUrl = utils.getUrl('indicatorCenter/indicatorOnline')
+const offIndexUrl = utils.getUrl('indicatorCenter/indicatorOffline')
 const userStore = useUserStore()
 const userInfo = userStore.getUserInfo
 const  folderProps = {
@@ -588,7 +588,7 @@ function query(
     indicatorLatitude = '',
     apiTreeId = 1
 ) {
-  const url = utils.getUrl('HDataApi/indicatorCenter/getList')
+  const url = utils.getUrl('indicatorCenter/getList')
   const params = {
     'indicatorDefiner': indicatorDefiner,
     'pageNum': page,

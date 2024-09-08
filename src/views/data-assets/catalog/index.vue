@@ -142,7 +142,7 @@ const TableData = reactive({
     const treeFolder = ref([])
     const expandedKeys = ref([1]);
     const pattern = ref('');
-    const getApiFolderUrl = utils.getUrl('HDataApi/interface_lineage/getTreeAll')
+    const getApiFolderUrl = utils.getUrl('interface_lineage/getTreeAll')
     const paginationReactive = reactive({
       page: 1,
       pageSize: 30,
@@ -157,7 +157,7 @@ const TableData = reactive({
         sqlLineageName = '',
         apiTreeId = 1
     ) {
-      const url = utils.getUrl('HDataApi/interface_lineage/getSqlLineageListByParams')
+      const url = utils.getUrl('interface_lineage/getSqlLineageListByParams')
       const params = {
         'pageNum': page,
         'pageSize': pageSize,
@@ -198,7 +198,7 @@ const TableData = reactive({
     }
 
     function handleMetadata() {
-      let url = utils.getUrl('/HDataApi/interface_lineage/sqlLineageExcute')
+      let url = utils.getUrl('interface_lineage/sqlLineageExcute')
       axios
           .get(url)
           .then(function () {

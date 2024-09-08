@@ -124,7 +124,7 @@ const route = useRoute()
 const activeName = ref('请求参数')
 const returnParams = ref([])
 const requestParams = ref([])
-const getApiTreeUrl = utils.getUrl('HDataApi/interface/getApiTreeFloder')
+const getApiTreeUrl = utils.getUrl('interface/getApiTreeFloder')
 const formValue = ref({
   apiName: '',
   apiPath: '',
@@ -369,8 +369,8 @@ const menuIcon = () => {
 
 let validatePath = (rule, value, callback) => {
   return new Promise((resolve, reject) => {
-    let url = utils.getUrl('HDataApi/interface/getApiPath')
-    let body = { apiPath: '/HDataApi/proxy' + value }
+    let url = utils.getUrl('interface/getApiPath')
+    let body = { apiPath: '/HData/DevApi/proxy' + value }
     //0存在，1不存在
     axios.post(url, body).then(function (response) {
       if (response.data.status == 0) {
@@ -387,7 +387,7 @@ let validatePath = (rule, value, callback) => {
 let validateName = (rule, value, callback) => {
   if (route.query.apiId == undefined) {
     return new Promise((resolve, reject) => {
-      let url = utils.getUrl('HDataApi/interface/getInterfaceInfoByApiName')
+      let url = utils.getUrl('interface/getInterfaceInfoByApiName')
       let body = { apiName: value }
 
       //0存在，1不存在
@@ -525,7 +525,7 @@ function getTreeFolder ()  {
 }
 
 function getInitData ()  {
-  let url = utils.getUrl('HDataApi/interface/getInterfaceInfoById')
+  let url = utils.getUrl('interface/getInterfaceInfoById')
   let params = { apiId: '' }
   params.apiId = route.query.apiId
 

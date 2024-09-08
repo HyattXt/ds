@@ -88,7 +88,7 @@
 
   function queryDataSource() {
       formValue.value.apiDatasourceId = ''
-      const url = utils.getUrl('HDataApi/apiService/getDataSource?type='+formValue.value.apiDatasourceType)
+      const url = utils.getUrl('apiService/getDataSource?type='+formValue.value.apiDatasourceType)
       axios.get(url).then(function (response) {
 
       sList.value = response.data.data
@@ -96,7 +96,7 @@
   }
 
   function queryTab() {
-    const url = utils.getUrl(+'HDataApi/apiService/getTables')
+    const url = utils.getUrl('apiService/getTables')
     let params = {
       type : formValue.value.apiDatasourceType,
       id : formValue.value.apiDatasourceId
@@ -108,7 +108,7 @@
   }
 
   function queryCol(table: string) {
-    const url = utils.getUrl('HDataApi/apiService/getColumnsByTable')
+    const url = utils.getUrl('apiService/getColumnsByTable')
     const params = {
       type : formValue.value.apiDatasourceType,
       id : formValue.value.apiDatasourceId,
@@ -126,7 +126,7 @@
   }
 
   function getInitData() {
-    let url = utils.getUrl('HDataApi/interface/getInterfaceInfoById')
+    let url = utils.getUrl('interface/getInterfaceInfoById')
     let params = { apiId: '' }
     params.apiId = route.query.apiId
 

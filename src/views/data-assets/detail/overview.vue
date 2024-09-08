@@ -32,7 +32,7 @@ const message = useMessage()
 const tableName = ref(history.state.tableName)
 
 onMounted(() => {
-  const url = utils.getUrl('HDataApi/interface_lineage/getTableDataByTableName')
+  const url = utils.getUrl('interface_lineage/getTableDataByTableName')
   let params ={
     tableName: history.state.tableName
   }

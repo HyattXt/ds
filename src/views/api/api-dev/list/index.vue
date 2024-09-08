@@ -277,7 +277,7 @@
     apiTreeId = 1
   ) {
     return new Promise((resolve) => {
-      const url = utils.getUrl('HDataApi/interface/getList')
+      const url = utils.getUrl('interface/getList')
       const params = {
         pageNum: page,
         pageSize: pageSize,
@@ -338,13 +338,11 @@
   const updateFormValue = ref({})
   const selectedMenu = ref(1)
   const addFormValue = ref({ titleName: '' })
-  const getApiTreeUrl = utils.getUrl('HDataApi/interface/getApiTree')
-  const addApiTreeUrl = utils.getUrl('HDataApi/interface/insertApiTree')
-  const delApiTreeUrl = utils.getUrl('HDataApi/interface/deleteApiTree')
-  const updateApiTreeUrl = utils.getUrl(
-    'HDataApi/interface/updateInterfaceFloderRename'
-  )
-  const getApiFolderUrl = utils.getUrl('HDataApi/interface/getApiTreeFloder')
+  const getApiTreeUrl = utils.getUrl('interface/getApiTree')
+  const addApiTreeUrl = utils.getUrl('interface/insertApiTree')
+  const delApiTreeUrl = utils.getUrl('interface/deleteApiTree')
+  const updateApiTreeUrl = utils.getUrl('interface/updateInterfaceFloderRename')
+  const getApiFolderUrl = utils.getUrl('interface/getApiTreeFloder')
   const router = useRouter()
   const rules = {
     titleName: {
@@ -655,7 +653,7 @@
   }
 
   function deleteApi(row) {
-    let urlDel = utils.getUrl('HDataApi/interface/deleteByApiId')
+    let urlDel = utils.getUrl('interface/deleteByApiId')
     let delPar = {
       apiId: row.apiId
     }
@@ -774,9 +772,7 @@
           })
       }
     } else {
-      let sqlUrl = utils.getUrl(
-        'HDataApi/interface-ui/api/perform?id=' + drawId.value
-      )
+      let sqlUrl = utils.getUrl('interface-ui/api/perform?id=' + drawId.value)
       let sqlBody = {
         id: drawId.value,
         select: 'POST',
@@ -805,7 +801,7 @@
   }
 
   function updateApiTimeConsuming(id, executeTime) {
-    let url = utils.getUrl('HDataApi/interface/updateApiTimeConsuming')
+    let url = utils.getUrl('interface/updateApiTimeConsuming')
     let param = {
       apiId: id,
       apiTimeConsuming: executeTime

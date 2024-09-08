@@ -154,8 +154,8 @@ const apiData =ref({
     })
 
 function queryUser() {
-  const listUrl = utils.getUrl('HDataApi/interface/getUser')
-  const authListUrl = utils.getUrl('HDataApi/interface/getAuthorizeInfo')
+  const listUrl = utils.getUrl('interface/getUser')
+  const authListUrl = utils.getUrl('interface/getAuthorizeInfo')
   axios.get(listUrl).then(function (response) {
 
     userList.value = response.data.data
@@ -191,10 +191,10 @@ function queryBasic(apiParam, type) {
   let url
   let basicPar = {}
   if(type === 'apiName'){
-    url = utils.getUrl('HDataApi/interface/getInterfaceInfoByApiName')
+    url = utils.getUrl('interface/getInterfaceInfoByApiName')
     basicPar.apiName = apiParam
   } else {
-    url = utils.getUrl('HDataApi/interface/getInterfaceInfoById')
+    url = utils.getUrl('interface/getInterfaceInfoById')
     basicPar.apiId = apiParam
   }
 
@@ -204,7 +204,7 @@ function queryBasic(apiParam, type) {
     if (basicInfo.value.apiFlag === 1) {
       basicInfo.value.apiFlag = '接口开发'
       basicInfo.value.apiScript = basicInfo.value.apiScript.replace(/.*HD688296/,"")
-      basicInfo.value.apiPath = basicInfo.value.apiPath.replace('/api/','/HDataApi/api/')
+      basicInfo.value.apiPath = basicInfo.value.apiPath.replace('/api/','/HData/DevApi/api/')
     }
     if (basicInfo.value.apiFlag === 2) {
       basicInfo.value.apiFlag = '接口注册'
