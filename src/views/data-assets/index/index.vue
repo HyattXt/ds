@@ -137,6 +137,7 @@
               check-strictly
               style="width: 240px"
               popper-class="form-item-select"
+              :render-content="renderContent"
           />
         </el-form-item>
       </el-form>
@@ -146,13 +147,14 @@
         </div>
       </template>
     </el-dialog>
-    <el-dialog :before-close="metaDialogVisible" v-model="active" append-to-body>
+    <el-dialog :before-close="metaDialogVisible" v-model="active" append-to-body class="model-form-wrapper">
       <template #header> {{ indexFormValue.opperate }} </template>
         <n-form
             :size="'small'"
             :model='indexFormValue'
             label-placement="left"
-            label-width="auto"
+            require-mark-placement="left"
+            :label-width="100"
             ref="formRef"
             :rules="rules"
         >
@@ -165,6 +167,8 @@
                 children-field="children"
                 placeholder="选择目标指标目录"
                 :disabled="ifUpdate"
+                :default-expanded-keys="[1]"
+                :render-prefix="menuIcon"
             />
           </n-form-item>
           <n-grid :cols="24" :x-gap="24">
@@ -317,6 +321,7 @@
         <n-form
             ref="formRef"
             label-placement="left"
+            require-mark-placement="left"
             label-width="auto"
             :rules="rules"
             :model="indexFormValue"
@@ -363,6 +368,7 @@ import {Search} from "@element-plus/icons-vue";
 import {ElMessageBox} from "element-plus";
 import {CaretUp, CaretDown, PencilAlt, TrashAlt} from "@vicons/fa";
 import {Add12Filled} from "@vicons/fluent";
+import utils from '@/utils'
 
 const TableData = reactive({
   tableList: [],
@@ -384,40 +390,22 @@ const indexFormValue = ref({})
 const operaSpan = ref(0)
 const operaOffSpan = ref(0)
 const ifUpdate = ref(false)
-const expandedKeys = ref([]);
+const expandedKeys = ref([1]);
 const pattern = ref('');
 const ruleFormRef = ref()
 const currentRow = ref()
 const ifDisableDelete = ref(true)
 const showUpdateRef = ref(false)
 const updateFormValue = ref({})
-const getCatalogFolderUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/indicatorCenter/getIndicatorCenterTreeFloder'
-    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/indicatorCenter/getIndicatorCenterTreeFloder'
-const addCatalogTreeUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/indicatorCenter/insertIndicatorCenterTree'
-    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/indicatorCenter/insertIndicatorCenterTree'
-const delCatalogTreeUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/indicatorCenter/deleteIndicatorCenterTree'
-    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/indicatorCenter/deleteIndicatorCenterTree'
-const updateIndexTreeUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/indicatorCenter/updateIndicatorCenterFloderRename'
-    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/indicatorCenter/updateIndicatorCenterFloderRename'
-const insertIndexUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/indicatorCenter/insert'
-    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/indicatorCenter/insert'
-const updateIndexUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/indicatorCenter/update'
-    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/indicatorCenter/update'
-const deleteIndexUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/indicatorCenter/delete'
-    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/indicatorCenter/delete'
-const pubIndexUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/indicatorCenter/indicatorOnline'
-    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/indicatorCenter/indicatorOnline'
-const offIndexUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/indicatorCenter/indicatorOffline'
-    : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/indicatorCenter/indicatorOffline'
+const getCatalogFolderUrl = utils.getUrl('indicatorCenter/getIndicatorCenterTreeFloder')
+const addCatalogTreeUrl = utils.getUrl('indicatorCenter/insertIndicatorCenterTree')
+const delCatalogTreeUrl = utils.getUrl('indicatorCenter/deleteIndicatorCenterTree')
+const updateIndexTreeUrl = utils.getUrl('indicatorCenter/updateIndicatorCenterFloderRename')
+const insertIndexUrl = utils.getUrl('indicatorCenter/insert')
+const updateIndexUrl = utils.getUrl('indicatorCenter/update')
+const deleteIndexUrl = utils.getUrl('indicatorCenter/delete')
+const pubIndexUrl = utils.getUrl('indicatorCenter/indicatorOnline')
+const offIndexUrl = utils.getUrl('indicatorCenter/indicatorOffline')
 const userStore = useUserStore()
 const userInfo = userStore.getUserInfo
 const  folderProps = {
@@ -551,17 +539,43 @@ const rules = reactive({
     trigger: 'blur'
   }
 })
+const renderContent = (h, { data }) => {
+  return h('div',{style: {display: 'flex', alignItems: 'center'}},[
+    h('svg', {
+      class: 'icon',
+      viewBox: '0 0 1260 1024',
+      xmlns: 'http://www.w3.org/2000/svg',
+      width: '16',
+      height: '16'
+    }, [
+      h('path', {
+        d: 'M1171.561 157.538H601.797L570.814 61.44A88.222 88.222 0 00486.794 0H88.747A88.747 88.747 0 000 88.747v846.506A88.747 88.747 0 0088.747 1024H1171.56a88.747 88.747 0 0088.747-88.747V246.285a88.747 88.747 0 00-88.747-88.747zm-1082.814 0V88.747h398.047l22.055 68.791z',
+        fill: '#0099CB'
+      })
+    ]),
+    h(
+        'span',
+        {
+          style: {
+            'padding-left': '5px',
+          },
+        },
+        data.titleName
+    )
+  ])
+}
 const paginationReactive = reactive({
   indicatorDefiner: '',
   assetName: '',
   page: 1,
   pageSize: 30,
-  timeDimension: null,
+  timeDimension: '',
   indicatorName: '',
   indicatorCode: '',
   indicatorTargetTable: '',
   indicatorLatitude: '',
-  apiTreeId: 1
+  apiTreeId: 1,
+  itemCount: 0
 })
 function query(
     indicatorDefiner,
@@ -574,18 +588,12 @@ function query(
     indicatorLatitude = '',
     apiTreeId = 1
 ) {
-  const url = import.meta.env.MODE === 'development'
-      ? import.meta.env.VITE_APP_DEV_ASSETS_URL+'/HDataApi/indicatorCenter/getList'
-      : window.webConfig.VITE_APP_PROD_ASSETS_URL+'/HDataApi/indicatorCenter/getList'
+  const url = utils.getUrl('indicatorCenter/getList')
   const params = {
     'indicatorDefiner': indicatorDefiner,
     'pageNum': page,
     'pageSize': pageSize,
-//    'timeDimension': timeDimension,
     'indicatorName': indicatorName,
-//    'indicatorCode': indicatorCode,
-//    'indicatorTargetTable': indicatorTargetTable,
-//    'indicatorLatitude': indicatorLatitude,
     'apiTreeId': apiTreeId
   }
   loadingRef.value = true
@@ -714,7 +722,7 @@ function updateMenu(ruleFormRef) {
   })
 }
 function editMetadata() {
-  indexFormValue.value = currentRow.value
+  indexFormValue.value = { ...currentRow.value }
   indexFormValue.value.treeId = Number(currentRow.value.treeId)
   currentRow.value.indicatorLabels === '已上架' ? indexFormValue.value.opperate = '查看' : indexFormValue.value.opperate = '编辑'
   operaSpan.value = 12
@@ -725,6 +733,7 @@ function editMetadata() {
 
 function metaDialogVisible () {
   active.value = false
+  formRef.value?.restoreValidation()
   Object.keys(indexFormValue.value).forEach(key => {
     indexFormValue.value[key] = ''; // 将表单的所有响应式属性设置为空字符串
   });
@@ -732,12 +741,12 @@ function metaDialogVisible () {
 
 function addDialogVisible () {
   showAddRef.value = false
-  formValue.value.titleName = ''
+  ruleFormRef.value?.resetFields()
 }
 
 function updateDialogVisible () {
   showUpdateRef.value = false
-  updateFormValue.value.titleName = ''
+  ruleFormRef.value?.resetFields()
 }
 
 function pubMetadata(row) {
@@ -785,11 +794,7 @@ const delTreeConfirm = (id, titleName) => {
 
 function handleCurrentChange(val) {
   currentRow.value = val
-  if(currentRow.value && (currentRow.value.indicatorLabels === '已下架' || currentRow.value.indicatorLabels === '未上架') ) {
-    ifDisableDelete.value = false
-  } else {
-    ifDisableDelete.value = true
-  }
+  ifDisableDelete.value = !(currentRow.value && (currentRow.value.indicatorLabels === '已下架' || currentRow.value.indicatorLabels === '未上架'));
 }
 
 function getApiFolder ()  {
@@ -815,8 +820,8 @@ function renderSuffix({ option }) {
               ),
           default: () =>
               h('div', [
-                h('div', h(NButton, { onClick: () => updateTree(option.id, option.parentId), quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h(NIcon,{ text: true ,size: '12'}, h(PencilAlt) ),default: () =>"修改"} )),
-                h('div', h(NButton, { onClick: () => delTreeConfirm(option.id, option.titleName), disabled: option.children.length !== 0, quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h(NIcon,{ text: true ,size: '12'}, h(TrashAlt) ),default: () =>"删除"} ))
+                h('div', h(NButton, { onClick: () => updateTree(option.id, option.parentId), quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h(NIcon,{ text: true ,size: '12'}, {default: () => h(PencilAlt)} ),default: () =>"修改"} )),
+                h('div', h(NButton, { onClick: () => delTreeConfirm(option.id, option.titleName), disabled: option.children.length !== 0, quaternary: true, style: {width: '100px', 'font-size': '12px', 'justify-content': 'left'}},{icon: () => h(NIcon,{ text: true ,size: '12'}, {default: () => h(TrashAlt)} ),default: () =>"删除"} ))
               ])
         }
     )

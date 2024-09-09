@@ -152,3 +152,10 @@ export function getDatasourceTableColumnsById(
     }
   })
 }
+
+export function getDatasourceHome(): any {
+  return axios({
+    url: '/datasources/queryIndexInfo',
+    method: 'get'
+  })
+}

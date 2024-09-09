@@ -102,7 +102,7 @@ dt {
   }
 
   .el-dialog__body {
-    padding: 26px 16px 14px 26px;
+    padding: 26px 26px 14px 26px;
     min-width: 600px;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
@@ -135,6 +135,7 @@ dt {
   .el-form-item__label {
     padding-right:6px;
     height: 28px;
+    align-items: center;
   }
 
   .el-input {
@@ -216,7 +217,6 @@ dt {
 .page-select {
   .el-select-dropdown__item {
     font: 12px/1.5 "Microsoft YaHei","Arial","Hiragino Sans GB","PingFang SC","Helvetica","Verdana","微软雅黑","Verdana",sans-serif;
-    padding: 0 20px;
     position: relative;
     white-space: nowrap;
     overflow: hidden;
@@ -238,7 +238,6 @@ dt {
 .form-item-select {
   .el-select-dropdown__item {
     font-size: 12px;
-    padding: 0 20px;
     position: relative;
     white-space: nowrap;
     overflow: hidden;
@@ -263,6 +262,9 @@ dt {
   z-index: 2000!important;
 }
 
+.el-loading-mask {
+  z-index: 1999;
+}
 .el-overlay-message-box {
   text-align: center;
   position: fixed;
@@ -687,6 +689,7 @@ dt {
 
       .cue-crud__footer-tab {
         overflow: hidden;
+        display: flex;
 
         > .el-button-group {
           display: flex;
@@ -694,7 +697,7 @@ dt {
           width: 100%;
           overflow-x: auto;
           /*float: left;*/
-          margin-top: 6px;
+          margin-top: 8.5px;
         }
       }
 
@@ -730,3 +733,71 @@ dt {
   text-align: center;
 }
 
+.n-input__placeholder, .n-base-selection-placeholder__inner{
+  font-size: 12px !important;
+}
+
+.n-base-selection .n-base-selection-overlay .n-base-selection-overlay__wrapper {
+  font-size: 12px !important;
+}
+
+.el-radio-button__inner {
+  color: #000000;
+  padding: 7px 12px;
+  font-size: 12px;
+
+  &:hover {
+    color: #0099CB;
+  }
+}
+
+.el-radio-button {
+  --el-radio-button-checked-bg-color:  #0099CB;
+
+  &:first-child .el-radio-button__inner {
+    border-left: 1px solid #cbd5dd;
+    border-radius: 2px 0 0 2px;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+  }
+
+  &:last-child .el-radio-button__inner {
+    border-radius: 0 2px 2px 0;
+  }
+
+}
+
+.v-binder-follower-content {
+  font-size: 13px;
+}
+
+.el-switch {
+  height: 20px
+}
+
+.model-form-wrapper {
+  .n-form-item-feedback-wrapper {
+    min-height: 14px;
+  }
+}
+
+.hover_image {
+  transition: transform 0.3s ease;
+  &:hover {
+    transform: scale(1.1); /* 当鼠标悬停时，放大10% */
+  }
+}
+
+.hover_image_large {
+  transition: transform 0.3s ease;
+  &:hover {
+    transform: scale(1.03); /* 当鼠标悬停时，放大3% */
+  }
+}
+
+.hover_div {
+  transition: border-color 0.3s, box-shadow 0.3s;
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+}

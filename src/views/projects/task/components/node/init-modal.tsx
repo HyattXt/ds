@@ -232,6 +232,7 @@ const NodeInitModal = defineComponent({
             default: () =>(
                 <NForm
                     label-placement="left"
+                    require-mark-placement="left"
                     label-align="right"
                     label-width="100"
                     size="medium"

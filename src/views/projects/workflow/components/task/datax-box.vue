@@ -12,12 +12,22 @@
         :disableStop="disableStop"
         :showOnline="props.readOnly"
     >
+      <template #define-button>
+        <el-tooltip :content="taskData.jsonConfig ? '表单模式' : '脚本模式'" placement="top">
+          <n-button :disabled="props.readOnly" text @click="handleJsonConfig">
+            <n-icon size="18">
+              <Code16Filled v-if="!taskData.jsonConfig"/>
+              <FormatListBulletedOutlined v-if="taskData.jsonConfig"/>
+            </n-icon>
+          </n-button>
+        </el-tooltip>
+      </template>
     </CrudWorkflowTooltip>
     <div class="right-bar"><div @click="openTab('first')">任务属性</div><div @click="openTab('second')">参数配置</div></div>
     <n-split class="split_lower" direction="vertical" v-model:size="logHeight" @drag-move="handleOnDragMove" style="width: calc(100% - 36px)">
       <template #1>
         <div class="build-form">
-          <NForm :disabled="props.readOnly" size="small" label-placement="left" label-align="right" label-width="100" :model="taskData" :rules="rules" ref="formRef">
+          <NForm v-if="!taskData.jsonConfig" :disabled="props.readOnly" size="small" label-placement="left" require-mark-placement="left" label-align="right" label-width="100" :model="taskData" :rules="rules" ref="formRef">
             <n-collapse :default-expanded-names="['1', '2', '3', '4']">
               <n-collapse-item  name="1">
                 <template #header>
@@ -81,6 +91,7 @@
                               value-field="TABLE_NAME"
                               @click="updateSplitPk"
                               filterable
+                              clearable
                           />
                           <n-tooltip trigger="hover">
                             <template #trigger>
@@ -261,6 +272,14 @@
               </n-collapse-item>
             </n-collapse>
           </NForm>
+          <Editor
+              v-if="taskData.jsonConfig"
+              ref="editorRef"
+              :value="taskData.json"
+              :onUpdateValue = "(value) => taskData.json = value"
+              :options="{readOnly: props.readOnly, language: 'json'}"
+              style="height: 99%"
+          />
         </div>
       </template>
       <template #2>
@@ -345,11 +364,11 @@ import {useAsyncState} from "@vueuse/core";
 import {
   ArrowMinimize28Filled,
   ArrowMinimizeVertical20Filled,
-  FullScreenMinimize24Filled
+  FullScreenMinimize24Filled,
+  Code16Filled
 } from "@vicons/fluent";
-import {
-  QuestionCircleTwotone
-} from "@vicons/antd";
+import { QuestionCircleTwotone } from "@vicons/antd";
+import { FormatListBulletedOutlined } from "@vicons/material";
 import {
   queryDataSourceList
 } from "@/service/modules/data-source";
@@ -357,7 +376,7 @@ import {find, lowerCase} from "lodash";
 import Editor from "@/components/monaco-editor";
 import axios from "axios";
 import {useHeightAdjustment} from "@/views/projects/workflow/components/task/useHeightAdjustment";
-
+import utils from "@/utils";
 
 const props = defineProps({
   taskCode: {
@@ -428,9 +447,6 @@ const jdbcConnectInfo = ref({
      database: ''
    }
 })
-const SecondDevCreateUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL
-    : window.webConfig.VITE_APP_PROD_API_URL
 const taskData = ref({
   code: '',
   name: '',
@@ -661,27 +677,33 @@ const datasourceTypes = [
 ]
 
 const onTaskSubmit = async (data) => {
-  jsplumbRef.value.save()
-  taskData.value.json = formatJson()
-  const params = formatData(data)
-  try {
-    await updateWithUpstream(
-        props.projectCode,
-        data.code,
-        {
-          upstreamCodes: params.upstreamCodes,
-          taskDefinitionJsonObj: JSON.stringify(params.taskDefinitionJsonObj)
-        }
-    )
-    message.success('成功')
-    await initData()
-    updateTab(data.code, data.name)
-    updateEdited(taskData.value.code, false)
-    saveBeforeRun.value = false
-    return true
-  } catch (err) {
-    message.error('保存出错，请联系系统维护人员')
-    return false
+  if(!taskData.value.jsonConfig) {
+    jsplumbRef.value.save()
+    taskData.value.json = formatJson()
+  }
+  if(taskData.value.leftList.length || taskData.value.jsonConfig){
+    const params = formatData(data)
+    try {
+      await updateWithUpstream(
+          props.projectCode,
+          data.code,
+          {
+            upstreamCodes: params.upstreamCodes,
+            taskDefinitionJsonObj: JSON.stringify(params.taskDefinitionJsonObj)
+          }
+      )
+      message.success('成功')
+      await initData()
+      updateTab(data.code, data.name)
+      updateEdited(taskData.value.code, false)
+      saveBeforeRun.value = false
+      return true
+    } catch (err) {
+      message.error('保存出错，请联系系统维护人员')
+      return false
+    }
+  } else {
+    message.error('保存前请先映射字段!')
   }
 }
 
@@ -789,7 +811,7 @@ async function updateDataTarget(type) {
 }
 
 async function getDatasourceTables(dataSource ,type) {
-  let url = SecondDevCreateUrl + '/HDataApi/apiService/getTableByDataSourceId'
+  let url = utils.getUrl('apiService/getTableByDataSourceId')
   let params = {
     type: type,
     id: dataSource
@@ -815,7 +837,7 @@ async function updateSourceTableList(dataSource) {
     taskData.value.splitPk = null
   }
   if (sourceTableList.value.length && taskData.value.sourceTable) {
-    const item = find(sourceTableList.value, { value: taskData.value.sourceTable })
+    const item = find(sourceTableList.value, { TABLE_NAME: taskData.value.sourceTable })
     if (!item) {
       taskData.value.sourceTable = null
       taskData.value.splitPk = null
@@ -847,7 +869,7 @@ async function updateTargetTableList(dataSource) {
     taskData.value.targetTable = null
   }
   if (targetTableList.value.length && taskData.value.targetTable) {
-    const item = find(targetTableList.value, { value: taskData.value.targetTable })
+    const item = find(targetTableList.value, { TABLE_NAME: taskData.value.targetTable })
     if (!item) {
       taskData.value.targetTable = null
     }
@@ -867,7 +889,7 @@ async function initTargetTableList(dataSource, type) {
 }
 
 async function getDatasourceTableColumns(dataSource, table) {
-  const url = SecondDevCreateUrl + '/HDataApi/apiService/getColumnsByTable'
+  const url = utils.getUrl('apiService/getColumnsByTable')
   const params = {
     type: datasourceTypes.find(datasource => datasource.value === taskData.value.dsType)?.id,
     id: dataSource,
@@ -907,7 +929,7 @@ function getTableSql() {
     message.error('请输入去向库')
   }
   else {
-    let getSql = SecondDevCreateUrl+'/HDataApi/createTable/getCreateSql'
+    let getSql = utils.getUrl('createTable/getCreateSql')
     let body = {
       id: taskData.value.dataSource,
       type : datasourceTypes.find(datasource => datasource.value === taskData.value.dsType)?.id,
@@ -930,7 +952,7 @@ function getTableSql() {
 }
 
 function executeTableSql() {
-  let getSql = SecondDevCreateUrl+'/HDataApi/createTable/excuteSql'
+  let getSql = utils.getUrl('createTable/excuteSql')
   let body = {
     id: taskData.value.dataTarget,
     sqlStr: taskData.value.createSql
@@ -956,7 +978,7 @@ function getTableColumn() {
   if( taskData.value.rightData.length) {
     disassociate()
   }
-  let getCol = SecondDevCreateUrl + '/HDataApi/apiService/getColumnsByTable'
+  let getCol = utils.getUrl('apiService/getColumnsByTable')
   let targetBody = {
     id: taskData.value.dataTarget,
     type: datasourceTypes.find(datasource => datasource.value === taskData.value.dtType)?.id,
@@ -1018,7 +1040,10 @@ function getTableColumn() {
                     message.error(error)
                   })
             } else {
-              const res = await querySqlColum(taskData.value.sql)
+              let params = {
+                sql: taskData.value.sql
+              }
+              const res = await querySqlColum(params)
               taskData.value.leftData = res.map((item) => {
                     let res = {
                       id: '',
@@ -1093,14 +1118,10 @@ function formatJson() {
                 {
                   "jdbcUrl": [
                     jdbcConnectInfo.value.sourceConnect.jdbcUrl
-                  ],
-                  "table": [
-                    taskData.value.sourceTable
                   ]
                 }
               ],
               "password": jdbcConnectInfo.value.sourceConnect.password,
-              "splitPk": taskData.value.splitPk,
               "username": jdbcConnectInfo.value.sourceConnect.user,
               "where": taskData.value.where
             }
@@ -1139,8 +1160,18 @@ function formatJson() {
     }
   }
   if(taskData.value.dtType === 'MYSQL') json.job.content[0].writer.parameter['writeMode'] =  taskData.value.writeMode
-  if(taskData.value.executeMode === '1') json.job.content[0].reader.parameter['querySql'] = [ taskData.value.sql ]
+  taskData.value.executeMode === '1' ? json.job.content[0].reader.parameter.connection[0].querySql = [ taskData.value.sql ] : json.job.content[0].reader.parameter.connection[0].table = [taskData.value.sourceTable]
+  if(taskData.value.splitPk)  json.job.content[0].reader.parameter['splitPk'] = taskData.value.splitPk
   return JSON.stringify(json,null,4)
+}
+
+async function handleJsonConfig() {
+  let jsonConfig = !taskData.value.jsonConfig
+  taskData.value.leftList = []
+  taskData.value.rightList = []
+  taskData.value.leftData = []
+  taskData.value.rightData = []
+  taskData.value.jsonConfig = jsonConfig
 }
 
 function VerticalLog () {

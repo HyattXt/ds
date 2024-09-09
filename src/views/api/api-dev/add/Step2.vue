@@ -54,15 +54,14 @@ import {useRoute} from "vue-router";
 import axios from "axios";
 import CrudSplit from "@/components/cue/crud-split.vue";
 import {querySqlColum} from "@/service/modules/task-definition";
+import utils from "@/utils";
 
 const message = useMessage()
 const loading = ref(false)
-const kvValue = ref([])
 const route = useRoute()
 const activeName = ref('请求参数')
 const returnParams = ref([])
 const requestParams = ref([])
-const SecondDevApiUrl = import.meta.env.MODE === 'development' ? import.meta.env.VITE_APP_DEV_API_URL : window.webConfig.VITE_APP_PROD_API_URL
 const formValue = ref({
   codeValue: '',
   requestBody: '',
@@ -250,7 +249,7 @@ function formSubmit() {
 }
 
 function getInitData() {
-  let url = SecondDevApiUrl+'/HDataApi/interface/getInterfaceInfoById'
+  let url = utils.getUrl('interface/getInterfaceInfoById')
   let params = { apiId: '' }
   params.apiId = route.query.apiId
   axios

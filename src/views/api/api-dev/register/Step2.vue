@@ -46,6 +46,7 @@ import {useRoute} from "vue-router";
 import axios from "axios";
 import CrudSplit from "@/components/cue/crud-split.vue";
 import {PlusSquareOutlined} from "@vicons/antd";
+import utils from "@/utils";
 
 const form2Ref = ref(null)
 const message = useMessage()
@@ -53,7 +54,6 @@ const loading = ref(false)
 const success =ref('')
 const route = useRoute()
 const emit = defineEmits(['prevStep', 'nextStep'])
-const SecondDevApiUrl = import.meta.env.MODE === 'development' ? import.meta.env.VITE_APP_DEV_API_URL : window.webConfig.VITE_APP_PROD_API_URL
 const responseStatusColumns = [
   {
     title: "状态码",
@@ -151,7 +151,7 @@ function formSubmit() {
 }
 
 function getInitData ()  {
-  let url = SecondDevApiUrl+'/HDataApi/interface/getInterfaceInfoById'
+  let url = utils.getUrl('interface/getInterfaceInfoById')
   let params = { apiId: '' }
   params.apiId = route.query.apiId
 

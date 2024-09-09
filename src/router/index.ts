@@ -31,7 +31,7 @@ import 'nprogress/nprogress.css'
 
 const router = createRouter({
   history: createWebHistory(
-    import.meta.env.MODE === 'production' ? '/HData/ui/' : '/'
+    import.meta.env.MODE === 'production' ? '/HData/Dev/ui/' : '/'
   ),
   routes
 })

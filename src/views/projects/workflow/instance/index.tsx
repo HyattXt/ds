@@ -111,7 +111,7 @@ export default defineComponent({
               table: () => (
                     <NDataTable
                         loading={loadingRef}
-                        rowKey={(row: any) => row.code}
+                        rowKey={(row: any) => row.id}
                         columns={this.columns}
                         data={this.tableData}
                         v-model:checked-row-keys={this.checkedRowKeys}

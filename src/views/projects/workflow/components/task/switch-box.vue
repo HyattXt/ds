@@ -13,7 +13,7 @@
     </CrudWorkflowTooltip>
     <div class="right-bar"><div @click="openTab('first')">任务属性</div></div>
         <div style="height: calc(100% - 90px); margin: 30px 100px; overflow: auto;">
-          <NForm :disabled="props.readOnly" size="small" label-placement="left" label-align="right" label-width="150" :rules="rules" :model="taskData" ref="formRef">
+          <NForm :disabled="props.readOnly" size="small" label-placement="left" require-mark-placement="left" label-align="right" label-width="150" :rules="rules" :model="taskData" ref="formRef">
             <NGrid x-gap="10">
               <NFormItemGi
                   v-for="element in elements"

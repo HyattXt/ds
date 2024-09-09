@@ -55,6 +55,7 @@
   import { useMessage } from 'naive-ui'
   import axios from 'axios'
   import {useRoute} from "vue-router";
+  import utils from "@/utils";
 
   const emit = defineEmits(['nextStep2_1'])
   const route = useRoute()
@@ -63,9 +64,6 @@
   const tList = ref([])
   const sList = ref([])
   const colList = ref([])
-  const SecondDevApiUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL
-    : window.webConfig.VITE_APP_PROD_API_URL
 
   const formValue = ref({
     apiDatasourceType: '',
@@ -90,7 +88,7 @@
 
   function queryDataSource() {
       formValue.value.apiDatasourceId = ''
-      const url = SecondDevApiUrl+'/HDataApi/apiService/getDataSource?type='+formValue.value.apiDatasourceType
+      const url = utils.getUrl('apiService/getDataSource?type='+formValue.value.apiDatasourceType)
       axios.get(url).then(function (response) {
 
       sList.value = response.data.data
@@ -98,7 +96,7 @@
   }
 
   function queryTab() {
-    const url = SecondDevApiUrl+'/HDataApi/apiService/getTables'
+    const url = utils.getUrl('apiService/getTables')
     let params = {
       type : formValue.value.apiDatasourceType,
       id : formValue.value.apiDatasourceId
@@ -110,7 +108,7 @@
   }
 
   function queryCol(table: string) {
-    const url = SecondDevApiUrl+'/HDataApi/apiService/getColumnsByTable'
+    const url = utils.getUrl('apiService/getColumnsByTable')
     const params = {
       type : formValue.value.apiDatasourceType,
       id : formValue.value.apiDatasourceId,
@@ -128,7 +126,7 @@
   }
 
   function getInitData() {
-    let url = SecondDevApiUrl+'/HDataApi/interface/getInterfaceInfoById'
+    let url = utils.getUrl('interface/getInterfaceInfoById')
     let params = { apiId: '' }
     params.apiId = route.query.apiId
 

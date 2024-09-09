@@ -7,6 +7,13 @@
       {{ title }}
     </div>
     <div class="cue-crud__header-right">
+      <el-button
+          v-if="$route.query.back"
+          class="show-text el-button--default"
+          @click="goBack"
+      >
+        返回
+      </el-button>
       <slot name="button-group"></slot>
       <el-button
           v-if="defineButton"
@@ -31,6 +38,7 @@
 
 <script setup>
 import { Plus, PencilAlt, TrashAlt } from '@vicons/fa'
+import {useRoute, useRouter} from "vue-router";
 
 defineProps({
   title: String,
@@ -62,6 +70,12 @@ defineProps({
   },
 })
 
+const router = useRouter()
+const route = useRoute()
+
+const goBack = () => {
+  router.go(-1)
+}
 </script>
 
 <style lang="scss">

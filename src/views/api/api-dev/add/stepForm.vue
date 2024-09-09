@@ -43,14 +43,12 @@
   import {useMessage} from "naive-ui";
   import {useRoute} from "vue-router";
   import CrudHeader from "@/components/cue/crud-header.vue";
+  import utils from "@/utils";
 
   const currentTab = ref(1)
   const message = useMessage()
   const currentStatus = ref('process')
   const route = useRoute()
-  const SecondDevApiUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL
-    : window.webConfig.VITE_APP_PROD_API_URL
   const params = ref({
     id: -1,
     apiName: '',
@@ -136,7 +134,7 @@
   }
 
   function updateApi(apiId) {
-    const urlUpdate = SecondDevApiUrl+'/HDataApi/interface/update'
+    const urlUpdate = utils.getUrl('interface/update')
     params2.value.apiId = apiId
     axios
         .post(urlUpdate, params2.value)
@@ -150,7 +148,7 @@
 
   function nextStep3() {
     return new Promise((resolve) => {
-      const url = SecondDevApiUrl+'/HDataApi/interface-ui/api/save-api?id=-1'
+      const url = utils.getUrl('interface-ui/api/save-api?id=-1')
       if (route.query.apiId === undefined) {
         let apiId = ''
         axios

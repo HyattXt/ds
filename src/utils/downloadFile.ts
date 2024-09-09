@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-const apiPrefix = '/HData'
+const apiPrefix = '/HData/Dev'
 const reSlashPrefix = /^\/+/
 
 const resolveURL = (url: string) => {

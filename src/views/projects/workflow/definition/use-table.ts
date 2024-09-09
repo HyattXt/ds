@@ -16,11 +16,12 @@
  */
 
 import _ from 'lodash'
-import { h, ref, reactive } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
-import { useAsyncState } from '@vueuse/core'
-import { useTextCopy } from '../components/dag/use-text-copy'
+import {h, reactive, ref} from 'vue'
+import {useI18n} from 'vue-i18n'
+import type {Router} from 'vue-router'
+import {useRouter} from 'vue-router'
+import {useAsyncState} from '@vueuse/core'
+import {useTextCopy} from '../components/dag/use-text-copy'
 import {
   batchCopyByCodes,
   batchDeleteByCodes,
@@ -31,17 +32,12 @@ import {
 } from '@/service/modules/process-definition'
 import TableAction from './components/table-action'
 import styles from './index.module.scss'
-import { NTag, NSpace, NIcon, NButton, NEllipsis } from 'naive-ui'
-import { CopyOutlined } from '@vicons/antd'
+import {NButton, NEllipsis, NIcon, NSpace, NTag} from 'naive-ui'
+import {CopyOutlined} from '@vicons/antd'
 import ButtonLink from '@/components/button-link'
-import {
-  COLUMN_WIDTH_CONFIG,
-  calculateTableWidth,
-  DefaultTableWidth
-} from '@/common/column-width-config'
-import type { IDefinitionParam } from './types'
-import type { Router } from 'vue-router'
-import type { TableColumns, RowKey } from 'naive-ui/es/data-table/src/interface'
+import {calculateTableWidth, COLUMN_WIDTH_CONFIG, DefaultTableWidth} from '@/common/column-width-config'
+import type {IDefinitionParam} from './types'
+import type {RowKey, TableColumns} from 'naive-ui/es/data-table/src/interface'
 
 export function useTable() {
   const { t } = useI18n()
@@ -89,26 +85,25 @@ export function useTable() {
           h(
             NSpace,
             {
-              justify: 'space-between',
+              justify: 'center',
               wrap: false,
               class: styles['workflow-name']
             },
             {
               default: () => [
-                h(NEllipsis, null, () => row.name),
-/*                h(
+                h(
                   ButtonLink,
                   {
                     onClick: () =>
                       void router.push({
                         name: 'workflow-relation',
-                        query: { code: row.code }
+                        state: { taskCode: row.code, taskName: row.name, state: row.releaseState === 'OFFLINE' ? 0 : 1 }
                       })
                   },
                   {
                     default: () => h(NEllipsis, null, () => row.name)
                   }
-                ),*/
+                ),
                 h(
                   NButton,
                   {

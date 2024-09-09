@@ -17,28 +17,23 @@
 
 import { defineComponent, onMounted, toRefs, watch } from 'vue'
 import {
-  NSpace,
   NInput,
   NSelect,
   NDatePicker,
   NButton,
   NIcon,
   NDataTable,
-  NPagination,
-  NCard, NTooltip, NPopconfirm, NFormItemGi, NGrid, NForm
+  NFormItemGi, NGrid, NForm
 } from 'naive-ui'
 import { SearchOutlined } from '@vicons/antd'
 import { useTable } from './use-table'
 import { useI18n } from 'vue-i18n'
-import Card from '@/components/card'
 import LogModal from '@/components/log-modal'
 import { useAsyncState } from '@vueuse/core'
 import { queryLog } from '@/service/modules/log'
 import { stateType } from '@/common/common'
-import styles from './index.module.scss'
 import CrudForm from "@/components/cue/crud-form.vue";
 import CrudHeader from "@/components/cue/crud-header.vue";
-import ProcessInstanceCondition from "@/views/projects/workflow/instance/components/process-instance-condition";
 import CrudPageDs from "@/components/cue/crud-page-ds.vue";
 
 const TaskInstance = defineComponent({
@@ -147,7 +142,7 @@ const TaskInstance = defineComponent({
   render() {
     const {
       t,
-      requestTableData,
+      handlePageChange,
       onUpdatePageSize,
       onSearch,
       onConfirmModal,
@@ -239,7 +234,7 @@ const TaskInstance = defineComponent({
                         page={this.page}
                         page-size={this.pageSize}
                         item-count={this.total}
-                        onPageChange={requestTableData}
+                        onPageChange={handlePageChange}
                         onPageSizeChange={onUpdatePageSize}
                     />
               )

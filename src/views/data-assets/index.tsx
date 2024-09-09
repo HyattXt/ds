@@ -17,7 +17,6 @@
 
 import { defineComponent, onMounted, ref, toRefs } from 'vue'
 import { NGrid, NGi } from 'naive-ui'
-import {useLogin} from "@/views/login/use-login";
 import { useI18n } from 'vue-i18n'
 import { useTaskState } from './use-task-state'
 import StateCard from './components/state-card'
@@ -26,7 +25,6 @@ import { useRoute } from 'vue-router'
 export default defineComponent({
   name: 'assets',
   setup() {
-    const { loginNew } = useLogin('')
     const { t } = useI18n()
     const dateRef = ref(
       [[new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 6 * 24 * 60 * 60 * 1000,
@@ -115,13 +113,9 @@ export default defineComponent({
       AssetOverviewLineData.value = getAssetOverviewLineData(val, Proj.value)
       AssentsSelectCurrent.value = AssentsSelect.value.filter(item => item.value === val)[0].label;
     }
-    const ssoLogin = async () => {
-      await loginNew()
-      initData()
-    }
 
     onMounted(() => {
-      ssoLogin()
+      initData()
     })
 
 

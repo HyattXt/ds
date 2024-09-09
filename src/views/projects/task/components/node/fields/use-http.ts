@@ -20,6 +20,7 @@ import type { IJsonItem } from '../types'
 import { onMounted, ref} from "vue";
 import axios from "axios";
 import {useMessage} from "naive-ui";
+import utils from "@/utils";
 
 export function useHttp(model: { [field: string]: any }): IJsonItem[] {
   const { t } = useI18n()
@@ -44,12 +45,9 @@ export function useHttp(model: { [field: string]: any }): IJsonItem[] {
   ]
 
   const restOptions = ref([] as { label: string; value: number }[])
-  const restUrl = import.meta.env.MODE === 'development'
-      ? import.meta.env.VITE_APP_DEV_REST_URL
-      : window.webConfig.VITE_APP_PROD_REST_URL
 
   function queryRestSourceList() {
-    let restOptionUrl = restUrl+'/HDataApi/httpHandle/getHttpDataListByParams'
+    let restOptionUrl =utils.getUrl('httpHandle/getHttpDataListByParams')
     const params = {
       'pageNum': 1,
       'pageSize': 100,
@@ -79,7 +77,7 @@ export function useHttp(model: { [field: string]: any }): IJsonItem[] {
       type: 'input',
       field: 'url',
       name: t('project.node.http_url'),
-      value: 'http://localhost:8187/HDataApi/httpHandle/schedulerHttpDataHandle',
+      value: 'http://localhost:8187/HData/DevApi/httpHandle/schedulerHttpDataHandle',
       props: {
         placeholder: t('project.node.http_url_tips')
       },
@@ -149,7 +147,9 @@ export function useHttp(model: { [field: string]: any }): IJsonItem[] {
           span: 8,
           props: {
             placeholder: t('project.node.value_tips'),
-            maxLength: 256
+            maxLength: 256,
+            filterable: true,
+            tag: true
           },
           validate: {
             trigger: ['input', 'blur'],

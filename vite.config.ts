@@ -24,7 +24,7 @@ import path from 'path'
 const CurrentTimeVersion = `version-${new Date().toLocaleDateString()}`
 // @ts-ignore
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? '/HData/ui/' : '/',
+  base: process.env.NODE_ENV === 'production' ? '/HData/Dev/ui/' : '/',
   plugins: [
     vue(),
     vueJsx(),
@@ -58,7 +58,7 @@ export default defineConfig({
         target: loadEnv('development', './').VITE_APP_DEV_API_URL,
         changeOrigin: true
       },
-      '/HData': {
+      '/HData/Dev': {
         target: loadEnv('development', './').VITE_APP_DEV_WEB_URL,
         changeOrigin: true
       },
@@ -67,7 +67,7 @@ export default defineConfig({
         changeOrigin: true
       },
       '/getSqlLineageListByParams': {
-      target: loadEnv('development', './').VITE_APP_DEV_ASSETS_URL,
+      target: loadEnv('development', './').VITE_APP_DEV_API_URL,
       changeOrigin: true
       },
       '/api': {

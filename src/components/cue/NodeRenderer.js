@@ -1,7 +1,7 @@
 import { h } from 'vue';
 export default {
     props: {
-        node: Function
+        node: Object
     },
     setup(props) {
         return () => {

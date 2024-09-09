@@ -171,15 +171,15 @@ const StateCard = defineComponent({
       { title: '排名', key: '排名', width: 60 },
       { title: '任务名名称', key: '任务名名称' },
       { title: '工作流名称', key: '工作流名称' },
-      { title: '任务代码', key: '任务代码' },
-      { title: '最大运行时长', key: '最大运行时长' }
+      { title: '任务代码', key: '任务代码', width: 130 },
+      { title: '最大运行时长', key: '最大运行时长', width: 130 }
     ]);
 
     const RunErrorSelectHeader = ref([
       { title: '排名', key: '排名', width: 60 },
       { title: '任务名', key: '任务名' },
       { title: '业务流程', key: '业务流程' },
-      { title: '出错次数', key: '出错次数' },
+      { title: '出错次数', key: '出错次数', width: 100 },
     ]);
 
     const ApiTop10DataHeader = ref([
@@ -217,7 +217,7 @@ const StateCard = defineComponent({
             <NGi span={2}>
               <Card title={'任务状态统计'}>
                 <div style="display: flex;padding: 10px; height: 90px">
-                  <div style="flex: 1;background-color: #f4f6f9;margin: 0 24px 0 0;padding-top: 16px;padding-left: 16px;padding-bottom: 8px;border-radius: 2px;">
+                  <div class="hover_div" style="flex: 1;background-color: #f4f6f9;margin: 0 24px 0 0;padding-top: 16px;padding-left: 16px;padding-bottom: 8px;border-radius: 2px;">
                   <span role="img" class="anticon" style="font-size: 16px; padding-right: 8px">
                     <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="25" height="25"><path d="M67.1 310.4c-6.7 3.7-6.7 14.1 0 17.7l423.3 239.2c12.2 6.7 27.5 6.7 39.8 0l423.3-239.2c6.7-3.7 6.7-14.1 0-17.7L519.2 65.1c-5.5-3.1-12.2-3.1-17.7 0L67.1 310.4z" fill="#0099CB"></path><path d="M954.1 503.1l-89.3-50.8L563.2 623c-15.9 9.2-34.3 13.5-52 13.5-17.7 0-36.1-4.3-52-13.5L156.5 452.3l-89.3 50.8c-6.7 3.7-6.7 14.1 0 17.7L490.4 760c12.2 6.7 27.5 6.7 39.8 0l423.3-239.2c7.3-4.2 7.3-14 0.6-17.7z" fill="#0099CB"></path><path d="M954.1 697.6L863 646.2 562.6 815.7c-15.9 9.2-34.3 13.5-52 13.5s-36.1-4.3-52-13.5L158.3 646.2l-91.1 51.4c-6.7 3.7-6.7 14.1 0 17.7l423.3 239.2c12.2 6.7 27.5 6.7 39.8 0l423.3-239.2c7.2-4.2 7.2-14 0.5-17.7z" fill="#0099CB"></path></svg>
                   </span>
@@ -226,7 +226,7 @@ const StateCard = defineComponent({
                     <div style="font-size: 24px; color: #000000"> {tableCount[0]} </div>
                   </router-link>
                   </div>
-                  <div style="flex: 1;background-color: #f4f6f9;margin: 0 24px 0 0;padding-top: 16px;padding-left: 16px;padding-bottom: 8px;border-radius: 2px;">
+                  <div class="hover_div" style="flex: 1;background-color: #f4f6f9;margin: 0 24px 0 0;padding-top: 16px;padding-left: 16px;padding-bottom: 8px;border-radius: 2px;">
                   <span role="img" class="anticon" style="font-size: 16px; padding-right: 8px">
                     <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="25" height="25"><path d="M512 41.472c-129.901714 0-247.661714 52.662857-332.8 137.801143A469.211429 469.211429 0 0 0 41.545143 512c0 129.901714 52.662857 247.661714 137.801143 332.726857A469.211429 469.211429 0 0 0 512 982.528c129.901714 0 247.661714-52.662857 332.726857-137.801143A469.211429 469.211429 0 0 0 982.528 512c0-129.901714-52.662857-247.661714-137.801143-332.8A469.211429 469.211429 0 0 0 512 41.545143z" fill="#0099CB" data-spm-anchor-id="a313x.search_index.0.i12.76293a81UD8Rem" class=""></path><path d="M787.382857 384L500.370286 671.012571a43.885714 43.885714 0 0 1-62.098286 0L279.259429 512l62.098285-62.098286 128 128 256-256 62.025143 62.098286z" fill="#ffffff" data-spm-anchor-id="a313x.search_index.0.i11.76293a81UD8Rem" class="selected"></path></svg>
                   </span>
@@ -235,7 +235,7 @@ const StateCard = defineComponent({
                       <div style="font-size: 24px; color: #000000"> {tableCount[1]} </div>
                     </router-link>
                   </div>
-                  <div style="flex: 1;background-color: #f4f6f9;margin: 0 24px 0 0;padding-top: 16px;padding-left: 16px;padding-bottom: 8px;border-radius: 2px;">
+                  <div class="hover_div" style="flex: 1;background-color: #f4f6f9;margin: 0 24px 0 0;padding-top: 16px;padding-left: 16px;padding-bottom: 8px;border-radius: 2px;">
                   <span role="img" class="anticon" style="font-size: 16px; padding-right: 8px">
                     <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="25" height="25"><path d="M512 41.472a470.528 470.528 0 1 0 0 941.056A470.528 470.528 0 0 0 512 41.472z" fill="#0099CB"></path><path d="M574.025143 512l146.285714-146.285714L658.285714 303.616l-146.285714 146.285714-146.285714-146.285714L303.542857 365.714286l146.285714 146.285714-146.285714 146.285714L365.714286 720.384l146.285714-146.285714 146.285714 146.285714L720.310857 658.285714l-146.285714-146.285714z" fill="#ffffff" data-spm-anchor-id="a313x.search_index.0.i18.76293a81UD8Rem" class="selected"></path></svg>
                   </span>
@@ -244,7 +244,7 @@ const StateCard = defineComponent({
                       <div style="font-size: 24px; color: #000000"> {tableCount[2]} </div>
                     </router-link>
                   </div>
-                  <div style="flex: 1;background-color: #f4f6f9;margin: 0 24px 0 0;padding-top: 16px;padding-left: 16px;padding-bottom: 8px;border-radius: 2px;">
+                  <div class="hover_div" style="flex: 1;background-color: #f4f6f9;margin: 0 24px 0 0;padding-top: 16px;padding-left: 16px;padding-bottom: 8px;border-radius: 2px;">
                   <span role="img" class="anticon" style="font-size: 16px; padding-right: 8px">
                     <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="25" height="25"><path d="M501.94 0A502.121 502.121 0 0 0 0 501.94c0 277.083 224.858 502.002 501.94 502.002s502.002-224.919 502.002-502.001S779.023 0 501.94 0zM401.59 677.647V326.295c0-20.6 23.552-32.648 40.116-20.119l234.436 175.706c13.553 10.06 13.553 30.118 0 40.177L441.705 697.705a25.058 25.058 0 0 1-40.116-20.058z" fill="#0099CB"></path></svg>
                   </span>
@@ -253,7 +253,7 @@ const StateCard = defineComponent({
                       <div style="font-size: 24px; color: #000000"> {tableCount[3]} </div>
                     </router-link>
                   </div>
-                  <div style="flex: 1;background-color: #f4f6f9;margin: 0 24px 0 0;padding-top: 16px;padding-left: 16px;padding-bottom: 8px;border-radius: 2px;">
+                  <div class="hover_div" style="flex: 1;background-color: #f4f6f9;margin: 0 24px 0 0;padding-top: 16px;padding-left: 16px;padding-bottom: 8px;border-radius: 2px;">
                   <span role="img" class="anticon" style="font-size: 16px; padding-right: 8px">
                     <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="25" height="25"><path d="M874.058005 149.941995a510.06838 510.06838 0 1 0 109.740156 162.738976 511.396369 511.396369 0 0 0-109.740156-162.738976z" fill="#0099CB" data-spm-anchor-id="a313x.search_index.0.i43.76293a81UD8Rem" class=""></path><path d="M417.954256 281.533601a41.046923 41.046923 0 0 0-41.77128 40.201839v385.116718a41.892007 41.892007 0 0 0 83.663287 0v-385.116718a41.167649 41.167649 0 0 0-41.892007-40.201839zM606.045744 281.533601a41.046923 41.046923 0 0 0-41.77128 40.201839v385.116718a41.892007 41.892007 0 0 0 83.663287 0v-385.116718a41.167649 41.167649 0 0 0-41.892007-40.201839z" fill="#ffffff" data-spm-anchor-id="a313x.search_index.0.i44.76293a81UD8Rem" class="selected"></path></svg>
                   </span>
@@ -262,7 +262,7 @@ const StateCard = defineComponent({
                       <div style="font-size: 24px; color: #000000"> {tableCount[4]} </div>
                     </router-link>
                   </div>
-                  <div style="flex: 1;background-color: #f4f6f9;margin: 0 24px 0 0;padding-top: 16px;padding-left: 16px;padding-bottom: 8px;border-radius: 2px;">
+                  <div class="hover_div" style="flex: 1;background-color: #f4f6f9;margin: 0 24px 0 0;padding-top: 16px;padding-left: 16px;padding-bottom: 8px;border-radius: 2px;">
                   <span role="img" class="anticon" style="font-size: 16px; padding-right: 8px">
                     <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="25" height="25"><path d="M510.9 60.7c-245.6 0-446.7 199.8-446.7 446.7C64.2 753 263.9 954 510.8 954s446.6-199.7 446.6-446.6c0.1-245.6-199.6-446.7-446.5-446.7z m139.8 574c0 8.8-7.2 16-16 16H389.3c-8.8 0-16-7.2-16-16V389.3c0-8.8 7.2-16 16-16h245.5c8.8 0 16 7.2 16 16v245.4z" fill="#0099CB"></path></svg>
                   </span>
@@ -275,7 +275,7 @@ const StateCard = defineComponent({
               </Card>
             </NGi>
             <NGi span={2}>
-              <Card title={'实例运行时段分布'} style={{ height: '60vh', width: '100%', flexWrap: "nowrap" }}>
+              <Card title={'实例运行时段分布'} style={{ height: '400px', width: '100%', flexWrap: "nowrap" }}>
                 {chartData.length > 0 && <ChartLineBox data={chartData} />}
               </Card>
             </NGi>
@@ -283,7 +283,7 @@ const StateCard = defineComponent({
               <Card title={'实例类别占比'} style={{ border: 'none', height: '100%' }}>
                 <div style={{ border: 'none', display: 'flex', height: '100%',justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ width: '50%'  }}>
-                    {TaskPieData.chart.length > 0 && <TaskPie data={TaskPieData.chart} taskTotalNum={TaskPieData.table[0].taskTotalNum} colors={colors} />}
+                    {TaskPieData.chart.length > 0 && <TaskPie data={TaskPieData.chart} taskTotalNum={TaskPieData.table[0].taskTotalNum} colors={colors} height={'350px'}/>}
                   </div>
                   <div style={{ width: '50%' }}>
                     {progressElements}
@@ -309,6 +309,7 @@ const StateCard = defineComponent({
                     data={RunTop10Data}
                     size='small'
                     striped
+                    single-line={false}
                     min-height={"150"}
                     max-height={"150"}
                 />
@@ -332,6 +333,7 @@ const StateCard = defineComponent({
                     data={RunErrorTop10Data}
                     size='small'
                     striped
+                    single-line={false}
                     min-height={"150"}
                     max-height={"150"}
                 />
@@ -354,6 +356,7 @@ const StateCard = defineComponent({
                     columns={ApiTop10DataHeader.value}
                     data={ApiTop10Data}
                     striped
+                    single-line={false}
                     size='small'
                     min-height={"150"}
                     max-height={"150"}

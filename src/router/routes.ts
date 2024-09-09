@@ -29,6 +29,7 @@ import restPage from './modules/rest'
 import dataAssetsPage from './modules/data-assets'
 import DevOpsPage from './modules/devops'
 import dataLabelsPage from './modules/data-labels'
+import dataBusinessPage from './modules/data-business'
 import projectManagerPage from './modules/project-manager'
 
 // All TSX files under the views folder automatically generate mapping relationship
@@ -48,7 +49,8 @@ const basePage: RouteRecordRaw[] = [
       {
         path: '/home',
         name: 'home',
-        component: components['home'],
+        //component: components['home'],
+        component: () => import('@/views/home/index.vue'),
         meta: {
           title: '首页',
           activeMenu: 'home',
@@ -86,7 +88,8 @@ const basePage: RouteRecordRaw[] = [
   restPage,
   DevOpsPage,
   projectManagerPage,
-  dataLabelsPage
+  dataLabelsPage,
+  dataBusinessPage
 ]
 
 /**

@@ -16,8 +16,9 @@
           <div class="cue-crud__body">
             <slot name="table"></slot>
           </div>
-          <div class="cue-crud__footer">
+          <div class="cue-crud__footer" v-if="showPage">
             <div class="cue-crud__footer-tab">
+              <slot name="tab"></slot>
             </div>
             <div class="cue-crud__footer-pager">
               <slot name="page"></slot>
@@ -39,6 +40,10 @@ const props = defineProps({
    width: {
     type: String,
     default: '100%',
+  },
+  showPage: {
+    type: Boolean,
+    default: true,
   },
 })
 </script>

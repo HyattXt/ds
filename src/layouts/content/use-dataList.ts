@@ -53,9 +53,11 @@ import {
   ProjectOutlined,
   FormOutlined,
   RadarChartOutlined,
-  VerifiedOutlined
+  VerifiedOutlined, UnorderedListOutlined, TagsOutlined, AppstoreTwotone
 } from '@vicons/antd'
-import { useRoute, RouterLink } from 'vue-router'
+import {SecurityFilled, DesignServicesFilled} from '@vicons/material'
+import { RuleDraft, UserAvatarFilled, UserMultiple } from '@vicons/carbon'
+import { RouterLink } from 'vue-router'
 import { useUserStore } from '@/store/user/user'
 import { timezoneList } from '@/common/timezone'
 import type { UserInfoRes } from '@/service/modules/users/types'
@@ -63,7 +65,6 @@ import { useProjectStore } from "@/store/route/project";
 
 export function useDataList() {
   const { t } = useI18n()
-  const route = useRoute()
   const userStore = useUserStore()
   const ProjectStore = useProjectStore()
 
@@ -123,7 +124,7 @@ export function useDataList() {
               {
                 label: t('menu.workflow_relation'),
                 key: `/projects/${projectCode}/workflow/relation`
-              },
+              }
               /*{
                 label: t('menu.workflow_definition'),
                 key: `/projects/${projectCode}/workflow-definition`
@@ -133,8 +134,8 @@ export function useDataList() {
                 key: `/projects/${projectCode}/workflow/instances`
               }*/
             ]
-          },
-/*          {
+          }
+          /*          {
             label: t('menu.task'),
             key: 'task',
             icon: renderIcon(SettingOutlined),
@@ -190,6 +191,11 @@ export function useDataList() {
                 key: '/resource/task-group-queue'
               }
             ]
+          },
+          {
+            label: t('menu.resource_plan'),
+            key: '/resource/resource-plan',
+            icon: renderIcon(DesignServicesFilled)
           }
         ]
       },
@@ -266,66 +272,84 @@ export function useDataList() {
         children:
           (userStore.getUserInfo as UserInfoRes).userType === 'ADMIN_USER'
             ? [
-              {
-                label: t('menu.tenant_manage'),
-                key: '/security/tenant-manage',
-                icon: renderIcon(UsergroupAddOutlined)
-              },
-              {
-                label: t('menu.user_manage'),
-                key: '/security/user-manage',
-                icon: renderIcon(UserAddOutlined)
-              },
-              {
-                label: t('menu.alarm_group_manage'),
-                key: '/security/alarm-group-manage',
-                icon: renderIcon(WarningOutlined)
-              },
-              {
-                label: t('menu.alarm_instance_manage'),
-                key: '/security/alarm-instance-manage',
-                icon: renderIcon(InfoCircleOutlined)
-              },
-              {
-                label: t('menu.worker_group_manage'),
-                key: '/security/worker-group-manage',
-                icon: renderIcon(ControlOutlined)
-              },
-              {
-                label: t('menu.yarn_queue_manage'),
-                key: '/security/yarn-queue-manage',
-                icon: renderIcon(SlackOutlined)
-              },
-              {
-                label: t('menu.environment_manage'),
-                key: '/security/environment-manage',
-                icon: renderIcon(EnvironmentOutlined)
-              },
-              {
-                label: t('menu.k8s_namespace_manage'),
-                key: '/security/k8s-namespace-manage',
-                icon: renderIcon(CloudServerOutlined)
-              },
-              {
-                label: t('menu.token_manage'),
-                key: '/security/token-manage',
-                icon: renderIcon(SafetyOutlined)
-              },
-              {
-                label: t('menu.license_manage'),
-                key: '/security/license-manage',
-                icon: renderIcon(VerifiedOutlined)
-              }
-            ]
+                {
+                  label: t('menu.tenant_manage'),
+                  key: '/security/tenant-manage',
+                  icon: renderIcon(UsergroupAddOutlined)
+                },
+                {
+                  label: t('menu.user_manage'),
+                  key: '/security/user-manage',
+                  icon: renderIcon(UserAddOutlined)
+                },
+                {
+                  label: t('menu.alarm_group_manage'),
+                  key: '/security/alarm-group-manage',
+                  icon: renderIcon(WarningOutlined)
+                },
+                {
+                  label: t('menu.alarm_instance_manage'),
+                  key: '/security/alarm-instance-manage',
+                  icon: renderIcon(InfoCircleOutlined)
+                },
+                {
+                  label: t('menu.desensitization_manage'),
+                  key: '/security/desensitization/rule-manage',
+                  icon: renderIcon(SecurityFilled),
+                  children: [
+                    {
+                      label: t('menu.desensitization_rule'),
+                      key: '/security/desensitization/rule-manage'
+                    },
+                    {
+                      label: t('menu.secret_key_manage'),
+                      key: '/security/desensitization/secret-key-manage'
+                    },
+                    {
+                      label: t('menu.desensitization_list'),
+                      key: '/security/desensitization/list-manage'
+                    }
+                  ]
+                },
+                {
+                  label: t('menu.worker_group_manage'),
+                  key: '/security/worker-group-manage',
+                  icon: renderIcon(ControlOutlined)
+                },
+                {
+                  label: t('menu.yarn_queue_manage'),
+                  key: '/security/yarn-queue-manage',
+                  icon: renderIcon(SlackOutlined)
+                },
+                {
+                  label: t('menu.environment_manage'),
+                  key: '/security/environment-manage',
+                  icon: renderIcon(EnvironmentOutlined)
+                },
+                {
+                  label: t('menu.k8s_namespace_manage'),
+                  key: '/security/k8s-namespace-manage',
+                  icon: renderIcon(CloudServerOutlined)
+                },
+                {
+                  label: t('menu.token_manage'),
+                  key: '/security/token-manage',
+                  icon: renderIcon(SafetyOutlined)
+                },
+                {
+                  label: t('menu.license_manage'),
+                  key: '/security/license-manage',
+                  icon: renderIcon(VerifiedOutlined)
+                }
+              ]
             : [
-              {
-                label: t('menu.token_manage'),
-                key: '/security/token-manage',
-                icon: renderIcon(SafetyOutlined)
-              }
-            ]
+                {
+                  label: t('menu.token_manage'),
+                  key: '/security/token-manage',
+                  icon: renderIcon(SafetyOutlined)
+                }
+              ]
       },
-
       {
         label: () => h(NEllipsis, null, { default: () => t('menu.devops') }),
         key: 'devops',
@@ -362,14 +386,15 @@ export function useDataList() {
             children: [
               {
                 label: t('menu.api_manager'),
-                key: '/devops/service/api-manager',
+                key: '/devops/service/api-manager'
                 //icon: renderIcon(BarsOutlined)
               },
               {
                 label: t('menu.rest_manager'),
-                key: '/devops/rest/rest-manager',
+                key: '/devops/rest/rest-manager'
                 //icon: renderIcon(BarsOutlined)
-              }]
+              }
+            ]
           },
           {
             label: t('menu.alarm_instance_manage'),
@@ -394,7 +419,7 @@ export function useDataList() {
             icon: renderIcon(BarsOutlined)
           }
         ]
-      } ,
+      },
       {
         label: () => h(NEllipsis, null, { default: () => t('menu.data_assets') }),
         key: 'data-assets',
@@ -405,11 +430,11 @@ export function useDataList() {
             key: '/data-assets/assets',
             icon: renderIcon(BarChartOutlined)
           },
-          {
+          /*          {
             label: t('menu.assets_overview'),
             key: '/data-assets/assets-overview',
             icon: renderIcon(PieChartOutlined)
-          },
+          },*/
           {
             label: t('menu.assets_catalog'),
             key: '/data-assets/assets-catalog',
@@ -418,24 +443,28 @@ export function useDataList() {
           {
             label: t('menu.assets_query'),
             key: '/data-assets/assets-query',
-            icon: () => h(NIcon, null, [
-              h(
-                  'svg',
-                  {
-                  t: "1690188010748",
-                  class: "icon",
-                  viewBox: "0 0 1024 1024",
-                  version: "1.1",
-                  xmlns: "http://www.w3.org/2000/svg",
-                  id: "mx_n_1690188010750",
-                  width: "150",
-                  height: "150"
-                  },
-          [
-                    h('path', { d: "M1014.9 935.6l-32.3-32.3c26.1-35.7 41.5-79.7 41.5-127.3 0-88-52.6-163.6-128-197.3V242c0-39.6-23.4-76.6-64-108.2C753.6 72.8 611 32 448 32S142.4 72.8 64 133.8C23.4 165.4 0 202.4 0 242v476c0 116 200.6 210 448 210 67.7 0 131.8-7 189.3-19.6C676.8 959.3 738.6 992 808 992c48.6 0 93.5-16.1 129.6-43.2l32.1 32.1c6.2 6.3 14.4 9.4 22.6 9.4s16.4-3.1 22.6-9.4c12.5-12.5 12.5-32.8 0-45.3zM158.4 151.5c36.5-17.1 79.4-30.6 127.7-40.2C337.2 101.1 391.7 96 448 96s110.8 5.1 161.9 15.3c48.3 9.6 91.2 23.1 127.7 40.2 58.2 27.3 94.4 62 94.4 90.5s-36.2 63.3-94.4 90.5c-36.5 17.1-79.4 30.6-127.7 40.2C558.8 382.9 504.3 388 448 388s-110.8-5.1-161.9-15.3c-48.3-9.6-91.2-23.1-127.7-40.2C100.2 305.3 64 270.6 64 242s36.2-63.3 94.4-90.5zM64 350.2c78.4 61 221 101.8 384 101.8s305.6-40.8 384-101.8V398c0 28.6-36.2 63.3-94.4 90.5-36.5 17.1-79.4 30.6-127.7 40.2C558.8 538.9 504.3 544 448 544s-110.8-5.1-161.9-15.3c-48.3-9.6-91.2-23.1-127.7-40.2C100.2 461.3 64 426.6 64 398v-47.8zM448 864c-56.3 0-110.8-5.1-161.9-15.3-48.3-9.6-91.2-23.1-127.7-40.2C100.2 781.3 64 746.6 64 718v-51.8c78.4 61 221 101.8 384 101.8 50.7 0 99.4-4 144.8-11.2-0.6 6.3-0.8 12.7-0.8 19.2 0 25.9 4.5 50.7 12.9 73.7C555.2 859.2 502.5 864 448 864z m162.4-175.4c-0.2 0-0.3 0.1-0.5 0.1C558.8 698.9 504.3 704 448 704s-110.8-5.1-161.9-15.3c-48.3-9.6-91.2-23.1-127.7-40.2C100.2 621.3 64 586.6 64 558v-51.8c78.4 61 221 101.8 384 101.8s305.6-40.8 384-101.8V558c0 1.1-0.1 2.2-0.2 3.3-7.8-0.9-15.8-1.3-23.8-1.3-88.2 0-164 52.9-197.6 128.6z m305.1 194.9C886.8 912.2 848.6 928 808 928c-37.7 0-73.3-13.6-101.2-38.6-2.2-1.9-4.3-3.9-6.3-6-14.2-14.2-25.3-30.8-32.8-48.8C660 816.3 656 796.5 656 776c0-11.2 1.2-22.2 3.5-32.8 6.2-28.1 20.2-53.8 41-74.6 2.7-2.7 5.5-5.3 8.4-7.8 19.5-16.8 42.6-28.2 67.5-33.5 10.3-2.2 20.9-3.3 31.7-3.3 32 0 62.5 9.8 88 28 6.9 4.9 13.4 10.4 19.5 16.5C944.2 697.2 960 735.4 960 776s-15.8 78.8-44.5 107.5z"}),
-                  ]
-              )
-            ])
+            icon: () =>
+              h(NIcon, null, {
+                default: () =>
+                  h(
+                    'svg',
+                    {
+                      t: '1690188010748',
+                      class: 'icon',
+                      viewBox: '0 0 1024 1024',
+                      version: '1.1',
+                      xmlns: 'http://www.w3.org/2000/svg',
+                      id: 'mx_n_1690188010750',
+                      width: '150',
+                      height: '150'
+                    },
+                    [
+                      h('path', {
+                        d: 'M1014.9 935.6l-32.3-32.3c26.1-35.7 41.5-79.7 41.5-127.3 0-88-52.6-163.6-128-197.3V242c0-39.6-23.4-76.6-64-108.2C753.6 72.8 611 32 448 32S142.4 72.8 64 133.8C23.4 165.4 0 202.4 0 242v476c0 116 200.6 210 448 210 67.7 0 131.8-7 189.3-19.6C676.8 959.3 738.6 992 808 992c48.6 0 93.5-16.1 129.6-43.2l32.1 32.1c6.2 6.3 14.4 9.4 22.6 9.4s16.4-3.1 22.6-9.4c12.5-12.5 12.5-32.8 0-45.3zM158.4 151.5c36.5-17.1 79.4-30.6 127.7-40.2C337.2 101.1 391.7 96 448 96s110.8 5.1 161.9 15.3c48.3 9.6 91.2 23.1 127.7 40.2 58.2 27.3 94.4 62 94.4 90.5s-36.2 63.3-94.4 90.5c-36.5 17.1-79.4 30.6-127.7 40.2C558.8 382.9 504.3 388 448 388s-110.8-5.1-161.9-15.3c-48.3-9.6-91.2-23.1-127.7-40.2C100.2 305.3 64 270.6 64 242s36.2-63.3 94.4-90.5zM64 350.2c78.4 61 221 101.8 384 101.8s305.6-40.8 384-101.8V398c0 28.6-36.2 63.3-94.4 90.5-36.5 17.1-79.4 30.6-127.7 40.2C558.8 538.9 504.3 544 448 544s-110.8-5.1-161.9-15.3c-48.3-9.6-91.2-23.1-127.7-40.2C100.2 461.3 64 426.6 64 398v-47.8zM448 864c-56.3 0-110.8-5.1-161.9-15.3-48.3-9.6-91.2-23.1-127.7-40.2C100.2 781.3 64 746.6 64 718v-51.8c78.4 61 221 101.8 384 101.8 50.7 0 99.4-4 144.8-11.2-0.6 6.3-0.8 12.7-0.8 19.2 0 25.9 4.5 50.7 12.9 73.7C555.2 859.2 502.5 864 448 864z m162.4-175.4c-0.2 0-0.3 0.1-0.5 0.1C558.8 698.9 504.3 704 448 704s-110.8-5.1-161.9-15.3c-48.3-9.6-91.2-23.1-127.7-40.2C100.2 621.3 64 586.6 64 558v-51.8c78.4 61 221 101.8 384 101.8s305.6-40.8 384-101.8V558c0 1.1-0.1 2.2-0.2 3.3-7.8-0.9-15.8-1.3-23.8-1.3-88.2 0-164 52.9-197.6 128.6z m305.1 194.9C886.8 912.2 848.6 928 808 928c-37.7 0-73.3-13.6-101.2-38.6-2.2-1.9-4.3-3.9-6.3-6-14.2-14.2-25.3-30.8-32.8-48.8C660 816.3 656 796.5 656 776c0-11.2 1.2-22.2 3.5-32.8 6.2-28.1 20.2-53.8 41-74.6 2.7-2.7 5.5-5.3 8.4-7.8 19.5-16.8 42.6-28.2 67.5-33.5 10.3-2.2 20.9-3.3 31.7-3.3 32 0 62.5 9.8 88 28 6.9 4.9 13.4 10.4 19.5 16.5C944.2 697.2 960 735.4 960 776s-15.8 78.8-44.5 107.5z'
+                      })
+                    ]
+                  )
+              })
           },
           {
             label: t('menu.assets_classify'),
@@ -446,10 +475,59 @@ export function useDataList() {
             label: t('menu.index_center'),
             key: '/data-assets/index-center',
             icon: renderIcon(RadarChartOutlined)
+          },
+          {
+            label: t('menu.data_standard'),
+            icon: renderIcon(RuleDraft),
+            children: [
+              {
+                label: t('menu.data_statistic'),
+                key: '/data-assets/data-standard/data-statistic'
+              },
+              {
+                label: t('menu.standard_list'),
+                key: '/data-assets/data-standard/standard-list'
+              },
+              {
+                label: t('menu.model_list'),
+                key: '/data-assets/data-standard/model-list'
+              }
+            ]
           }
         ]
-      } ,
-
+      },
+      {
+        label: () => h(NEllipsis, null, { default: () => t('menu.data_business') }),
+        key: 'data-business',
+        icon: renderIcon(ApiOutlined),
+        children: [
+          {
+            label: t('menu.data_property'),
+            key: '/data-business/property',
+            icon: renderIcon(UnorderedListOutlined)
+          },
+          {
+            label: t('menu.data_dataTags'),
+            key: '/data-business/dataTags',
+            icon: renderIcon(TagsOutlined)
+          },
+          {
+            label: t('menu.data_userGroup'),
+            key: '/data-business/userGroup',
+            icon: renderIcon(UserMultiple)
+          },
+          {
+            label: t('menu.data_customAnalyse'),
+            key: '/data-business/customAnalyse',
+            icon: renderIcon(AppstoreTwotone)
+          },
+          {
+            label: t('menu.data_userPortrayal'),
+            key: '/data-business/userPortrayal',
+            icon: renderIcon(UserAvatarFilled)
+          },
+        ]
+      },
       {
         label: () => h(NEllipsis, null, { default: () => t('menu.project_manager') }),
         key: 'project',
@@ -465,13 +543,11 @@ export function useDataList() {
     ]
     let keyToHidden = new Set()
     window.webConfig.SHOW_DATA_ASSETS ? null : keyToHidden.add('data-assets')
-    !!window.webConfig.VITE_APP_PROD_ASSETS_HOME_URL ? null : keyToHidden.add('/data-assets/assets-overview')
     !!window.webConfig.VITE_APP_PROD_ASSETS_QUERY_URL ? null : keyToHidden.add('/data-assets/assets-query')
-    window.webConfig.SHOW_REST ? null : keyToHidden.add('/devops/rest/rest-manager')
+    window.webConfig.SHOW_BUSINESS ? null : keyToHidden.add('data-business')
     window.webConfig.SHOW_API ? null : keyToHidden.add('/devops/service/api-manager').add('/service/api-manager').add('service')
-    !window.webConfig.SHOW_REST && !window.webConfig.SHOW_API ? keyToHidden.add('devops_rest') : null
 
-    function deleteItemsWithKey(options, condition) {
+    function deleteItemsWithKey(options: any, condition: any) {
       for (let i = options.length - 1; i >= 0; i--) {
         const option = options[i];
         if (condition(option.key)) {
@@ -483,7 +559,7 @@ export function useDataList() {
       }
     }
 
-    function isKeyMatch(key) {
+    function isKeyMatch(key: any) {
       return keyToHidden.has(key);
     }
 
@@ -492,7 +568,7 @@ export function useDataList() {
   }
 
   const changeHeaderMenuOptions = (state: any) => {
-    state.headerMenuOptions = state.menuOptions.filter(x => x.key !== 'security' && x.key !== 'data-quality' && x.key !== 'resource' && x.key !== 'datasource' && x.key !== 'project' && x.key !== 'monitor').map(
+    state.headerMenuOptions = state.menuOptions.filter((x: any) => x.key !== 'security' && x.key !== 'data-quality' && x.key !== 'resource' && x.key !== 'datasource' && x.key !== 'project' && x.key !== 'monitor').map(
       (item: { label: string; key: string; icon: any }) => {
         return {
           label: item.label,
@@ -503,7 +579,7 @@ export function useDataList() {
     )
   }
   const changeIconMenuOptions = (state: any) => {
-    state.iconMenuOptions = state.menuOptions.filter(item => item.key === 'security' || item.key === 'data-quality' || item.key === 'resource' || item.key === 'datasource' || item.key === 'project' || item.key === 'monitor').map(
+    state.iconMenuOptions = state.menuOptions.filter((item: any) => item.key === 'security' || item.key === 'data-quality' || item.key === 'resource' || item.key === 'datasource' || item.key === 'project' || item.key === 'monitor').map(
       (item: { label: string; key: string; icon: any, children: any }) => {
         return {
           // label: () =>

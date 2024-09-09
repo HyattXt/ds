@@ -29,7 +29,8 @@ const props = {
     default: '100%'
   },
   data: {
-    type: Array as PropType<Array<any>>
+    type: Array as PropType<Array<any>>,
+    default: []
   }
 }
 
@@ -93,22 +94,32 @@ const PieChart = defineComponent({
             color: '#333',
           }
         },
-        type: 'value'
+        type: 'value',
+        splitArea: {
+          show: false // 确保 splitArea 是显示的
+        }
       },
       series: [
         {
           name: '成功',
-          showSymbol: false,
+          showSymbol: true,
+          symbolSize: 8, // 标记点大小
+          itemStyle: {
+            fill: 'none' // 填充颜色，设置为'none'表示空心
+          },
           data: props.data[0].成功,
           type: 'line',               // 类型为折线图
-          // smooth: false,
           lineStyle: {                // 线条样式 => 必须使用normal属性
             color: '#30CE78',
           },
         },
         {
           name: '失败',
-          showSymbol: false,
+          showSymbol: true,
+          symbolSize: 8, // 标记点大小
+          itemStyle: {
+            fill: 'none' // 填充颜色，设置为'none'表示空心
+          },
           data: props.data[0].失败,
           type: 'line',
           lineStyle: {
@@ -117,7 +128,11 @@ const PieChart = defineComponent({
         },
         {
           name: '正在运行',
-          showSymbol: false,
+          showSymbol: true,
+          symbolSize: 8, // 标记点大小
+          itemStyle: {
+            fill: 'none' // 填充颜色，设置为'none'表示空心
+          },
           data: props.data[0].正在运行,
           type: 'line',
           lineStyle: {
@@ -126,7 +141,11 @@ const PieChart = defineComponent({
         },
         {
           name: '暂停',
-          showSymbol: false,
+          showSymbol: true,
+          symbolSize: 8, // 标记点大小
+          itemStyle: {
+            fill: 'none' // 填充颜色，设置为'none'表示空心
+          },
           data: props.data[0].暂停,
           type: 'line',
           lineStyle: {
@@ -135,7 +154,11 @@ const PieChart = defineComponent({
         },
         {
           name: '停止',
-          showSymbol: false,
+          showSymbol: true,
+          symbolSize: 8, // 标记点大小
+          itemStyle: {
+            fill: 'none' // 填充颜色，设置为'none'表示空心
+          },
           data: props.data[0].停止,
           type: 'line',
           lineStyle: {

@@ -2,8 +2,8 @@
   <el-config-provider :locale="zhCn">
     <el-pagination
         background
-        current-page="page"
-        page-size="pageSize"
+        :current-page="page"
+        :page-size="pageSize"
         :default-page-size="defaultPageSizes"
         :page-sizes="pageSizes"
         layout="total, sizes, prev, pager, next"

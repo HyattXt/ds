@@ -27,7 +27,7 @@ export default {
   path: '/data-assets',
   name: 'data-assets',
   meta: { title: 'data-assets' },
-  redirect: { name: !!window.webConfig.VITE_APP_PROD_ASSETS_HOME_URL ? 'assets' : 'assets-catalog' },
+  redirect: { name: 'assets' },
   component: () => import('@/layouts/content'),
   children: [
     {
@@ -37,19 +37,6 @@ export default {
       meta: {
         title: '资产概览',
         activeMenu: 'data-assets',
-        showSide: true,
-        auth: []
-      }
-
-    },
-    {
-      path: '/data-assets/assets-overview',
-      name: 'assets-overview',
-      component: () => import('@/views/iframe/index.vue'),
-      meta: {
-        title: '资产总览-assets-overview',
-        activeMenu: 'data-assets',
-        frameSrc: window.webConfig.VITE_APP_PROD_ASSETS_HOME_URL,
         showSide: true,
         auth: []
       }
@@ -107,6 +94,51 @@ export default {
       meta: {
         title: '指标中心-index-center',
         activeMenu: 'data-assets',
+        showSide: true,
+        auth: []
+      }
+    },
+    {
+      path: '/data-assets/data-standard/data-statistic',
+      name: 'data-statistic',
+      component: () => import('@/views/data-assets/data-standard/data-statistic/index.vue'),
+      meta: {
+        title: '标准概览-data-statistic',
+        activeMenu: 'data-assets',
+        showSide: true,
+        auth: []
+      }
+    },
+    {
+      path: '/data-assets/data-standard/standard-list',
+      name: 'standard-list',
+      component: () => import('@/views/data-assets/data-standard/standard-list/index.vue'),
+      meta: {
+        title: '标准列表-standard-list',
+        activeMenu: 'data-assets',
+        showSide: true,
+        auth: []
+      }
+    },
+    {
+      path: '/data-assets/data-standard/model-list',
+      name: 'model-list',
+      component: () => import('@/views/data-assets/data-standard/model-list/index.vue'),
+      meta: {
+        title: '模型列表-model-list',
+        activeMenu: 'data-assets',
+        showSide: true,
+        auth: []
+      }
+    },
+    {
+      path: '/data-assets/data-standard/model-detail',
+      name: 'model-detail',
+      component: () => import('@/views/data-assets/data-standard/model-list/detail.vue'),
+      meta: {
+        title: '模型明细-model-detail',
+        activeMenu: 'data-assets',
+        activeSide: '/data-assets/data-standard/model-list',
         showSide: true,
         auth: []
       }

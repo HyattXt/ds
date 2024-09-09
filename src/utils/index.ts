@@ -23,6 +23,8 @@ import downloadFile from './downloadFile'
 import copy from './clipboard'
 import removeUselessChildren from './tree-format'
 import isJson from './json'
+import getUrl from './get-url'
+import formatTimestamp from './formatTimestamp'
 
 const utils = {
   mapping,
@@ -32,7 +34,9 @@ const utils = {
   downloadFile,
   copy,
   removeUselessChildren,
-  isJson
+  isJson,
+  getUrl,
+  formatTimestamp
 }
 
 export default utils

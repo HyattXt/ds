@@ -29,10 +29,14 @@ const props = {
     default: '100%'
   },
   data: {
-    type: Array as PropType<Array<any>>
+    type: Array as PropType<Array<any>>,
+    default: []
   },
   title: {},
-  label: {}
+  label: {
+    type: String,
+    default: ''
+  }
 }
 
 const lineChart = defineComponent({
@@ -67,7 +71,6 @@ const lineChart = defineComponent({
         type: 'category',
         boundaryGap: false,     //坐标轴两边不留白
         data: props.data[0].time,
-        name: '时间',           //X轴 name
         nameTextStyle: {        //坐标轴名称的文字样式
           color: '#333',
           fontSize: 16,
@@ -85,15 +88,6 @@ const lineChart = defineComponent({
       yAxis: {
         name: '',
         minInterval: 1,
-        // min: function(value){
-        //   return value.min;
-        // },
-        // max:function(value){
-        //   return value.max;
-        // },
-        axisLabel: {
-          margin: 0,
-        },
         nameTextStyle: {
           color: '#333',
           fontSize: 16,
@@ -104,12 +98,19 @@ const lineChart = defineComponent({
             color: '#333',
           }
         },
-        type: 'value'
+        type: 'value',
+        splitArea: {
+          show: false // 确保 splitArea 是显示的
+        }
       },
       series: [
         {
           name: props.title,
-          showSymbol: false,
+          showSymbol: true,
+          symbolSize: 8, // 标记点大小
+          itemStyle: {
+            fill: 'none' // 填充颜色，设置为'none'表示空心
+          },
           data: props.data[0][props.label],
           type: 'line',               // 类型为折线图
           // smooth: false,
@@ -119,10 +120,13 @@ const lineChart = defineComponent({
         }
       ],
       grid: {
-        x: 30,
-        y: 50,
-        x2: 35,
-        y2: 35
+        left: '0%',
+        top: '6%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true,
+        backgroundColor: 'rgba(255, 255, 255, 0)', // 设置为透明或其他颜色
+        borderColor: 'transparent', // 边框色设置为透明
       },
     };
 
@@ -131,7 +135,7 @@ const lineChart = defineComponent({
     return { lineChartRef }
   },
   render() {
-    const { height, width } = this
+    const {  width } = this
     return (
       <div
         ref='lineChartRef'

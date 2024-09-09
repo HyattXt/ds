@@ -69,6 +69,7 @@ import CrudHead from "@/components/cue/crud-header.vue";
 import moment from "moment/moment";
 import CrudSplit from "@/components/cue/crud-split.vue";
 import CrudTable from "@/components/cue/crud-table.vue";
+import utils from "@/utils";
 
 const route = useRoute()
 const backName = ref("")
@@ -77,9 +78,6 @@ const basicInfo = ref({})
 const apiAuthorizer = ref([])
 const apiAuthorizerName = ref('')
 const userList = ref([])
-const ip = ref(import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_APP_DEV_API_URL
-    : window.webConfig.VITE_APP_PROD_API_URL)
 const apiData =ref({
       portTable: {
         data: [],
@@ -156,12 +154,8 @@ const apiData =ref({
     })
 
 function queryUser() {
-  const listUrl = import.meta.env.MODE === 'development'
-      ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getUser'
-      : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getUser'
-  const authListUrl = import.meta.env.MODE === 'development'
-      ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getAuthorizeInfo'
-      : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getAuthorizeInfo'
+  const listUrl = utils.getUrl('interface/getUser')
+  const authListUrl = utils.getUrl('interface/getAuthorizeInfo')
   axios.get(listUrl).then(function (response) {
 
     userList.value = response.data.data
@@ -197,14 +191,10 @@ function queryBasic(apiParam, type) {
   let url
   let basicPar = {}
   if(type === 'apiName'){
-    url = import.meta.env.MODE === 'development'
-        ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getInterfaceInfoByApiName'
-        : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getInterfaceInfoByApiName'
+    url = utils.getUrl('interface/getInterfaceInfoByApiName')
     basicPar.apiName = apiParam
   } else {
-    url = import.meta.env.MODE === 'development'
-        ? import.meta.env.VITE_APP_DEV_API_URL+'/HDataApi/interface/getInterfaceInfoById'
-        : window.webConfig.VITE_APP_PROD_API_URL+'/HDataApi/interface/getInterfaceInfoById'
+    url = utils.getUrl('interface/getInterfaceInfoById')
     basicPar.apiId = apiParam
   }
 
@@ -214,7 +204,7 @@ function queryBasic(apiParam, type) {
     if (basicInfo.value.apiFlag === 1) {
       basicInfo.value.apiFlag = '接口开发'
       basicInfo.value.apiScript = basicInfo.value.apiScript.replace(/.*HD688296/,"")
-      basicInfo.value.apiPath = basicInfo.value.apiPath.replace('/api/','/HDataApi/api/')
+      basicInfo.value.apiPath = basicInfo.value.apiPath.replace('/api/','/HData/DevApi/api/')
     }
     if (basicInfo.value.apiFlag === 2) {
       basicInfo.value.apiFlag = '接口注册'
