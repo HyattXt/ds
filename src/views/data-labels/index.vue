@@ -1,69 +1,80 @@
 <template>
-  <div class="label-back">
-    <CrudHead title="用户画像" style="border-bottom: 1px solid rgb(239, 239, 245)"/>
-    <n-grid :x-gap="12" :y-gap="8" :cols="9">
-      <n-grid-item span="2">
-        <div>
-          <div style="margin: 5px 5px 0 20px; display: flex; align-items: center;">
-            <n-icon size="25">
-              <svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="40" height="40"><path d="M896.512 698.88H132.608c-58.88 0-107.008-48.128-107.008-107.008v-10.24c0-58.88 48.128-107.008 107.008-107.008h763.904c58.88 0 107.008 48.128 107.008 107.008v10.24c0 58.88-48.128 107.008-107.008 107.008zM496.64 201.728h35.84v117.248h-35.84z" fill="#6F8698" p-id="14931"></path><path d="M516.608 223.744h-4.608c-37.888 0-68.096-30.72-68.096-68.096v-6.656c0-37.888 30.72-68.096 68.096-68.096h4.608c37.888 0 68.096 30.72 68.096 68.096v6.656c0.512 37.888-30.208 68.096-68.096 68.096z" fill="#3677FF" p-id="14932"></path><path d="M573.44 944.64H450.56c-181.248 0-327.68-146.432-327.68-327.68v-4.096c0-181.248 146.432-327.68 327.68-327.68h122.88c181.248 0 327.68 146.432 327.68 327.68v4.096c0 180.224-146.432 327.68-327.68 327.68z" fill="#D0D5F1" p-id="14933"></path><path d="M681.984 715.264H347.136c-72.704 0-131.584-58.88-131.584-131.584s58.88-131.584 131.584-131.584h334.336c72.704 0 131.584 58.88 131.584 131.584 0.512 72.704-58.368 131.584-131.072 131.584z" fill="#3677FF"></path><path d="M286.72 583.68a78.336 70.144 90 1 0 140.288 0 78.336 70.144 90 1 0-140.288 0Z" fill="#FFFFFF" p-id="14935"></path><path d="M608.256 583.68a78.336 70.144 90 1 0 140.288 0 78.336 70.144 90 1 0-140.288 0Z" fill="#FFFFFF"></path><path d="M443.392 799.232s2.56 58.88 68.096 58.88c58.88 0 69.632-61.952 69.632-61.952s-27.136 33.28-68.096 33.28c-42.496 0-69.632-30.208-69.632-30.208z" fill="#8896A4"></path></svg>
+  <div class="container">
+    <!-- 第一个div -->
+    <div class="left-panel">
+      <div style="height: 95%">
+        <div style="height: 20%; width: 100%; display: flex">
+          <div style="margin: 5px 5px 0 20px; width: 15%;">
+            <n-icon size="70">
+              <svg t="1726816857696" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="70" height="70"><path d="M700.8 349.6c-12.9-4.25-29.3 10.4-36.65 32.7-7.35 22.3-2.85 43.8 10.05 48.05s29.3-10.4 36.65-32.7c7.35-22.25 2.85-43.8-10.05-48.05zM323.85 349.6c12.9-4.25 29.3 10.4 36.65 32.7 7.35 22.3 2.85 43.8-10.05 48.05s-29.3-10.4-36.65-32.7c-7.35-22.25-2.85-43.8 10.05-48.05z" fill="#FFD7A3"></path><path d="M580.2 586.4c150.75 66.1 196 101.3 213.85 117.15 27.55 24.4 42.8 115.25 59.05 192.4H170.95c16.25-77.15 31.5-168 59.05-192.4 17.85-15.8 61.45-50.15 212.2-116.25l138-0.9z" fill="#FFDDCC"></path><path d="M580.2 586.4c150.75 66.1 195.95 101.3 213.85 117.15 27.55 24.4 42.8 115.25 59.05 192.4H170.95c16.25-77.15 31.5-168 59.05-192.4 17.85-15.8 61.45-50.15 212.2-116.25l138-0.9z" fill="#B0BEC5"></path><path d="M438.8 454.65v167.1c40.25 49.3 106.15 47.6 146.4 0V454.65c0-90.2-146.4-90.2-146.4 0z" fill="#FFD7A3"></path><path d="M438.8 454.65v111.9c27.7 20.2 54.4 31.5 73.2 31.5 18.8 0 45.5-11.3 73.2-31.5V454.65c0-90.2-146.4-90.2-146.4 0z" fill="#E9C596"></path><path d="M512 154.65c245.65 0 157.3 296.85 141.25 320.45-17.7 26.05-101.6 95.15-141.25 95.15-39.7 0-123.55-69.05-141.25-95.15C354.7 451.5 266.35 154.65 512 154.65z" fill="#FFD7A3"></path><path d="M624.3 254c14.25 77.85 49.95 70.6 47.1 161.95 19.7-144 37.15-281.05-169.75-287.9-31.1 1.2-64.95 10.05-101.25 33.1-60.25 38.25-92.35 118.6-49.35 242.1 6.55-43.55 5.7-76.9 35.65-106.5 31.35-30.85 101.85 53.05 237.6-42.75z" fill="#6D4C41"></path><path d="M511.6 658.1s102.15 24.4 102.15 30.55c0 6.2-38.85 207.25-38.85 207.25H436.2l-15.9-206.35 91.3-31.45z" fill="#B0BEC5"></path><path d="M585.2 588.6v33.2l-31.8 274.15h54.65l60.15-122.1-57.4-38.3 70.15-32.8-64.5-100.1zM438.8 588.8v33l32.1 274.15H416.25l-60.15-122.1 57.4-38.3-70.15-32.8 57.35-97.05z" fill="#ECEFF1"></path><path d="M585.2 566.55l6.4 24.9-17.9 129.6-62.1-62.95z" fill="#FFFFFF"></path><path d="M543.45 692l-17.75 27.45h-27.5L480.5 692l31.1-33.9 31.85 33.9z" fill="#0D47A1"></path><path d="M525.75 719.5l25.25 176.45H473l25.25-176.45z" fill="#1976D2" p-id="1905"></path><path d="M438.8 566.55l-5.05 24.5 16.85 131.3 61-64.25z" fill="#FFFFFF"></path><path d="M714.05 895.95h-11.7c0.5-51.95 0.5-89.35 0.5-89.35s5.25 38.85 11.2 89.35zM309.95 895.95h11.7c-0.5-51.95-0.5-89.35-0.5-89.35s-5.25 38.85-11.2 89.35z" fill="#546E7A"></path><path d="M586.4 465.4c-49.4 17.7-106.75 14.8-148.8 0 13.7 63.2 122.55 64.75 148.8 0z" fill="#E9C596"></path></svg>
             </n-icon>
-            <CrudSplit :title="labelData.obj.tagName" style="background-color: #FFFFFF; font-size: 18px"/>
           </div>
-          <div style="padding: 10px 0 0 20px">
-            <n-descriptions label-placement="left" size="large">
+          <div style="padding: 10px 0 0 20px; flex-grow: 1">
+            <span style="background-color: #FFFFFF; font-size: 18px; font-weight: bold">
+              {{labelData.obj.tagName}}
+            </span>
+            <n-descriptions label-placement="left" size="large" style="margin-top: 5px">
               <n-descriptions-item label="户号" label-style="color:grey">
                 {{ labelData.obj.tagId }}
               </n-descriptions-item>
               <n-descriptions-item label="类别" label-style="color:grey">
                 {{ labelData.obj.tagType }}
               </n-descriptions-item>
+            </n-descriptions>
+            <n-descriptions label-placement="left" size="large" style="margin-top: 5px">
               <n-descriptions-item label="电话" label-style="color:grey">
                 {{ labelData.obj.tagTel }}
               </n-descriptions-item>
+            </n-descriptions>
+            <n-descriptions label-placement="left" size="large" style="margin-top: 5px">
               <n-descriptions-item label="地址" label-style="color:grey">
                 {{ labelData.obj.tagAddress }}
               </n-descriptions-item>
             </n-descriptions>
           </div>
-          <div style="margin-top: 5px; display: flex; justify-content: flex-end">
-            <n-switch v-model:value="tabActive" :rail-style="railStyle">
-              <template #checked>
-                词云
-              </template>
-              <template #unchecked>
-                列表
-              </template>
-            </n-switch>
-          </div>
-          <div style="height: 800px; overflow: hidden; padding-top: 20px">
-            <MyChart v-if="tabActive" :option="cloudOption" height="100%"/>
-            <n-table v-if="!tabActive" :single-line="false" striped>
-              <tbody>
-              <tr v-for="item in labelData.data[0]">
-                <td>{{ item.labelName }}</td>
-                <n-td>{{ item.tagValue }}</n-td>
-              </tr>
-              </tbody>
-            </n-table>
-          </div>
         </div>
-      </n-grid-item>
-      <n-grid-item span="7">
-        <n-grid :cols="3">
-          <n-grid-item span="3">
-            <CrudSplit title="用户生命周期" style="font-size: 16px"/>
-          </n-grid-item>
-          <n-grid-item span="3">
-            <div style="margin-right: 10px; height: 300px">
-              <TimeLine :items="itemList"></TimeLine>
-            </div>
-          </n-grid-item>
-          <n-grid-item span="3">
-            <CrudSplit title="用户阳光分" style="font-size: 16px"/>
-          </n-grid-item>
-          <n-grid-item span="1">
-            <n-table striped>
+        <div style="height: 80%">
+          <NTabs type="line" style="height: 100%">
+            <NTabPane name="列表" tab="列表">
+              <n-table :single-line="false" striped size="small">
+                <thead>
+                <tr>
+                  <th>标签</th>
+                  <th>数据值</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="item in labelData.data[0]">
+                  <td>{{ item.labelName }}</td>
+                  <n-td>{{ item.tagValue }}</n-td>
+                </tr>
+                </tbody>
+              </n-table>
+            </NTabPane>
+            <NTabPane name="词云" tab="词云" style="height: 100%">
+                <MyChart :option="cloudOption" height="100%"/>
+            </NTabPane>
+          </NTabs>
+        </div>
+      </div>
+    </div>
+    <!-- 后三个div的容器，用于分配剩余75%的宽度 -->
+    <div class="right-panels">
+      <div class="right-panel">
+        <div style="height: 10%">
+          <CrudSplit title="生命周期" style="font-size: 16px; background:white"/>
+        </div>
+        <div style="height: 90%">
+          <TimeLine :items="itemList"></TimeLine>
+        </div>
+      </div>
+      <div class="right-panel">
+        <div style="height: 10%">
+          <CrudSplit title="阳光分" style="font-size: 16px; background:white"/>
+        </div>
+        <div style="display: flex; height: 90%; flex-direction: row;">
+          <div style="width: 25%; height: 100%; margin-left: 10px">
+            <table class="custom-table">
               <tbody>
               <tr v-for="item in score">
                 <td>{{ item.labelName }}</td>
@@ -73,56 +84,43 @@
                     <span v-for="n in parseInt(item.tagValue)">★</span>
                   </span>
                   <span v-else>
-            <!-- 否则显示tagValue的原值 -->
-            {{ item.tagValue }}
-          </span>
+                    <!-- 否则显示tagValue的原值 -->
+                    {{ item.tagValue }}
+                 </span>
                 </td>
                 <td>{{ item.labelScore }}分</td>
               </tr>
               </tbody>
-            </n-table>
-          </n-grid-item>
-          <n-grid-item span="1">
-            <div>
-              <MyChart :option="sunOption" height="300px"/>
+            </table>
+          </div>
+          <div style="width: 30%; height: 100%; margin-left: 10px">
+            <MyChart :option="sunOption" height="100%"/>
+          </div>
+          <div style="width: 30%; height: 100%;/">
+            <MyChart :option="gaugeOption" height="100%"/>
+          </div>
+          <div style="width: 15%; height: 100%;">
+            <div class="sun-div">
+              <!-- 第一行，使用<strong>标签使字体加粗 -->
+              <strong class="center-text">{{ totalScore }}</strong>
+              <!-- 第二行，同样使用<strong>标签 -->
+              <strong class="center-text">{{ gaugeOption.series[0].data[0].tag }}</strong><br>
+              <!-- 第三行，直接使用文本，不改变字体粗细 -->
+              <span class="bottom-text">阳光分超过了{{ getTagValueByTagName('用户领先百分比') }}的用户，{{ gaugeOption.series[0].data[0].tag }}</span>
             </div>
-          </n-grid-item>
-          <n-grid-item span="1">
-            <div style="margin-top: 5px">
-              <n-table striped>
-                <tbody>
-                <tr>
-                  <td>阳光信用分</td>
-                  <td>{{ totalScore }}</td>
-                  <td>{{ gaugeOption.series[0].data[0].name }}</td>
-                </tr>
-                </tbody>
-              </n-table>
-              <n-grid :cols="4">
-                <n-grid-item span="1">
-                  <div class="sun-div">
-                    阳光分超过了{{ getTagValueByTagName('用户领先百分比') }}的用户，{{ gaugeOption.series[0].data[0].name }}
-                  </div>
-                </n-grid-item>
-                <n-grid-item span="3">
-                  <MyChart :option="gaugeOption" height="250px"/>
-                </n-grid-item>
-              </n-grid>
-            </div>
-          </n-grid-item>
-          <n-grid-item span="3">
-            <CrudSplit title="用户用水分析" style="font-size: 16px"/>
-          </n-grid-item>
-          <n-grid-item span="3">
-            <div style="height: 300px">
-              <MyChart :option="waterOption" height="300px"/>
-            </div>
-          </n-grid-item>
-        </n-grid>
-      </n-grid-item>
-    </n-grid>
+          </div>
+        </div>
+      </div>
+      <div class="right-panel">
+        <div style="height: 10%">
+          <CrudSplit title="用户用水分析" style="font-size: 16px; background:white"/>
+        </div>
+        <div style="height: 90%">
+          <MyChart :option="waterOption" height="100%"/>
+        </div>
+      </div>
+    </div>
   </div>
-
 </template>
 
 <script setup>
@@ -238,7 +236,7 @@ const waterOption = {
     right: 20,
     top: 20,
   },
-  color: ['#3bb969', '#0299cb', '#e6824d'],
+  color: ['#73d1b7', '#52a2f2', '#f2bf64'],
   grid: {
     left: '3%',
     right: '4%',
@@ -250,7 +248,7 @@ const waterOption = {
   xAxis: [
     {
       type: 'category',
-      data: [5, 20, 36, 10, 10, 20],
+      data: ['1月', '2月', '3月', '4月', '5月', '6月','7月','8月','9月'],
       axisTick: {
         alignWithLabel: true
       }
@@ -283,20 +281,20 @@ const waterOption = {
     {
       name: '本期',
       type: 'bar',
-      barWidth: '30%',
-      data: [5, 20, 36, 10, 10, 20]
+      barWidth: '15%',
+      data: [5, 20, 36, 10, 10, 20, 36, 10, 22]
     },
     {
       name: '同期',
       type: 'bar',
-      barWidth: '30%',
-      data: [5, 20, 36, 10, 10, 20]
+      barWidth: '15%',
+      data: [6, 23, 31, 15, 13, 27, 6, 23, 31, 15]
     },
     {
       name: '同比',
       type: 'line',
       yAxisIndex: 1, // 指定使用第二个 Y 轴
-      data: [0.5, 0.20, 0.36, 0.10, 0.10, 0.20]
+      data: [0.5, 0.20, 0.36, 0.10, 0.10, 0.20, 0.20, 0.36, 0.10]
     }
   ]
 }
@@ -424,7 +422,8 @@ const gaugeOption = ref({
       data: [
         {
           value: 0,
-          name: '信用极好'
+          name: '阳光信誉分',
+          tag: '信用极好'
         }
       ]
     }
@@ -556,7 +555,7 @@ function initData() {
         setTagValues()
 
         gaugeOption.value.series[0].data[0].value = totalScore.value/100
-        gaugeOption.value.series[0].data[0].name = setNameBasedOnValue(totalScore.value)
+        gaugeOption.value.series[0].data[0].tag = setNameBasedOnValue(totalScore.value)
 
         sunOption.value.series[0].data[0].value = score.value.map(item => item.labelScore)
       })
@@ -611,16 +610,76 @@ onMounted(()=>{
 </script>
 
 <style scoped>
-.label-back {
-  background-color: rgb(255, 255, 255);
+.container {
+  display: flex; /* 使用flex布局 */
+  height: 100%; /* 高度设置为视窗高度 */
 }
-.sun-div {
-  margin-top: 20px;
+
+.left-panel {
+  width: 25%; /* 宽度为25% */
+  background-color: white; /* 背景色仅作区分 */
+  height: 100%; /* 高度继承自父元素 */
   padding: 0 10px;
-  background-color: #5BCA84;
-  color: #FFFFFF;
-  height: 200px;
-  display: flex;
-  align-items: center
 }
+
+.right-panels {
+  width: 75%; /* 宽度为75%，与左侧div共同填满整个屏幕宽度 */
+  flex-direction: column; /* 子项垂直排列 */
+  height: 100%; /* 高度继承自父元素 */
+  padding-left: 12px;
+}
+
+.right-panel {
+  margin-top: 12px;
+  height: calc(33.3333% - 12px);
+  background-color: white; /* 背景色仅作区分 */
+}
+
+/* 使用 :first-child 选择器移除第一个 .right-panel 的上边距 */
+.right-panels > .right-panel:first-child {
+  margin-top: 0;
+  height: 33.3333%
+}
+
+.custom-table {
+  width: 100%; /* 根据需要调整宽度 */
+  border-collapse: collapse; /* 确保边框合并 */
+  margin: 20px auto; /* 可选：居中显示并添加外边距 */
+}
+
+.custom-table td, .custom-table th {
+  border: 1px solid #ddd; /* 定义边框样式 */
+  padding: 8px; /* 添加内边距 */
+  text-align: center; /* 使文本居中 */
+}
+
+.sun-div {
+  margin: 20px 10px 0 0;
+  padding: 0 10px;
+  background: linear-gradient(to bottom, rgb(214, 246, 246), white);
+  height: 70%;
+  width: 80%;
+  display: flex;
+  flex-direction: column; /* 确保子项垂直排列 */
+  justify-content: flex-end; /* 第三行放在最下面 */
+  align-items: center; /* 水平中心对齐 */
+  text-align: center; /* 确保文本居中对齐 */
+}
+
+.center-text {
+  display: block;
+  width: 100%;
+}
+
+.bottom-text {
+  text-align: center;
+  padding-top: 10px;
+}
+
+strong {
+  font-weight: bold; /* 这通常是默认的，但为了清晰起见还是写出来 */
+  font-size: 20px;
+  color: rgba(24,215,227);
+}
+
 </style>
