@@ -355,11 +355,11 @@ const gaugeOption = ref({
         lineStyle: {
           width: 6,
           color: [
-            [0.2, '#FF6E76'],
-            [0.4, '#FDDD60'],
+            [0.2, '#58D9F9'],
+            [0.4, '#58D9F9'],
             [0.6, '#58D9F9'],
-            [0.8, '#7CFFB2'],
-            [1, '#1cc160'],
+            [0.8, '#58D9F9'],
+            [1, '#58D9F9'],
           ]
         }
       },
@@ -392,17 +392,6 @@ const gaugeOption = ref({
         distance: -60,
         rotate: 'tangential',
         formatter: function (value) {
-          if (value === 0.9 ) {
-            return '极好';
-          } else if (value === 0.7) {
-            return '较好';
-          } else if (value === 0.5) {
-            return '一般';
-          } else if (value === 0.3) {
-            return '较低';
-          } else if (value === 0.1) {
-            return '极低';
-          }
           return '';
         }
       },
@@ -616,14 +605,14 @@ onMounted(()=>{
 }
 
 .left-panel {
-  width: 25%; /* 宽度为25% */
+  width: 20%; /* 宽度为25% */
   background-color: white; /* 背景色仅作区分 */
   height: 100%; /* 高度继承自父元素 */
   padding: 0 10px;
 }
 
 .right-panels {
-  width: 75%; /* 宽度为75%，与左侧div共同填满整个屏幕宽度 */
+  width: 80%; /* 宽度为75%，与左侧div共同填满整个屏幕宽度 */
   flex-direction: column; /* 子项垂直排列 */
   height: 100%; /* 高度继承自父元素 */
   padding-left: 12px;
@@ -639,6 +628,11 @@ onMounted(()=>{
 .right-panels > .right-panel:first-child {
   margin-top: 0;
   height: 33.3333%
+}
+
+/* 使用 :first-child 选择器移除第一个 .right-panel 的上边距 */
+.right-panels > .right-panel:last-child {
+  flex: 1;
 }
 
 .custom-table {
