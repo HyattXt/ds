@@ -152,7 +152,7 @@ svg {
 
 .card-text {
   font-size: 10px;
-  font-family: "Microsoft YaHei", Arial, sans-serif;
+  font-family: "Microsoft YaHei Bold", Arial, sans-serif;
   fill: black;
 }
 
