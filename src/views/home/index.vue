@@ -287,10 +287,6 @@ const handleClick = (type) => {
       })
       break
     case 'workInstance':
-      router.push({
-        path: `/devops/${window.webConfig.VITE_APP_PROD_PROJECT_ID}/workflow/instances`,
-        query: {back: true}
-      })
       break
     case 'dataAsset':
       router.push({
