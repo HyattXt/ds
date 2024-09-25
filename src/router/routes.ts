@@ -28,7 +28,6 @@ import apiPage from './modules/api'
 import restPage from './modules/rest'
 import dataAssetsPage from './modules/data-assets'
 import DevOpsPage from './modules/devops'
-import dataLabelsPage from './modules/data-labels'
 import dataBusinessPage from './modules/data-business'
 import projectManagerPage from './modules/project-manager'
 
@@ -88,7 +87,6 @@ const basePage: RouteRecordRaw[] = [
   restPage,
   DevOpsPage,
   projectManagerPage,
-  dataLabelsPage,
   dataBusinessPage
 ]
 
