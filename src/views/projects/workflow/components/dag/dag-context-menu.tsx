@@ -23,7 +23,9 @@ import { useRoute } from 'vue-router'
 import styles from './menu.module.scss'
 import { uuid } from '@/common/common'
 import { IWorkflowTaskInstance } from './types'
-import { NButton } from 'naive-ui'
+import {NButton, NIcon, NTooltip} from 'naive-ui'
+import Styles from "@/views/projects/workflow/components/dag/dag.module.scss";
+import {CopyOutlined} from "@vicons/antd";
 
 const props = {
   startReadonly: {
@@ -157,13 +159,20 @@ export default defineComponent({
               {t('project.node.copy')}
             </NButton>)}
           {!this.hasInstancesPath &&
-            (<NButton
-              class={`${styles['menu-item']}`}
-              disabled={this.menuReadonly}
-              onClick={this.handleDelete}
-            >
-              {t('project.node.delete')}
-            </NButton>)}
+            (<NTooltip
+                    v-slots={{
+                      trigger: () => (
+                          <NButton
+                              class={`${styles['menu-item']}`}
+                              disabled={this.menuReadonly}
+                              onClick={this.handleDelete}
+                          >
+                            {t('project.node.delete')}
+                          </NButton>
+                      ),
+                      default: () => '删除该任务后后续将不能新增该任务，如需恢复请点击对应版本恢复'
+                    }}
+                ></NTooltip>)}
           {this.taskInstance && (
             <NButton
               class={`${styles['menu-item']}`}
