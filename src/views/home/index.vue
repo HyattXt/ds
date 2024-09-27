@@ -137,8 +137,7 @@ const firstListData = ref([])
 const secondListData = ref([])
 const loopData0 = [
   {
-    lanhuimage0:
-        'https://lanhu.oss-cn-beijing.aliyuncs.com/SketchPng9e2c764d6db1e98396f71d7f84a2edca0cb52d32f2095a7ec7d0530ab6e7e2be',
+    lanhuimage0: `${import.meta.env.BASE_URL}images/home/2-1.png`,
     specialSlot1: {
       lanhutext0: '数据规划',
       lanhutext1: '基于智慧水务数据归集与数据源维护',
@@ -146,8 +145,7 @@ const loopData0 = [
     slot1: 1,
   },
   {
-    lanhuimage0:
-        'https://lanhu.oss-cn-beijing.aliyuncs.com/SketchPng86ba45062fb1b97c204246dd6f808129728636b58eb25d15cc3f5f02d1c0f659',
+    lanhuimage0: `${import.meta.env.BASE_URL}images/home/2-2.png`,
     specialSlot2: {
       lanhutext0: '数据工厂',
       lanhutext1:
@@ -156,8 +154,7 @@ const loopData0 = [
     slot2: 2,
   },
   {
-    lanhuimage0:
-        'https://lanhu.oss-cn-beijing.aliyuncs.com/SketchPng0bb78a7a1bec50b71f61a9f0483658414ab43f895dddc0ff7cd87d846cb96e2f',
+    lanhuimage0: `${import.meta.env.BASE_URL}images/home/2-3.png`,
     specialSlot1: {
       lanhutext0: '数据开发',
       lanhutext1: '基于归集数据进行数据模型开发以及数据处理',
@@ -165,8 +162,7 @@ const loopData0 = [
     slot1: 1,
   },
   {
-    lanhuimage0:
-        'https://lanhu.oss-cn-beijing.aliyuncs.com/SketchPng99e54a7a33948622d1f708ffd050fef1e93d875869e3a4a1d0816ff949f10721',
+    lanhuimage0: `${import.meta.env.BASE_URL}images/home/2-4.png`,
     specialSlot2: {
       lanhutext0: '资源管理',
       lanhutext1:
@@ -175,8 +171,7 @@ const loopData0 = [
     slot2: 2,
   },
   {
-    lanhuimage0:
-        'https://lanhu.oss-cn-beijing.aliyuncs.com/SketchPng20aaed5ddbdc1e7433105bc8dbb86f0f3df77ddaa147b0dd8f518890a588fa50',
+    lanhuimage0: `${import.meta.env.BASE_URL}images/home/2-5.png`,
     specialSlot1: {
       lanhutext0: '服务开发',
       lanhutext1: '基于自定义SQL以及封装API低代码服务开发',
@@ -184,8 +179,7 @@ const loopData0 = [
     slot1: 1,
   },
   {
-    lanhuimage0:
-        'https://lanhu.oss-cn-beijing.aliyuncs.com/SketchPng370bc608804a4a40295397e1fcc5a9181e2ccf6a37f6f083a8f7d380fa3d94f5',
+    lanhuimage0: `${import.meta.env.BASE_URL}images/home/2-6.png`,
     specialSlot2: {
       lanhutext0: '数据运营',
       lanhutext1: '基于资源管理资源库数据对优质数据进行运营管理',
@@ -193,8 +187,7 @@ const loopData0 = [
     slot2: 2,
   },
   {
-    lanhuimage0:
-        'https://lanhu.oss-cn-beijing.aliyuncs.com/SketchPng20aaed5ddbdc1e7433105bc8dbb86f0f3df77ddaa147b0dd8f518890a588fa50',
+    lanhuimage0: `${import.meta.env.BASE_URL}images/home/2-5.png`,
     specialSlot1: {
       lanhutext0: '运维中心',
       lanhutext1: '对数据开发以及服务开发的任务进行运维和告警等操作',
@@ -202,8 +195,7 @@ const loopData0 = [
     slot1: 1,
   },
   {
-    lanhuimage0:
-        'https://lanhu.oss-cn-beijing.aliyuncs.com/SketchPng370bc608804a4a40295397e1fcc5a9181e2ccf6a37f6f083a8f7d380fa3d94f5',
+    lanhuimage0: `${import.meta.env.BASE_URL}images/home/2-6.png`,
     specialSlot2: {
       lanhutext0: '数据标签',
       lanhutext1: '基于资源管理资源库数据对优质数据进行运营管理',
