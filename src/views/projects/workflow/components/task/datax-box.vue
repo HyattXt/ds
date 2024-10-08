@@ -188,10 +188,6 @@
                           :rightData="taskData.rightData"
                           :leftList="taskData.leftList"
                           :rightList="taskData.rightList"
-                          :dataSource="taskData.dataSource"
-                          :dataTarget="taskData.dataTarget"
-                          :dsType="taskData.dsType"
-                          :dtType="taskData.dtType"
                           :taskCode="props.taskCode"
                           :disabled="props.readOnly"
                           @save-jsplumb="saveJsplumb"
@@ -818,6 +814,10 @@ async function getDatasourceTables(dataSource ,type) {
   }
   try {
     const response = await axios.post(url, params);
+    if (response.data.status === 0) {
+      message.error(response.data.error);
+      return response.data.data;
+    }
     return response.data.data;
   } catch (error) {
     message.error(error);

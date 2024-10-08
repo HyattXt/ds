@@ -22,18 +22,6 @@ const props = defineProps({
     type: Array,
     required: true
   },
-  dsType: {
-    required: true
-  },
-  dtType: {
-    required: true
-  },
-  dataSource: {
-    required: true
-  },
-  dataTarget: {
-    required: true
-  },
   disabled: {
     type: Boolean,
     default: false
@@ -274,12 +262,6 @@ function getConnection()  {
 
 defineExpose({save, disassociate, sameName, sameLine, init, repaintPlumb})
 
-/*watch(() => props.rightList, () => {
-  if (container.value) {
-    init()
-  }
-}, { deep: true });*/
-
 onMounted( () => {
   let isFirstChange = true;
   watch(
@@ -292,6 +274,7 @@ onMounted( () => {
               let obj = {};
               obj.source = 'S' + props.taskCode + item;
               obj.target = 'T' + props.taskCode + newRightList[index];
+              console.log(obj)
               plumbins.connect(obj);
             });
             isFirstChange = false;

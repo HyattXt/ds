@@ -93,7 +93,7 @@ defineProps({
 })
 
 const showVersionModalRef = ref(false)
-const emit = defineEmits(['refresh'])
+const emit = defineEmits(['refresh', 'saveEvent', 'runEvent', 'stopEvent'])
 
 const onRefresh = () => {
   showVersionModalRef.value = false
