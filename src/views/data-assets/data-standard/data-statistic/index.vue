@@ -294,7 +294,7 @@ const pieOptionOne = ref({
       top: '55%',
       left: 'center',
       style: {
-        text: '82%',
+        text: '0%',
         textAlign: 'center',
         fontSize: 20,
         color: '#666666'
@@ -329,7 +329,7 @@ const pieOptionTwo = ref({
       top: '55%',
       left: 'center',
       style: {
-        text: '5%',
+        text: '0%',
         textAlign: 'center',
         fontSize: 20,
         color: '#666666'
