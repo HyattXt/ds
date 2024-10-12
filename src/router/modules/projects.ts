@@ -66,6 +66,17 @@ export default {
       }
     },
     {
+      path: '/projects/:projectCode/workflow/relation-flink',
+      name: 'workflow-relation-flink',
+      component: components['projects-workflow-treemap-index-flink'],
+      meta: {
+        title: '工作流定义',
+        activeMenu: 'projects',
+        showSide: true,
+        auth: []
+      }
+    },
+    {
       path: '/projects/:projectCode/workflow-definition',
       name: 'workflow-definition-list',
       component: components['projects-workflow-definition'],
