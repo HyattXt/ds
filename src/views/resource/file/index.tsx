@@ -65,7 +65,7 @@ export default defineComponent({
 
     const paginationReactive = reactive({
       page: 1,
-      pageSize: 10,
+      pageSize: 30,
       itemCount: 0,
       pageSizes: [10, 30, 50]
     })

@@ -63,7 +63,7 @@ export function useTable() {
     breadList: [],
     id: ref(Number(router.currentRoute.value.params.id) || -1),
     page: ref(1),
-    pageSize: ref(10),
+    pageSize: ref(30),
     searchVal: ref(),
     total: ref(0),
     totalPage: ref(1),
