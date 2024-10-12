@@ -567,7 +567,14 @@ export default defineComponent({
                 contextMenuVisible.value = true;
                 menuTop.value = event.clientY;
                 menuLeft.value = event.clientX;
+            } else if(targetElement?.id.startsWith("tab-")){
+                contextMenuTab.value = Number(targetElement.id.split("-")[1]);
+                event.preventDefault(); // 手动阻止默认行为
+                contextMenuVisible.value = true;
+                menuTop.value = event.clientY;
+                menuLeft.value = event.clientX;
             }
+
         };
 
         const pushComponent = (type: number, taskCode: number, taskName: string, taskType: string, state: boolean, processCode: number)=> {
