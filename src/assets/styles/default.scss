@@ -294,8 +294,7 @@ dt {
 
     .el-message-box__header {
       position: relative;
-      padding: 15px;
-      padding-bottom: 10px;
+      padding: 15px 15px 10px;
 
       .el-message-box__title {
         padding-left: 0;
@@ -601,12 +600,11 @@ dt {
     .cue-crud__body {
       display: inline-flex;
       box-sizing: border-box;
-      border-top: $report-top-split-line;
       flex: 1;
       height: 100%;
       position: relative;
       overflow: hidden;
-      border: none;
+      border-style: none;
       background: $background-base;
 
       &.hide-line {

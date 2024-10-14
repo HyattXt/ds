@@ -101,7 +101,7 @@
   }
 
   let validatePath = (rule: any, value: any, callback: any) => {
-    if (route.query.apiId == undefined) {
+    if (!route.query.apiId) {
       return new Promise<void>((resolve, reject) => {
         let url = utils.getUrl('interface/getApiPath')
         let body = { apiPath: value }
@@ -125,7 +125,7 @@
   }
 
   let validateName = (rule: any, value: any, callback: any) => {
-    if (route.query.apiId == undefined) {
+    if (!route.query.apiId) {
       return new Promise<void>((resolve, reject) => {
         let url = utils.getUrl('interface/getInterfaceInfoByApiName')
         let body = { apiName: value }
@@ -249,7 +249,7 @@ function getTreeFolder ()  {
 
 onMounted(() => {
   getTreeFolder()
-    if (route.query.apiId !== undefined) {
+    if (!!route.query.apiId) {
       getInitData()
       isDisable.value = true
     }

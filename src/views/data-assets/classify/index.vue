@@ -705,7 +705,7 @@ function createMenu(ruleFormRef) {
   })
 }
 function addMetadata() {
-  detailPaginationReactive.page = 1, detailPaginationReactive.apiName= '', detailPaginationReactive.dataCatalogType= '2', detailPaginationReactive.notes= '', detailPaginationReactive.tableDataLength= '', detailPaginationReactive.tableDataRow= '', detailPaginationReactive.tableUpdateTime= ''
+  detailPaginationReactive.page = 1; detailPaginationReactive.apiName= ''; detailPaginationReactive.dataCatalogType= '2'; detailPaginationReactive.notes= ''; detailPaginationReactive.tableDataLength= ''; detailPaginationReactive.tableDataRow= ''; detailPaginationReactive.tableUpdateTime= '';
   detailQuery(
       detailPaginationReactive.page,
       detailPaginationReactive.pageSize,
@@ -716,7 +716,7 @@ function addMetadata() {
       detailPaginationReactive.tableDataRow,
       detailPaginationReactive.tableUpdateTime
   )
-  apiDetailPaginationReactive.page = 1, apiDetailPaginationReactive.apiName= '', apiDetailPaginationReactive.dataCatalogType= '2', apiDetailPaginationReactive.apiComment= '', apiDetailPaginationReactive.apiTimeConsuming= '', apiDetailPaginationReactive.interfaceNum= ''
+  apiDetailPaginationReactive.page = 1; apiDetailPaginationReactive.apiName= ''; apiDetailPaginationReactive.dataCatalogType= '2'; apiDetailPaginationReactive.apiComment= ''; apiDetailPaginationReactive.apiTimeConsuming= ''; apiDetailPaginationReactive.interfaceNum= '';
   apiDetailQuery(
       apiDetailPaginationReactive.page,
       apiDetailPaginationReactive.pageSize,

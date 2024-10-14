@@ -147,7 +147,7 @@
   }
 
   onMounted(() => {
-    if (route.query.apiId !== undefined) {
+    if (!!route.query.apiId) {
       getInitData()
     }
   })
