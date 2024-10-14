@@ -23,7 +23,7 @@ import {
   NButton,
   NIcon,
   NDataTable,
-  NForm, NGrid, NFormItemGi
+  NForm, NGrid, NFormItem
 } from 'naive-ui'
 import { SearchOutlined } from '@vicons/antd'
 import { useTable } from './use-table'
@@ -93,17 +93,16 @@ const AuditLog = defineComponent({
                 <CrudHeader title="审计日志"/>
             ),
             condition: () => (
-                <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
-                  <NGrid cols="18" x-gap="16">
-                    <NFormItemGi label="用户" span="3">
+                <NForm showFeedback={false} label-placement="left" inline style="margin-bottom: 3px">
+                    <NFormItem label="用户">
                       <NInput
                           v-model={[this.userName, 'value']}
                           size='small'
                           placeholder={t('monitor.audit_log.user_name')}
                           clearable
                       />
-                    </NFormItemGi>
-                    <NFormItemGi label="操作类型" span="3">
+                    </NFormItem>
+                    <NFormItem label="操作类型">
                       <NSelect
                           v-model={[this.operationType, 'value']}
                           size='small'
@@ -117,8 +116,8 @@ const AuditLog = defineComponent({
                           style={{ width: '180px' }}
                           clearable
                       />
-                    </NFormItemGi>
-                    <NFormItemGi label="资源类型" span="3">
+                    </NFormItem>
+                    <NFormItem label="资源类型">
                       <NSelect
                           v-model={[this.resourceType, 'value']}
                           size='small'
@@ -136,8 +135,8 @@ const AuditLog = defineComponent({
                           style={{ width: '180px' }}
                           clearable
                       />
-                    </NFormItemGi>
-                    <NFormItemGi label="时间" span="5">
+                    </NFormItem>
+                    <NFormItem label="时间" span="5">
                       <NDatePicker
                           v-model={[this.datePickerRange, 'value']}
                           type='datetimerange'
@@ -146,8 +145,8 @@ const AuditLog = defineComponent({
                           end-placeholder={t('monitor.audit_log.end_time')}
                           clearable
                       />
-                    </NFormItemGi>
-                    <NFormItemGi span="2">
+                    </NFormItem>
+                    <NFormItem span="2">
                       <NButton size='small' color={'#0099CB'} type='primary' onClick={onSearch} style={"padding: 0 15px 0 15px"}>
                         <NIcon>
                           <SearchOutlined />
@@ -156,8 +155,7 @@ const AuditLog = defineComponent({
                           查询
                         </div>
                       </NButton>
-                    </NFormItemGi>
-                  </NGrid>
+                    </NFormItem>
                 </NForm>
             ),
             table: () => (

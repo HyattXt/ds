@@ -23,7 +23,7 @@ import {
   NButton,
   NIcon,
   NDataTable,
-  NFormItemGi, NGrid, NForm
+  NFormItem, NGrid, NForm
 } from 'naive-ui'
 import { SearchOutlined } from '@vicons/antd'
 import { useTable } from './use-table'
@@ -159,33 +159,32 @@ const TaskInstance = defineComponent({
                   <CrudHeader title="任务实例" />
               ),
               condition: () => (
-                  <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
-                    <NGrid cols="22" x-gap="16">
-                      <NFormItemGi label="任务名称" span="4">
+                  <NForm showFeedback={false} label-placement="left" inline style="margin-bottom: 3px">
+                      <NFormItem label="任务名称">
                         <NInput
                             v-model={[this.searchVal, 'value']}
                             size='small'
                             placeholder={t('project.task.task_name')}
                             clearable
                         />
-                      </NFormItemGi>
-                      <NFormItemGi label="工作流名称" span="4">
+                      </NFormItem>
+                      <NFormItem label="工作流名称">
                         <NInput
                             v-model={[this.processInstanceName, 'value']}
                             size='small'
                             placeholder={t('project.task.workflow_instance')}
                             clearable
                         />
-                      </NFormItemGi>
-                      <NFormItemGi label="执行用户" span="3">
+                      </NFormItem>
+                      <NFormItem label="执行用户">
                         <NInput
                             v-model={[this.executorName, 'value']}
                             size='small'
                             placeholder={t('project.task.executor')}
                             clearable
                         />
-                      </NFormItemGi>
-                      <NFormItemGi label="状态" span="3">
+                      </NFormItem>
+                      <NFormItem label="状态">
                         <NSelect
                             v-model={[this.stateType, 'value']}
                             size='small'
@@ -194,8 +193,8 @@ const TaskInstance = defineComponent({
                             style={{ width: '180px' }}
                             clearable
                         />
-                      </NFormItemGi>
-                      <NFormItemGi label="时间" span="5">
+                      </NFormItem>
+                      <NFormItem label="时间">
                         <NDatePicker
                             v-model={[this.datePickerRange, 'value']}
                             type='datetimerange'
@@ -204,8 +203,8 @@ const TaskInstance = defineComponent({
                             end-placeholder={t('project.task.end_time')}
                             clearable
                         />
-                      </NFormItemGi>
-                      <NFormItemGi span="2">
+                      </NFormItem>
+                      <NFormItem>
                         <NButton size='small' color={'#0099CB'} type='primary' onClick={onSearch} style={"padding: 0 15px 0 15px"}>
                           <NIcon>
                             <SearchOutlined />
@@ -214,8 +213,7 @@ const TaskInstance = defineComponent({
                             查询
                           </div>
                         </NButton>
-                      </NFormItemGi>
-                    </NGrid>
+                      </NFormItem>
                   </NForm>
               ),
               table: () => (

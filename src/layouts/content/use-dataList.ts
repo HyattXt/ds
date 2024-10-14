@@ -294,7 +294,7 @@ export function useDataList() {
                 },
                 {
                   label: t('menu.desensitization_manage'),
-                  key: '/security/desensitization/rule-manage',
+                  key: 'desensitization',
                   icon: renderIcon(SecurityFilled),
                   children: [
                     {
@@ -478,6 +478,7 @@ export function useDataList() {
           },
           {
             label: t('menu.data_standard'),
+            key: 'data-standard',
             icon: renderIcon(RuleDraft),
             children: [
               {

@@ -37,6 +37,7 @@
               :options="stateOptions"
               clearable
               placeholder="请选择"
+              class="from-n-select"
           />
         </n-form-item-gi>
         <n-form-item-gi :span="4" label="API状态">
@@ -107,7 +108,8 @@
           v-model:value="apiAuthorizer"
           virtual-scroll
           :options="userList"
-          filterable
+          source-filterable
+          target-filterable
       />
     </n-form-item>
     <template #footer>
@@ -520,4 +522,7 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 
+.n-base-select-menu .n-base-select-option {
+  font-size: 12px;
+}
 </style>

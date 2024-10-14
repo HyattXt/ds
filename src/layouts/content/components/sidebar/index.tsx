@@ -41,7 +41,9 @@ const Sidebar = defineComponent({
       'statistical-manage',
       'task-group-manage',
       'devops_task',
-      'devops_rest'
+      'devops_rest',
+      'data-standard',
+      'desensitization'
     ]
 
     const { handleMenuClick } = useMenuClick()

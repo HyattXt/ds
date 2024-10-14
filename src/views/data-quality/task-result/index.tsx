@@ -23,7 +23,7 @@ import {
   NButton,
   NIcon,
   NDataTable,
-  NForm, NGrid, NFormItemGi
+  NForm, NGrid, NFormItem
 } from 'naive-ui'
 import { SearchOutlined } from '@vicons/antd'
 import { useTable } from './use-table'
@@ -93,17 +93,16 @@ const TaskResult = defineComponent({
                 <CrudHeader title="任务结果"/>
             ),
             condition: () => (
-                <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
-                  <NGrid cols="18" x-gap="16">
-                    <NFormItemGi label="名称" span="3">
+                <NForm showFeedback={false} label-placement="left" inline style="margin-bottom: 3px">
+                    <NFormItem label="名称">
                       <NInput
                           v-model={[this.searchVal, 'value']}
                           size='small'
                           placeholder={t('data_quality.task_result.task_name')}
                           clearable
                       />
-                    </NFormItemGi>
-                    <NFormItemGi label="规则类型" span="3">
+                    </NFormItem>
+                    <NFormItem label="规则类型">
                       <NSelect
                           v-model={[this.ruleType, 'value']}
                           size='small'
@@ -129,8 +128,8 @@ const TaskResult = defineComponent({
                           style={{ width: '180px' }}
                           clearable
                       />
-                    </NFormItemGi>
-                    <NFormItemGi label="任务状态" span="3">
+                    </NFormItem>
+                    <NFormItem label="任务状态">
                       <NSelect
                           v-model={[this.state, 'value']}
                           size='small'
@@ -152,8 +151,8 @@ const TaskResult = defineComponent({
                           style={{ width: '180px' }}
                           clearable
                       />
-                    </NFormItemGi>
-                    <NFormItemGi label="时间" span="5">
+                    </NFormItem>
+                    <NFormItem label="时间">
                       <NDatePicker
                           v-model={[this.datePickerRange, 'value']}
                           type='datetimerange'
@@ -162,8 +161,8 @@ const TaskResult = defineComponent({
                           end-placeholder={t('monitor.audit_log.end_time')}
                           clearable
                       />
-                    </NFormItemGi>
-                    <NFormItemGi span="2">
+                    </NFormItem>
+                    <NFormItem>
                       <NButton size='small' color={'#0099CB'} type='primary' onClick={onSearch} style={"padding: 0 15px 0 15px"}>
                         <NIcon>
                           <SearchOutlined />
@@ -172,8 +171,7 @@ const TaskResult = defineComponent({
                           查询
                         </div>
                       </NButton>
-                    </NFormItemGi>
-                  </NGrid>
+                    </NFormItem>
                 </NForm>
             ),
             table: () => (

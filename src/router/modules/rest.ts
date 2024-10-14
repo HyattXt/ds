@@ -42,18 +42,6 @@ export default {
       }
     },
     {
-      path: '/rest/rest-dev',
-      name: 'rest-dev',
-      component: () => import('@/views/rest/detail/add.vue'),
-      meta: {
-        title: '接口开发-rest-dev',
-        activeMenu: 'rest',
-        showSide: true,
-        activeSide: '/rest/rest-manager',
-        auth: []
-      }
-    },
-    {
       path: '/rest/rest-edit',
       name: 'rest-edit',
       component: () => import('@/views/rest/detail/edit.vue'),

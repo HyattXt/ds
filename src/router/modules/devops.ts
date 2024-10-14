@@ -104,18 +104,6 @@ export default {
             }
         },
         {
-            path: '/devops/rest/rest-dev',
-            name: 'devops-rest-dev',
-            component: () => import('@/views/rest/detail/add.vue'),
-            meta: {
-                title: '接口开发-rest-dev',
-                activeMenu: 'devops',
-                showSide: true,
-                activeSide: '/devops/rest/rest-manager',
-                auth: []
-            }
-        },
-        {
             path: '/devops/rest/rest-edit',
             name: 'devops-rest-edit',
             component: () => import('@/views/rest/detail/edit.vue'),

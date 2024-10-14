@@ -580,12 +580,16 @@ dt {
 
       }
 
-      .cue-crud__header-content .el-form.el-form--inline .el-form-ite {
+      .cue-crud__header-content .el-form.el-form--inline .el-form-item {
         margin-bottom: 8px;
       }
 
       .cue-crud__header-content .el-form-item__label {
         padding-right: 8px;
+      }
+
+      .cue-crud__header-content * {
+        font-size: 12px;
       }
 
       .el-button.cue-crud__header-query {

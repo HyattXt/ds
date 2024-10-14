@@ -19,7 +19,7 @@ import { SearchOutlined } from '@vicons/antd'
 import {
   NGrid,
   NForm,
-  NFormItemGi,
+  NFormItem,
   NInput,
   NButton,
   NDatePicker,
@@ -78,41 +78,41 @@ export default defineComponent({
     const { t } = useI18n()
     const options = stateType(t)
     return (
-      <NForm showFeedback={false} label-placement="left" style="margin-bottom: 3px">
-        <NGrid xGap={16} cols={24}>
-        <NFormItemGi label="名称" span={4}>
+      <NForm showFeedback={false} label-placement="left" inline style="margin-bottom: 3px">
+        <NFormItem label="名称" >
           <NInput
             size='small'
             clearable
             v-model:value={this.searchValRef}
             placeholder={t('project.workflow.name')}
           />
-        </NFormItemGi>
-        <NFormItemGi label="执行用户" span={4}>
+        </NFormItem>
+        <NFormItem label="执行用户" >
           <NInput
             size='small'
             clearable
             v-model:value={this.executorNameRef}
             placeholder={t('project.workflow.executor')}
           />
-        </NFormItemGi>
-        <NFormItemGi label="状态" span={3}>
+        </NFormItem>
+        <NFormItem label="状态" >
           <NSelect
             size='small'
             options={options}
             defaultValue={''}
             v-model:value={this.stateTypeRef}
+            style={{ width: '180px' }}
           />
-        </NFormItemGi>
-        <NFormItemGi label="时间" span={6}>
+        </NFormItem>
+        <NFormItem label="时间" >
           <NDatePicker
             size='small'
             type='datetimerange'
             clearable
             v-model:value={this.startEndTimeRef}
           />
-        </NFormItemGi>
-        <NFormItemGi span={1}>
+        </NFormItem>
+        <NFormItem >
           <NButton size='small' color={'#0099CB'} type='primary' onClick={this.handleSearch} style={"padding: 0 15px 0 15px"}>
             <NIcon>
               <SearchOutlined />
@@ -121,8 +121,7 @@ export default defineComponent({
               查询
             </div>
           </NButton>
-        </NFormItemGi>
-      </NGrid>
+        </NFormItem>
       </NForm>
     )
   }

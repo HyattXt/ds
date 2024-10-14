@@ -13,7 +13,7 @@
       <n-space justify="space-between">
         <n-form-item label="任务名称" path="taskName">
           <n-input
-              disabled="true"
+              :disabled="ifEdit"
               v-model:value="formValue.taskName"
               placeholder="请输入"
               :style="{ width: '300px' }"
@@ -199,7 +199,6 @@
 import {onMounted, ref} from 'vue'
 import { useMessage } from 'naive-ui'
 import axios from 'axios'
-import {keys, values} from "lodash";
 import {useRoute, useRouter} from "vue-router";
 import CrudHeader from "@/components/cue/crud-header.vue";
 import utils from "@/utils";
@@ -230,17 +229,46 @@ const dataKeyTmp = ref([])
 const dataUserTmp = ref([])
 const dataParamTmp = ref([])
 const dynamicParameterTmp = ref([])
-const ifDynamicParameter =ref()
+const ifDynamicParameter =ref(false)
 const listSource = ref([])
 const route = useRoute()
 const router = useRouter()
+const ifEdit = ref(false)
+
+let validatePath = (rule: any, value: any, callback: any) => {
+  return new Promise<void>((resolve, reject) => {
+    let url = utils.getUrl('httpHandle/getHttpDataByTaskName')
+    let body = { taskName: value }
+
+    //0存在，1不存在
+    axios
+        .post(url, body)
+        .then(function (response) {
+
+          if (response.data.status == 0) {
+            reject(Error(response.data.info)) // reject with error message
+          } else {
+            resolve()
+          }
+        })
+        .catch(function (error) {
+          reject(error)
+        })
+  })
+}
 
 const rules = {
-  taskName: {
-    required: true,
-    message: '请输入名称',
-    trigger: 'blur'
-  }
+  taskName: [
+    {
+      required: true,
+      message: '请输入名称',
+      trigger: 'blur'
+    },
+    {
+      validator: validatePath,
+      trigger: 'blur'
+    }
+  ]
 }
 const dataSourceTypeOptions = ref([
   {
@@ -296,11 +324,13 @@ const dataTokenTypeOptions = ref([
 ])
 
 function formSubmit() {
-  let insUrl = utils.getUrl('httpHandle/updateHttpData')
-  formValue.value.dataKey = {}
-  formValue.value.dataUser = {}
-  formValue.value.dataParam = {}
-  formValue.value.dynamicParameter = {}
+  let insUrl = route.query.id ? utils.getUrl('httpHandle/updateHttpData') : utils.getUrl('httpHandle/insertHttpData')
+  if(route.query.id) {
+    formValue.value.dataKey = {}
+    formValue.value.dataUser = {}
+    formValue.value.dataParam = {}
+    formValue.value.dynamicParameter = {}
+  }
 
   for(let i=0;i<dataKeyTmp.value.length; i++){
     formValue.value.dataKey[dataKeyTmp.value[i].key]=dataKeyTmp.value[i].value
@@ -330,7 +360,7 @@ function formSubmit() {
 
         message.info(response.data.info)
         setTimeout(() => {
-          if (response.data.info === 'HTTP任务编辑成功！') {
+          if (response.data.status === 1 ) {
             router.push({
               path: '/devops/rest/rest-manager'
             })
@@ -338,7 +368,7 @@ function formSubmit() {
         }, 1000)
       })
       .catch(function (error) {
-        message.error('修改失败，请咨询管理员')
+        message.error('操作失败，请咨询管理员')
       })
 }
 
@@ -352,47 +382,50 @@ function queryDataSource() {
 }
 
 onMounted(() => {
-  let url = utils.getUrl('httpHandle/getHttpDataById')
-  let params = { id: '' }
-  params.id = route.query.id
-  formValue.value.id = route.query.id
-  queryDataSource()
+  if(route.query.id) {
+    ifEdit.value = true
+    let url = utils.getUrl('httpHandle/getHttpDataById')
+    let params = { id: '' }
+    params.id = route.query.id
+    formValue.value.id = route.query.id
+    queryDataSource()
 
-  axios
-      .post(url, params)
-      .then(function (response) {
+    axios
+        .post(url, params)
+        .then(function (response) {
 
-        formValue.value = response.data.obj
-        if(response.data.obj.dynamicParameterStatus===2){
-          ifDynamicParameter.value=false
-        }else{
-          ifDynamicParameter.value=true
-        }
+          formValue.value = response.data.obj
+          if(response.data.obj.dynamicParameterStatus===2){
+            ifDynamicParameter.value=false
+          }else{
+            ifDynamicParameter.value=true
+          }
 
-        dynamicParameterTmp.value = Object.entries(response.data.obj.dynamicParameter).map(([key, value]) => ({
-          key,
-          value
-        }))
+          dynamicParameterTmp.value = Object.entries(response.data.obj.dynamicParameter).map(([key, value]) => ({
+            key,
+            value
+          }))
 
-        dataParamTmp.value = Object.entries(response.data.obj.dataParam).map(([key, value]) => ({
-          key,
-          value
-        }))
+          dataParamTmp.value = Object.entries(response.data.obj.dataParam).map(([key, value]) => ({
+            key,
+            value
+          }))
 
-        dataUserTmp.value = Object.entries(response.data.obj.dataUser).map(([key, value]) => ({
-          key,
-          value
-        }))
+          dataUserTmp.value = Object.entries(response.data.obj.dataUser).map(([key, value]) => ({
+            key,
+            value
+          }))
 
-        dataKeyTmp.value = Object.entries(response.data.obj.dataKey).map(([key, value]) => ({
-          key,
-          value
-        }))
+          dataKeyTmp.value = Object.entries(response.data.obj.dataKey).map(([key, value]) => ({
+            key,
+            value
+          }))
 
-      })
-      .catch(function (error) {
-        console.log(error)
-      })
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+  }
 })
 </script>
 

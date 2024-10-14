@@ -287,7 +287,7 @@ function query(
 
     function addRest() {
       router.push({
-        path: '/devops/rest/rest-dev'
+        path: '/devops/rest/rest-edit'
       })
     }
 
