@@ -18,8 +18,6 @@
 import type { Component } from 'vue'
 import utils from '@/utils'
 //import { useTaskState } from '@/views/devops/use-task-state'
-import { useAsyncState } from '@vueuse/core'
-import { queryUnauthorizedProject, getDataByProjectCodeAndDate, getStatisticsDataByProjectCodeAndDate } from '@/service/modules/devops-analysis'
 
 const IFrame = () => import('@/views/iframe/index.vue')
 

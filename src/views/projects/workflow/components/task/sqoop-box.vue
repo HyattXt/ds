@@ -72,7 +72,6 @@ import {formatModel, formatParams as formatData} from "@/views/projects/task/com
 import * as Fields from "@/views/projects/task/components/node/fields";
 import getElementByJson from "@/components/form/get-elements-by-json";
 import UseParameterConfiguration from "@/views/projects/workflow/components/task/items/use-parameter-configuration.vue";
-import {useTask} from "@/views/projects/task/components/node/use-task";
 import {useHeightAdjustment} from "@/views/projects/workflow/components/task/useHeightAdjustment";
 
 const props = defineProps({

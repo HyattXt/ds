@@ -159,12 +159,12 @@
 <script setup>
 import {ref, reactive, onMounted, h} from 'vue'
 import { useRouter } from 'vue-router'
-import {BoxPlotOutlined, ProfileOutlined} from '@vicons/antd'
+import {BoxPlotOutlined} from '@vicons/antd'
 import {
   NButton,
   useMessage,
   NIcon,
-  NPopover, NGrid, NTooltip
+  NPopover, NGrid
 } from 'naive-ui'
 import hljs from 'highlight.js/lib/core'
 import javascript from 'highlight.js/lib/languages/javascript'

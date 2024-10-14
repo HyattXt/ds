@@ -25,7 +25,6 @@ import {
   CloseOutlined,
   CloseCircleOutlined,
   PauseCircleOutlined,
-  ControlOutlined,
   PlayCircleOutlined
 } from '@vicons/antd'
 import { useI18n } from 'vue-i18n'

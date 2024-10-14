@@ -24,7 +24,6 @@ import type {
   DataLedgerListReq,
   DataLedgerReq
 } from './types'
-import {modelTableReq} from "@/service/modules/data-standard/types";
 
 export function queryDataSecurityEncryption(data: EncryptionReq): any {
   return axios({

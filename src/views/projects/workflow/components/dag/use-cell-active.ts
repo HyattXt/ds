@@ -56,7 +56,7 @@ export function useCellActive(options: Options) {
     const isSelected = graph.value?.isSelected(edge)
     // TODO
     // const labelName = this.getEdgeLabelName ? this.getEdgeLabelName(edge) : ''
-    let edgeProps = null
+    let edgeProps: null
 
     if (isHover) {
       edgeProps = _.merge(_.cloneDeep(EDGE), EDGE_HOVER)
@@ -92,9 +92,9 @@ export function useCellActive(options: Options) {
     const nodeHover = _.merge(_.cloneDeep(NODE.attrs), NODE_HOVER.attrs)
     const nodeSelected = _.merge(_.cloneDeep(NODE.attrs), NODE_SELECTED.attrs)
 
-    let img = null
-    let nodeAttrs = null
-    let portAttrs = null
+    let img: null
+    let nodeAttrs: null
+    let portAttrs: null
 
     if (isHover || isSelected) {
       img = `${

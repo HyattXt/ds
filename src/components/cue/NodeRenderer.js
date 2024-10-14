@@ -1,4 +1,3 @@
-import { h } from 'vue';
 export default {
     props: {
         node: Object

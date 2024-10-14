@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {ref, onMounted, watch, computed, h, onBeforeUnmount, onUpdated} from 'vue'
+import {ref, onMounted, watch, computed, h} from 'vue'
 import { useI18n } from 'vue-i18n'
-import {useCreateTable, useCustomParams, useDatasource, useColumnJsplumb} from '.'
+import {useCreateTable, useDatasource, useColumnJsplumb} from '.'
 import type { IJsonItem } from '../types'
 import styles from "@/views/projects/task/components/node/index.module.scss";
-import {cloneDeep, lowerCase} from "lodash";
+import {lowerCase} from "lodash";
 import {queryTaskConnect} from "@/service/modules/task-definition";
 
 export function useDataX(model: { [field: string]: any }): IJsonItem[] {

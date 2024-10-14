@@ -203,17 +203,16 @@
 <script setup>
 
 import CrudHeader from "@/components/cue/crud-header.vue";
-import {computed, onMounted, ref, unref} from "vue";
+import {onMounted, ref} from "vue";
 import CrudForm from "@/components/cue/crud-form.vue";
 import {ElButton} from "element-plus";
 import Sortable from 'sortablejs';
 import {TableFreezeRow24Regular, ArrowMove24Filled} from '@vicons/fluent'
-import {darkTheme, NButton, NGrid, useMessage} from "naive-ui";
+import {NButton, NGrid, useMessage} from "naive-ui";
 import CrudSplit from "@/components/cue/crud-split.vue";
 import Editor from "@/components/monaco-editor";
 import {
   createModelColumn, deleteModelColumn, modelTableCreate, modelTableExists,
-  queryElementByName,
   queryModelColumn, queryModelElementByName,
   queryStandardList, sortModelField, updateModelColumn
 } from "@/service/modules/data-standard";

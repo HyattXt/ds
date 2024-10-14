@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {defineComponent, nextTick, onMounted, toRefs, watchEffect, withKeys} from 'vue'
+import {defineComponent, onMounted, toRefs, withKeys} from 'vue'
 import styles from './index.module.scss'
 import {
   NInput,
@@ -31,7 +31,6 @@ import {useLogin} from './use-login'
 import {useLocalesStore} from '@/store/locales/locales'
 import {useThemeStore} from '@/store/theme/theme'
 import cookies from 'js-cookie'
-import axios from "axios";
 
 const login = defineComponent({
   name: 'login',

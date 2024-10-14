@@ -87,7 +87,7 @@ export function renderMultiCondition(
       return h(
         NFormItemGi,
         {
-          showLabel: child.name ? true : false,
+          showLabel: !!child.name,
           label: child.name ? child.name : '',
           path: `${fields[field]}[${i}].${mergedChild.field}`,
           span: unref(mergedChild.span)

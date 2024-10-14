@@ -395,11 +395,7 @@ onMounted(() => {
         .then(function (response) {
 
           formValue.value = response.data.obj
-          if(response.data.obj.dynamicParameterStatus===2){
-            ifDynamicParameter.value=false
-          }else{
-            ifDynamicParameter.value=true
-          }
+          ifDynamicParameter.value = response.data.obj.dynamicParameterStatus !== 2;
 
           dynamicParameterTmp.value = Object.entries(response.data.obj.dynamicParameter).map(([key, value]) => ({
             key,

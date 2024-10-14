@@ -920,7 +920,7 @@ function handlePageChange(currentPage, pageSize) {
     loadingRef.value = true
     paginationReactive.page = currentPage
     paginationReactive.pageSize = pageSize
-    showAssetOperation.value = paginationReactive.apiTreeId===2 || paginationReactive.apiTreeId===3 || paginationReactive.apiTreeId===4 ? true : false
+    showAssetOperation.value = paginationReactive.apiTreeId === 2 || paginationReactive.apiTreeId === 3 || paginationReactive.apiTreeId === 4
     query(
         paginationReactive.page,
         paginationReactive.pageSize,
@@ -1007,11 +1007,7 @@ function packHandle() {
 }
 function handleCurrentChange(val) {
   currentRow.value = val
-  if(currentRow.value && currentRow.value.addFlag === 0 ) {
-    ifDisableDelete.value = false
-  } else {
-    ifDisableDelete.value = true
-  }
+  ifDisableDelete.value = !(currentRow.value && currentRow.value.addFlag === 0);
 }
 
 function menuIcon({ option }) {

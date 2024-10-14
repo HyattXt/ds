@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-import {releaseStandard} from "@/service/modules/data-standard/index";
-
 interface ListReq {
   pageNum: number
   pageSize: number

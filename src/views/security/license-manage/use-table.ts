@@ -16,7 +16,7 @@
  */
 
 import { useAsyncState } from '@vueuse/core'
-import { reactive, h, ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { queryLicense } from '@/service/modules/license'
 import { LicenseRes } from '@/service/modules/license/types'

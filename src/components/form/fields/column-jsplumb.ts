@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 
-import {h, ref, watch} from 'vue'
+import {h} from 'vue'
 import { isFunction } from 'lodash'
 import type { IJsonItem } from '../types'
 import styles from '../index.module.scss'
-import {NButton} from "naive-ui";
 
 export function renderColumnJsplumb( item: IJsonItem, fields: { [field: string]: any }) {
     const { props, field, fieldLeft, fieldRight } = isFunction(item) ? item() : item

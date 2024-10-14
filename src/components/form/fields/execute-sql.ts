@@ -16,11 +16,10 @@
  */
 
 import {h, ref} from 'vue'
-import {NButton, NTooltip,NSpace, useMessage} from 'naive-ui'
+import {NButton, NTooltip,useMessage} from 'naive-ui'
 import { isFunction } from 'lodash'
 import type { IJsonItem } from '../types'
 import axios from "axios";
-import {DeleteOutlined} from "@vicons/antd";
 
 export function renderExecuteSql( item: IJsonItem, fields: { [field: string]: any }) {
     const { props } = isFunction(item) ? item() : item

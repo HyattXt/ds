@@ -125,7 +125,7 @@
   import { SearchOutlined } from '@vicons/antd'
   import { Add12Filled } from '@vicons/fluent'
   import { CaretUp, CaretDown } from '@vicons/fa'
-  import { h, ref, unref } from 'vue'
+  import { ref, unref } from 'vue'
   import { NIcon, useMessage } from 'naive-ui'
   import { ElButton } from 'element-plus'
   import zhCn from 'element-plus/es/locale/lang/zh-cn'

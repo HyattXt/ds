@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import {defineComponent, onMounted, PropType, ref} from 'vue'
+import {defineComponent, onMounted, ref} from 'vue'
 import { NIcon, NButton, NDropdown} from 'naive-ui'
-import {DownOutlined, ProfileOutlined, UserOutlined} from '@vicons/antd'
+import {DownOutlined} from '@vicons/antd'
 import { useDropDown } from './use-dropdown'
 import styles from './index.module.scss'
 import {queryProjectListPaging} from "@/service/modules/projects";

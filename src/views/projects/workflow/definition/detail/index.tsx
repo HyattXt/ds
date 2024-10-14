@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {defineComponent, onBeforeUpdate, onMounted, onUpdated, PropType, ref, unref} from 'vue'
+import {defineComponent, onMounted, PropType, ref} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useThemeStore } from '@/store/theme/theme'
 import { useMessage} from 'naive-ui'
@@ -30,7 +30,7 @@ import {
   SaveForm,
   TaskDefinition,
   Connect,
-  Location, WorkflowInstance
+  Location
 } from '../../components/dag/types'
 import Styles from './index.module.scss'
 

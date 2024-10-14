@@ -15,15 +15,8 @@
  * limitations under the License.
  */
 
-import { ref, onMounted, nextTick, Ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { queryDataSourceList } from '@/service/modules/data-source'
-import { indexOf, find } from 'lodash'
+import { Ref } from 'vue'
 import type { IJsonItem } from '../types'
-import type { TypeReq } from '@/service/modules/data-source/types'
-import {useMessage} from "naive-ui";
-import {renderCreateSql} from "@/components/form/fields";
-import {useDatasource} from "@/views/projects/task/components/node/fields/use-datasource";
 
 export function useCreateTable(
   model: { [field: string]: any },

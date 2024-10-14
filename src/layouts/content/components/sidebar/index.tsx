@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import {defineComponent, ref, PropType, onMounted, unref, watch} from 'vue'
-import {MenuOption, NLayoutSider, NMenu} from 'naive-ui'
+import {defineComponent, ref, PropType} from 'vue'
+import {NLayoutSider, NMenu} from 'naive-ui'
 import { useMenuClick } from './use-menuClick'
 
 const Sidebar = defineComponent({

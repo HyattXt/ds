@@ -1,5 +1,3 @@
-import getUrl from "@/utils/get-url";
-
 const formatTimestamp = (timestamp) => {
     // 创建一个新的Date对象
     let date = new Date(timestamp);

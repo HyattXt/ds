@@ -17,7 +17,7 @@
 
 import { useI18n } from 'vue-i18n'
 import { useTaskNodeStore } from '@/store/project/task-node'
-import { useRelationCustomParams, useTimeoutAlarm } from '.'
+import { useRelationCustomParams } from '.'
 import type { IJsonItem } from '../types'
 import {nextTick, onMounted, ref} from "vue";
 import {queryProcessDefinitionByCode} from "@/service/modules/process-definition";

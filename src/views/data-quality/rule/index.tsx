@@ -17,13 +17,8 @@
 
 import { defineComponent, onMounted, ref, toRefs } from 'vue'
 import {
-  NInput,
-  NButton,
-  NIcon,
-  NDataTable,
-  NForm, NGrid, NFormItemGi
+  NDataTable
 } from 'naive-ui'
-import { SearchOutlined } from '@vicons/antd'
 import { useTable } from './use-table'
 import RuleModal from './components/rule-modal'
 import CrudForm from "@/components/cue/crud-form.vue";

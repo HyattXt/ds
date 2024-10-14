@@ -19,7 +19,6 @@ import { useCustomParams } from '.'
 import type { IJsonItem } from '../types'
 import { onMounted, ref} from "vue";
 import axios from "axios";
-import {useMessage} from "naive-ui";
 import utils from "@/utils";
 
 export function useHttp(model: { [field: string]: any }): IJsonItem[] {

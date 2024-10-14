@@ -20,11 +20,8 @@ import { useRoute, useRouter } from 'vue-router'
 import styles from './index.module.scss'
 import { NMenu } from 'naive-ui'
 import Logo from '../logo'
-import Locales from '../locales'
-import Timezone from '../timezone'
 import User from '../user'
 import Project from '../project'
-import Theme from '../theme'
 import {useProjectStore} from "@/store/route/project";
 
 const Navbar = defineComponent({

@@ -15,12 +15,11 @@
  * limitations under the License.
  */
 
-import {defineComponent, ref, watch, inject, Ref, unref, PropType} from 'vue'
+import {defineComponent, ref, watch, inject, Ref, unref} from 'vue'
 import Form from '@/components/form'
 import { useTask } from './use-task'
 import { useTaskNodeStore } from '@/store/project/task-node'
 import type { ITaskData, EditWorkflowDefinition } from './types'
-import {NDrawer} from "naive-ui";
 
 interface IDetailPanel {
   projectCode: number

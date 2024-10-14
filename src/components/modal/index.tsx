@@ -17,7 +17,7 @@
 
 import { defineComponent, PropType, renderSlot, Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import {NModal, NCard, NButton, NSpace, NDrawer} from 'naive-ui'
+import {NModal, NCard, NButton, NSpace} from 'naive-ui'
 import ButtonLink from '@/components/button-link'
 import styles from './index.module.scss'
 import type { LinkOption } from '@/components/modal/types'

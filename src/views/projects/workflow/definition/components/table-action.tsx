@@ -20,14 +20,10 @@ import { NSpace, NTooltip, NButton, NIcon, NPopconfirm } from 'naive-ui'
 import {
   DeleteOutlined,
   DownloadOutlined,
-  FormOutlined,
   InfoCircleFilled,
   PlayCircleOutlined,
   ClockCircleOutlined,
-  CopyOutlined,
   FieldTimeOutlined,
-  ExportOutlined,
-  ApartmentOutlined,
   UploadOutlined
 } from '@vicons/antd'
 import { useI18n } from 'vue-i18n'

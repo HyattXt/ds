@@ -185,7 +185,7 @@ export function useTable() {
                         type: 'info',
                         size: 'tiny',
                         class: 'btn-download',
-                        disabled: row?.directory ? true : false,
+                        disabled: !!row?.directory,
                         onClick: () => downloadResource(row.id)
                       },
                       {

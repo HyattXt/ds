@@ -22,11 +22,7 @@ const isJson = (str: string) => {
   if (typeof str === 'string') {
     try {
       const obj = JSON.parse(str)
-      if (typeof obj === 'object' && obj) {
-        return true
-      } else {
-        return false
-      }
+      return !!(typeof obj === 'object' && obj);
     } catch (e) {
       return false
     }

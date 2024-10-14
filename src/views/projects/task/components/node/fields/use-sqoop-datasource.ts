@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { onMounted, ref, Ref } from 'vue'
+import { ref, Ref } from 'vue'
 import { queryDataSourceList } from '@/service/modules/data-source'
 import { useI18n } from 'vue-i18n'
 import type { IJsonItem, IDataBase } from '../types'

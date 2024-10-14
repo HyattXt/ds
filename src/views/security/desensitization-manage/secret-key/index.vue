@@ -47,12 +47,10 @@
 import {Search} from "@element-plus/icons-vue";
 import CrudForm from "@/components/cue/crud-form.vue";
 import CrudPage from "@/components/cue/crud-page.vue";
-import {ElButton, ElSwitch} from "element-plus";
+import {ElButton} from "element-plus";
 import CrudHeader from "@/components/cue/crud-header.vue";
 import CrudTable from "@/components/cue/crud-table.vue";
-import {h, ref, onMounted} from "vue";
-import {NButton, NGrid, NIcon, NPopconfirm, NTooltip} from "naive-ui";
-import {ToTopOutlined, VerticalAlignBottomOutlined} from "@vicons/antd";
+import {ref, onMounted} from "vue";
 import {queryDataSecurityEncryption} from "@/service/modules/desensitization";
 
 const active = ref(false)

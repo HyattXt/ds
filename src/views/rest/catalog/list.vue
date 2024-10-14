@@ -269,7 +269,7 @@ function query(
             paginationReactive.taskName
         ).then((data) => {
           dataRef.value = data.data
-          dataRef.value.httpType = dataRef.value.forEach((item) => {
+          dataRef.value.forEach((item) => {
             if (item.httpType === 1) {
               item.httpType = 'POST'
             }

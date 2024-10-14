@@ -24,7 +24,6 @@ import type { SessionIdRes } from '@/service/modules/login/types'
 import type { UserInfoRes } from '@/service/modules/users/types'
 import { useRouteStore } from '@/store/route/route'
 import { useTimezoneStore } from '@/store/timezone/timezone'
-import {getUrlParam} from "@/service/service";
 
 export function useLogin(state: any) {
   const router: Router = useRouter()

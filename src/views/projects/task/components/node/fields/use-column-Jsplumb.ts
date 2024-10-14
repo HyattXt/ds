@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {onMounted, reactive, ref, watch} from 'vue'
+import {onMounted, ref, watch} from 'vue'
 import type {IJsonItem} from '../types'
 import {useMessage} from "naive-ui";
 import styles from "../index.module.scss";
@@ -329,7 +329,7 @@ export function useColumnJsplumb(
             return sortData.indexOf(a.sourceId.replace('S' + model['dsType'] + model['dataSource'], '')) - sortData.indexOf(b.sourceId.replace('S' + model['dsType'] + model['dataSource'], ''));
             })
         }
-        for (var i in connections) {
+        for (let i in connections) {
             // connections 是线数据数组
             //info[connections[i].sourceId] = connections[i].targetId;
             readColumn.push(connections[i].sourceId.replace('S' + model['dsType'] + model['dataSource'], ''))

@@ -1,4 +1,4 @@
-import { onMounted, onBeforeUnmount } from 'vue';
+import { onMounted } from 'vue';
 
 export function useHeightAdjustment( ifRun ) {
     onMounted(() => {

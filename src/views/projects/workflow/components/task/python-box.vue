@@ -79,7 +79,7 @@
 </template>
 
 <script setup>
-import {inject, nextTick, onMounted, ref, watch, watchEffect, h} from "vue";
+import {inject, nextTick, onMounted, ref, watch, watchEffect} from "vue";
 import {queryTaskDefinitionByCode, updateWithUpstream} from "@/service/modules/task-definition";
 import CrudWorkflowTooltip from "@/components/cue/crud-workflow-tooltip.vue";
 import UseTaskProperties from "@/views/projects/workflow/components/task/items/use-task-properties.vue";

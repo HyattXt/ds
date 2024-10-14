@@ -41,7 +41,7 @@
 
 <script setup>
 import {h, onMounted, ref} from 'vue'
-import {NButton, NIcon, NInput, NSelect, useMessage} from 'naive-ui'
+import {NButton, NIcon, NInput, useMessage} from 'naive-ui'
 import {useRoute} from "vue-router";
 import axios from "axios";
 import CrudSplit from "@/components/cue/crud-split.vue";

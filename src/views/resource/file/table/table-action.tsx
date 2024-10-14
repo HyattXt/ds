@@ -143,7 +143,7 @@ export default defineComponent({
               <NButton
                 size='tiny'
                 type='info'
-                disabled={this.row?.directory ? true : false}
+                disabled={!!this.row?.directory}
                 tag='div'
                 circle
                 style={{ marginRight: '-5px' }}

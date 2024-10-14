@@ -39,12 +39,10 @@ import {
 } from '@vicons/antd'
 import {
   LogInst,
-  NCard,
   NDrawer,
   NDrawerContent,
   NIcon,
   NLog,
-  NModal,
   NTable,
   NTabPane,
   NTabs,

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { defineComponent, onMounted, toRefs, watch } from 'vue'
+import { defineComponent, onMounted, toRefs } from 'vue'
 import {
   NDescriptions
 } from 'naive-ui'

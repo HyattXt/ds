@@ -179,7 +179,7 @@ import {ElButton, ElMessageBox, ElSwitch} from "element-plus";
 import CrudHeader from "@/components/cue/crud-header.vue";
 import CrudTable from "@/components/cue/crud-table.vue";
 import {h, onMounted, ref} from "vue";
-import {NButton, NGrid, NIcon, NPopconfirm, useMessage} from "naive-ui";
+import {NButton, NGrid, NIcon, useMessage} from "naive-ui";
 import CrudSplit from "@/components/cue/crud-split.vue";
 import {queryDataSourceList} from "@/service/modules/data-source";
 import {find} from "lodash";
@@ -194,7 +194,6 @@ import {
   queryDataSecurityDataLedger,
   queryDataSecurityDesensitizationRules,
   queryDataSecurityEncryption,
-  ruleNameExists,
   runDataProcess,
   updateDataLedger,
   verifyDesensitizationRules,

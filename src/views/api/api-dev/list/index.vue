@@ -188,7 +188,7 @@
   import { useRouter } from 'vue-router'
   import axios from 'axios'
   import { BoxPlotOutlined } from '@vicons/antd'
-  import { NButton, useMessage, NPopconfirm, NIcon, NPopover } from 'naive-ui'
+  import { NButton, useMessage, NIcon, NPopover } from 'naive-ui'
   import hljs from 'highlight.js/lib/core'
   import javascript from 'highlight.js/lib/languages/javascript'
   import moment from 'moment'
@@ -555,11 +555,11 @@
         paginationReactive.apiTreeId
       ).then((data) => {
         dataRef.value = data.data
-        dataRef.value.apiCreateTime = dataRef.value.forEach((item) => {
+        dataRef.value.forEach((item) => {
           let date = new Date(parseInt(item.apiCreateTime))
           item.apiCreateTime = moment(date).format('YYYY-MM-DD HH:mm:ss')
         })
-        dataRef.value.apiStatus = dataRef.value.forEach((item) => {
+        dataRef.value.forEach((item) => {
           if (item.apiStatus === '-1') {
             item.apiStatus = '删除'
           }
@@ -576,7 +576,7 @@
             item.apiStatus = '禁用'
           }
         })
-        dataRef.value.apiFlag = dataRef.value.forEach((item) => {
+        dataRef.value.forEach((item) => {
           if (item.apiFlag === 1) {
             item.apiFlag = '接口开发'
           }

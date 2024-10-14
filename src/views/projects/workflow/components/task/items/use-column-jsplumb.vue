@@ -252,7 +252,7 @@ function getConnection()  {
       return sortData.indexOf(a.sourceId.replace('S' + props.taskCode, '')) - sortData.indexOf(b.sourceId.replace('S' + props.taskCode, ''));
     })
   }
-  for (var i in connections) {
+  for (let i in connections) {
     readColumn.push(connections[i].sourceId.replace('S' + props.taskCode, ''))
     writerColumn.push(connections[i].targetId.replace('T' + props.taskCode, ''))
   }

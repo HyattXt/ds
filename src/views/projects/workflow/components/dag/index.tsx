@@ -24,7 +24,7 @@ import {
   toRef,
   watch,
   onBeforeUnmount,
-  computed, inject
+  computed
 } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
@@ -58,7 +58,6 @@ import { useAsyncState } from '@vueuse/core'
 import utils from '@/utils'
 import {useTask} from "@/views/projects/task/definition/use-task";
 import {INodeData} from "@/views/projects/task/components/node/types";
-import graph from "@/views/projects/workflow/relation/components/Graph";
 import {release} from "@/service/modules/process-definition";
 import {useTable} from "@/views/projects/workflow/definition/timing/use-table";
 
@@ -420,7 +419,7 @@ export default defineComponent({
         />
         {!!props.definition && (
           <VersionModal
-            isInstance={props.instance ? true : false}
+            isInstance={!!props.instance}
             v-model:row={props.definition.processDefinition}
             v-model:show={versionModalShow.value}
             onUpdateList={refreshDetail}

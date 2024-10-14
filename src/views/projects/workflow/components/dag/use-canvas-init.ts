@@ -198,7 +198,7 @@ export function useCanvasInit(options: Options) {
    * Redraw when the page is resized
    */
   const resize = debounce(() => {
-    if (container.value && true) {
+    if (container.value) {
       const w = container.value.offsetWidth
       const h = container.value.offsetHeight
       graph.value?.resize(w, h)

@@ -16,7 +16,7 @@
  */
 
 import {defineComponent, PropType, toRefs, h, unref, ref} from 'vue'
-import { NSpin, NGrid, NForm, NFormItemGi, NDrawer, NButton, NCard, NDrawerContent } from 'naive-ui'
+import { NSpin, NGrid, NForm, NFormItemGi, NDrawer, NDrawerContent } from 'naive-ui'
 import { useForm } from './use-form'
 import type { GridProps, IMeta } from './types'
 import {useI18n} from "vue-i18n";

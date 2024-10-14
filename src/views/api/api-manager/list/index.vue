@@ -323,13 +323,13 @@ function queryUser() {
   axios.post(authListUrl, authBody).then(function (response) {
     let list = response.data.data
     apiAuthorizer.value = list.map((item) => {
-      let authList = ''
+      let authList
       authList = item.id
       return authList
     })
     apiAuthorizerName.value = list
         .map((item) => {
-          let authList = ''
+          let authList
           authList = item.userName
           return authList
         })
@@ -352,11 +352,11 @@ function handlePageChange(currentPage, pageSize) {
         paginationReactive.apiTreeId
     ).then((data) => {
       dataRef.value = data.data
-      dataRef.value.apiCreateTime = dataRef.value.forEach((item) => {
+      dataRef.value.forEach((item) => {
         let date = new Date(parseInt(item.apiCreateTime))
         item.apiCreateTime = moment(date).format('YYYY-MM-DD HH:mm:ss')
       })
-      dataRef.value.apiStatus = dataRef.value.forEach((item) => {
+      dataRef.value.forEach((item) => {
         if (item.apiStatus === '-1') {
           item.apiStatus = '删除'
         }
@@ -373,7 +373,7 @@ function handlePageChange(currentPage, pageSize) {
           item.apiStatus = '禁用'
         }
       })
-      dataRef.value.apiFlag = dataRef.value.forEach((item) => {
+      dataRef.value.forEach((item) => {
         if (item.apiFlag === 1) {
           item.apiFlag = '接口开发'
         }

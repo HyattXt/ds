@@ -18,21 +18,17 @@
 import { defineComponent, Ref, toRefs, onMounted, toRef, watch } from 'vue'
 import {
   NIcon,
-  NSpace,
   NDataTable,
   NButton,
-  NPagination,
   NInput,
   NBreadcrumb,
   NBreadcrumbItem, NForm, NGrid, NFormItemGi
 } from 'naive-ui'
 import { useI18n } from 'vue-i18n'
 import { SearchOutlined } from '@vicons/antd'
-import Card from '@/components/card'
 import FolderModal from './components/folder-modal'
 import UploadModal from './components/upload-modal'
 import { useTable } from './use-table'
-import styles from './index.module.scss'
 import CrudForm from "@/components/cue/crud-form.vue";
 import CrudHeader from "@/components/cue/crud-header.vue";
 import CrudPageDs from "@/components/cue/crud-page-ds.vue";

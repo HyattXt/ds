@@ -23,9 +23,7 @@ import { useRoute } from 'vue-router'
 import styles from './menu.module.scss'
 import { uuid } from '@/common/common'
 import { IWorkflowTaskInstance } from './types'
-import {NButton, NIcon, NTooltip} from 'naive-ui'
-import Styles from "@/views/projects/workflow/components/dag/dag.module.scss";
-import {CopyOutlined} from "@vicons/antd";
+import {NButton, NTooltip} from 'naive-ui'
 
 const props = {
   startReadonly: {

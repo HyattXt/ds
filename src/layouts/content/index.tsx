@@ -16,7 +16,7 @@
  */
 
 import { defineComponent, computed, onMounted, watch, toRefs, ref } from 'vue'
-import { NLayout, NSelect, NLayoutContent, NLayoutHeader, useMessage } from 'naive-ui'
+import { NLayout, NLayoutContent, NLayoutHeader, useMessage } from 'naive-ui'
 import NavBar from './components/navbar'
 import SideBar from './components/sidebar'
 import { useDataList } from './use-dataList'

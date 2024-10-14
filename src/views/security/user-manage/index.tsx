@@ -20,11 +20,9 @@ import {
   NButton,
   NInput,
   NIcon,
-  NSpace,
   NDataTable,
-  NPagination, NForm, NGrid, NFormItemGi
+  NForm, NGrid, NFormItemGi
 } from 'naive-ui'
-import Card from '@/components/card'
 import UserDetailModal from './components/user-detail-modal'
 import AuthorizeModal from './components/authorize-modal'
 import { useI18n } from 'vue-i18n'

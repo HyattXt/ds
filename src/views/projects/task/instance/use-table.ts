@@ -31,7 +31,7 @@ import {
   DownloadOutlined
 } from '@vicons/antd'
 import { format } from 'date-fns'
-import {LocationQueryValue, useRoute, useRouter} from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 import { parseTime, renderTableTime, tasksState } from '@/common/common'
 import {
   COLUMN_WIDTH_CONFIG,
