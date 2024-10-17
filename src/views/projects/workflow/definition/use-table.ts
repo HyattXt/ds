@@ -97,7 +97,7 @@ export function useTable() {
                     onClick: () =>
                       void router.push({
                         name: 'workflow-relation',
-                        state: { taskCode: row.code, taskName: row.name, state: row.releaseState === 'OFFLINE' ? 0 : 1 }
+                        state: { taskCode: row.code, taskName: row.name, state: row.releaseState === 'OFFLINE' ? 0 : 1, back: true }
                       })
                   },
                   {
