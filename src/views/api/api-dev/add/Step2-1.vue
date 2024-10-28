@@ -6,7 +6,7 @@
           v-model:value="formValue.apiDatasourceType"
           size="small"
           placeholder="请选择"
-          :options="[{ label: 'MYSQL', value: 0 },{ label: 'ORACLE', value: 5 },{ label: 'SQLSERVER', value: 6 }]"
+          :options="[{ label: 'MYSQL', value: 0 },{ label: 'POSTGRESQL', value: 1 },{ label: 'ORACLE', value: 5 },{ label: 'SQLSERVER', value: 6 },{ label: 'DM', value: 12 }]"
           @update:value="queryDataSource"
         />
       </n-form-item>
