@@ -931,7 +931,8 @@ function getTableSql() {
   else {
     let getSql = utils.getUrl('createTable/getCreateSql')
     let body = {
-      id: taskData.value.dataSource,
+      sourceId: taskData.value.dataSource,
+      targetId: taskData.value.dataTarget,
       type : datasourceTypes.find(datasource => datasource.value === taskData.value.dsType)?.id,
       tableName: taskData.value.sourceTable
     }
