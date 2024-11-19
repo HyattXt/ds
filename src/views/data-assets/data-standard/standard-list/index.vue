@@ -187,7 +187,7 @@ import {
   updateDataElement,
   deleteDataElement,
   queryElementByName,
-  queryModelElementByName
+  queryModelElementByName, queryModelDataType
 } from "@/service/modules/data-standard";
 import {Search} from "@element-plus/icons-vue";
 
@@ -197,7 +197,6 @@ const formRef = ref(null)
 const loadingRef = ref(false)
 const showSpin = ref(false)
 const active = ref(false)
-const code = ref('')
 const treeFolder = ref([])
 const showDropdownRef = ref(false)
 const showAddRef = ref(false)
@@ -371,7 +370,7 @@ const rules = ref({
   }
 })
 
-const typeOptions = [
+const typeOptions = ref([
   {label: 'varchar', value: 'varchar'},
   {label: 'int', value: 'int'},
   {label: 'double', value: 'double'},
@@ -383,7 +382,7 @@ const typeOptions = [
   {label: 'longtext', value: 'longtext'},
   {label: 'blob', value: 'blob'},
   {label: 'json', value: 'json'}
-]
+])
 
 const message = useMessage()
 
@@ -467,6 +466,21 @@ async function getTreeFolder ()  {
   showSpin.value = true
   treeFolder.value = await queryStandardTreeFolder({})
   showSpin.value = false
+}
+
+async function queryDataType() {
+  const data = await queryModelDataType()
+  if (data.dataWareType === 12) {
+    typeOptions.value = [
+      {label: 'VARCHAR', value: 'VARCHAR'},
+      {label: 'INT', value: 'INT'},
+      {label: 'DOUBLE', value: 'DOUBLE'},
+      {label: 'DECIMAL', value: 'DECIMAL'},
+      {label: 'TIMESTAMP', value: 'TIMESTAMP'},
+      {label: 'CHAR', value: 'CHAR'},
+      {label: 'CLOB', value: 'CLOB'}
+    ]
+  }
 }
 
 function metaDialogVisible () {
@@ -684,6 +698,7 @@ onMounted(() => {
   getTreeFolder()
 
   handlePageChange(1, 30)
+  queryDataType()
 })
 </script>
 

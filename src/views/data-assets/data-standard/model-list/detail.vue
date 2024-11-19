@@ -213,7 +213,7 @@ import CrudSplit from "@/components/cue/crud-split.vue";
 import Editor from "@/components/monaco-editor";
 import {
   createModelColumn, deleteModelColumn, modelTableCreate, modelTableExists,
-  queryModelColumn, queryModelElementByName,
+  queryModelColumn, queryModelDataType, queryModelElementByName,
   queryStandardList, sortModelField, updateModelColumn
 } from "@/service/modules/data-standard";
 
@@ -227,6 +227,7 @@ const showEditElement = ref(false)
 const tableName = ref(history.state.tableName)
 const elementOptions = ref([])
 const elementLoading = ref(false)
+const dataType = ref(0)
 
 const elementFormValue = ref({
   chineseName: null,
@@ -245,7 +246,7 @@ const taskData = ref({
   createSql: ''
 })
 
-const typeOptions = [
+const typeOptions = ref([
     {label: 'varchar', value: 'varchar'},
     {label: 'int', value: 'int'},
     {label: 'double', value: 'double'},
@@ -257,7 +258,7 @@ const typeOptions = [
     {label: 'longtext', value: 'longtext'},
     {label: 'blob', value: 'blob'},
     {label: 'json', value: 'json'}
-]
+])
 
 const rules = ref({
   chineseName: {
@@ -376,7 +377,7 @@ function dataTypeDisplay(item) {
 }
 
 function generateCreateTableSQL(tableData, tableName) {
-  let sql = `CREATE TABLE IF NOT EXISTS ${tableName} (\n`;
+  let sql = dataType.value === 0 ? `CREATE TABLE IF NOT EXISTS ${tableName} (\n` : `CREATE TABLE ${tableName} (\n`;
 
   tableData.forEach(field => {
     sql += `  ${field.englishName} ${field.dataType}`;
@@ -390,13 +391,14 @@ function generateCreateTableSQL(tableData, tableName) {
     }
 
     // 添加注释
-    sql += ` COMMENT '${field.chineseName}',\n`;
+    if(dataType.value === 0) sql += ` COMMENT '${field.chineseName}'`;
+    sql += ',\n';
   });
 
   // 移除最后一个逗号和换行符
   sql = sql.slice(0, -2) + '\n';
 
-  sql += `) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`;
+  sql += `);`;
 
   return sql;
 }
@@ -436,6 +438,22 @@ function handleEdit(row) {
   }
 }
 
+async function queryDataType() {
+  const data = await queryModelDataType()
+  dataType.value = data.dataWareType || 0
+  if (dataType.value === 12) {
+    typeOptions.value = [
+      {label: 'VARCHAR', value: 'VARCHAR'},
+      {label: 'INT', value: 'INT'},
+      {label: 'DOUBLE', value: 'DOUBLE'},
+      {label: 'DECIMAL', value: 'DECIMAL'},
+      {label: 'TIMESTAMP', value: 'TIMESTAMP'},
+      {label: 'CHAR', value: 'CHAR'},
+      {label: 'CLOB', value: 'CLOB'}
+    ]
+  }
+}
+
 async function initData() {
   let params = {
     chineseName: '',
@@ -472,6 +490,7 @@ function setSort() {
 
 onMounted(async () => {
   await initData()
+  await queryDataType()
   setSort()
 })
 </script>

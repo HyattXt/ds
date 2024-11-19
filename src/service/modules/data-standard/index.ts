@@ -25,7 +25,7 @@ import {
   releaseReq,
   modelTableReq,
   modelColumnReq,
-  createModelColumnReq, modelFieldListReq
+  createModelColumnReq, modelFieldListReq, dataElementReq
 } from './types'
 
 export function queryStandardTreeFolder(data): any {
@@ -121,6 +121,13 @@ export function deleteModelTreeFolder(data: modelTreeId): any {
       'Content-Type': 'application/json'
     },
     transformRequest: (params) => JSON.stringify(params)
+  })
+}
+
+export function queryModelDataType(): any {
+  return axios({
+    url: '/Model/queryDataWareType',
+    method: 'get'
   })
 }
 
