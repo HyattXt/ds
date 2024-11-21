@@ -81,6 +81,10 @@ const props = {
     type: Boolean,
     default: false
   },
+  loading: {
+    type: Boolean,
+    default: false
+  },
   parentId: {
     type: Number,
     default: 0
@@ -209,7 +213,7 @@ const NodeInitModal = defineComponent({
               initForm.value.taskDescription = ''
               initForm.value.datasourceType = 'MYSQL'
               initForm.value.datasource = null
-            }, 500)
+            }, 2000)
           }
         } else {
           message.error('验证失败，请填写完整信息')
@@ -287,6 +291,7 @@ const NodeInitModal = defineComponent({
                   <NButton
                       type='info'
                       size='small'
+                      loading={props.loading}
                       onClick={onConfirm}
                   >
                     { t('modal.confirm')}

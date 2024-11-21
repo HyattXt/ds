@@ -97,6 +97,7 @@ export default defineComponent({
     const { t } = useI18n()
     const route = useRoute()
     const theme = useThemeStore()
+    const loading = ref(false)
 
     // Whether the graph can be operated
     provide('readonly', toRef(props, 'readonly'))
@@ -241,7 +242,9 @@ export default defineComponent({
     }
 
     const commitInitTaskAndVis = (taskName: string,taskDescription: string,processCode: number,datasourceType: String, datasource: Number ) => {
+      loading.value = true
       commitInitTask(taskName, taskDescription, processCode, datasourceType, datasource).then(r =>{
+        loading.value = false
         initTaskCancel()
       })
     }
@@ -464,6 +467,7 @@ export default defineComponent({
         <InitModal
             readonly={props.readonly}
             show={initModalVisible.value}
+            loading={loading.value}
             projectCode={props.projectCode}
             processCode={props.processCode}
             processInstance={props.instance}

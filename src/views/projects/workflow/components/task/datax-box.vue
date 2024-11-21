@@ -54,7 +54,7 @@
                           <n-select v-model:value="taskData.dataSource" @update:value="updateSourceTableList" label-field="name" value-field="id" :options="dataSourceList"/>
                         </n-form-item-gi>
                         <n-form-item-gi :span="datasourceSpan" label="表名" path="sourceTable" key="sourceTable">
-                          <n-select v-model:value="taskData.sourceTable" @update:value="updateSplitPk" label-field="TABLE_NAME" value-field="TABLE_NAME" filterable :options="sourceTableList"/>
+                          <n-select v-model:value="taskData.sourceTable" @update:value="updateSplitPk" label-field="TABLE_NAME" value-field="TABLE_NAME" filterable :loading="sourceLoading" :options="sourceTableList"/>
                         </n-form-item-gi>
                         <n-form-item-gi :span="12" label="读取模式" key="executeMode">
                           <n-radio-group v-model:value="taskData.executeMode" @update:value="initConstants">
@@ -116,7 +116,7 @@
                           <n-select v-model:value="taskData.dataTarget" @update:value="updateTargetTableList" label-field="name" value-field="id" :options="dataTargetList"/>
                         </n-form-item-gi>
                         <n-form-item-gi :span="12" label="表名" path="targetTable" key="targetTable">
-                          <n-select v-model:value="taskData.targetTable" label-field="TABLE_NAME" value-field="TABLE_NAME" filterable :options="targetTableList"/>
+                          <n-select v-model:value="taskData.targetTable" label-field="TABLE_NAME" value-field="TABLE_NAME" filterable :loading="targetLoading" :options="targetTableList"/>
                         </n-form-item-gi>
                         <n-form-item-gi :span="writeModeSpan" label="写入模式" key="writeMode">
                           <n-radio-group v-model:value="taskData.writeMode">
@@ -412,6 +412,8 @@ const editorRef = ref()
 const tabData = ref([])
 const initTag = ref(false)
 const logLoadingRef = ref(false)
+const sourceLoading = ref(false)
+const targetLoading = ref(false)
 const processInstanceId = ref()
 const limit = ref()
 const skipLineNum = ref()
@@ -827,10 +829,12 @@ async function getDatasourceTables(dataSource ,type) {
 async function updateSourceTableList(dataSource) {
   if(dataSource) {
     try {
+      sourceLoading.value = true
       sourceTableList.value = await getDatasourceTables(dataSource, datasourceTypes.find(datasource => datasource.value === taskData.value.dsType)?.id)
     } catch (err) {
       sourceTableList.value = []
     }
+    sourceLoading.value = false
   }
   if (!sourceTableList.value.length && taskData.value.sourceTable) {
     taskData.value.sourceTable = null
@@ -849,10 +853,12 @@ async function updateSourceTableList(dataSource) {
 async function initSourceTableList(dataSource, type) {
   if(dataSource) {
     try {
+      sourceLoading.value = true
       sourceTableList.value = await getDatasourceTables(dataSource, type)
     } catch (err) {
       sourceTableList.value = []
     }
+    sourceLoading.value = false
   }
   getConnect(dataSource, 'dataSource')
 }
@@ -860,10 +866,12 @@ async function initSourceTableList(dataSource, type) {
 async function updateTargetTableList(dataSource) {
     if(dataSource) {
       try {
+        targetLoading.value = true
         targetTableList.value = await getDatasourceTables(dataSource, datasourceTypes.find(datasource => datasource.value === taskData.value.dtType)?.id)
       } catch (err) {
         targetTableList.value = []
       }
+      targetLoading.value = false
     }
   if (!targetTableList.value.length && taskData.value.targetTable) {
     taskData.value.targetTable = null
@@ -880,10 +888,12 @@ async function updateTargetTableList(dataSource) {
 async function initTargetTableList(dataSource, type) {
   if(dataSource) {
     try {
+      targetLoading.value = true
       targetTableList.value = await getDatasourceTables(dataSource, type)
     } catch (err) {
       targetTableList.value = []
     }
+    targetLoading.value = false
   }
   getConnect(dataSource, 'dataTarget')
 }
