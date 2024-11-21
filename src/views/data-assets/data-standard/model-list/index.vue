@@ -164,7 +164,7 @@ import {
   deleteModel,
   modelTableExists,
   modelTableCreate,
-  queryModelColumn, queryModelByName
+  queryModelColumn, queryModelByName, queryModelDataType
 } from "@/service/modules/data-standard";
 import {Search} from "@element-plus/icons-vue";
 
@@ -175,7 +175,7 @@ const loadingRef = ref(false)
 const showSpin = ref(false)
 const active = ref(false)
 const showSqlModal = ref(false)
-const code = ref('')
+const dataType = ref(0)
 const treeFolder = ref([])
 const showAddRef = ref(false)
 const currentRow = ref()
@@ -408,8 +408,24 @@ async function getTreeFolder ()  {
   showSpin.value = false
 }
 
+async function queryDataType() {
+  const data = await queryModelDataType()
+  dataType.value = data.dataWareType || 0
+  if (dataType.value === 12) {
+    typeOptions.value = [
+      {label: 'VARCHAR', value: 'VARCHAR'},
+      {label: 'INT', value: 'INT'},
+      {label: 'DOUBLE', value: 'DOUBLE'},
+      {label: 'DECIMAL', value: 'DECIMAL'},
+      {label: 'TIMESTAMP', value: 'TIMESTAMP'},
+      {label: 'CHAR', value: 'CHAR'},
+      {label: 'CLOB', value: 'CLOB'}
+    ]
+  }
+}
+
 function generateCreateTableSQL(tableData, tableName) {
-  let sql = `CREATE TABLE IF NOT EXISTS ${tableName} (\n`;
+  let sql = dataType.value === 0 ? `CREATE TABLE IF NOT EXISTS ${tableName} (\n` : `CREATE TABLE ${tableName} (\n`;
 
   tableData.forEach(field => {
     sql += `  ${field.englishName} ${field.dataType}`;
@@ -423,13 +439,14 @@ function generateCreateTableSQL(tableData, tableName) {
     }
 
     // 添加注释
-    sql += ` COMMENT '${field.chineseName}',\n`;
+    if(dataType.value === 0) sql += ` COMMENT '${field.chineseName}'`;
+    sql += ',\n';
   });
 
   // 移除最后一个逗号和换行符
   sql = sql.slice(0, -2) + '\n';
 
-  sql += `) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`;
+  sql += `);`;
 
   return sql;
 }
@@ -648,6 +665,7 @@ async function deleteApi(row) {
   onMounted(() => {
     getTreeFolder()
     handlePageChange(1, 30)
+    queryDataType()
   })
 </script>
 
