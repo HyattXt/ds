@@ -7,13 +7,6 @@
       {{ title }}
     </div>
     <div class="cue-crud__header-right">
-      <el-button
-          v-if="$route.query.back"
-          class="show-text el-button--default"
-          @click="goBack"
-      >
-        返回
-      </el-button>
       <slot name="button-group"></slot>
       <el-button
           v-if="defineButton"
@@ -31,6 +24,13 @@
       </el-button>
       <el-button title="删除" v-if="deleteButton" :disabled="disableDelete" class="el-button--default" @click="$emit('deleteEvent')">
         <n-icon text><TrashAlt/></n-icon>
+      </el-button>
+      <el-button
+          v-if="$route.query.back"
+          class="show-text el-button--default"
+          @click="goBack"
+      >
+        返回
       </el-button>
     </div>
   </div>
