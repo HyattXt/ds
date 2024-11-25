@@ -116,20 +116,6 @@
       <n-button color="#0099CB" type="primary" size="small" @click="handleCreateModel">确定</n-button>
     </template>
   </el-dialog>
-  <el-dialog v-model="showSqlModal">
-    <template #header> 建表SQL </template>
-      <Editor
-          :value="taskData.createSql"
-          :onUpdateValue = "(value) => taskData.createSql = value"
-          :options="{ language: 'sql' }"
-      />
-      <template #footer>
-        <n-space justify="end">
-          <NButton size="small" @click="showSqlModal = false">取消</NButton>
-          <NButton size="small" type="info" @click="executeTableSql">执行</NButton>
-        </n-space>
-      </template>
-  </el-dialog>
 </template>
 
 <script setup>
@@ -174,7 +160,6 @@ const formRef = ref(null)
 const loadingRef = ref(false)
 const showSpin = ref(false)
 const active = ref(false)
-const showSqlModal = ref(false)
 const dataType = ref(0)
 const treeFolder = ref([])
 const showAddRef = ref(false)
