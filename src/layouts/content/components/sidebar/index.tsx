@@ -43,6 +43,7 @@ const Sidebar = defineComponent({
       'devops_task',
       'devops_rest',
       'data-standard',
+      'label-examine',
       'desensitization'
     ]
 

@@ -527,6 +527,33 @@ export function useDataList() {
             key: '/data-business/userPortrayal',
             icon: renderIcon(UserAvatarFilled)
           },
+          {
+            label: t('menu.label_examine'),
+            key: 'label-examine',
+            icon: renderIcon(RuleDraft),
+            children: [
+              {
+                label: t('menu.examine_list'),
+                key: '/data-business/label/examine-list'
+              },
+              {
+                label: t('menu.my_examine'),
+                key: '/data-business/label/my-examine'
+              },
+              {
+                label: t('menu.already_examine'),
+                key: '/data-business/label/already-examine'
+              },
+              {
+                label: t('menu.my_approval'),
+                key: '/data-business/label/my-approval'
+              },
+              {
+                label: t('menu.approve_set'),
+                key: '/data-business/label/approve-set'
+              }
+            ]
+          }
         ]
       },
       {

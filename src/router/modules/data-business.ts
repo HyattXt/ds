@@ -90,5 +90,71 @@ export default {
         auth: []
       }
     },
+    {
+      path: '/data-business/label/examine-list',
+      name: 'label-examine-list',
+      component: () => import('@/views/label/examine/list/index.vue'),
+      meta: {
+        title: '全部审批-label-examine-list',
+        activeMenu: 'data-business',
+        showSide: true,
+        auth: []
+      }
+    },
+    {
+      path: '/data-business/label/my-examine',
+      name: 'label-my-examine',
+      component: () => import('@/views/label/examine/my-examine/index.vue'),
+      meta: {
+        title: '我的审批-label-my-examine',
+        activeMenu: 'data-business',
+        showSide: true,
+        auth: []
+      }
+    },
+    {
+      path: '/data-business/label/already-examine',
+      name: 'label-already-examine',
+      component: () => import('@/views/label/examine/already-examine/index.vue'),
+      meta: {
+        title: '我已审批-label-already-examine',
+        activeMenu: 'data-business',
+        showSide: true,
+        auth: []
+      }
+    },
+    {
+      path: '/data-business/label/examine-detail',
+      name: 'examine-detail',
+      component: () => import('@/views/label/examine/my-examine/detail.vue'),
+      meta: {
+        title: '审批明细-examine-detail',
+        activeMenu: 'data-business',
+        showSide: true,
+        auth: []
+      }
+    },
+    {
+      path: '/data-business/label/my-approval',
+      name: 'label-my-approval',
+      component: () => import('@/views/label/examine/my-approval/index.vue'),
+      meta: {
+        title: '我的申请-label-my-approval',
+        activeMenu: 'data-business',
+        showSide: true,
+        auth: []
+      }
+    },
+    {
+      path: '/data-business/label/approve-set',
+      name: 'label-approve-set',
+      component: () => import('@/views/label/examine/approve-set/index.vue'),
+      meta: {
+        title: '审批配置-label-approve-set',
+        activeMenu: 'data-business',
+        showSide: true,
+        auth: []
+      }
+    },
   ]
 }

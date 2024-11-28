@@ -28,7 +28,7 @@ import {
   createModelColumnReq, modelFieldListReq, dataElementReq
 } from './types'
 
-export function queryStandardTreeFolder(data): any {
+export function queryStandardTreeFolder(data: any): any {
   return axios({
     url: '/ModelDataElement/getTreeFloder',
     method: 'post',
@@ -76,7 +76,7 @@ export function deleteStandardTreeFolder(data: modelTreeId): any {
   })
 }
 
-export function queryModelTreeFolder(data): any {
+export function queryModelTreeFolder(data: any): any {
   return axios({
     url: '/Model/getTreeFloder',
     method: 'post',
@@ -311,7 +311,7 @@ export function sortModelField(data: modelFieldListReq): any {
   })
 }
 
-export function queryModelIndexNum(data): any {
+export function queryModelIndexNum(data: any): any {
   return axios({
     url: '/Model/queryModelIndexNum',
     method: 'post',
@@ -323,7 +323,7 @@ export function queryModelIndexNum(data): any {
   })
 }
 
-export function queryModelIndexNephogram(data): any {
+export function queryModelIndexNephogram(data: any): any {
   return axios({
     url: 'Model/queryModelIndexNephogram',
     method: 'post',
@@ -335,7 +335,7 @@ export function queryModelIndexNephogram(data): any {
   })
 }
 
-export function queryModelIndexLatest(data): any {
+export function queryModelIndexLatest(data: any): any {
   return axios({
     url: 'Model/queryModelIndexLatest',
     method: 'post',
@@ -347,7 +347,7 @@ export function queryModelIndexLatest(data): any {
   })
 }
 
-export function queryModelIndexRate(data): any {
+export function queryModelIndexRate(data: any): any {
   return axios({
     url: 'Model/queryModelIndexRate',
     method: 'post',
@@ -359,7 +359,7 @@ export function queryModelIndexRate(data): any {
   })
 }
 
-export function queryModelIndexLineChart(data): any {
+export function queryModelIndexLineChart(data: any): any {
   return axios({
     url: 'Model/queryModelIndexLineChart',
     method: 'post',
@@ -371,7 +371,7 @@ export function queryModelIndexLineChart(data): any {
   })
 }
 
-export function queryElementByName(data): any {
+export function queryElementByName(data: any): any {
   return axios({
     url: 'ModelDataElement/loadDataElementByName',
     method: 'post',
@@ -383,7 +383,7 @@ export function queryElementByName(data): any {
   })
 }
 
-export function queryModelElementByName(data): any {
+export function queryModelElementByName(data: any): any {
   return axios({
     url: 'ModelField/loadModelFieldByName',
     method: 'post',
@@ -395,7 +395,7 @@ export function queryModelElementByName(data): any {
   })
 }
 
-export function queryModelByName(data): any {
+export function queryModelByName(data: any): any {
   return axios({
     url: 'Model/loadModelByName',
     method: 'post',

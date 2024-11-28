@@ -164,9 +164,21 @@ const goBack = () => {
         background-color: $button-disabled-background-color;
 
         &.el-button--primary{
-          border-color: $color-primary;
-          background-color: $color-primary;
+          border-color: #0099CB;
+          background-color: #0099CB;
           color: #fff;
+
+          &:hover, &:focus {
+            color: #fff;
+            border-color: $button-hover-border-color;
+            background-color: #33add5;
+          }
+
+          &.is-disabled{
+            color: $button-disabled-color;
+            background-color: $button-disabled-background-color;
+            border-color: $button-disabled-border-color;
+          }
         }
 
         .handle-text {

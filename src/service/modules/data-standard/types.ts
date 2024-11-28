@@ -37,7 +37,7 @@ interface modelTreeId {
   id: number
 }
 
-interface modelTreeUpdateReq extends modelId {
+interface modelTreeUpdateReq extends modelTreeId {
   titleName: string
 }
 
