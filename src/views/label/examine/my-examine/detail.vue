@@ -99,7 +99,6 @@ import {ElButton} from "element-plus";
 import {NButton, useMessage} from "naive-ui";
 import {updateApproval} from "@/service/modules/data-bussiness";
 import {useRouter} from "vue-router";
-import {createModelColumn, updateModelColumn} from "@/service/modules/data-standard";
 
 const router = useRouter()
 const message = useMessage()
