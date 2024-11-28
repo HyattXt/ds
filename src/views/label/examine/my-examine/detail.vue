@@ -62,7 +62,7 @@
       </n-timeline>
     </n-card>
   </div>
-  <el-dialog v-model="ifModel" width="30%" append-to-body class="model-form-wrapper">
+  <el-dialog v-model="ifModel" :before-close="dialogVisible" width="30%" append-to-body class="model-form-wrapper">
     <template #header> 审批确认 </template>
     <n-form
         :size="'small'"
@@ -99,6 +99,7 @@ import {ElButton} from "element-plus";
 import {NButton, useMessage} from "naive-ui";
 import {updateApproval} from "@/service/modules/data-bussiness";
 import {useRouter} from "vue-router";
+import {createModelColumn, updateModelColumn} from "@/service/modules/data-standard";
 
 const router = useRouter()
 const message = useMessage()
@@ -115,16 +116,39 @@ const formValue = ref({
 const handleExamine = (flag) => {
   ifModel.value = true
   formValue.value.approvalStatus = flag
+  if(flag === 3) {
+    rules.value = {
+      approvalOpinion: {
+        required: true,
+        message: '请输入原因',
+        trigger: 'blur'
+      }
+    }
+  }
+}
+
+const dialogVisible = () => {
+  ifModel.value = false
+  rules.value = {}
+  formRef.value?.restoreValidation()
 }
 
 const handleApproval = async () => {
-  let params = {...formValue.value, id: basicInfo.value.id, objNum: basicInfo.value.objNum, approvalType: basicInfo.value.approvalTypeCode }
-  await updateApproval(params)
-  message.info('成功')
-  ifModel.value = false
-  formValue.value.approvalOpinion = ''
-  router.go(-1)
+  formRef.value.validate(async (errors) => {
+    if (!errors) {
+      let params = {...formValue.value, id: basicInfo.value.id, objNum: basicInfo.value.objNum, approvalType: basicInfo.value.approvalTypeCode }
+      await updateApproval(params)
+      message.info('成功')
+      ifModel.value = false
+      formValue.value.approvalOpinion = ''
+      router.go(-1)
+    } else {
+      message.error('验证失败，请填写完整信息')
+    }
+  })
 }
+
+const rules = ref({})
 
 onMounted(() => {
   basicInfo.value = history.state
