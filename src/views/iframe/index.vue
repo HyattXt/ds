@@ -8,14 +8,16 @@
 <script lang="ts" setup>
   import { ref, unref, onMounted, nextTick } from 'vue'
   import { useRoute } from 'vue-router'
+  import {useUserStore} from "@/store/user/user";
 
   const currentRoute = useRoute()
   const loading = ref(false)
   const frameRef = ref<HTMLFrameElement | null>(null)
   const frameSrc = ref<string>('')
+  const userStore = useUserStore()
 
   if (unref(currentRoute.meta)?.frameSrc) {
-    frameSrc.value = unref(currentRoute.meta)?.frameSrc as string
+    frameSrc.value = unref(currentRoute.meta)?.frameSrc as string + '?sessionId=' + userStore.getSessionId
   }
 
   function hideLoading() {

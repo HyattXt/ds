@@ -84,6 +84,7 @@ interface ListReq {
   pageNo: number
   pageSize: number
   searchVal?: string
+  approvalUserType?: string
 }
 
 interface RegisterUserReq {

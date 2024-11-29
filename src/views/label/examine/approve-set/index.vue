@@ -132,7 +132,7 @@ import CrudForm from "@/components/cue/crud-form.vue";
 import CrudHeader from "@/components/cue/crud-header.vue";
 import CrudPage from "@/components/cue/crud-page.vue";
 import {Search} from "@element-plus/icons-vue";
-import {queryUserList} from "@/service/modules/users";
+import {queryUserApprovalList, queryUserList} from "@/service/modules/users";
 import {queryApprovalConfig, updateApprovalConfig, userAuthorization} from "@/service/modules/data-bussiness";
 
 const formRef = ref(null)
@@ -203,11 +203,11 @@ const columns =  [
   },
   {
     label: '授权时间',
-    prop: 'updateTime'
+    prop: 'approvalDate'
   },
   {
     label: '授权用户',
-    prop: 'authorizationUser'
+    prop: 'approvalUserName'
   },
   {
     label: '备注',
@@ -252,7 +252,7 @@ async function query(
     searchVal,
     approvalUserType
 ) {
-  const data = await queryUserList({
+  const data = await queryUserApprovalList({
     pageNo: pageNo,
     pageSize: pageSize,
     searchVal: searchVal,

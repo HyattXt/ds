@@ -152,6 +152,14 @@ export function queryUserList(params: ListReq): any {
   })
 }
 
+export function queryUserApprovalList(params: ListReq): any {
+  return axios({
+    url: '/users/list-paging-approval',
+    method: 'get',
+    params
+  })
+}
+
 export function registerUser(data: RegisterUserReq): any {
   return axios({
     url: '/users/register',
