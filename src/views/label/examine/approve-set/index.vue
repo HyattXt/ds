@@ -273,6 +273,7 @@ async function querySet() {
 
 function metaDialogVisible () {
   active.value = false
+  ifShowSet.value = false
   formRef.value?.restoreValidation()
   Object.keys(formValue.value).forEach(key => {
     formValue.value[key] = ''; // 将表单的所有响应式属性设置为空字符串
