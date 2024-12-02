@@ -132,9 +132,9 @@ const columns =  [
     prop: 'approvalType',
     slots: (row) => {
       switch (row.approvalType) {
-        case '1': return '数据标签'
-        case '2': return '用户群组'
-        case '3' : return '自定义分析'
+        case '1': return h("div",'数据标签')
+        case '2': return h("div",'用户群组')
+        case '3' : return h("div",'自定义分析')
       }
     }
   },
@@ -157,7 +157,7 @@ const columns =  [
             type: approvalColor,
             size: 'small',
           },
-          approvalStatus
+          { default: ()=> h("div",approvalStatus) }
       )
     }
   },
