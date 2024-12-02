@@ -59,7 +59,7 @@
       />
     </template>
   </CrudForm>
-  <el-dialog :before-close="metaDialogVisible" v-model="active" width="30%" append-to-body class="model-form-wrapper">
+  <el-dialog :before-close="metaDialogVisible" v-model="active" width="700px" append-to-body class="model-form-wrapper">
     <template #header> 角色赋权 </template>
     <n-form
         :size="'small'"
@@ -83,7 +83,7 @@
       <n-button color="#0099CB" type="primary" size="small"  @click="handleUserAuthorization">确定</n-button>
     </template>
   </el-dialog>
-  <el-dialog :before-close="metaDialogVisible" v-model="ifShowSet" width="30%" append-to-body class="model-form-wrapper">
+  <el-dialog :before-close="metaDialogVisible" v-model="ifShowSet" width="700px" append-to-body class="model-form-wrapper">
     <template #header> 选择需审批对象 </template>
     <n-data-table
         bordered

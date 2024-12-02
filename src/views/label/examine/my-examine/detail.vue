@@ -62,7 +62,7 @@
       </n-timeline>
     </n-card>
   </div>
-  <el-dialog v-model="ifModel" :before-close="dialogVisible" width="30%" append-to-body class="model-form-wrapper">
+  <el-dialog v-model="ifModel" :before-close="dialogVisible" width="700px" append-to-body class="model-form-wrapper">
     <template #header> 审批确认 </template>
     <n-form
         :size="'small'"
