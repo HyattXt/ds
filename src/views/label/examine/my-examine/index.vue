@@ -230,7 +230,10 @@ const editDetail = (row) => {
           applicationTime: row.applicationTime,
           userName: row.userName,
           approver: row.approver,
-          approvalTime: row.approvalTime
+          approvalTime: row.approvalTime,
+          reasonForApplication: row.reasonForApplication,
+          approvalOpinion: row.approvalOpinion,
+          ifEdit: true,
         },
         query: {back: true}
       }

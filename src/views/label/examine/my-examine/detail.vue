@@ -2,7 +2,7 @@
   <div class="n-scrollbar-container">
     <CrudHead class="sticky-top" title="审批内容">
       <template v-slot:button-group>
-        <div v-if="basicInfo.approvalStatus === '审批中'">
+        <div v-if="basicInfo.ifEdit">
           <el-button
               class="show-text el-button--default"
               @click="handleExamine(3)"
@@ -10,7 +10,7 @@
             拒绝
           </el-button>
         </div>
-        <div v-if="basicInfo.approvalStatus === '审批中'">
+        <div v-if="basicInfo.ifEdit">
           <el-button
               class="show-text el-button--primary"
               color="#0099CB"
@@ -48,13 +48,13 @@
         <n-timeline-item
             type="info"
             title="提交申请"
-            :content="basicInfo.userName"
+            :content="`申请人：${basicInfo.userName} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;申请理由：${basicInfo.reasonForApplication || '无'}`"
             :time="basicInfo.applicationTime"
         />
         <n-timeline-item
             :type="basicInfo.approvalColor"
             :title="basicInfo.approvalStatus"
-            :content="basicInfo.approver"
+            :content="basicInfo.approver ? `审批人：${basicInfo.approver} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;审批意见：${basicInfo.approvalOpinion || '无'}` : null"
             :time="basicInfo.approvalTime"
             :line-type="basicInfo.approvalColor === 'info' ? 'dashed' : 'default'"
         />

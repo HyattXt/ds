@@ -7,7 +7,7 @@
           :disableDelete="ifDisableDelete"
       >
         <template v-slot:button-group>
-          <div>
+          <div v-if="userInfo.approvalUserType === 1">
             <el-button
                 class="show-text el-button--default"
                 @click="handleSet"
@@ -134,7 +134,10 @@ import CrudPage from "@/components/cue/crud-page.vue";
 import {Search} from "@element-plus/icons-vue";
 import {queryUserApprovalList, queryUserList} from "@/service/modules/users";
 import {queryApprovalConfig, updateApprovalConfig, userAuthorization} from "@/service/modules/data-bussiness";
+import {useUserStore} from "@/store/user/user";
 
+const userStore = useUserStore()
+const userInfo = userStore.userInfo
 const formRef = ref(null)
 const loadingRef = ref(false)
 const active = ref(false)
@@ -191,8 +194,8 @@ const columns =  [
     prop: 'approvalUserType',
     slots: (row) => {
       switch (row.approvalUserType) {
-        case 1: return '管理员'
-        case 2: return '开发'
+        case 1: return h("div",'管理员')
+        case 2: return h("div",'开发')
         default: return ''
       }
     }
@@ -221,6 +224,7 @@ const columns =  [
       return h(
           ElButton,
           {
+            disabled: userInfo.approvalUserType !== 1,
             class: 'el-button--text',
             size: 'small',
             onClick: () => editMetadata(row)
@@ -265,8 +269,8 @@ async function query(
 async function querySet() {
   const data = await queryApprovalConfig()
   data.forEach((item) => {
-    if(item.configurationStatus) {
-      checkedRowKeys.value.push(item.configurationStatus)
+    if(item.configurationStatus === 1) {
+      checkedRowKeys.value.push(item.configurationType)
     }
   })
 }
@@ -310,13 +314,13 @@ const handleApprovalConfig = async () => {
 
 const handleCheck = (rowKeys) => {
   approvalConfig.value.forEach(item => {
-    item.configurationStatus = ''
+    item.configurationStatus = '2'
   })
 
   rowKeys.forEach(key => {
     const item = approvalConfig.value.find(item => item.configurationType === key);
     if (item) {
-      item.configurationStatus = String(key); // 将 configurationStatus 设置为 key 的字符串形式
+      item.configurationStatus = '1'; // 将 configurationStatus 设置为 key 的字符串形式
     }
   })
 }
