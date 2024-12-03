@@ -2,7 +2,7 @@
   <CrudForm>
     <template v-slot:header>
       <CrudHeader
-          title="我的申请 "
+          title="审批配置"
           :disableUpdate="!currentRow"
           :disableDelete="ifDisableDelete"
       >
@@ -347,6 +347,7 @@ function editMetadata(row) {
 onMounted(() => {
   handlePageChange(1, 30)
   querySet()
+  console.log(userInfo)
 })
 </script>
 
