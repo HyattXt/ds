@@ -107,7 +107,7 @@ const initData = async () => {
       { systemName: "协调办公", abutmentStatus: '1', remarks: '' },
       { systemName: "仓储管理", abutmentStatus: '1', remarks: '' },
       { systemName: "设备管理", abutmentStatus: '1', remarks: '' },
-      { systemName: "水利模型", abutmentStatus: '1', remarks: '' },
+      { systemName: "水力模型", abutmentStatus: '1', remarks: '' },
       { systemName: "生产调度", abutmentStatus: '1', remarks: '' },
       { systemName: "应急指挥", abutmentStatus: '1', remarks: '' },
       { systemName: "科学调度", abutmentStatus: '1', remarks: '' },
