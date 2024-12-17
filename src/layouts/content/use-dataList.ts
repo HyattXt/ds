@@ -98,7 +98,6 @@ export function useDataList() {
   })
 
   const changeMenuOption = (state: any) => {
-    ProjectStore.$reset()
     const projectCode = ProjectStore.getCurrentProject
     state.menuOptions = [
       {

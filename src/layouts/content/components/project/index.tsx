@@ -46,7 +46,7 @@ const User = defineComponent({
     }
 
     onMounted(() => {
-      setTimeout(()=> { getProjectList() }, 500)
+      getProjectList()
     })
     return { handleSelect, projectOptions, ProjectStore }
   },
