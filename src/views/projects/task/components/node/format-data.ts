@@ -256,6 +256,8 @@ export function formatParams(data: INodeData): {
       taskParams.postStatements = data.postStatements
       taskParams.preSql = data.preSql
       taskParams.postSql = data.postSql
+      taskParams.hiveDs = data.hiveDs
+      taskParams.hiveDt = data.hiveDt
 
     //} else {
       taskParams.jsonConfig = data.jsonConfig

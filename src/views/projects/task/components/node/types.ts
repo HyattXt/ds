@@ -323,6 +323,8 @@ interface ITaskParams {
   timeoutShowFlag?: boolean
   preSql?: string
   postSql?: string
+  hiveDs?: Object
+  hiveDt?: Object
 }
 
 interface INodeData

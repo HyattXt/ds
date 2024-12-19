@@ -56,7 +56,7 @@
                         <n-form-item-gi :span="datasourceSpan" label="表名" path="sourceTable" key="sourceTable">
                           <n-select v-model:value="taskData.sourceTable" @update:value="updateSplitPk" label-field="TABLE_NAME" value-field="TABLE_NAME" filterable :loading="sourceLoading" :options="sourceTableList"/>
                         </n-form-item-gi>
-                        <n-form-item-gi :span="12" label="读取模式" key="executeMode">
+                        <n-form-item-gi :span="hiveDsSpan" label="读取模式" key="executeMode">
                           <n-radio-group v-model:value="taskData.executeMode" @update:value="initConstants">
                             <n-space>
                               <n-radio key="0" value="0">
@@ -76,7 +76,7 @@
                               :options="{readOnly: props.readOnly, language: 'sql' }"
                           />
                         </n-form-item-gi>
-                        <n-form-item-gi :span="datasourceSpan" label="数据过滤" key="where">
+                        <n-form-item-gi :span="whereSpan" label="数据过滤" key="where">
                           <NInput
                               type="textarea"
                               v-model:value="taskData.where"
@@ -105,6 +105,15 @@
                             <p>如果splitPk不填写，包括不提供splitPk或者splitPk值为空，DataX视作使用单通道同步该表数据。</p>
                           </n-tooltip>
                         </n-form-item-gi>
+                        <n-form-item-gi :span="6 - hiveDsSpan/2" label="hdfs" key="defaultFS">
+                          <NInput disabled v-model:value="taskData.hiveDs.defaultFS"/>
+                        </n-form-item-gi>
+                        <n-form-item-gi :span="6 - hiveDsSpan/2" label="字段分隔符" key="fieldDelimiter">
+                          <NInput v-model:value="taskData.hiveDs.fieldDelimiter"/>
+                        </n-form-item-gi>
+                        <n-form-item-gi :span="12 - hiveDsSpan" label="文件路径" key="path">
+                          <NInput v-model:value="taskData.hiveDs.path"/>
+                        </n-form-item-gi>
                       </NGrid>
                     </NGi>
                     <NGi>
@@ -116,19 +125,17 @@
                           <n-select v-model:value="taskData.dataTarget" @update:value="updateTargetTableList" label-field="name" value-field="id" :options="dataTargetList"/>
                         </n-form-item-gi>
                         <n-form-item-gi :span="12" label="表名" path="targetTable" key="targetTable">
-                          <n-select v-model:value="taskData.targetTable" label-field="TABLE_NAME" value-field="TABLE_NAME" filterable :loading="targetLoading" :options="targetTableList"/>
+                          <n-select v-model:value="taskData.targetTable" @update:value="updateTargetTable" label-field="TABLE_NAME" value-field="TABLE_NAME" filterable :loading="targetLoading" :options="targetTableList"/>
                         </n-form-item-gi>
                         <n-form-item-gi :span="writeModeSpan" label="写入模式" key="writeMode">
                           <n-radio-group v-model:value="taskData.writeMode">
                             <n-space>
-                              <n-radio key="insert" value="insert">
-                                insert
-                              </n-radio>
-                              <n-radio key="replace" value="replace">
-                                replace
-                              </n-radio>
-                              <n-radio key="update" value="update">
-                                update
+                              <n-radio
+                                  v-for="item in writeModeObj.type"
+                                  :key="item"
+                                  :value="item"
+                              >
+                                {{ item }}
                               </n-radio>
                             </n-space>
                           </n-radio-group>
@@ -138,7 +145,7 @@
                                 <QuestionCircleTwotone/>
                               </NIcon>
                             </template>
-                            <p>控制写入数据到目标表采用 insert into 或者 replace into 或者 ON DUPLICATE KEY UPDATE 语句。</p>
+                            <p>{{ writeModeObj.comment }}</p>
                           </n-tooltip>
                         </n-form-item-gi>
                         <n-form-item-gi :span="12-writeModeSpan"  key="createTable" style="display: flex; justify-content: flex-end;">
@@ -146,19 +153,31 @@
                             <n-button quaternary type="info" @click="getTableSql">生成目标表</n-button>
                           </div>
                         </n-form-item-gi>
-                        <n-form-item-gi :span="12" label="前置SQL" key="preSql">
+                        <n-form-item-gi :span="hiveDtSpan" label="前置SQL" key="preSql">
                           <NInput
                               type="textarea"
                               v-model:value="taskData.preSql"
                               placeholder="请输入导入数据前执行的SQL脚本"
                           />
                         </n-form-item-gi>
-                        <n-form-item-gi :span="12" label="后置SQL" key="postSql">
+                        <n-form-item-gi :span="hiveDtSpan" label="后置SQL" key="postSql">
                           <NInput
                               type="textarea"
                               v-model:value="taskData.postSql"
                               placeholder="请输入导入数据后执行的SQL脚本"
                           />
+                        </n-form-item-gi>
+                        <n-form-item-gi :span="6 - hiveDtSpan/2" label="hdfs" key="defaultFS">
+                          <NInput disabled v-model:value="taskData.hiveDt.defaultFS"/>
+                        </n-form-item-gi>
+                        <n-form-item-gi :span="6 - hiveDtSpan/2" label="字段分隔符" key="fieldDelimiter">
+                          <NInput v-model:value="taskData.hiveDt.fieldDelimiter"/>
+                        </n-form-item-gi>
+                        <n-form-item-gi :span="12 - hiveDtSpan" label="文件路径" key="path">
+                          <NInput v-model:value="taskData.hiveDt.path"/>
+                        </n-form-item-gi>
+                        <n-form-item-gi :span="6 - hiveDtSpan/2" label="文件名" key="fileName">
+                          <NInput disabled v-model:value="taskData.hiveDt.fileName"/>
                         </n-form-item-gi>
                       </NGrid>
                     </NGi>
@@ -343,6 +362,7 @@
 <script setup>
 import {computed, inject, nextTick, onMounted, ref, watch, watchEffect} from "vue";
 import {
+  queryHiveConnect,
   querySqlColum,
   queryTaskConnect,
   queryTaskDefinitionByCode,
@@ -428,9 +448,22 @@ const targetTableList = ref()
 const splitPkOption = ref()
 const sqlEditorSpan = ref(0)
 const datasourceSpan = ref(12)
+const whereSpan = ref(12)
 const splitPkSpan = ref(12)
-const writeModeSpan = computed(() => (taskData.value.dtType === 'MYSQL' && taskData.value.dataTarget ? 8 : 0))
+const hiveDtSpan = computed(() => (
+    taskData.value.dtType === 'HIVE' ? 0 : 12)
+)
+const hiveDsSpan = computed(() => (
+    taskData.value.dsType === 'HIVE' ? 0 : 12)
+)
+const writeModeSpan = computed(() => (
+    (taskData.value.dtType === 'MYSQL' || taskData.value.dtType === 'HIVE') ? 8 : 0)
+)
 const showSqlModal = ref(false)
+const writeModeObj = ref({
+  type: [],
+  comment: ''
+})
 const jdbcConnectInfo = ref({
    sourceConnect : {
      jdbcUrl: '',
@@ -482,6 +515,16 @@ const taskData = ref({
   leftData: [],
   rightData: [],
   targetDatabase: '',
+  hiveDs: {
+    defaultFS: '',
+    path: '',
+    fieldDelimiter: ''
+  },
+  hiveDt: {
+    defaultFS: '',
+    path: '',
+    fieldDelimiter: ''
+  },
   jobSpeedByte: 0,
   jobSpeedRecord: 1000,
   channel: 1,
@@ -759,7 +802,20 @@ const getLogs = (row) => {
 const initConstants = () => {
   sqlEditorSpan.value = taskData.value.executeMode === '0' ? 0 : 12
   datasourceSpan.value = taskData.value.executeMode === '0' ? 12 : 0
+  whereSpan.value = taskData.value.executeMode === '0' ? 12 : 0
   splitPkSpan.value = taskData.value.executeMode === '0' ? 12 : 0
+
+  if(taskData.value.dtType === 'MYSQL') {
+    writeModeObj.value.type = ['insert', 'replace', 'update']
+    writeModeObj.value.comment = '控制写入数据到目标表采用 insert into 或者 replace into 或者 ON DUPLICATE KEY UPDATE 语句。'
+  } else if(taskData.value.dtType === 'HIVE') {
+    console.log(taskData.value.dtType)
+    sqlEditorSpan.value = 0
+    splitPkSpan.value = 0
+    whereSpan.value = 0
+    writeModeObj.value.type = ['append', 'truncate']
+    writeModeObj.value.comment = '控制写入数据到目标表采用append增量 或者 truncate全量 语句。'
+  }
 
   if(taskData.value.executeMode === '0'){
     taskData.value.sql = ''
@@ -770,14 +826,39 @@ const initConstants = () => {
 }
 
 const getConnect = (id, type)=>{
-  queryTaskConnect(id).then(
-      (res) => {
-        if( type === 'dataSource' ){ jdbcConnectInfo.value.sourceConnect = res } else { jdbcConnectInfo.value.targetConnect = res }
-      }
-  )
+  if( type === 'dataSource' ) {
+    if(taskData.value.dsType === 'HIVE') {
+      queryHiveConnect().then((res) => {
+        jdbcConnectInfo.value.hiveDs= res
+      })
+    } else {
+      queryTaskConnect(id).then((res) => {
+        jdbcConnectInfo.value.sourceConnect = res
+      })
+    }
+  } else {
+    if(taskData.value.dtType === 'HIVE') {
+      queryHiveConnect().then((res) => {
+        jdbcConnectInfo.value.hiveDt = res
+      })
+    } else {
+      queryTaskConnect(id).then((res) => {
+        jdbcConnectInfo.value.targetConnect = res
+      })
+    }
+  }
 }
 
 async function updateDataSource(type) {
+  if(taskData.value.dsType === 'HIVE') {
+    splitPkSpan.value = 0
+    whereSpan.value = 0
+    sqlEditorSpan.value = 0
+    taskData.value.sql = ''
+    datasourceSpan.value = 12
+  } else {
+    initConstants()
+  }
   dataSourceList.value = await queryDataSourceList({type: type || 'MYSQL'})
   if (!dataSourceList.value.length && taskData.value.dataSource) {
     taskData.value.dataSource = null
@@ -794,6 +875,16 @@ async function updateDataSource(type) {
 }
 
 async function updateDataTarget(type) {
+  if(taskData.value.dtType === 'MYSQL') {
+    writeModeObj.value.type = ['insert', 'replace', 'update']
+    writeModeObj.value.comment = '控制写入数据到目标表采用 insert into 或者 replace into 或者 ON DUPLICATE KEY UPDATE 语句。'
+    taskData.value.writeMode = 'insert'
+  } else if(taskData.value.dtType === 'HIVE') {
+    console.log(taskData.value.dtType)
+    writeModeObj.value.type = ['append', 'truncate']
+    writeModeObj.value.comment = '控制写入数据到目标表采用append增量 或者 truncate全量 语句。'
+    taskData.value.writeMode = 'append'
+  }
   dataTargetList.value = await queryDataSourceList({type: type || 'MYSQL'})
   if (!dataTargetList.value.length && taskData.value.dataTarget) {
     taskData.value.dataTarget = null
@@ -864,7 +955,7 @@ async function initSourceTableList(dataSource, type) {
 }
 
 async function updateTargetTableList(dataSource) {
-    if(dataSource) {
+  if(dataSource) {
       try {
         targetLoading.value = true
         targetTableList.value = await getDatasourceTables(dataSource, datasourceTypes.find(datasource => datasource.value === taskData.value.dtType)?.id)
@@ -872,7 +963,7 @@ async function updateTargetTableList(dataSource) {
         targetTableList.value = []
       }
       targetLoading.value = false
-    }
+  }
   if (!targetTableList.value.length && taskData.value.targetTable) {
     taskData.value.targetTable = null
   }
@@ -914,6 +1005,9 @@ async function getDatasourceTableColumns(dataSource, table) {
 }
 
 async function updateSplitPk() {
+  taskData.value.hiveDs.path = jdbcConnectInfo.value.hiveDs.dataWareHouseHdfsPath + taskData.value.sourceTable
+  taskData.value.hiveDs.defaultFS = jdbcConnectInfo.value.hiveDs.dataWareHouseHdfsUrl
+  taskData.value.hiveDs.fieldDelimiter = '\\u0001'
   if(taskData.value.sourceTable){
     splitPkOption.value = await getDatasourceTableColumns(
         taskData.value.dataSource,
@@ -929,6 +1023,13 @@ async function updateSplitPk() {
       taskData.value.splitPk = null
     }
   }
+}
+
+async function updateTargetTable() {
+  taskData.value.hiveDt.path = jdbcConnectInfo.value.hiveDt.dataWareHouseHdfsPath + taskData.value.targetTable
+  taskData.value.hiveDt.defaultFS = jdbcConnectInfo.value.hiveDt.dataWareHouseHdfsUrl
+  taskData.value.hiveDt.fieldDelimiter = '\\u0001'
+  taskData.value.hiveDt.fileName = taskData.value.targetTable
 }
 
 function getTableSql() {
@@ -1122,7 +1223,7 @@ function formatJson() {
       "content": [
         {
           "reader": {
-            "name": lowerCase(['ORACLE','SQLSERVER','MYSQL','POSTGRESQL'].includes(taskData.value.dsType)? taskData.value.dsType : 'rdbms')+"reader",
+            "name": lowerCase(['ORACLE','SQLSERVER','MYSQL','POSTGRESQL'].includes(taskData.value.dsType)? taskData.value.dsType : (taskData.value.dsType ==='HIVE' ? 'hdfs' : 'rdbms'))+"reader",
             "parameter": {
               "column":  taskData.value.leftList,
               "connection": [
@@ -1138,7 +1239,7 @@ function formatJson() {
             }
           },
           "writer": {
-            "name": lowerCase(['ORACLE','SQLSERVER','MYSQL','POSTGRESQL'].includes(taskData.value.dtType)? taskData.value.dtType : 'rdbms')+"writer",
+            "name": lowerCase(['ORACLE','SQLSERVER','MYSQL','POSTGRESQL'].includes(taskData.value.dtType)? taskData.value.dtType : (taskData.value.dtType ==='HIVE' ? 'hdfs' : 'rdbms'))+"writer",
             "parameter": {
               "column": taskData.value.rightList,
               "connection": [
@@ -1170,9 +1271,34 @@ function formatJson() {
       }
     }
   }
-  if(taskData.value.dtType === 'MYSQL') json.job.content[0].writer.parameter['writeMode'] =  taskData.value.writeMode
+  if(taskData.value.dtType === 'MYSQL' || taskData.value.dtType === 'HIVE') json.job.content[0].writer.parameter['writeMode'] =  taskData.value.writeMode
   taskData.value.executeMode === '1' ? json.job.content[0].reader.parameter.connection[0].querySql = [ taskData.value.sql ] : json.job.content[0].reader.parameter.connection[0].table = [taskData.value.sourceTable]
   if(taskData.value.splitPk)  json.job.content[0].reader.parameter['splitPk'] = taskData.value.splitPk
+  if(taskData.value.dsType === 'HIVE') {
+    delete json.job.content[0].reader.parameter.connection
+    delete json.job.content[0].reader.parameter.password
+    delete json.job.content[0].reader.parameter.username
+    delete json.job.content[0].reader.parameter.where
+    json.job.content[0].reader.parameter['defaultFS'] = taskData.value.hiveDs.defaultFS
+    json.job.content[0].reader.parameter['fieldDelimiter'] = taskData.value.hiveDs.fieldDelimiter
+    json.job.content[0].reader.parameter['fileType'] = 'text'
+    json.job.content[0].reader.parameter['path'] = taskData.value.hiveDs.path
+    json.job.content[0].reader.parameter['fieldDelimiter'] = taskData.value.hiveDs.fieldDelimiter.toString()
+    json.job.content[0].reader.parameter.column = generateNewList(taskData.value.leftData, taskData.value.leftList)
+  }
+  if(taskData.value.dtType === 'HIVE') {
+    delete json.job.content[0].writer.parameter.connection
+    delete json.job.content[0].writer.parameter.password
+    delete json.job.content[0].writer.parameter.username
+    delete json.job.content[0].writer.parameter.postSql
+    delete json.job.content[0].writer.parameter.preSql
+    json.job.content[0].writer.parameter['defaultFS'] = taskData.value.hiveDt.defaultFS
+    json.job.content[0].writer.parameter['fieldDelimiter'] = taskData.value.hiveDt.fieldDelimiter
+    json.job.content[0].writer.parameter['fileName']= taskData.value.targetTable
+    json.job.content[0].writer.parameter['fileType'] = 'text'
+    json.job.content[0].writer.parameter['path'] = taskData.value.hiveDt.path
+    json.job.content[0].writer.parameter.column = generateNewList(taskData.value.rightData, taskData.value.rightList)
+  }
   return JSON.stringify(json,null,4)
 }
 
@@ -1200,6 +1326,18 @@ function fullScreenLog () {
   logHeight.value = '0'
   nextTick(()=>{
     handleOnDragMove()
+  })
+}
+
+function generateNewList(data, list) {
+  return list.map(label => {
+    const item = data.find(data => data.label === label);
+    if (item) {
+      return {
+        value: label,
+        type: item.type
+      };
+    }
   })
 }
 
@@ -1356,6 +1494,8 @@ onMounted( () => {
       background-color: #f1f1f1;
       height: 35px;
       padding-left: 10px;
+      border-radius: 5px 0 0 5px;
+      box-shadow: 0 2px 1px rgba(0, 0, 0, 0.1);
     }
 
     :deep(.n-collapse-item__header-extra) {
@@ -1365,6 +1505,9 @@ onMounted( () => {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      border-radius: 0 5px 5px 0;
+
+      box-shadow: 0 2px 1px rgba(0, 0, 0, 0.1);
 
       .box {
         flex: 1;

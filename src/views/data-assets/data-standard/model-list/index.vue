@@ -410,7 +410,7 @@ async function queryDataType() {
 }
 
 function generateCreateTableSQL(tableData, tableName) {
-  let sql = dataType.value === 0 ? `CREATE TABLE IF NOT EXISTS ${tableName} (\n` : `CREATE TABLE ${tableName} (\n`;
+  let sql = dataType.value === 0 || dataType.value === 2 ? `CREATE TABLE IF NOT EXISTS ${tableName} (\n` : `CREATE TABLE ${tableName} (\n`;
 
   tableData.forEach(field => {
     sql += `  ${field.englishName} ${field.dataType}`;

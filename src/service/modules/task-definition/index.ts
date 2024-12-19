@@ -81,6 +81,13 @@ export function queryTaskConnect(
   })
 }
 
+export function queryHiveConnect(): any {
+  return axios({
+    url: '/Model/queryHdfsInfo',
+    method: 'get'
+  })
+}
+
 export function querySqlColum(
     data: SqlColumnJsonObjReq,
 ): any {

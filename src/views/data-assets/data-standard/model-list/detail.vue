@@ -377,7 +377,7 @@ function dataTypeDisplay(item) {
 }
 
 function generateCreateTableSQL(tableData, tableName) {
-  let sql = dataType.value === 0 ? `CREATE TABLE IF NOT EXISTS ${tableName} (\n` : `CREATE TABLE ${tableName} (\n`;
+  let sql = dataType.value === 0 || dataType.value === 2 ? `CREATE TABLE IF NOT EXISTS ${tableName} (\n` : `CREATE TABLE ${tableName} (\n`;
 
   tableData.forEach(field => {
     sql += `  ${field.englishName} ${field.dataType}`;
@@ -450,6 +450,17 @@ async function queryDataType() {
       {label: 'TIMESTAMP', value: 'TIMESTAMP'},
       {label: 'CHAR', value: 'CHAR'},
       {label: 'CLOB', value: 'CLOB'}
+    ]
+  } else if (dataType.value === 2) {
+    typeOptions.value = [
+      {label: 'STRING', value: 'STRING'},
+      {label: 'INT', value: 'INT'},
+      {label: 'DOUBLE', value: 'DOUBLE'},
+      {label: 'DECIMAL', value: 'DECIMAL'},
+      {label: 'DATE', value: 'DATE'},
+      {label: 'TIMESTAMP', value: 'TIMESTAMP'},
+      {label: 'CHAR', value: 'CHAR'},
+      {label: 'BINARY', value: 'BINARY'}
     ]
   }
 }
