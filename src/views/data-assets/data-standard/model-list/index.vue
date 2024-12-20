@@ -406,6 +406,11 @@ async function queryDataType() {
       {label: 'CHAR', value: 'CHAR'},
       {label: 'CLOB', value: 'CLOB'}
     ]
+  } else if (dataType.value === 2) {
+    typeOptions.value = [
+      {label: 'STRING', value: 'STRING'},
+      {label: 'DECIMAL', value: 'DECIMAL'}
+    ]
   }
 }
 

@@ -454,13 +454,7 @@ async function queryDataType() {
   } else if (dataType.value === 2) {
     typeOptions.value = [
       {label: 'STRING', value: 'STRING'},
-      {label: 'INT', value: 'INT'},
-      {label: 'DOUBLE', value: 'DOUBLE'},
-      {label: 'DECIMAL', value: 'DECIMAL'},
-      {label: 'DATE', value: 'DATE'},
-      {label: 'TIMESTAMP', value: 'TIMESTAMP'},
-      {label: 'CHAR', value: 'CHAR'},
-      {label: 'BINARY', value: 'BINARY'}
+      {label: 'DECIMAL', value: 'DECIMAL'}
     ]
   }
 }

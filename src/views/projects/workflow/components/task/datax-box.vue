@@ -1338,20 +1338,21 @@ function fullScreenLog () {
 }
 
 function generateNewList(data, list, type) {
+  const dataWithIndex = data.map((item, index) => ({
+    ...item,
+    index: index
+  }));
   return list.map(label => {
-    const item = data.find(data => data.label === label);
+    const item = dataWithIndex.find(data => data.label === label);
     if (item) {
-      if(type === 'source') {
-        return {
-          value: label,
-          type: item.type
-        }
-      } else {
-        return {
-          name: label,
-          type: item.type
-        }
+      let result = {
+        name: label,
+        type: item.type
+      };
+      if (type === 'source') {
+        result.index = item.index;
       }
+      return result;
     }
   })
 }
