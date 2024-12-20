@@ -97,15 +97,20 @@ function init()  {
 
         const sourceRect = sourceElement.getBoundingClientRect();
         const targetRect = targetElement.getBoundingClientRect();
+        console.log("sourceElement",sourceElement)
+        console.log("targetElement",targetElement)
+        console.log("sourceRect",sourceRect)
+        console.log("targetRect",targetRect)
+
 
         // 你可以据此计算源和目标的中心位置（clientX, clientY）
-        const sourceClientX = sourceRect.left + window.scrollX + sourceRect.width / 2;
+        const sourceClientX = sourceRect.right + window.scrollX
         const sourceClientY = sourceRect.top + window.scrollY + sourceRect.height / 2;
 
-        const targetClientX = targetRect.left + window.scrollX + targetRect.width / 2;
+        const targetClientX = targetRect.left + window.scrollX
         const targetClientY = targetRect.top + window.scrollY + targetRect.height / 2;
 
-        deleteIconStyle.value.left = `${(sourceClientX+targetClientX-30)/2}px`;
+        deleteIconStyle.value.left = `${(sourceClientX+targetClientX-50)/2}px`;
         deleteIconStyle.value.top = `${(sourceClientY+targetClientY-4)/2}px`;
         showDeleteIcon.value = true;
 

@@ -56,8 +56,8 @@
                         <n-form-item-gi :span="datasourceSpan" label="表名" path="sourceTable" key="sourceTable">
                           <n-select v-model:value="taskData.sourceTable" @update:value="updateSplitPk" label-field="TABLE_NAME" value-field="TABLE_NAME" filterable :loading="sourceLoading" :options="sourceTableList"/>
                         </n-form-item-gi>
-                        <n-form-item-gi :span="hiveDsSpan" label="读取模式" key="executeMode">
-                          <n-radio-group v-model:value="taskData.executeMode" @update:value="initConstants">
+                        <n-form-item-gi :span="executeModeSpan" label="读取模式" key="executeMode">
+                          <n-radio-group v-model:value="taskData.executeMode" @update:value="initSpan">
                             <n-space>
                               <n-radio key="0" value="0">
                                 表
@@ -105,13 +105,13 @@
                             <p>如果splitPk不填写，包括不提供splitPk或者splitPk值为空，DataX视作使用单通道同步该表数据。</p>
                           </n-tooltip>
                         </n-form-item-gi>
-                        <n-form-item-gi :span="6 - hiveDsSpan/2" label="hdfs" key="defaultFS">
+                        <n-form-item-gi :span="hiveDsSpan/2" label="hdfs" key="defaultFS">
                           <NInput disabled v-model:value="taskData.hiveDs.defaultFS"/>
                         </n-form-item-gi>
-                        <n-form-item-gi :span="6 - hiveDsSpan/2" label="字段分隔符" key="fieldDelimiter">
+                        <n-form-item-gi :span="hiveDsSpan/2" label="字段分隔符" key="fieldDelimiter">
                           <NInput v-model:value="taskData.hiveDs.fieldDelimiter"/>
                         </n-form-item-gi>
-                        <n-form-item-gi :span="12 - hiveDsSpan" label="文件路径" key="path">
+                        <n-form-item-gi :span="hiveDsSpan" label="文件路径" key="path">
                           <NInput v-model:value="taskData.hiveDs.path"/>
                         </n-form-item-gi>
                       </NGrid>
@@ -153,30 +153,30 @@
                             <n-button quaternary type="info" @click="getTableSql">生成目标表</n-button>
                           </div>
                         </n-form-item-gi>
-                        <n-form-item-gi :span="hiveDtSpan" label="前置SQL" key="preSql">
+                        <n-form-item-gi :span="12 - hiveDtSpan" label="前置SQL" key="preSql">
                           <NInput
                               type="textarea"
                               v-model:value="taskData.preSql"
                               placeholder="请输入导入数据前执行的SQL脚本"
                           />
                         </n-form-item-gi>
-                        <n-form-item-gi :span="hiveDtSpan" label="后置SQL" key="postSql">
+                        <n-form-item-gi :span="12 - hiveDtSpan" label="后置SQL" key="postSql">
                           <NInput
                               type="textarea"
                               v-model:value="taskData.postSql"
                               placeholder="请输入导入数据后执行的SQL脚本"
                           />
                         </n-form-item-gi>
-                        <n-form-item-gi :span="6 - hiveDtSpan/2" label="hdfs" key="defaultFS">
+                        <n-form-item-gi :span="hiveDtSpan/2" label="hdfs" key="defaultFS">
                           <NInput disabled v-model:value="taskData.hiveDt.defaultFS"/>
                         </n-form-item-gi>
-                        <n-form-item-gi :span="6 - hiveDtSpan/2" label="字段分隔符" key="fieldDelimiter">
+                        <n-form-item-gi :span="hiveDtSpan/2" label="字段分隔符" key="fieldDelimiter">
                           <NInput v-model:value="taskData.hiveDt.fieldDelimiter"/>
                         </n-form-item-gi>
-                        <n-form-item-gi :span="12 - hiveDtSpan" label="文件路径" key="path">
+                        <n-form-item-gi :span="hiveDtSpan" label="文件路径" key="path">
                           <NInput v-model:value="taskData.hiveDt.path"/>
                         </n-form-item-gi>
-                        <n-form-item-gi :span="6 - hiveDtSpan/2" label="文件名" key="fileName">
+                        <n-form-item-gi :span="hiveDtSpan/2" label="文件名" key="fileName">
                           <NInput disabled v-model:value="taskData.hiveDt.fileName"/>
                         </n-form-item-gi>
                       </NGrid>
@@ -450,15 +450,10 @@ const sqlEditorSpan = ref(0)
 const datasourceSpan = ref(12)
 const whereSpan = ref(12)
 const splitPkSpan = ref(12)
-const hiveDtSpan = computed(() => (
-    taskData.value.dtType === 'HIVE' ? 0 : 12)
-)
-const hiveDsSpan = computed(() => (
-    taskData.value.dsType === 'HIVE' ? 0 : 12)
-)
-const writeModeSpan = computed(() => (
-    (taskData.value.dtType === 'MYSQL' || taskData.value.dtType === 'HIVE') ? 8 : 0)
-)
+const hiveDtSpan = ref(0)
+const hiveDsSpan = ref(0)
+const writeModeSpan = ref(12)
+const executeModeSpan = ref(12)
 const showSqlModal = ref(false)
 const writeModeObj = ref({
   type: [],
@@ -799,29 +794,50 @@ const getLogs = (row) => {
   return state
 }
 
-const initConstants = () => {
+const initSpan = () => {
+  handleSourceSpan()
+  handleTargetSpan()
+}
+
+const handleSourceSpan = () => {
+  if(taskData.value.dsType === 'HIVE') {
+    sqlEditorSpan.value = 0
+    datasourceSpan.value = 12
+    whereSpan.value = 0
+    splitPkSpan.value = 0
+    executeModeSpan.value = 0
+    hiveDsSpan.value = 12
+  } else {
+    executeModeSpan.value = 12
+    hiveDsSpan.value = 0
+    handleExecuteModeSpan()
+  }
+}
+
+const handleExecuteModeSpan = () => {
   sqlEditorSpan.value = taskData.value.executeMode === '0' ? 0 : 12
   datasourceSpan.value = taskData.value.executeMode === '0' ? 12 : 0
   whereSpan.value = taskData.value.executeMode === '0' ? 12 : 0
   splitPkSpan.value = taskData.value.executeMode === '0' ? 12 : 0
-
-  if(taskData.value.dtType === 'MYSQL') {
-    writeModeObj.value.type = ['insert', 'replace', 'update']
-    writeModeObj.value.comment = '控制写入数据到目标表采用 insert into 或者 replace into 或者 ON DUPLICATE KEY UPDATE 语句。'
-  } else if(taskData.value.dtType === 'HIVE') {
-    console.log(taskData.value.dtType)
-    sqlEditorSpan.value = 0
-    splitPkSpan.value = 0
-    whereSpan.value = 0
-    writeModeObj.value.type = ['append', 'truncate']
-    writeModeObj.value.comment = '控制写入数据到目标表采用append增量 或者 truncate全量 语句。'
-  }
-
   if(taskData.value.executeMode === '0'){
     taskData.value.sql = ''
   }else{
     taskData.value.sourceTable = null
     taskData.value.splitPk = null
+  }
+}
+
+const handleTargetSpan = () => {
+  if(taskData.value.dtType === 'HIVE') {
+    hiveDtSpan.value = 12
+    writeModeObj.value.type = ['append', 'truncate']
+    writeModeObj.value.comment = '控制写入数据到目标表采用append增量 或者 truncate全量 语句。'
+  } else if(taskData.value.dtType === 'MYSQL') {
+    hiveDtSpan.value = 0
+    writeModeObj.value.type = ['insert', 'replace', 'update']
+    writeModeObj.value.comment = '控制写入数据到目标表采用 insert into 或者 replace into 或者 ON DUPLICATE KEY UPDATE 语句。'
+  } else {
+    hiveDtSpan.value = 0
   }
 }
 
@@ -850,15 +866,7 @@ const getConnect = (id, type)=>{
 }
 
 async function updateDataSource(type) {
-  if(taskData.value.dsType === 'HIVE') {
-    splitPkSpan.value = 0
-    whereSpan.value = 0
-    sqlEditorSpan.value = 0
-    taskData.value.sql = ''
-    datasourceSpan.value = 12
-  } else {
-    initConstants()
-  }
+  handleSourceSpan()
   dataSourceList.value = await queryDataSourceList({type: type || 'MYSQL'})
   if (!dataSourceList.value.length && taskData.value.dataSource) {
     taskData.value.dataSource = null
@@ -875,12 +883,12 @@ async function updateDataSource(type) {
 }
 
 async function updateDataTarget(type) {
+  handleTargetSpan()
   if(taskData.value.dtType === 'MYSQL') {
     writeModeObj.value.type = ['insert', 'replace', 'update']
     writeModeObj.value.comment = '控制写入数据到目标表采用 insert into 或者 replace into 或者 ON DUPLICATE KEY UPDATE 语句。'
     taskData.value.writeMode = 'insert'
   } else if(taskData.value.dtType === 'HIVE') {
-    console.log(taskData.value.dtType)
     writeModeObj.value.type = ['append', 'truncate']
     writeModeObj.value.comment = '控制写入数据到目标表采用append增量 或者 truncate全量 语句。'
     taskData.value.writeMode = 'append'
@@ -1284,7 +1292,7 @@ function formatJson() {
     json.job.content[0].reader.parameter['fileType'] = 'text'
     json.job.content[0].reader.parameter['path'] = taskData.value.hiveDs.path
     json.job.content[0].reader.parameter['fieldDelimiter'] = taskData.value.hiveDs.fieldDelimiter.toString()
-    json.job.content[0].reader.parameter.column = generateNewList(taskData.value.leftData, taskData.value.leftList)
+    json.job.content[0].reader.parameter.column = generateNewList(taskData.value.leftData, taskData.value.leftList, 'source')
   }
   if(taskData.value.dtType === 'HIVE') {
     delete json.job.content[0].writer.parameter.connection
@@ -1297,7 +1305,7 @@ function formatJson() {
     json.job.content[0].writer.parameter['fileName']= taskData.value.targetTable
     json.job.content[0].writer.parameter['fileType'] = 'text'
     json.job.content[0].writer.parameter['path'] = taskData.value.hiveDt.path
-    json.job.content[0].writer.parameter.column = generateNewList(taskData.value.rightData, taskData.value.rightList)
+    json.job.content[0].writer.parameter.column = generateNewList(taskData.value.rightData, taskData.value.rightList, 'target')
   }
   return JSON.stringify(json,null,4)
 }
@@ -1329,14 +1337,21 @@ function fullScreenLog () {
   })
 }
 
-function generateNewList(data, list) {
+function generateNewList(data, list, type) {
   return list.map(label => {
     const item = data.find(data => data.label === label);
     if (item) {
-      return {
-        value: label,
-        type: item.type
-      };
+      if(type === 'source') {
+        return {
+          value: label,
+          type: item.type
+        }
+      } else {
+        return {
+          name: label,
+          type: item.type
+        }
+      }
     }
   })
 }
@@ -1415,7 +1430,7 @@ async function initData() {
     ...params
   }
 
-  initConstants()
+  initSpan()
 
   setTimeout(()=>{
     initTag.value = true
@@ -1494,8 +1509,7 @@ onMounted( () => {
       background-color: #f1f1f1;
       height: 35px;
       padding-left: 10px;
-      border-radius: 5px 0 0 5px;
-      box-shadow: 0 2px 1px rgba(0, 0, 0, 0.1);
+
     }
 
     :deep(.n-collapse-item__header-extra) {
@@ -1505,9 +1519,7 @@ onMounted( () => {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-radius: 0 5px 5px 0;
 
-      box-shadow: 0 2px 1px rgba(0, 0, 0, 0.1);
 
       .box {
         flex: 1;
