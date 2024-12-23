@@ -261,7 +261,7 @@ export function formatParams(data: INodeData): {
 
     //} else {
       taskParams.jsonConfig = data.jsonConfig
-      taskParams.json = data?.json.replace('\\\\','\\')
+      taskParams.json = data.json.replace(/\\\\/g, '\\');
       data?.localParams?.map((param: ILocalParam) => {
         param.direct = 'IN'
         param.type = 'VARCHAR'
