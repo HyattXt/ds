@@ -169,7 +169,7 @@
           <n-select
               v-model:value="elementFormValue.chineseName"
               filterable
-              placeholder="输入关键字进行搜索"
+              placeholder="输入关键字后,才会进行搜索"
               :options="elementOptions"
               :loading="elementLoading"
               value-field	="chineseName"
