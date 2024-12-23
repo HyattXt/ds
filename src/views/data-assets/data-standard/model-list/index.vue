@@ -436,7 +436,7 @@ function generateCreateTableSQL(tableData, tableName) {
   // 移除最后一个逗号和换行符
   sql = sql.slice(0, -2) + '\n';
 
-  sql += `);`;
+  dataType.value === 0 || dataType.value === 2 ? sql += `)` : sql += `);`;
 
   return sql;
 }
