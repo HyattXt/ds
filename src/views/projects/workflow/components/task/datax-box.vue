@@ -113,6 +113,15 @@
                         </n-form-item-gi>
                         <n-form-item-gi :span="hiveDsSpan" label="文件路径" key="path">
                           <NInput v-model:value="taskData.hiveDs.path"/>
+                          <n-tooltip trigger="hover">
+                            <template #trigger>
+                              <NIcon style="padding-left: 10px">
+                                <QuestionCircleTwotone/>
+                              </NIcon>
+                            </template>
+                            <p>【描述】要读取的文件路径，如果要读取多个文件，可以使用正则表达式"*"，注意这里可以支持填写多个路径。</p>
+                            <p>【注意】DataX会将一个作业下同步的所有的文件视作同一张数据表。用户必须自己保证所有的File能够适配同一套schema信息。并且提供给DataX权限可读。</p>
+                          </n-tooltip>
                         </n-form-item-gi>
                       </NGrid>
                     </NGi>
@@ -175,6 +184,15 @@
                         </n-form-item-gi>
                         <n-form-item-gi :span="hiveDtSpan" label="文件路径" key="path">
                           <NInput v-model:value="taskData.hiveDt.path"/>
+                          <n-tooltip trigger="hover">
+                            <template #trigger>
+                              <NIcon style="padding-left: 10px">
+                                <QuestionCircleTwotone/>
+                              </NIcon>
+                            </template>
+                            <p>【描述】要读取的文件路径，如果要读取多个文件，可以使用正则表达式"*"，注意这里可以支持填写多个路径。</p>
+                            <p>【注意】DataX会将一个作业下同步的所有的文件视作同一张数据表。用户必须自己保证所有的File能够适配同一套schema信息。并且提供给DataX权限可读。</p>
+                          </n-tooltip>
                         </n-form-item-gi>
                         <n-form-item-gi :span="hiveDtSpan/2" label="文件名" key="fileName">
                           <NInput disabled v-model:value="taskData.hiveDt.fileName"/>
