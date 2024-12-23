@@ -97,10 +97,6 @@ function init()  {
 
         const sourceRect = sourceElement.getBoundingClientRect();
         const targetRect = targetElement.getBoundingClientRect();
-        console.log("sourceElement",sourceElement)
-        console.log("targetElement",targetElement)
-        console.log("sourceRect",sourceRect)
-        console.log("targetRect",targetRect)
 
 
         // 你可以据此计算源和目标的中心位置（clientX, clientY）
@@ -279,7 +275,6 @@ onMounted( () => {
               let obj = {};
               obj.source = 'S' + props.taskCode + item;
               obj.target = 'T' + props.taskCode + newRightList[index];
-              console.log(obj)
               plumbins.connect(obj);
             });
             isFirstChange = false;
