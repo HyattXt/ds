@@ -59,7 +59,7 @@
       </div>
     </div>
     <el-dialog
-      :modelValue="showAddRef"
+      v-model="showAddRef"
       :before-close="addDialogVisible"
       width="500px"
     >
@@ -69,7 +69,7 @@
           <el-input
             type="text"
             style="width: 240px"
-            :modelValue="addFormValue.titleName"
+            v-model="addFormValue.titleName"
           />
         </el-form-item>
         <el-form-item required style="padding-top: 20px" label="目标文件夹">
@@ -77,7 +77,7 @@
             :data="treeFolder"
             node-key="id"
             :props="folderProps"
-            :modelValue="selectedMenu"
+            v-model="selectedMenu"
             check-strictly
             style="width: 240px"
             popper-class="form-item-select"
@@ -94,7 +94,7 @@
       </template>
     </el-dialog>
     <el-dialog
-      :modelValue="showUpdateRef"
+        v-model="showUpdateRef"
       :before-close="updateDialogVisible"
       title="修改文件夹"
       width="500px"
@@ -105,7 +105,7 @@
           <el-input
             type="text"
             style="width: 240px"
-            :modelValue="updateFormValue.titleName"
+            v-model="updateFormValue.titleName"
             @input="handleUpdateInput"
           />
         </el-form-item>
@@ -163,7 +163,8 @@
     'createMenu',
     'update:updateFormValue.titleName',
     'update:addFormValue.titleName',
-    'update:showUpdateRef'
+    'update:showUpdateRef',
+    'update:showAddRef'
   ])
 
   const expandedKeys = ref([1])
