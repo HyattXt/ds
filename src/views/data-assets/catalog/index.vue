@@ -380,10 +380,16 @@ function menuIcon({ option }) {
 
 .list-item {
   padding: 16px 24px;
-  border: 4px solid #e8ecf0;
+  margin: 8px 0;
   border-radius: 15px;
-  border-left: 0 none; /* 左侧边框宽度设为0，样式设为无 */
-  border-right: 0 none; /* 右侧边框宽度设为0，样式设为无 */
+  user-select: none;
+  transition: transform 0.3s; /* 添加过渡效果 */
+
+  &:hover {
+    /* 悬停特效 */
+    transform: scale(1.005); /* 稍微放大 */
+    box-shadow: 0 2px 4px rgba(181, 181, 181, 0.3);
+  }
 
   .top {
     border-bottom: 1px solid #e8e8e8;
