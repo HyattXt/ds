@@ -108,7 +108,22 @@
           key: 3,
           type: '自定义分析',
           comment: '根据对应标签以及用户群组，处理用户用水分析'
-        }
+        },
+        {
+          key: 4,
+          type: '数据开发',
+          comment: '支持对平台数据进行加工处理'
+        },
+        {
+          key: 5,
+          type: 'API服务',
+          comment: '支持对平台数据发布对外服务'
+        },
+        {
+          key: 6,
+          type: '数据元',
+          comment: '支持自定义数据模型的数据元'
+        },
       ]"
         v-model:checked-row-keys="checkedRowKeys"
         @update:checked-row-keys="handleCheck"
@@ -154,6 +169,18 @@ const approvalConfig = ref([
   },
   {
     configurationType: 3,
+    configurationStatus: ''
+  },
+  {
+    configurationType: 4,
+    configurationStatus: ''
+  },
+  {
+    configurationType: 5,
+    configurationStatus: ''
+  },
+  {
+    configurationType: 6,
     configurationStatus: ''
   }
 ])
@@ -323,6 +350,7 @@ const handleCheck = (rowKeys) => {
       item.configurationStatus = '1'; // 将 configurationStatus 设置为 key 的字符串形式
     }
   })
+  checkedRowKeys.value = rowKeys;
 }
 
 function handleCurrentChange(val) {
