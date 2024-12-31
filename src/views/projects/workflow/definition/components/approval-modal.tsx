@@ -52,8 +52,8 @@ export default defineComponent({
     }
 
     const handleApproval = async () => {
-      handleApprovalDefinition()
-      await ctx.emit('updateList')
+      await handleApprovalDefinition()
+      ctx.emit('updateList')
       if (typeof refreshTree === 'function') {
         refreshTree();
       }
