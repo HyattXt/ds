@@ -69,7 +69,7 @@ const props = {
 export default defineComponent({
   name: 'workflow-dag-toolbar',
   props,
-  emits: ['versionToggle', 'saveModelToggle', 'removeTasks', 'refresh', 'online', 'timingToggle', 'startToggle'],
+  emits: ['versionToggle', 'saveModelToggle', 'removeTasks', 'refresh', 'online', 'timingToggle', 'startToggle', 'approvalToggle'],
   setup(props, context) {
     const { t } = useI18n()
 
@@ -223,12 +223,23 @@ export default defineComponent({
           ></NTooltip>
         )}
         <div class={Styles['toolbar-left-part']}>
-          {route.name !== 'workflow-instance-detail' &&
-            props.definition?.processDefinition?.releaseState === 'ONLINE' && (
-              <NTag round size='small' type='info'>
-                {t('project.dag.online')}
-              </NTag>
-            )}
+          {
+              route.name !== 'workflow-instance-detail' && (
+                  (
+                      props.definition?.processDefinition?.releaseState === 'ONLINE' && (
+                          <NTag round size='small' type='info'>
+                            {t('project.dag.online')}
+                          </NTag>
+                      )
+                  ) || (
+                      props.definition?.processDefinition?.releaseState === 'APPROVE' && (
+                          <NTag round size='small' type='warning'>
+                            {t('project.workflow.on_approval')}
+                          </NTag>
+                      )
+                  )
+              )
+          }
           {route.name === 'workflow-instance-detail' && (
             <>
               <NTooltip
@@ -495,7 +506,9 @@ export default defineComponent({
               default: () =>
                   props.definition?.processDefinition?.releaseState === 'ONLINE'
                       ? t('project.workflow.down_line')
-                      : t('project.workflow.up_line'),
+                      : props.definition?.processDefinition?.releaseState === 'APPROVE'
+                        ? t('project.workflow.on_approval')
+                        : t('project.workflow.up_line'),
               trigger: () => (
                   <NButton
                       class={Styles['toolbar-right-item']}
@@ -503,6 +516,7 @@ export default defineComponent({
                       strong
                       secondary
                       circle
+                      disabled={props.definition?.processDefinition?.releaseState === 'APPROVE'}
                       onClick={() => {
                         context.emit('online')
                       }}
@@ -571,7 +585,7 @@ export default defineComponent({
                 secondary
                 round
                 disabled={
-                  props.definition?.processDefinition?.releaseState === 'ONLINE' &&
+                  (props.definition?.processDefinition?.releaseState === 'ONLINE' || props.definition?.processDefinition?.releaseState === 'APPROVE')&&
                   !props.instance
                 }
                 onClick={() => {

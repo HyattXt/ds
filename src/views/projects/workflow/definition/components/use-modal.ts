@@ -38,6 +38,7 @@ import {
 import { parseTime } from '@/common/common'
 import { EnvironmentItem } from '@/service/modules/environment/types'
 import { ITimingState } from './types'
+import {insertApproval} from "@/service/modules/data-bussiness";
 
 export function useModal(
   state: any,
@@ -80,6 +81,22 @@ export function useModal(
       ctx.emit('updateList')
       ctx.emit('update:show')
       resetImportForm()
+    } catch (err) {
+      state.saving = false
+    }
+  }
+
+  const handleApprovalDefinition = async () => {
+    await state.approvalFormRef.validate()
+
+    if (state.saving) return
+    state.saving = true
+    try {
+      await insertApproval(state.approvalForm)
+      window.$message.success(t('project.workflow.success'))
+      state.saving = false
+      ctx.emit('updateList')
+      ctx.emit('update:show')
     } catch (err) {
       state.saving = false
     }
@@ -283,6 +300,7 @@ export function useModal(
   return {
     variables,
     handleImportDefinition,
+    handleApprovalDefinition,
     handleStartDefinition,
     handleCreateTiming,
     handleUpdateTiming,

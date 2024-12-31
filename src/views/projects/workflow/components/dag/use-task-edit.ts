@@ -189,8 +189,14 @@ export function useTaskEdit(options: Options) {
    * @param taskName
    * @param taskType
    */
-  function editTask(code: number, taskName: String, taskType: String, readonly: Boolean, processCode: Number) {
-    pushComponent('', code, taskName, taskType, readonly, processCode)
+  function editTask(code: number, taskName: String, taskType: String, readonly: Boolean, processCode: Number, releaseState: String) {
+    let releaseStateCode
+    switch (releaseState) {
+      case 'OFFLINE': {releaseStateCode = 0} break
+      case 'ONLINE': {releaseStateCode = 1} break
+      case 'APPROVE': {releaseStateCode = 2} break
+    }
+    pushComponent('', code, taskName, taskType, readonly, processCode, releaseStateCode)
 /*    queryTaskDefinitionByCode(code, Number(route.params.projectCode)).then((res: any) => {
       let versionId = res.id
       const definition = processDefinition.value.taskDefinitionList.find(
@@ -297,7 +303,7 @@ export function useTaskEdit(options: Options) {
       graph.value.on('cell:dblclick', ({ cell }) => {
         const code = Number(cell.id)
         // @ts-ignore
-        editTask(code,cell.data.taskName, cell.data.taskType, definition.value.processDefinition.releaseState === 'ONLINE', definition.value.processDefinition.code)
+        editTask(code,cell.data.taskName, cell.data.taskType, definition.value.processDefinition.releaseState === 'ONLINE' || definition.value.processDefinition.releaseState === 'APPROVE', definition.value.processDefinition.code, definition.value.processDefinition.releaseState )
       })
     }
   })

@@ -156,14 +156,17 @@ export default defineComponent({
           {{
             default: () =>
               releaseState === 'ONLINE'
-                ? t('project.workflow.down_line')
-                : t('project.workflow.up_line'),
+                  ? t('project.workflow.down_line')
+                  : releaseState === 'APPROVE'
+                    ? t('project.workflow.on_approval')
+                    : t('project.workflow.up_line'),
             trigger: () => (
               <NButton
                 size='small'
                 type={releaseState === 'ONLINE' ? 'warning' : 'error'}
                 tag='div'
                 circle
+                disabled={releaseState === 'APPROVE'}
                 onClick={this.handleReleaseWorkflow}
                 class='btn-publish'
               >
@@ -187,7 +190,7 @@ export default defineComponent({
                 type='info'
                 tag='div'
                 circle
-                disabled={releaseState === 'OFFLINE'}
+                disabled={releaseState === 'OFFLINE' || releaseState === 'APPROVE'}
                 onClick={this.handleGotoTimingManage}
               >
                 <NIcon>
@@ -206,11 +209,11 @@ export default defineComponent({
                 type='error'
                 tag='div'
                 circle
-                disabled={releaseState === 'ONLINE'}
+                disabled={releaseState === 'ONLINE' || releaseState === 'APPROVE'}
                 class='btn-delete'
               >
                 <NPopconfirm
-                  disabled={releaseState === 'ONLINE'}
+                  disabled={releaseState === 'ONLINE' || releaseState === 'APPROVE'}
                   onPositiveClick={this.handleDeleteWorkflow}
                 >
                   {{
@@ -240,6 +243,7 @@ export default defineComponent({
                 type='info'
                 tag='div'
                 circle
+                disabled={releaseState === 'ONLINE' || releaseState === 'APPROVE'}
                 onClick={this.handleVersionWorkflow}
               >
                 <NIcon>

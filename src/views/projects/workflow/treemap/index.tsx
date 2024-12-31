@@ -64,7 +64,7 @@ export default defineComponent({
         const contextMenuVisible = ref(false);
         const menuTop = ref(0);
         const menuLeft = ref(0);
-        const dropdownOption = ref([{label: '', key: '',disable: false}])
+        const dropdownOption = ref([{label: '', key: '',disabled: false}])
         const tabDropdownOption = [
             {label: '关闭当前标签', key: '关闭当前标签'},
             {label: '关闭其他标签', key: '关闭其他标签'},
@@ -162,9 +162,6 @@ export default defineComponent({
             // @ts-ignore
             variables.value.model.projectCode = projectCode
             if( typeof(route.query.code) != 'undefined' )tsxRef.value.refresh(route.query.code, projectCode)
-            if(history.state.taskCode) {
-                pushComponent(2, Number(history.state.taskCode), String(history.state.taskName), '', history.state.state, 0)
-            }
         })
 
         function createMenu() {
@@ -345,13 +342,14 @@ export default defineComponent({
                     showDropdownRef.value = false
                     variables.value.delFolderModel.id = variables.value.moveFolderModel.id = variables.value.model.parentId = workflowModel.value.parentId = variables.value.renameFolderModel.id = option.id as number
                     variables.value.moveWorkflowModel.taskCode = variables.value.taskCode = variables.value.renameWorkflowModel.taskCode = option.taskCode as number
+                    variables.value.readOnly = option.releaseState === 1 || option.releaseState === 2
                     if(option.type == 1 ) {
                         if(option.id === 57 || option.id === 58){
                             dropdownOption.value =[
                                 {
                                     label: '新建工作流',
                                     key: 'workflow',
-                                    disable: false
+                                    disabled: false
                                 }
                             ]
                         } else {
@@ -359,27 +357,27 @@ export default defineComponent({
                                 {
                                     label: '新建文件夹',
                                     key: 'menu',
-                                    disable: false
+                                    disabled: false
                                 },
                                 {
                                     label: '新建工作流',
                                     key: 'workflow',
-                                    disable: false
+                                    disabled: false
                                 },
                                 {
                                     label: '重命名',
                                     key: 'renameMenu',
-                                    disable: false
+                                    disabled: false
                                 },
                                 {
                                     label: '移动',
                                     key: 'removeMenu',
-                                    disable: false
+                                    disabled: false
                                 },
                                 {
                                     label: '删除',
                                     key: 'deleteMenu',
-                                    disable: true
+                                    disabled: false
                                 },
                             ]
                         }
@@ -390,17 +388,17 @@ export default defineComponent({
                             {
                                 label: '重命名',
                                 key: 'renameWorkflow',
-                                disable: false
+                                disabled: variables.value.readOnly
                             },
                             {
                                 label: '移动',
                                 key: 'removeWorkflow',
-                                disable: false
+                                disabled: variables.value.readOnly
                             },
                             {
                                 label: '删除',
                                 key: 'deleteWorkflow',
-                                disable: true
+                                disabled: variables.value.readOnly
                             },
                         ];
                     }
@@ -432,7 +430,7 @@ export default defineComponent({
                 ondblclick() {
                     //双击事件
                     if(option.type !== 1){
-                        pushComponent(option.type as number, Number(option.taskCode), option.titleName as string, option.taskType as string, !!option.state, option.parentId as number)
+                        pushComponent(option.type as number, Number(option.taskCode), option.titleName as string, option.taskType as string, option.state === 1 || option.state === 2, option.parentId as number, option.state as number)
                     }
                     }
                 }
@@ -450,7 +448,7 @@ export default defineComponent({
         }
 
         const dropdownConfirm = ({ node, option }: { node: VNode, option: DropdownOption|DropdownGroupOption }) => {
-            if (option.key !== 'deleteMenu' && option.key !== 'deleteWorkflow') {
+            if (variables.value.readOnly || (option.key !== 'deleteMenu' && option.key !== 'deleteWorkflow')) {
                 return node
             }else{
                 return h(
@@ -577,7 +575,7 @@ export default defineComponent({
 
         };
 
-        const pushComponent = (type: number, taskCode: number, taskName: string, taskType: string, state: boolean, processCode: number)=> {
+        const pushComponent = (type: number, taskCode: number, taskName: string, taskType: string, state: boolean, processCode: number, releaseState?: number)=> {
             const newItem = {
                 label: taskName,
                 name: taskCode,
@@ -590,7 +588,8 @@ export default defineComponent({
                     projectCode: projectCode,
                     taskCode: taskCode,
                     processCode: processCode,
-                    readOnly: state
+                    readOnly: state,
+                    releaseState: releaseState,
                 }
             };
 
@@ -609,6 +608,7 @@ export default defineComponent({
         provide('pushComponent', pushComponent);
         provide('updateTab', updateTab);
         provide('updateEdited', updateEdited);
+        provide('refreshTree', refreshTree);
 
 
         return () =>

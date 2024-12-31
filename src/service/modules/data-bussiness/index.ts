@@ -75,3 +75,15 @@ export function updateApproval(data: UpdateApprovalReq): any {
     transformRequest: (params) => JSON.stringify(params)
   })
 }
+
+export function insertApproval(data: UpdateApprovalReq): any {
+  return axios({
+    url: '/Approval/insert',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    transformRequest: (params) => JSON.stringify(params)
+  })
+}

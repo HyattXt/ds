@@ -39,6 +39,7 @@ import styles from './index.module.scss'
 import CrudHeader from "@/components/cue/crud-header.vue";
 import CrudForm from "@/components/cue/crud-form.vue";
 import CrudPageDs from "@/components/cue/crud-page-ds.vue";
+import ApprovalModal from "@/views/projects/workflow/definition/components/approval-modal";
 
 export default defineComponent({
   name: 'WorkflowDefinitionList',
@@ -243,6 +244,11 @@ export default defineComponent({
             v-model:codes={this.checkedRowKeys}
             v-model:show={this.copyShowRef}
             onUpdateList={this.handleCopyUpdateList}
+          />
+          <ApprovalModal
+              v-model:show={this.approvalModalShow}
+              v-model:row={this.row}
+              onUpdateList={this.handleUpdateList}
           />
         </>
     )

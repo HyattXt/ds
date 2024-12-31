@@ -270,7 +270,7 @@ export function useTable() {
         pageSize: variables.pageSize,
         pageNo: variables.page,
         searchVal: variables.searchVal
-      })
+      }, row.processDefinitionCode)
     })
   }
 

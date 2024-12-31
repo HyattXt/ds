@@ -2,7 +2,7 @@
   <div class="cue-workflow__header" >
     <div class="cue-workflow__header-left">
       <el-tooltip content="保存" placement="top">
-        <n-button text :disabled="showOnline" @click="$emit('saveEvent')">
+        <n-button text :disabled="readOnly" @click="$emit('saveEvent')">
           <n-icon size="18">
             <Save24Regular />
           </n-icon>
@@ -23,20 +23,23 @@
         </n-button>
       </el-tooltip>
       <el-tooltip v-if="showFormat" content="格式化" placement="top">
-        <n-button text :disabled="showOnline" @click="$emit('formatEvent')">
+        <n-button text :disabled="readOnly" @click="$emit('formatEvent')">
           <n-icon size="18">
             <Broom16Filled />
           </n-icon>
         </n-button>
       </el-tooltip>
       <slot name="define-button"></slot>
-      <n-tag v-if="showOnline" type="info">
+      <n-tag v-if="releaseState === 1" type="info">
         已上线
+      </n-tag>
+      <n-tag v-if="releaseState === 2" type="warning">
+        审批中
       </n-tag>
     </div>
     <div class="cue-workflow__header-right">
       <div style="padding-right: 10px">
-        <n-button strong secondary size="small" type="info" @click="showVersionModalRef = true">
+        <n-button strong secondary size="small" type="info" @click="showVersionModalRef = true" :disabled="readOnly">
           版本: V{{version}}
         </n-button>
       </div>
@@ -70,9 +73,12 @@ defineProps({
     type: Boolean,
     default: false
   },
-  showOnline: {
+  readOnly: {
     type: Boolean,
     default: false
+  },
+  releaseState: {
+    type: Number
   },
   showRun: {
     type: Boolean,

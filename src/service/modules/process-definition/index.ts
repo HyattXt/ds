@@ -175,9 +175,9 @@ export function deleteByCode(code: number, processCode: number): any {
 }
 
 export function release(
-  data: NameReq & ReleaseStateReq,
-  code: number,
-  processCode: number
+    data: { name: string | undefined; releaseState: "OFFLINE" | "ONLINE" },
+    code: number,
+    processCode: number
 ): any {
   return axios({
     url: `/projects/${code}/process-definition/${processCode}/release`,

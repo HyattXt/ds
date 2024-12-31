@@ -6,7 +6,8 @@
         @refresh="initData"
         :version="taskData.version"
         :task-code="props.taskCode"
-        :showOnline="props.readOnly"
+        :readOnly="props.readOnly"
+        :releaseState="props.releaseState"
         :showRun="false"
         :showStop="false"
     >
@@ -84,6 +85,9 @@ const props = defineProps({
   readOnly: {
     type: Boolean,
     default: false
+  },
+  releaseState: {
+    type: Number
   }
 })
 useHeightAdjustment(false)

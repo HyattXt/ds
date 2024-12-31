@@ -267,22 +267,26 @@ export default defineComponent({
         {{
           'btn-middle': () => (
               <div>
-                {this.row.releaseState === 'ONLINE' && (
-                    <NButton
-                        style={'margin-right: 15px'}
-                        type='warning'
-                        size='small'
-                        onClick={this.handleOffline}
-                    >
-                      {'下线'}
-                    </NButton>)}
-                <NButton
-                    type='info'
-                    size='small'
-                    onClick={this.handleOnline}
-                >
-                  {'确定并上线'}
-                </NButton>
+                {this.definition && (
+                    <>
+                      {this.row.releaseState === 'ONLINE' && (
+                          <NButton
+                              style={'margin-right: 15px'}
+                              type='warning'
+                              size='small'
+                              onClick={this.handleOffline}
+                          >
+                            {'下线'}
+                          </NButton>)}
+                      <NButton
+                          type='info'
+                          size='small'
+                          onClick={this.handleOnline}
+                      >
+                        {'确定并上线'}
+                      </NButton>
+                    </>
+                )}
               </div>
           ),
           default: () => (

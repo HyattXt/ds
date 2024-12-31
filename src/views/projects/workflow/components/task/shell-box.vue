@@ -10,7 +10,8 @@
         :task-code="props.taskCode"
         :disableRun="logLoadingRef"
         :disableStop="disableStop"
-        :showOnline="props.readOnly"
+        :readOnly="props.readOnly"
+        :releaseState="props.releaseState"
     >
     </CrudWorkflowTooltip>
     <div class="right-bar"><div @click="openTab('first')">任务属性</div><div @click="openTab('second')">参数配置</div><div @click="openTab('third')">资源源配置</div></div>
@@ -110,6 +111,9 @@ const props = defineProps({
   readOnly: {
     type: Boolean,
     default: false
+  },
+  releaseState: {
+    type: Number
   }
 })
 useHeightAdjustment(true)

@@ -51,6 +51,7 @@ import ContextMenuItem from './dag-context-menu'
 import TaskModal from '@/views/projects/task/components/node/detail-modal'
 import InitModal from '@/views/projects/task/components/node/init-modal'
 import StartModal from '@/views/projects/workflow/definition/components/start-modal'
+import ApprovalModal from '@/views/projects/workflow/definition/components/approval-modal'
 import LogModal from '@/components/log-modal'
 import './x6-style.scss'
 import { queryLog } from '@/service/modules/log'
@@ -60,6 +61,7 @@ import {useTask} from "@/views/projects/task/definition/use-task";
 import {INodeData} from "@/views/projects/task/components/node/types";
 import {release} from "@/service/modules/process-definition";
 import {useTable} from "@/views/projects/workflow/definition/timing/use-table";
+import {queryApprovalConfig} from "@/service/modules/data-bussiness";
 
 const props = {
   // If this prop is passed, it means from definition detail
@@ -118,7 +120,6 @@ export default defineComponent({
     // Edit task
     const {
       taskConfirm,
-      initTaskConfirm,
       taskModalVisible,
       initModalVisible,
       currTask,
@@ -143,8 +144,8 @@ export default defineComponent({
     const startReadonly = computed(() => {
       if (props.definition) {
         return (
-          route.name === 'workflow-definition-detail' &&
-          props.definition!.processDefinition.releaseState === 'NOT_RELEASE'
+          route.name === 'workflow-relation' &&
+          props.definition!.processDefinition.releaseState !== 'ONLINE'
         )
       } else {
         return false
@@ -162,7 +163,7 @@ export default defineComponent({
           props.instance.state !== 'STOP'
         )
       } else if (props.definition) {
-        return props.definition!.processDefinition.releaseState === 'ONLINE'
+        return props.definition!.processDefinition.releaseState === 'ONLINE' || props.definition!.processDefinition.releaseState === 'APPROVE'
       } else {
         return false
       }
@@ -209,26 +210,14 @@ export default defineComponent({
     const timingModalShow = ref(false)
     const startModalShow = ref(false)
     const versionToggle = (bool: boolean) => {
-      if (typeof bool === 'boolean') {
-        versionModalShow.value = bool
-      } else {
-        versionModalShow.value = !versionModalShow.value
-      }
+      versionModalShow.value = bool
     }
     const timingToggle = (bool: boolean) => {
-      if (typeof bool === 'boolean') {
-        requestData()
-        timingModalShow.value = bool
-      } else {
-        timingModalShow.value = !timingModalShow.value
-      }
+      requestData()
+      timingModalShow.value = bool
     }
     const startToggle = (bool: boolean) => {
-      if (typeof bool === 'boolean') {
-        startModalShow.value = bool
-      } else {
-        startModalShow.value = !startModalShow.value
-      }
+      startModalShow.value = bool
     }
     const refreshDetail = () => {
       context.emit('refresh',!!props.processCode ? props.processCode : Number(route.query.code), props.projectCode)
@@ -236,14 +225,9 @@ export default defineComponent({
       timingModalShow.value = false
     }
 
-    const refreshEdit = (code: number) => {
-      refreshDetail()
-      //editTask(code)
-    }
-
     const commitInitTaskAndVis = (taskName: string,taskDescription: string,processCode: number,datasourceType: String, datasource: Number ) => {
       loading.value = true
-      commitInitTask(taskName, taskDescription, processCode, datasourceType, datasource).then(r =>{
+      commitInitTask(taskName, taskDescription, processCode, datasourceType, datasource).then(() =>{
         loading.value = false
         initTaskCancel()
       })
@@ -265,14 +249,16 @@ export default defineComponent({
       }, props.processCode)
     }
 
+    //approval modal
+    const approvalModalShow = ref(false)
+    const approvalModelToggle = (bool: boolean) => {
+      approvalModalShow.value = bool
+    }
+
     // Save modal
     const saveModalShow = ref(false)
     const saveModelToggle = (bool: boolean) => {
-      if (typeof bool === 'boolean') {
-        saveModalShow.value = bool
-      } else {
-        saveModalShow.value = !versionModalShow.value
-      }
+      saveModalShow.value = bool
     }
     const { getConnects, getLocations } = useBusinessMapper()
     const onSave = (saveForm: any) => {
@@ -352,17 +338,22 @@ export default defineComponent({
       }
     }
 
-    const releaseWorkflow = () => {
-      const data = {
-        name: props?.definition.processDefinition.name,
-        releaseState: (props?.definition.processDefinition.releaseState === 'ONLINE' ? 'OFFLINE' : 'ONLINE') as
-            | 'OFFLINE'
-            | 'ONLINE'
+    const releaseWorkflow = async () => {
+      const approvalConfig = await queryApprovalConfig()
+      if(approvalConfig[3].configurationStatus === 1) {
+        approvalModalShow.value = true
+      } else {
+        const data = {
+          name: props.definition?.processDefinition.name,
+          releaseState: (props.definition?.processDefinition.releaseState === 'ONLINE' ? 'OFFLINE' : 'ONLINE') as
+              | 'OFFLINE'
+              | 'ONLINE'
+        }
+        release(data, props.projectCode, props.processCode).then(() => {
+          window.$message.success(t('project.workflow.success'))
+          refreshDetail()
+        })
       }
-      release(data, props.projectCode, props.processCode).then(() => {
-        window.$message.success(t('project.workflow.success'))
-        refreshDetail()
-      })
     }
 
     watch(
@@ -402,6 +393,7 @@ export default defineComponent({
           instance={props.instance}
           definition={props.definition}
           onVersionToggle={versionToggle}
+          onApprovalToggle={approvalModelToggle}
           onTimingToggle={timingToggle}
           onSaveModelToggle={saveModelToggle}
           onStartToggle={startToggle}
@@ -444,6 +436,11 @@ export default defineComponent({
                 v-model:show={startModalShow.value}
             />
         )}
+        <ApprovalModal
+            v-model:show={approvalModalShow.value}
+            definition={props.definition}
+            onUpdateList={refreshDetail}
+        />
         <DagSaveModal
           v-model:show={saveModalShow.value}
           onSave={onSave}

@@ -396,7 +396,7 @@ export default defineComponent({
                       separator=':'
                       placeholder={['prop', 'value']}
                       defaultValue={[item.prop, item.value]}
-                      onUpdateValue={(param) =>
+                      onUpdateValue={(param: any) =>
                         this.updateParamsList(index, param)
                       }
                     />

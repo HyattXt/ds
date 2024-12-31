@@ -132,9 +132,23 @@ const columns =  [
     prop: 'approvalType',
     slots: (row) => {
       switch (row.approvalType) {
-        case '1': return h("div",'数据标签')
-        case '2': return h("div",'用户群组')
-        case '3' : return h("div",'自定义分析')
+        case 1: return h("div",'数据标签')
+        case 2: return h("div",'用户群组')
+        case 3 : return h("div",'自定义分析')
+        case 4 : return h("div",'数据开发')
+        case 5 : return h("div",'API服务')
+        case 6 : return h("div",'数据元')
+      }
+    }
+  },
+  {
+    label: '申请类型',
+    prop: 'releaseState',
+    width: 120,
+    slots: (row) => {
+      switch (row.releaseState) {
+        case 1: return h("div",'上线')
+        case 0: return h("div",'下线')
       }
     }
   },
@@ -283,9 +297,12 @@ const editDetail = (row) => {
   let approvalStatus
   let approvalColor
   switch (row.approvalType) {
-    case '1': {approvalType = '数据标签'} break
-    case '2': {approvalType = '用户群组'} break
-    case '3': {approvalType = '自定义分析'} break
+    case 1: {approvalType = '数据标签'} break
+    case 2: {approvalType = '用户群组'} break
+    case 3: {approvalType = '自定义分析'} break
+    case 4: {approvalType = '数据开发'} break
+    case 5: {approvalType = 'API服务'} break
+    case 6: {approvalType = '数据元'} break
   }
   switch (row.approvalStatus) {
     case 1: {approvalStatus = '已同意'; approvalColor = 'success'} break

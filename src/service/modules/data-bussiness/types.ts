@@ -40,7 +40,7 @@ interface ApprovalListReq {
 }
 
 interface UpdateApprovalReq {
-  id: number,
+  id?: number,
   objNum: string,
   approvalType: number,
   approvalStatus: number,

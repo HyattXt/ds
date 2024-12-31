@@ -46,6 +46,30 @@ export const useForm = () => {
     } as FormRules
   })
 
+  const approvalState = reactive({
+    approvalFormRef: ref(),
+    approvalForm: {
+      objNum: 0,
+      objName: '',
+      approvalType: 4,
+      approvalStatus: 2,
+      releaseState: 1,
+      reasonForApplication: ''
+    },
+    saving: false,
+    approvalRules: {
+      reasonForApplication: {
+        required: true,
+        trigger: ['input', 'blur'],
+        validator() {
+          if (approvalState.approvalForm.reasonForApplication === '') {
+            return new Error(t('project.workflow.reason'))
+          }
+        }
+      }
+    } as FormRules
+  })
+
   const startState = reactive({
     startFormRef: ref(),
     startForm: {
@@ -110,6 +134,7 @@ export const useForm = () => {
 
   return {
     importState,
+    approvalState,
     startState,
     timingState,
     copyState

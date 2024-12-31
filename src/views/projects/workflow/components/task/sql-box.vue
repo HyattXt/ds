@@ -12,7 +12,8 @@
         :disableRun="disableRun"
         :disableStop="disableStop"
         showFormat
-        :showOnline="props.readOnly"
+        :readOnly="props.readOnly"
+        :releaseState="props.releaseState"
     >
       <template #right>
         <div class="datasource"><span>数据源类型：</span> <span>{{taskData.type}}</span> <span>数据源：</span> <span>{{ dataSourceName }}</span></div>
@@ -133,6 +134,9 @@ const props = defineProps({
   readOnly: {
     type: Boolean,
     default: false
+  },
+  releaseState: {
+    type: Number
   }
 })
 useHeightAdjustment(true)

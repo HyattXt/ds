@@ -28,7 +28,7 @@
             {{ basicInfo.objName }}
           </n-descriptions-item>
           <n-descriptions-item label="申请类型">
-            {{ basicInfo.approvalType }}
+            {{basicInfo.approvalType + (basicInfo.releaseState === 1 ? '上线 ' : '下线 ') }}
           </n-descriptions-item>
           <n-descriptions-item label="审批状态">
             {{ basicInfo.approvalStatus }}
@@ -47,7 +47,7 @@
         <n-timeline-item content="开始" />
         <n-timeline-item
             type="info"
-            title="提交申请"
+            :title="basicInfo.releaseState === 1 ? '提交上线申请' : '提交下线申请'"
             :content="`申请人：${basicInfo.userName} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;申请理由：${basicInfo.reasonForApplication || '无'}`"
             :time="basicInfo.applicationTime"
         />
@@ -135,7 +135,7 @@ const dialogVisible = () => {
 const handleApproval = async () => {
   formRef.value.validate(async (errors) => {
     if (!errors) {
-      let params = {...formValue.value, id: basicInfo.value.id, objNum: basicInfo.value.objNum, approvalType: basicInfo.value.approvalTypeCode }
+      let params = {...formValue.value, id: basicInfo.value.id, objNum: basicInfo.value.objNum, approvalType: basicInfo.value.approvalTypeCode, releaseState: basicInfo.value.releaseState}
       await updateApproval(params)
       message.info('成功')
       ifModel.value = false
@@ -151,6 +151,7 @@ const rules = ref({})
 
 onMounted(() => {
   basicInfo.value = history.state
+  console.log(basicInfo.value)
 })
 </script>
 

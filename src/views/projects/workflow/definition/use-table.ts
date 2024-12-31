@@ -38,6 +38,7 @@ import ButtonLink from '@/components/button-link'
 import {calculateTableWidth, COLUMN_WIDTH_CONFIG, DefaultTableWidth} from '@/common/column-width-config'
 import type {IDefinitionParam} from './types'
 import type {RowKey, TableColumns} from 'naive-ui/es/data-table/src/interface'
+import {queryApprovalConfig} from "@/service/modules/data-bussiness";
 
 export function useTable() {
   const { t } = useI18n()
@@ -60,7 +61,8 @@ export function useTable() {
     timingShowRef: ref(false),
     versionShowRef: ref(false),
     copyShowRef: ref(false),
-    loadingRef: ref(false)
+    loadingRef: ref(false),
+    approvalModalShow: ref(false)
   })
 
   const createColumns = (variables: any) => {
@@ -125,8 +127,10 @@ export function useTable() {
         ...COLUMN_WIDTH_CONFIG['state'],
         render: (row) =>
           row.releaseState === 'ONLINE'
-            ? t('project.workflow.up_line')
-            : t('project.workflow.down_line')
+              ? t('project.workflow.down_line')
+              : row.releaseState === 'APPROVE'
+                  ? t('project.workflow.on_approval')
+                  : t('project.workflow.up_line'),
       },
       {
         title: t('project.workflow.schedule_publish_status'),
@@ -277,21 +281,28 @@ export function useTable() {
 
   const batchCopyWorkflow = () => {}
 
-  const releaseWorkflow = (row: any) => {
-    const data = {
-      name: row.name,
-      releaseState: (row.releaseState === 'ONLINE' ? 'OFFLINE' : 'ONLINE') as
-        | 'OFFLINE'
-        | 'ONLINE'
-    }
-    release(data, variables.projectCode, row.code).then(() => {
-      window.$message.success(t('project.workflow.success'))
-      getTableData({
-        pageSize: variables.pageSize,
-        pageNo: variables.page,
-        searchVal: variables.searchVal
+  const releaseWorkflow = async (row: any) => {
+    const approvalConfig = await queryApprovalConfig()
+    if (approvalConfig[3].configurationStatus === 1) {
+      console.log('approval config', row)
+      variables.row = row
+      variables.approvalModalShow = true
+    } else {
+      const data = {
+        name: row.name,
+        releaseState: (row.releaseState === 'ONLINE' ? 'OFFLINE' : 'ONLINE') as
+            | 'OFFLINE'
+            | 'ONLINE'
+      }
+      release(data, variables.projectCode, row.code).then(() => {
+        window.$message.success(t('project.workflow.success'))
+        getTableData({
+          pageSize: variables.pageSize,
+          pageNo: variables.page,
+          searchVal: variables.searchVal
+        })
       })
-    })
+    }
   }
 
   const copyWorkflow = (row: any) => {

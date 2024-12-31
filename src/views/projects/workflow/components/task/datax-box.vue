@@ -10,7 +10,9 @@
         :task-code="props.taskCode"
         :disableRun="logLoadingRef"
         :disableStop="disableStop"
-        :showOnline="props.readOnly"
+        :readOnly="props.readOnly"
+        :releaseState="props.releaseState"
+
     >
       <template #define-button>
         <el-tooltip :content="taskData.jsonConfig ? '表单模式' : '脚本模式'" placement="top">
@@ -428,6 +430,9 @@ const props = defineProps({
   readOnly: {
     type: Boolean,
     default: false
+  },
+  releaseState: {
+    type: Number
   }
 })
 

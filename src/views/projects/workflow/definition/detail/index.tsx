@@ -71,7 +71,7 @@ export default defineComponent({
     const refresh = (code: number, projectCode: number) => {
       isLoading.value = true
       queryProcessDefinitionByCode(code, projectCode).then((res: any) => {
-        readonly.value = res.processDefinition.releaseState === 'ONLINE'
+        readonly.value = res.processDefinition.releaseState === 'ONLINE' || res.processDefinition.releaseState === 'APPROVE'
         definition.value = res
         isLoading.value = false
       })

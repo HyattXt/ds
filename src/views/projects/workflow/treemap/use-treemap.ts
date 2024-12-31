@@ -32,6 +32,7 @@ export function useTreemap() {
       saving: false,
       loading: true,
       taskCode: 1,
+      readOnly: false,
       model:{
           parentId: 1,
           titleName: '',
