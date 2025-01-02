@@ -62,6 +62,7 @@ export default defineComponent({
     watch(
         () => props.definition,
         () => {
+          approvalState.approvalForm.reasonForApplication = ''
           approvalState.approvalForm.objNum = props.definition?.processDefinition.code as number
           approvalState.approvalForm.objName = props.definition?.processDefinition.name as string
           approvalState.approvalForm.releaseState = props.definition?.processDefinition.releaseState === 'OFFLINE' ? 1 : 0
@@ -71,6 +72,7 @@ export default defineComponent({
     watch(
         () => props.row,
         () => {
+          approvalState.approvalForm.reasonForApplication = ''
           approvalState.approvalForm.objNum = props.row?.code as number
           approvalState.approvalForm.objName = props.row?.name as string
           approvalState.approvalForm.releaseState = props.row?.releaseState === 'OFFLINE' ? 1 : 0

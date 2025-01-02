@@ -284,7 +284,6 @@ export function useTable() {
   const releaseWorkflow = async (row: any) => {
     const approvalConfig = await queryApprovalConfig()
     if (approvalConfig[3].configurationStatus === 1) {
-      console.log('approval config', row)
       variables.row = row
       variables.approvalModalShow = true
     } else {
