@@ -154,6 +154,26 @@
       <n-button color="#0099CB" type="primary" size="small"  @click="handleCreateDataElement">确定</n-button>
     </template>
   </el-dialog>
+  <el-dialog
+      v-model="approvalModalShow"
+      width="600px"
+  >
+    <template #header> {{approvalForm.releaseState ? '上线' : '下线'}}审批 </template>
+    <n-form ref="approvalFormRef" :rules="approveRule" :model="approvalForm">
+      <n-form-item label="申请理由" label-placement="left" path="reasonForApplication">
+        <n-input
+            v-model:value="approvalForm.reasonForApplication"
+            type="textarea"
+        />
+      </n-form-item>
+    </n-form>
+
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button color="#0099CB" @click="handleApprovalDefinition" >确定</el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup>
@@ -164,7 +184,7 @@ import {
   NButton,
   useMessage,
   NIcon,
-  NPopover, NGrid
+  NPopover, NGrid, NTag
 } from 'naive-ui'
 import hljs from 'highlight.js/lib/core'
 import javascript from 'highlight.js/lib/languages/javascript'
@@ -190,6 +210,7 @@ import {
   queryModelElementByName, queryModelDataType
 } from "@/service/modules/data-standard";
 import {Search} from "@element-plus/icons-vue";
+import {insertApproval, queryApprovalConfig} from "@/service/modules/data-bussiness";
 
 hljs.registerLanguage('javascript', javascript)
 
@@ -207,12 +228,20 @@ const ifUpdate = ref(false)
 const ifNameUpdate = ref(false)
 const operaOffSpan = ref(0)
 const indexFormValue = ref({})
-const startTime = ref(0)
+const approvalModalShow = ref(false)
 const showUpdateRef = ref(false)
 const updateFormValue = ref({})
 const selectedMenu = ref(1)
 const addFormValue = ref({ titleName: '' })
-const router = useRouter()
+const approvalFormRef = ref()
+const approvalForm = ref({
+  objNum: 0,
+  objName: '',
+  approvalType: 6,
+  approvalStatus: 2,
+  releaseState: 1,
+  reasonForApplication: ''
+})
 const tableData = ref([])
 const createDate = ref(null)
 const paginationReactive = reactive({
@@ -253,15 +282,21 @@ const columns =  [
     prop: 'releaseStatus',
     width: 80,
     slots: (row) => {
-      return              h(
-          ElSwitch,
+      let approvalStatus
+      let approvalColor
+      switch (row.releaseStatus) {
+        case 0: {approvalStatus = '未发布'; approvalColor = 'info'} break
+        case 1: {approvalStatus = '已发布'; approvalColor = 'success'} break
+        case 2: {approvalStatus = '审批中'; approvalColor = 'warning'} break
+      }
+      return h(
+          NTag,
           {
-            modelValue: row.releaseStatus,
-            activeValue: 1,
-            inactiveValue: 0,
-            style: "--el-switch-on-color: #0099CB",
-            onChange: () => handleRelease(row)
-          }
+            bordered: false,
+            type: approvalColor,
+            size: 'small',
+          },
+          { default: ()=> h("div",approvalStatus) }
       )
     }
   },
@@ -277,6 +312,23 @@ const columns =  [
   {
     label: '更新日期',
     prop: 'dataElementUpdateDate'
+  },
+  {
+    label: '操作',
+    prop: 'actions',
+    width: 100,
+    slots: (row) => {
+      return h(
+          ElButton,
+          {
+            disabled: row.releaseStatus === 2,
+            class: 'el-button--text',
+            size: 'small',
+            onClick: () => handleRelease(row)
+          },
+          { default: ()=> row.releaseStatus ? '下线' : '上线' }
+      )
+    }
   }
 ]
 
@@ -370,6 +422,14 @@ const rules = ref({
   }
 })
 
+const approveRule = {
+  reasonForApplication: {
+    required: true,
+    message: '请输入理由',
+    trigger: 'blur'
+  }
+}
+
 const typeOptions = ref([
   {label: 'varchar', value: 'varchar'},
   {label: 'int', value: 'int'},
@@ -401,20 +461,51 @@ const handleRelease = async (row) => {
   }
   await queryModelElementByName(modelParam)
 
-  let param = {
-    releaseStatus: !row.releaseStatus,
-    id: row.id
+  const approvalConfig = await queryApprovalConfig()
+  if (approvalConfig[5].configurationStatus === 1) {
+    approvalForm.value.reasonForApplication = ''
+    approvalForm.value.objNum = row.id
+    approvalForm.value.objName = row.chineseName
+    approvalForm.value.releaseState = row.releaseStatus === 0 ? 1 : 0
+    approvalModalShow.value = true
+  } else {
+    let param = {
+      releaseStatus: !row.releaseStatus,
+      id: row.id
+    }
+    await releaseStandard(param)
+    await query(
+        paginationReactive.chineseName,
+        paginationReactive.page,
+        paginationReactive.pageSize,
+        paginationReactive.startTime,
+        paginationReactive.endTime,
+        paginationReactive.apiTreeId,
+        paginationReactive.releaseStatus
+    )
   }
-  await releaseStandard(param)
-  await query(
-      paginationReactive.chineseName,
-      paginationReactive.page,
-      paginationReactive.pageSize,
-      paginationReactive.startTime,
-      paginationReactive.endTime,
-      paginationReactive.apiTreeId,
-      paginationReactive.releaseStatus
-  )
+}
+
+const handleApprovalDefinition = () => {
+  approvalFormRef.value.validate(async (errors) => {
+    if (!errors) {
+      await insertApproval(approvalForm.value)
+      window.$message.success('提交成功')
+      approvalModalShow.value = false
+      await query(
+          paginationReactive.chineseName,
+          paginationReactive.page,
+          paginationReactive.pageSize,
+          paginationReactive.startTime,
+          paginationReactive.endTime,
+          paginationReactive.apiTreeId,
+          paginationReactive.releaseStatus
+      )
+    } else {
+      message.error('验证失败，请填写完整信息')
+    }
+  })
+
 }
 
 const handleCreateDataElement = () => {
