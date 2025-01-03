@@ -393,7 +393,7 @@
       value: '1'
     },
     {
-      label: '有变更',
+      label: '审核中',
       value: '2'
     },
     {
@@ -570,7 +570,7 @@
             item.apiStatus = '已发布'
           }
           if (item.apiStatus === '2') {
-            item.apiStatus = '有变更'
+            item.apiStatus = '审核中'
           }
           if (item.apiStatus === '3') {
             item.apiStatus = '禁用'
@@ -713,7 +713,7 @@
 
   function handleCurrentChange(val) {
     currentRow.value = val
-    if (currentRow.value && currentRow.value.apiStatus !== '已发布') {
+    if (currentRow.value && currentRow.value.apiStatus !== '已发布' && currentRow.value.apiStatus !== '审核中') {
       ifDisableUpdate.value = false
       ifDisableDelete.value = currentRow.value.addFlag !== 2
     } else {

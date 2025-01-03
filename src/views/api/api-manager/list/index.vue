@@ -118,6 +118,26 @@
       </div>
     </template>
   </el-dialog>
+  <el-dialog
+      v-model="approvalModalShow"
+      width="600px"
+  >
+    <template #header> {{approvalForm.releaseState ? '上线' : '下线'}}审批 </template>
+    <n-form ref="approvalFormRef" :rules="approveRule" :model="approvalForm">
+      <n-form-item label="申请理由" label-placement="left" path="reasonForApplication">
+        <n-input
+            v-model:value="approvalForm.reasonForApplication"
+            type="textarea"
+        />
+      </n-form-item>
+    </n-form>
+
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button color="#0099CB" @click="handleApprovalDefinition" >确定</el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup>
@@ -148,6 +168,7 @@ import CrudSplit from "@/components/cue/crud-split.vue";
 import router from "@/router";
 import CrudPage from "@/components/cue/crud-page.vue";
 import utils from "@/utils";
+import {insertApproval, queryApprovalConfig} from "@/service/modules/data-bussiness";
 
 hljs.registerLanguage('javascript', javascript)
 
@@ -224,14 +245,14 @@ const columns = ({ play }, { pub }, { auth }) => {
             ),
             h(NPopconfirm, {onPositiveClick: () => {pub(row)}}, {trigger: () =>
                   h(NTooltip, {}, {trigger: () =>
-                        h(NButton, {disabled: row.apiAuthorizer === null, circle: true, type: row.apiStatus === '待发布' ? 'info' : 'warning', size: 'small', class: 'edit'}, {icon: () =>
+                        h(NButton, {disabled: row.apiAuthorizer === null || row.apiStatus === '审核中', circle: true, type: row.apiStatus === '待发布' ? 'info' : 'warning', size: 'small', class: 'edit'}, {icon: () =>
                               h(NIcon, null, {
                                 default: () => row.apiStatus === '待发布'
                                     ? h(ToTopOutlined)
                                     : h(VerticalAlignBottomOutlined)
                               })}
                         ), default: () =>
-                        row.apiStatus === '待发布' ? '发布' : '下线'}
+                        row.apiStatus === '待发布' ? '发布' : (row.apiStatus === '审核中' ? '审核中' : '下线')}
                   ), default: () =>
                   row.apiStatus === '待发布' ? '确定发布吗？' : '确定下线吗？'}
             )
@@ -270,17 +291,34 @@ const statusOptions = [
     value: '1'
   }
 ]
+const approveRule = {
+  reasonForApplication: {
+    required: true,
+    message: '请输入理由',
+    trigger: 'blur'
+  }
+}
 
 const getApiTreeUrl = utils.getUrl('interface/getApiTreeFloder')
 const dataRef = ref([])
 const loadingRef = ref(false)
 const showModal = ref(false)
+const approvalModalShow = ref(false)
 const drawTitle = ref('')
 const drawId = ref('')
 const userList = ref([])
 const apiAuthorizer = ref([])
 const apiAuthorizerName = ref('')
 const folderData = ref([])
+const approvalFormRef = ref()
+const approvalForm = ref({
+  objNum: 0,
+  objName: '',
+  approvalType: 5,
+  approvalStatus: 2,
+  releaseState: 1,
+  reasonForApplication: ''
+})
 const actAuth = (row) => {
   showModal.value = true
   drawTitle.value = row.apiName
@@ -367,7 +405,7 @@ function handlePageChange(currentPage, pageSize) {
           item.apiStatus = '发布'
         }
         if (item.apiStatus === '2') {
-          item.apiStatus = '有变更'
+          item.apiStatus = '审核中'
         }
         if (item.apiStatus === '3') {
           item.apiStatus = '禁用'
@@ -413,6 +451,20 @@ function query(page, pageSize = 30, apiName = '', apiFlag = '', apiStatus = '', 
   })
 }
 
+const handleApprovalDefinition = () => {
+  approvalFormRef.value.validate(async (errors) => {
+    if (!errors) {
+      await insertApproval(approvalForm.value)
+      window.$message.success('提交成功')
+      approvalModalShow.value = false
+      handlePageChange(paginationReactive.page, paginationReactive.pageSize)
+    } else {
+      message.error('验证失败，请填写完整信息')
+    }
+  })
+
+}
+
 function subAuth() {
   let subUrl = utils.getUrl('interface/insertAuthorizeInfo')
   let requestBody = {
@@ -443,50 +495,59 @@ const columnsRef = ref(
             }
         },
         {
-          pub(row) {
-            if (row.apiStatus === '待发布') {
-              if (row.apiFlag === '接口开发') {
-                let urlPub = utils.getUrl(`interface-ui/api/publish?id=${row.apiId}`)
-                let pubPar = {
-                  id: ''
+          async pub(row) {
+            const approvalConfig = await queryApprovalConfig()
+            if (approvalConfig[4].configurationStatus === 1) {
+              approvalForm.value.reasonForApplication = ''
+              approvalForm.value.objNum = row.apiId
+              approvalForm.value.objName = row.apiName
+              approvalForm.value.releaseState = row.apiStatus === '待发布' ? 1 : 0
+              approvalModalShow.value = true
+            } else {
+              if (row.apiStatus === '待发布') {
+                if (row.apiFlag === '接口开发') {
+                  let urlPub = utils.getUrl(`interface-ui/api/publish?id=${row.apiId}`)
+                  let pubPar = {
+                    id: ''
+                  }
+                  pubPar.id = row.apiId
+                  axios.post(urlPub, pubPar).then(function (response) {
+                    message.info(`成功发布 ${row.apiName}`)
+                    handlePageChange(paginationReactive.page, paginationReactive.pageSize)
+                  }).catch(function (error) {
+                    message.info('发布失败,请联系管理员')
+                    console.log(error)
+                  })
+                } else {
+                  let urlPub = utils.getUrl('interface/upAndDownLines')
+                  let pubPar = {
+                    apiId: '',
+                    apiStatus: 1
+                  }
+                  pubPar.apiId = row.apiId
+                  axios.post(urlPub, pubPar).then(function (response) {
+                    message.info(`成功发布 ${row.apiName}`)
+                    handlePageChange(paginationReactive.page, paginationReactive.pageSize)
+                  }).catch(function (error) {
+                    message.info('发布失败,请联系管理员')
+                    console.log(error)
+                  })
                 }
-                pubPar.id = row.apiId
-                axios.post(urlPub, pubPar).then(function (response) {
-                  message.info(`成功发布 ${row.apiName}`)
-                  handlePageChange(paginationReactive.page, paginationReactive.pageSize)
-                }).catch(function (error) {
-                  message.info('发布失败,请联系管理员')
-                  console.log(error)
-                })
               } else {
                 let urlPub = utils.getUrl('interface/upAndDownLines')
                 let pubPar = {
                   apiId: '',
-                  apiStatus: 1
+                  apiStatus: 0
                 }
                 pubPar.apiId = row.apiId
                 axios.post(urlPub, pubPar).then(function (response) {
-                  message.info(`成功发布 ${row.apiName}`)
+                  message.info(`成功下线 ${row.apiName}`)
                   handlePageChange(paginationReactive.page, paginationReactive.pageSize)
                 }).catch(function (error) {
-                  message.info('发布失败,请联系管理员')
+                  message.info('下线失败,请联系管理员')
                   console.log(error)
                 })
               }
-            } else {
-              let urlPub = utils.getUrl('interface/upAndDownLines')
-              let pubPar = {
-                apiId: '',
-                apiStatus: 0
-              }
-              pubPar.apiId = row.apiId
-              axios.post(urlPub, pubPar).then(function (response) {
-                message.info(`成功下线 ${row.apiName}`)
-                handlePageChange(paginationReactive.page, paginationReactive.pageSize)
-              }).catch(function (error) {
-                message.info('下线失败,请联系管理员')
-                console.log(error)
-              })
             }
           }
         },
