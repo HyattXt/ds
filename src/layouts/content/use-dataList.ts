@@ -19,8 +19,6 @@ import { reactive, h } from 'vue'
 import { NEllipsis, NIcon } from 'naive-ui'
 import { useI18n } from 'vue-i18n'
 import {
-  HomeOutlined,
-  ProfileOutlined,
   FolderOutlined,
   DatabaseOutlined,
   DesktopOutlined,
@@ -46,17 +44,15 @@ import {
   ApartmentOutlined,
   BarsOutlined,
   CloudServerOutlined,
-  ApiOutlined,
-  PieChartOutlined,
   BarChartOutlined,
-  BoxPlotOutlined,
   ProjectOutlined,
   FormOutlined,
   RadarChartOutlined,
   VerifiedOutlined, UnorderedListOutlined, TagsOutlined, AppstoreTwotone
 } from '@vicons/antd'
-import {SecurityFilled, DesignServicesFilled} from '@vicons/material'
-import { RuleDraft, UserAvatarFilled, UserMultiple } from '@vicons/carbon'
+import {SecurityFilled, DesignServicesFilled, PlaylistAddCheckTwotone} from '@vicons/material'
+import { RuleDraft, UserAvatarFilled, UserMultiple} from '@vicons/carbon'
+import { TextBulletListSquareEdit24Regular, DocumentBulletListClock20Regular, MyLocation16Filled, EditSettings24Regular} from '@vicons/fluent'
 import { RouterLink } from 'vue-router'
 import { useUserStore } from '@/store/user/user'
 import { timezoneList } from '@/common/timezone'
@@ -103,18 +99,11 @@ export function useDataList() {
       {
         label: () => h(NEllipsis, null, { default: () => t('menu.home') }),
         key: 'home',
-        icon: renderIcon(HomeOutlined)
       },
       {
         label: () => h(NEllipsis, null, { default: () => t('menu.project') }),
         key: 'projects',
-        icon: renderIcon(ProfileOutlined),
         children: [
-          /*{
-            label: t('menu.project_overview'),
-            key: `/projects/${projectCode}`,
-            icon: renderIcon(FundProjectionScreenOutlined)
-          },*/
           {
             label: t('menu.workflow'),
             key: 'workflow',
@@ -124,31 +113,8 @@ export function useDataList() {
                 label: t('menu.workflow_relation'),
                 key: `/projects/${projectCode}/workflow/relation`
               }
-              /*{
-                label: t('menu.workflow_definition'),
-                key: `/projects/${projectCode}/workflow-definition`
-              },
-              {
-                label: t('menu.workflow_instance'),
-                key: `/projects/${projectCode}/workflow/instances`
-              }*/
             ]
           }
-          /*          {
-            label: t('menu.task'),
-            key: 'task',
-            icon: renderIcon(SettingOutlined),
-            children: [
-              {
-                label: t('menu.task_definition'),
-                key: `/projects/${projectCode}/task/definitions`
-              },
-              /!*{
-                label: t('menu.task_instance'),
-                key: `/projects/${projectCode}/task/instances`
-              }*!/
-            ]
-          }*/
         ]
       },
       {
@@ -199,8 +165,7 @@ export function useDataList() {
         ]
       },
       {
-        label: () =>
-          h(NEllipsis, null, { default: () => t('menu.data_quality') }),
+        label: () => h(NEllipsis, null, { default: () => t('menu.data_quality') }),
         key: 'data-quality',
         icon: renderIcon(ContainerOutlined),
         children: [
@@ -352,7 +317,6 @@ export function useDataList() {
       {
         label: () => h(NEllipsis, null, { default: () => t('menu.devops') }),
         key: 'devops',
-        icon: renderIcon(BoxPlotOutlined),
         children: [
           {
             label: t('menu.devops_overview'),
@@ -386,12 +350,10 @@ export function useDataList() {
               {
                 label: t('menu.api_manager'),
                 key: '/devops/service/api-manager'
-                //icon: renderIcon(BarsOutlined)
               },
               {
                 label: t('menu.rest_manager'),
                 key: '/devops/rest/rest-manager'
-                //icon: renderIcon(BarsOutlined)
               }
             ]
           },
@@ -405,7 +367,6 @@ export function useDataList() {
       {
         label: () => h(NEllipsis, null, { default: () => t('menu.api') }),
         key: 'service',
-        icon: renderIcon(ApiOutlined),
         children: [
           {
             label: t('menu.api_dev'),
@@ -422,18 +383,12 @@ export function useDataList() {
       {
         label: () => h(NEllipsis, null, { default: () => t('menu.data_assets') }),
         key: 'data-assets',
-        icon: renderIcon(PieChartOutlined),
         children: [
           {
             label: t('menu.assets'),
             key: '/data-assets/assets',
             icon: renderIcon(BarChartOutlined)
           },
-          /*          {
-            label: t('menu.assets_overview'),
-            key: '/data-assets/assets-overview',
-            icon: renderIcon(PieChartOutlined)
-          },*/
           {
             label: t('menu.assets_catalog'),
             key: '/data-assets/assets-catalog',
@@ -499,7 +454,6 @@ export function useDataList() {
       {
         label: () => h(NEllipsis, null, { default: () => t('menu.data_business') }),
         key: 'data-business',
-        icon: renderIcon(ApiOutlined),
         children: [
           {
             label: t('menu.data_property'),
@@ -525,33 +479,6 @@ export function useDataList() {
             label: t('menu.data_userPortrayal'),
             key: '/data-business/userPortrayal',
             icon: renderIcon(UserAvatarFilled)
-          },
-          {
-            label: t('menu.label_examine'),
-            key: 'label-examine',
-            icon: renderIcon(RuleDraft),
-            children: [
-              {
-                label: t('menu.examine_list'),
-                key: '/data-business/label/examine-list'
-              },
-              {
-                label: t('menu.my_examine'),
-                key: '/data-business/label/my-examine'
-              },
-              {
-                label: t('menu.already_examine'),
-                key: '/data-business/label/already-examine'
-              },
-              {
-                label: t('menu.my_approval'),
-                key: '/data-business/label/my-approval'
-              },
-              {
-                label: t('menu.approve_set'),
-                key: '/data-business/label/approve-set'
-              }
-            ]
           }
         ]
       },
@@ -564,6 +491,38 @@ export function useDataList() {
             label: t('menu.project_manager'),
             key: '/project/project-manager',
             icon: renderIcon(ProjectOutlined)
+          }
+        ]
+      },
+      {
+        label: () => h(NEllipsis, null, { default: () => t('menu.data_examine') }),
+        key: 'data-examine',
+        icon: renderIcon(TextBulletListSquareEdit24Regular),
+        children: [
+          {
+            label: t('menu.examine_list'),
+            key: '/data-examine/examine-list',
+            icon: renderIcon(BarsOutlined)
+          },
+          {
+            label: t('menu.my_examine'),
+            key: '/data-examine/my-examine',
+            icon: renderIcon(DocumentBulletListClock20Regular)
+          },
+          {
+            label: t('menu.already_examine'),
+            key: '/data-examine/already-examine',
+            icon: renderIcon(PlaylistAddCheckTwotone)
+          },
+          {
+            label: t('menu.my_approval'),
+            key: '/data-examine/my-approval',
+            icon: renderIcon(MyLocation16Filled)
+          },
+          {
+            label: t('menu.approve_set'),
+            key: '/data-examine/approve-set',
+            icon: renderIcon(EditSettings24Regular)
           }
         ]
       }
@@ -595,30 +554,19 @@ export function useDataList() {
   }
 
   const changeHeaderMenuOptions = (state: any) => {
-    state.headerMenuOptions = state.menuOptions.filter((x: any) => x.key !== 'security' && x.key !== 'data-quality' && x.key !== 'resource' && x.key !== 'datasource' && x.key !== 'project' && x.key !== 'monitor').map(
+    state.headerMenuOptions = state.menuOptions.filter((x: any) => !x.icon).map(
       (item: { label: string; key: string; icon: any }) => {
         return {
           label: item.label,
           key: item.key,
-          // icon: item.icon
         }
       }
     )
   }
   const changeIconMenuOptions = (state: any) => {
-    state.iconMenuOptions = state.menuOptions.filter((item: any) => item.key === 'security' || item.key === 'data-quality' || item.key === 'resource' || item.key === 'datasource' || item.key === 'project' || item.key === 'monitor').map(
+    state.iconMenuOptions = state.menuOptions.filter((item: any) => !!item.icon).map(
       (item: { label: string; key: string; icon: any, children: any }) => {
         return {
-          // label: () =>
-          //   h(
-          //     'a',
-          //     {
-          //       href: '/' + item.key,
-          //       target: '_self',
-          //       rel: 'subsection'
-          //     },
-          //     ''
-          //   ),
           label: () =>
             h(
               RouterLink,
@@ -627,7 +575,6 @@ export function useDataList() {
                   path: '/' + item.key,
                 }
               },
-              //h(NIcon, {size: 20}, { default: () => h(item.icon) })
             ),
           key: item.key,
           icon: item.icon,
@@ -635,7 +582,6 @@ export function useDataList() {
             {
               label: item.label,
               key: item.key,
-              // icon: item.icon
             }
           ]
         }

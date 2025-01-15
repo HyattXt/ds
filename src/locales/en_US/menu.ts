@@ -64,6 +64,7 @@ export default {
   api: 'Api',
   api_dev: 'API development',
   data_business: 'Data Business',
+  data_examine: 'Data Examine',
   data_property: 'Data Property',
   data_dataTags: 'Data DataTags',
   data_userGroup: 'Data UserGroup',

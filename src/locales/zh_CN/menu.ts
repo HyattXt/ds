@@ -64,6 +64,7 @@ export default {
   api: '服务开发',
   api_dev: 'API开发',
   data_business: '资产运营',
+  data_examine: '审批中心',
   data_property: '资产列表',
   data_dataTags: '标签列表',
   data_userGroup: '群组列表',

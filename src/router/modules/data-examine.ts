@@ -24,71 +24,77 @@ const modules = import.meta.glob('/src/views/**/**.tsx')
 const components: { [key: string]: Component } = utils.mapping(modules)
 
 export default {
-  path: '/data-business',
-  name: 'data-business',
-  meta: { title: 'data-business' },
-  redirect: { name: 'property' },
+  path: '/data-examine',
+  name: 'data-examine',
+  meta: { title: 'data-examine' },
+  redirect: { name: 'data-examine-list' },
   component: () => import('@/layouts/content'),
   children: [
     {
-      path: '/data-business/property',
-      name: 'property',
-      component: () => import('@/views/iframe/index.vue'),
+      path: '/data-examine/examine-list',
+      name: 'data-examine-list',
+      component: () => import('@/views/examine/list/index.vue'),
       meta: {
-        title: '资产列表',
-        activeMenu: 'data-business',
-        frameSrc: window.webConfig.VITE_APP_PROD_BUSINESS_URL+'/#/data/property',
+        title: '全部审批-data-examine-list',
+        activeMenu: 'data-examine',
         showSide: true,
         auth: []
       }
     },
     {
-      path: '/data-business/dataTags',
-      name: 'dataTags',
-      component: () => import('@/views/iframe/index.vue'),
+      path: '/data-examine/my-examine',
+      name: 'data-my-examine',
+      component: () => import('@/views/examine/my-examine/index.vue'),
       meta: {
-        title: '标签列表',
-        activeMenu: 'data-business',
-        frameSrc: window.webConfig.VITE_APP_PROD_BUSINESS_URL+'/#/dataTags/index',
+        title: '我的审批-data-my-examine',
+        activeMenu: 'data-examine',
         showSide: true,
         auth: []
       }
     },
     {
-      path: '/data-business/userGroup',
-      name: 'userGroup',
-      component: () => import('@/views/iframe/index.vue'),
+      path: '/data-examine/already-examine',
+      name: 'data-already-examine',
+      component: () => import('@/views/examine/already-examine/index.vue'),
       meta: {
-        title: '群组列表',
-        activeMenu: 'data-business',
-        frameSrc: window.webConfig.VITE_APP_PROD_BUSINESS_URL+'/#/userGroup/index',
+        title: '我已审批-data-already-examine',
+        activeMenu: 'data-examine',
         showSide: true,
         auth: []
       }
     },
     {
-      path: '/data-business/customAnalyse',
-      name: 'customAnalyse',
-      component: () => import('@/views/iframe/index.vue'),
+      path: '/data-examine/examine-detail',
+      name: 'examine-detail',
+      component: () => import('@/views/examine/my-examine/detail.vue'),
       meta: {
-        title: '自定义场景',
-        activeMenu: 'data-business',
-        frameSrc: window.webConfig.VITE_APP_PROD_BUSINESS_URL+'/#/customAnalyse/index',
+        title: '审批明细-examine-detail',
+        activeMenu: 'data-examine',
         showSide: true,
         auth: []
       }
     },
     {
-      path: '/data-business/userPortrayal',
-      name: 'userPortrayal',
-      component: () => import('@/views/iframe/index.vue'),
+      path: '/data-examine/my-approval',
+      name: 'data-my-approval',
+      component: () => import('@/views/examine/my-approval/index.vue'),
       meta: {
-        title: '用户画像',
-        activeMenu: 'data-business',
-        frameSrc: window.webConfig.VITE_APP_PROD_BUSINESS_URL+'/#/userPortrayal/index',
+        title: '我的申请-data-my-approval',
+        activeMenu: 'data-examine',
         showSide: true,
         auth: []
       }
-    }
+    },
+    {
+      path: '/data-examine/approve-set',
+      name: 'data-approve-set',
+      component: () => import('@/views/examine/approve-set/index.vue'),
+      meta: {
+        title: '审批配置-data-approve-set',
+        activeMenu: 'data-examine',
+        showSide: true,
+        auth: []
+      }
+    },
   ]
 }

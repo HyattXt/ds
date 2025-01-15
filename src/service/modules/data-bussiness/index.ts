@@ -87,3 +87,27 @@ export function insertApproval(data: UpdateApprovalReq): any {
     transformRequest: (params) => JSON.stringify(params)
   })
 }
+
+export function queryListUrl(data: any): any {
+  return axios({
+    url: '/sqlLineageLikeCollection/queryList',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    transformRequest: (params) => JSON.stringify(params)
+  })
+}
+
+export function updateLikeCollection(data: any): any {
+  return axios({
+    url: '/sqlLineageLikeCollection/update',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    transformRequest: (params) => JSON.stringify(params)
+  })
+}
