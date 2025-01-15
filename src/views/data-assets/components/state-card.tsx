@@ -220,7 +220,7 @@ const StateCard = defineComponent({
               <div style={{height: '260px', 'overflow-y': 'auto'}} class={styles['scrollable-div']}>
                 {
                   collectData.map((item: any) =>
-                      <div style="padding: 16px; border-bottom: 1px solid rgb(240, 240, 240);"
+                      <div style="padding: 8px 16px; border-bottom: 1px solid rgb(240, 240, 240);"
                            class={styles['ant-card-body']}>
                         <div class={[styles.FBH, styles.mb8]}>
                           <svg style="position: relative; top: 2px" class="icon" viewBox="0 0 1024 1024" version="1.1"
@@ -274,7 +274,7 @@ const StateCard = defineComponent({
               <div style={{height: '260px', 'overflow-y': 'auto'}} class={styles['scrollable-div']}>
                 {
                   likeData.map((item: any) =>
-                      <div style="padding: 16px; border-bottom: 1px solid rgb(240, 240, 240);" class={styles['ant-card-body']}>
+                      <div style="padding: 8px 16px; border-bottom: 1px solid rgb(240, 240, 240);" class={styles['ant-card-body']}>
                         <div class={[styles.FBH, styles.mb8]}>
                           <svg style="position: relative; top: 2px" class="icon" viewBox="0 0 1024 1024" version="1.1"
                                xmlns="http://www.w3.org/2000/svg" p-id="7015" width="20" height="20">
