@@ -285,7 +285,7 @@ function queryCollect () {
 async function handleLikeCollection(ifCollection, initLike, initCollection, tableName) {
   let params = {
     userId: userStore.getUserInfo.id,
-    sqllineageName: tableName,
+    sqlLineageName: tableName,
     likeState: initLike,
     collectionState: initCollection,
   }

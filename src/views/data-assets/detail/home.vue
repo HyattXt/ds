@@ -82,7 +82,7 @@ const tableDetail = ref({
   isLiked: 0,
   totalCollections: 0,
   totalLikes: 0,
-  sqllineageName: '',
+  sqlLineageName: '',
   isCollected: 0
 })
 
@@ -93,7 +93,7 @@ function goBack(){
 async function handleLikeCollection(ifCollection, initValue) {
   let params = {
     userId: userStore.getUserInfo.id,
-    sqllineageName: tableName.value,
+    sqlLineageName: tableName.value,
     likeState: tableDetail.value?.isLiked ? 1 : 0,
     collectionState: tableDetail.value?.isCollected ? 1 : 0,
   }
@@ -109,7 +109,7 @@ async function handleLikeCollection(ifCollection, initValue) {
 async function initData() {
   let params = {
     userId: userStore.getUserInfo.id,
-    sqllineageName: tableName.value,
+    sqlLineageName: tableName.value,
   }
   const data = await queryListUrl(params)
   tableDetail.value = data.totalList[0]

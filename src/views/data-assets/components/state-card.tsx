@@ -78,7 +78,7 @@ const StateCard = defineComponent({
     async function initData(likeState: number, collectionState: number) {
       let params = {
         userId: (userStore.getUserInfo as any).id,
-        sqllineageName: '',
+        sqlLineageName: '',
         likeState: likeState,
         collectionState: collectionState
       }
@@ -129,7 +129,7 @@ const StateCard = defineComponent({
           return `${index + 1}`;
         }
       },
-      { title: '表名', key: 'sqllineageName'},
+      { title: '表名', key: 'sqlLineageName'},
       { title: '收藏时间', key: 'collectionTime' },
       { title: '收藏数', key: 'totalCollections', width: 100  }
     ]
@@ -143,7 +143,7 @@ const StateCard = defineComponent({
           return `${index + 1}`;
         }
       },
-      { title: '表名', key: 'sqllineageName'},
+      { title: '表名', key: 'sqlLineageName'},
       { title: '点赞时间', key: 'likeTime' },
       { title: '点赞数', key: 'totalLikes', width: 100 },
     ]
@@ -238,7 +238,7 @@ const StateCard = defineComponent({
                           </svg>
                           <div class={[styles.FBH, styles.FBJB, styles.FB1]}>
                     <span class={[styles.color65, styles.pr16, styles.omit, styles.ml8]}
-                          style="width: 220px;">{item.sqllineageName}</span>
+                          style="width: 220px;">{item.sqlLineageName}</span>
                             <span class={[styles.color45, styles.nowrap]}>{'收藏时间: ' + item.collectionTime}</span>
                           </div>
                         </div>
@@ -290,7 +290,7 @@ const StateCard = defineComponent({
                                 fill="#FFFFFF" p-id="7019"></path>
                           </svg>
                           <div class={[styles.FBH, styles.FBJB, styles.FB1]}>
-                            <span class={[styles.color65, styles.pr16, styles.omit, styles.ml8]} style="width: 220px;">{item.sqllineageName}</span>
+                            <span class={[styles.color65, styles.pr16, styles.omit, styles.ml8]} style="width: 220px;">{item.sqlLineageName}</span>
                             <span class={[styles.color45, styles.nowrap]}>{'点赞时间: ' + item.likeTime}</span>
                           </div>
                         </div>
