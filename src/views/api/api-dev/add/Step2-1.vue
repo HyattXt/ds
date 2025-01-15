@@ -88,10 +88,12 @@
 
   function queryDataSource() {
       formValue.value.apiDatasourceId = ''
+      formValue.value.apiDatasourceTable = ''
+      colList.value = []
       const url = utils.getUrl('apiService/getDataSource?type='+formValue.value.apiDatasourceType)
       axios.get(url).then(function (response) {
-
-      sList.value = response.data.data
+        sList.value = response.data.data
+        emit('nextStep2_1', formValue.value)
     })
   }
 
@@ -150,7 +152,6 @@
     if (!!route.query.apiId) {
       getInitData()
     }
-    console.log("sql")
   })
 </script>
 

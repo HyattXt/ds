@@ -234,7 +234,9 @@ async function analysisSql() {
 }
 
 function formSubmit() {
-  if(formValue.value.apiDatasourceId === ''){message.error('请先选择数据源!')}
+  if((history.state.type === '自定义SQL' && !formValue.value.apiDatasourceTable) || (history.state.type === '标签API' && !formValue.value.dataBaseLabelId)){
+    message.error('请先选择数据源!')
+  }
   else{
     loading.value = true
     let tmpRequestBody = requestParams.value.reduce((obj, item) => {

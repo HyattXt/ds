@@ -74,12 +74,12 @@
   const rules = {
       dataBaseLabelClassTypeNum: {
           required: true,
-          message: '请选择数据源类型',
+          message: '请选择标签类型',
           trigger: 'blur'
       },
     dataBaseLabelId: {
           required: true,
-          message: '请选择数据源',
+          message: '请选择标签名称',
           trigger: 'blur'
       }
   }
@@ -101,12 +101,15 @@
 
   function queryDataSource() {
       formValue.value.dataBaseLabelId = ''
+      formValue.value.apiDatasourceTable = ''
+      colList.value = []
       const url = utils.getUrl('interface/getDataBaseLabel')
       let params = {
         labelClassNum: formValue.value.dataBaseLabelClassTypeNum
       }
       axios.post(url, params).then(function (response) {
       sList.value = response.data.data
+      emit('nextStep2_1', formValue.value)
     })
   }
 
@@ -119,13 +122,13 @@
     }
     axios.post(url, params).then(function (response) {
       colList.value = response.data.data
+      emit('nextStep2_1', formValue.value)
     })
   }
 
-  async function submitValue(){
+  function submitValue(){
     formValue.value.apiDatasourceTable = sList.value.find((obj: any) => obj.labelName === formValue.value.dataBaseLabelId).tableName
-    await queryCol()
-    emit('nextStep2_1', formValue.value)
+    queryCol()
   }
 
   function getInitData() {
