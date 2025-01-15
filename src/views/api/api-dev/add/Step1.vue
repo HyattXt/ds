@@ -8,17 +8,18 @@
     require-mark-placement="left"
     style="margin: 40px 80px 0 80px"
   >
-    <n-form-item label="API名称" path="apiName">
+    <n-grid :cols="24" :x-gap="24">
+    <n-form-item-gi :span="24" label="API名称" path="apiName">
       <n-input v-model:value="formValue.apiName" placeholder="请输入名称" />
-    </n-form-item>
-    <n-form-item label="API路径" path="apiPath">
+    </n-form-item-gi>
+    <n-form-item-gi :span="24" label="API路径" path="apiPath">
       <n-input
         v-model:value="formValue.apiPath"
         placeholder="请输入路径 /api/开头"
         :disabled="isDisable"
       />
-    </n-form-item>
-    <n-form-item label="API目录" path="apiMenu">
+    </n-form-item-gi>
+    <n-form-item-gi :span="12" label="API目录" path="apiMenu">
       <n-tree-select
           v-model:value="formValue.apiTreeId"
           default-value="1"
@@ -30,44 +31,44 @@
           :default-expanded-keys="[1]"
           :render-prefix="menuIcon"
       />
-    </n-form-item>
-    <n-form-item label="请求方式" path="apiMethod">
+    </n-form-item-gi>
+    <n-form-item-gi :span="12" label="请求方式" path="apiMethod">
       <n-select
         v-model:value="formValue.apiMethod"
         placeholder="请选择"
         :options="[{ label: 'POST', value: 'POST' }]"
         default-value="POST"
       />
-    </n-form-item>
-    <n-form-item label="创建人" path="apiCreator">
+    </n-form-item-gi>
+    <n-form-item-gi :span="12" label="创建人" path="apiCreator">
       <n-input v-model:value="formValue.apiCreator" placeholder="请输入" />
-    </n-form-item>
-    <n-space justify="space-between">
-      <n-input-group>
-        <n-form-item label="频次限制" path="apiFrequency">
+    </n-form-item-gi>
+      <n-form-item-gi :span="12" label="频次限制" path="apiFrequency">
+        <n-input-group>
           <n-input-number
             v-model:value="formValue.apiFrequency"
             placeholder="请输入"
+            :style="{ width: '100%' }"
           />
-        </n-form-item>
-        <n-input-group-label>次/秒</n-input-group-label>
+          <n-input-group-label>次/秒</n-input-group-label>
       </n-input-group>
-    </n-space>
-    <n-form-item label="描述" path="apiComment">
+    </n-form-item-gi>
+    <n-form-item-gi :span="24" label="描述" path="apiComment">
       <n-input
         v-model:value="formValue.apiComment"
         type="textarea"
         :rows="2"
         placeholder="描述"
       />
-    </n-form-item>
+    </n-form-item-gi>
+    </n-grid>
+  </n-form>
     <n-space justify="center" style="margin-top: 30px">
         <router-link to="/service/api-dev">
           <n-button tertiary >返回</n-button>
         </router-link>
         <n-button color="#0099CB" type="primary" @click="formSubmit">下一步</n-button>
     </n-space>
-  </n-form>
 </template>
 
 <script lang="ts" setup>

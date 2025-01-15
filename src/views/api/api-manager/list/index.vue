@@ -217,7 +217,7 @@ const columns = ({ play }, { pub }, { auth }) => {
     {
       title: 'API类型',
       key: 'apiFlag',
-      width: 80,
+      width: 100,
       align: 'center'
     },
     {
@@ -273,12 +273,16 @@ const rowKey = (rowData) => {
 
 const stateOptions = [
   {
-    label: '接口开发',
+    label: '自定义SQL',
     value: '1'
   },
   {
-    label: '接口注册',
+    label: '注册API',
     value: '2'
+  },
+  {
+    label: '标签API',
+    value: '3'
   }
 ]
 const statusOptions = [
@@ -413,10 +417,13 @@ function handlePageChange(currentPage, pageSize) {
       })
       dataRef.value.forEach((item) => {
         if (item.apiFlag === 1) {
-          item.apiFlag = '接口开发'
+          item.apiFlag = '自定义SQL'
         }
         if (item.apiFlag === 2) {
-          item.apiFlag = '接口注册'
+          item.apiFlag = '注册API'
+        }
+        if (item.apiFlag === 3) {
+          item.apiFlag = '标签API'
         }
       })
       paginationReactive.page = currentPage
@@ -505,7 +512,7 @@ const columnsRef = ref(
               approvalModalShow.value = true
             } else {
               if (row.apiStatus === '待发布') {
-                if (row.apiFlag === '接口开发') {
+                if (row.apiFlag === '自定义SQL') {
                   let urlPub = utils.getUrl(`interface-ui/api/publish?id=${row.apiId}`)
                   let pubPar = {
                     id: ''

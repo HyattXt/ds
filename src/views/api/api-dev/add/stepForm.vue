@@ -108,7 +108,7 @@
     params2.value.apiFrequency = value.apiFrequency
     params2.value.apiTimeout = value.apiTimeout
     params2.value.apiTreeId = value.apiTreeId
-
+    params2.value.apiFlag = history.state.type === '标签API' ? 3 : 1
     if (currentTab.value < 4) {
       currentTab.value += 1
     }
@@ -125,6 +125,8 @@
     params2.value.apiDatasourceId = value.apiDatasourceId
     params2.value.apiDatasourceTable = value.apiDatasourceTable
     params2.value.apiDatasourceType = value.apiDatasourceType
+    params2.value.dataBaseLabelClassTypeNum = value.dataBaseLabelClassTypeNum
+    params2.value.dataBaseLabelId = value.dataBaseLabelId
     params2.value.bodyArray = value.bodyArray
     params2.value.fieldsInfo = value.fieldsInfo
     params2.value.requestDemo = value.requestDemo

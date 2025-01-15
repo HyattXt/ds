@@ -169,16 +169,21 @@
           key: '注册API',
           API类型: '注册API',
           描述: '支持将已有Web服务注册到平台进行统一管理'
-        }
+        },
+        {
+          key: '标签API',
+          API类型: '标签API',
+          描述: '获取标签系统已有标签，生成API对外提供数据服务'
+        },
       ]"
       @update:checked-row-keys="handleCheck"
       :default-checked-row-keys="['自定义SQL']"
       style="margin-top: 10px"
     />
     <template #footer>
-      <n-button color="#0099CB" type="primary" size="small" @click="createApi"
-        >确定</n-button
-      >
+      <n-button color="#0099CB" type="primary" size="small" @click="createApi">
+        确定
+      </n-button>
     </template>
   </el-dialog>
 </template>
@@ -230,7 +235,7 @@
     {
       label: 'API类型',
       prop: 'apiFlag',
-      width: 80
+      width: 100
     },
     {
       label: '已绑定资产运营',
@@ -371,12 +376,16 @@
 
   const stateOptions = [
     {
-      label: '接口开发',
+      label: '自定义SQL',
       value: '1'
     },
     {
-      label: '接口注册',
+      label: '注册API',
       value: '2'
+    },
+    {
+      label: '标签API',
+      value: '3'
     }
   ]
   const statusOptions = [
@@ -578,10 +587,13 @@
         })
         dataRef.value.forEach((item) => {
           if (item.apiFlag === 1) {
-            item.apiFlag = '接口开发'
+            item.apiFlag = '自定义SQL'
           }
           if (item.apiFlag === 2) {
-            item.apiFlag = '接口注册'
+            item.apiFlag = '注册API'
+          }
+          if (item.apiFlag === 3) {
+            item.apiFlag = '标签API'
           }
         })
         paginationReactive.page = currentPage
@@ -609,10 +621,13 @@
   }
 
   function createApi() {
-    if (checkRow.value[0] === '自定义SQL') {
-      router.push({ path: '/service/api-dev-step' })
-    } else {
+    if (checkRow.value[0] === '注册API') {
       router.push({ path: '/service/api-register' })
+    } else {
+      router.push({
+        path: '/service/api-dev-step',
+        state: {type: checkRow.value[0]}
+      })
     }
   }
 
@@ -723,15 +738,16 @@
   }
 
   function editMetadata(row) {
-    if (row.apiFlag === '接口开发') {
+    if (row.apiFlag === '注册API') {
       router.push({
-        path: '/service/api-dev-step',
+        path: '/service/api-register',
         query: { apiId: row.apiId }
       })
     } else {
       router.push({
-        path: '/service/api-register',
-        query: { apiId: row.apiId }
+        path: '/service/api-dev-step',
+        query: { apiId: row.apiId },
+        state: {type: checkRow.value[0]}
       })
     }
   }

@@ -3,7 +3,7 @@
     <n-gi span="4">
       <n-card size="small">
         <crudSplit class="titleSplit" title="配置数据源"/>
-        <Step @nextStep2_1="nextStep2_1"></Step>
+        <component :is="currentStepComponent" @nextStep2_1="nextStep2_1"/>
       </n-card>
     </n-gi>
     <n-gi span="10">
@@ -48,7 +48,8 @@ import {onMounted, ref, h } from 'vue'
 import {NInput, NCheckbox, useMessage} from 'naive-ui'
 import { Codemirror } from 'vue-codemirror'
 import { sql } from '@codemirror/lang-sql'
-import Step from './Step2-1.vue'
+import StepSql from './Step2-1.vue'
+import StepLabel from './Step2-1-label.vue'
 import { PlayCircleOutlined } from '@vicons/antd'
 import {useRoute} from "vue-router";
 import axios from "axios";
@@ -62,6 +63,12 @@ const route = useRoute()
 const activeName = ref('请求参数')
 const returnParams = ref([])
 const requestParams = ref([])
+const currentStep = ref('step1')
+const componentMap = {
+  自定义SQL: StepSql,
+  标签API: StepLabel,
+};
+const currentStepComponent = ref(componentMap[history.state.type])
 const formValue = ref({
   codeValue: '',
   requestBody: '',
@@ -195,6 +202,9 @@ function nextStep2_1(value) {
   formValue.value.apiDatasourceId = value.apiDatasourceId
   formValue.value.apiDatasourceType = value.apiDatasourceType
   formValue.value.apiDatasourceTable = value.apiDatasourceTable
+  if(history.state.type === "标签API") {
+    formValue.value.codeValue = 'SELECT tag_id,tag_value,dw FROM ' + value.apiDatasourceTable
+  }
 }
 
 async function analysisSql() {
@@ -278,6 +288,8 @@ onMounted(() => {
   if (route.query.apiId !== undefined) {
     getInitData()
   }
+  console.log(history.state.type)
+  console.log(currentStep.value)
 })
 </script>
 

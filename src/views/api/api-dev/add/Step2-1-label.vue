@@ -1,20 +1,22 @@
 <template>
   <n-scrollbar  style="height: 526px">
     <n-form :model="formValue" label-placement="top" :rules="rules" ref="form2Ref">
-      <n-form-item label="数据源类型" path="apiDatasourceType">
+      <n-form-item label="标签类型" path="dataBaseLabelClassTypeNum">
         <n-select
-          v-model:value="formValue.apiDatasourceType"
+          v-model:value="formValue.dataBaseLabelClassTypeNum"
           size="small"
           placeholder="请选择"
-          :options="[{ label: 'MYSQL', value: 0 },{ label: 'POSTGRESQL', value: 1 },{ label: 'ORACLE', value: 5 },{ label: 'SQLSERVER', value: 6 },{ label: 'DM', value: 12 }]"
+          :options="sourceType"
+          label-field="name"
+          value-field="num"
           @update:value="queryDataSource"
         />
       </n-form-item>
-      <n-form-item label="数据源" path="apiDatasourceId">
+      <n-form-item label="标签名称" path="dataBaseLabelId">
         <n-select
-            v-model:value="formValue.apiDatasourceId"
-            label-field="name"
-            value-field="id"
+            v-model:value="formValue.dataBaseLabelId"
+            label-field="labelName"
+            value-field="labelName"
             size="small"
             filterable
             :options="sList"
@@ -24,13 +26,8 @@
       <n-form-item label="数据表" path="apiDatasourceTable">
         <n-select
           v-model:value="formValue.apiDatasourceTable"
-          label-field="TABLE_NAME"
-          value-field="TABLE_NAME"
           size="small"
-          filterable
-          :options="tList"
-          @click="queryTab"
-          @update:value="queryCol(formValue.apiDatasourceTable)"
+          disabled
         />
       </n-form-item>
       <n-form-item label="字段预览">
@@ -61,67 +58,69 @@
   const route = useRoute()
   const form2Ref: any = ref(null)
   const message = useMessage()
-  const tList = ref([])
   const sList = ref([])
   const colList = ref([])
 
   const formValue = ref({
+    dataBaseLabelClassTypeNum: '',
+    dataBaseLabelId: '',
     apiDatasourceType: '',
     apiDatasourceId: '',
     apiDatasourceTable: ''
   })
 
+  const sourceType = ref([])
+
   const rules = {
-      apiDatasourceType: {
+      dataBaseLabelClassTypeNum: {
           required: true,
           message: '请选择数据源类型',
-          trigger: 'blur',
-          type: 'number'
+          trigger: 'blur'
       },
-    apiDatasourceId: {
+    dataBaseLabelId: {
           required: true,
           message: '请选择数据源',
-          trigger: 'blur',
-          type: 'number'
+          trigger: 'blur'
       }
   }
 
-  function queryDataSource() {
-      formValue.value.apiDatasourceId = ''
-      const url = utils.getUrl('apiService/getDataSource?type='+formValue.value.apiDatasourceType)
-      axios.get(url).then(function (response) {
+  function getDataWarehouse() {
+    const url = utils.getUrl('apiService/getDataWarehouse')
+    axios.post(url).then(function (response) {
+      formValue.value.apiDatasourceType = response.data.data[0].type
+      formValue.value.apiDatasourceId = response.data.data[0].id
+    })
+  }
 
+  function querySourceType() {
+    const url = utils.getUrl('interface/getDataBaseLabelClass')
+    axios.post(url).then(function (response) {
+      sourceType.value = response.data.data
+    })
+  }
+
+  function queryDataSource() {
+      formValue.value.dataBaseLabelId = ''
+      const url = utils.getUrl('interface/getDataBaseLabel')
+      let params = {
+        labelClassNum: formValue.value.dataBaseLabelClassTypeNum
+      }
+      axios.post(url, params).then(function (response) {
       sList.value = response.data.data
     })
   }
 
-  function queryTab() {
-    const url = utils.getUrl('apiService/getTables')
-    let params = {
-      type : formValue.value.apiDatasourceType,
-      id : formValue.value.apiDatasourceId
-    }
-    axios.post(url,params).then(function (response) {
-
-      tList.value = response.data.data
-    })
-  }
-
-  function queryCol(table: string) {
+  function submitValue(){
+    formValue.value.apiDatasourceTable = sList.value?.find((obj: any) => obj.labelName === formValue.value.dataBaseLabelId).tableName
     const url = utils.getUrl('apiService/getColumnsByTable')
     const params = {
       type : formValue.value.apiDatasourceType,
       id : formValue.value.apiDatasourceId,
-      tableName: table
+      tableName: formValue.value.apiDatasourceTable
     }
     axios.post(url, params).then(function (response) {
-
       colList.value = response.data.data
     })
-      submitValue()
-  }
-
-  function submitValue(){
     emit('nextStep2_1', formValue.value)
   }
 
@@ -133,12 +132,10 @@
     axios
         .post(url, params)
         .then(function (response) {
-          formValue.value.apiDatasourceType = response.data.obj.apiDatasourceType
+          formValue.value.dataBaseLabelClassTypeNum = response.data.obj.dataBaseLabelClassTypeNum
           queryDataSource()
-          formValue.value.apiDatasourceId = response.data.obj.apiDatasourceId
-          queryTab()
+          formValue.value.dataBaseLabelId = response.data.obj.dataBaseLabelId
           formValue.value.apiDatasourceTable = response.data.obj.apiDatasourceTable
-
           queryCol(formValue.value.apiDatasourceTable)
         })
         .catch(function (error) {
@@ -150,7 +147,8 @@
     if (!!route.query.apiId) {
       getInitData()
     }
-    console.log("sql")
+    getDataWarehouse()
+    querySourceType()
   })
 </script>
 
