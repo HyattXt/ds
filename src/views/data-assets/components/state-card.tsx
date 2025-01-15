@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {defineComponent, PropType} from 'vue'
+import {defineComponent, onMounted, PropType} from 'vue'
 import { NDataTable, NGrid, NGi, NSpace, NSelect } from 'naive-ui'
 import LineBox from '@/components/chart/modules/LineBox'
 import Card from '@/components/card'
@@ -24,6 +24,11 @@ import { ref } from 'vue'
 import CrudHead from "@/components/cue/crud-header.vue"
 import {SelectMixedOption} from "naive-ui/lib/select/src/interface";
 import {RowData} from "naive-ui/es/data-table/src/interface";
+import utils from "@/utils";
+import axios from "axios";
+import {useUserStore} from "@/store/user/user";
+import {queryListUrl} from "@/service/modules/data-bussiness";
+import styles from './index.module.scss'
 
 const props = {
   title: {
@@ -66,13 +71,31 @@ const StateCard = defineComponent({
     }
 
     const { t } = useI18n()
-    const datePickerRange = ref(
-      [new Date(new Date().setHours(0, 0, 0, 0)).getTime() - 6 * 24 * 60 * 60 * 1000,
-      new Date(new Date().setHours(0, 0, 0, 0)).getTime() + 24 * 60 * 60 * 1000]
-    )
-    // 在组件挂载时动态生成组件
+    const userStore = useUserStore()
+    const likeData = ref([])
+    const collectData: any = ref([])
 
-    return { onUpdategetInterfaceTop10Data, onUpdategetAssetOverviewLineData, t, datePickerRange }
+    async function initData(likeState: number, collectionState: number) {
+      let params = {
+        userId: (userStore.getUserInfo as any).id,
+        sqllineageName: '',
+        likeState: likeState,
+        collectionState: collectionState
+      }
+      const data = await queryListUrl(params)
+      if(likeState) {
+        likeData.value = data.totalList
+      } else {
+        collectData.value = data.totalList
+      }
+    }
+
+    onMounted( () => {
+      initData(1, 0)
+      initData(0, 1)
+    })
+
+    return { onUpdategetInterfaceTop10Data, onUpdategetAssetOverviewLineData, t, collectData, likeData}
   },
 
   render() {
@@ -85,17 +108,47 @@ const StateCard = defineComponent({
       AssetOverviewData,
       AssetOverviewLineData,
       onUpdategetInterfaceTop10Data,
-      onUpdategetAssetOverviewLineData
+      onUpdategetAssetOverviewLineData,
+      collectData,
+      likeData
     } = this
 
-
-
-    const ApiTop10DataHeader = ref([
+    const ApiTop10DataHeader = [
       { title: '排名', key: '排名', width: 60 },
       { title: '接口地址', key: '接口地址' },
       { title: '接口类型', key: '接口类型' },
       { title: '接口访问次数', key: '接口访问次数' },
-    ]);
+    ]
+
+    const collectCol = [
+      {
+        title: '#',
+        key: 'key',
+        width: 40,
+        render: (_: any, index: any) => {
+          return `${index + 1}`;
+        }
+      },
+      { title: '表名', key: 'sqllineageName'},
+      { title: '收藏时间', key: 'collectionTime' },
+      { title: '收藏数', key: 'totalCollections', width: 100  }
+    ]
+
+    const likeCol = [
+      {
+        title: '#',
+        key: 'key',
+        width: 40,
+        render: (_: any, index: any) => {
+          return `${index + 1}`;
+        }
+      },
+      { title: '表名', key: 'sqllineageName'},
+      { title: '点赞时间', key: 'likeTime' },
+      { title: '点赞数', key: 'totalLikes', width: 100 },
+    ]
+
+
     return (
 
       <div>
@@ -156,28 +209,133 @@ const StateCard = defineComponent({
             </Card>
           </NGi>
           <NGi span={1}>
-            <Card title={'数据表总数'} style={{ height: '300px' }}>
-              {AssetOverviewLineData.length > 0 && <LineBox data={AssetOverviewLineData} title='' label='totalTables' />}
+            <Card style={{height: '300px'}}>
+              <NSpace justify='space-between' style={{height: '40px'}}>
+                <p style="font-size:16px;">我的收藏</p>
+                <router-link to="/data-assets/assets-catalog?type=collect&back=true"
+                             style={{'text-decoration': 'none', 'color': '#0974f1'}}>
+                  更多 &gt;
+                </router-link>
+              </NSpace>
+              <div style={{height: '260px', 'overflow-y': 'auto'}} class={styles['scrollable-div']}>
+                {
+                  collectData.map((item: any) =>
+                      <div style="padding: 16px; border-bottom: 1px solid rgb(240, 240, 240);"
+                           class={styles['ant-card-body']}>
+                        <div class={[styles.FBH, styles.mb8]}>
+                          <svg style="position: relative; top: 2px" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                               xmlns="http://www.w3.org/2000/svg" p-id="7015" width="20" height="20">
+                            <path
+                                d="M102.4 179.2a76.8 76.8 0 0 1 76.8-76.8h665.6a76.8 76.8 0 0 1 76.8 76.8v665.6a76.8 76.8 0 0 1-76.8 76.8H179.2a76.8 76.8 0 0 1-76.8-76.8V179.2z"
+                                fill="#1677FF" p-id="7016"></path>
+                            <path
+                                d="M102.4 332.8a76.8 76.8 0 0 1 76.8-76.8h665.6a76.8 76.8 0 0 1 76.8 76.8v512a76.8 76.8 0 0 1-76.8 76.8H179.2a76.8 76.8 0 0 1-76.8-76.8V332.8z"
+                                fill="#FFFFFF" fill-opacity=".35" p-id="7017"></path>
+                            <path d="M332.8 256h358.4v51.2H332.8v-51.2z" fill="#FFFFFF" p-id="7018"></path>
+                            <path
+                                d="M320 588.8V384h-51.2v204.8H102.4v51.2h166.4v281.6h51.2V640h166.4v281.6h51.2V640h166.4v281.6h51.2V640h166.4v-51.2H320z"
+                                fill="#FFFFFF" p-id="7019"></path>
+                          </svg>
+                          <div class={[styles.FBH, styles.FBJB, styles.FB1]}>
+                    <span class={[styles.color65, styles.pr16, styles.omit, styles.ml8]}
+                          style="width: 220px;">{item.sqllineageName}</span>
+                            <span class={[styles.color45, styles.nowrap]}>{'收藏时间: ' + item.collectionTime}</span>
+                          </div>
+                        </div>
+                        <div>
+                          <div class={[styles.FBH, styles.FBJB, styles.FBAC]}>
+                            <div style="height: 22px; overflow: hidden; padding-right: 160px;"></div>
+                            <div class="color45 nowrap mb4 FBH FBAC">
+                              <svg style="position: relative; top: 2px" class="icon" viewBox="0 0 1024 1024"
+                                   xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+                                <path
+                                    d="M335.008 916.629333c-35.914667 22.314667-82.88 10.773333-104.693333-25.557333a77.333333 77.333333 0 0 1-8.96-57.429333l46.485333-198.24a13.141333 13.141333 0 0 0-4.021333-12.864l-152.16-132.586667c-31.605333-27.52-35.253333-75.648-8.234667-107.733333a75.68 75.68 0 0 1 51.733333-26.752L354.848 339.2c4.352-0.362667 8.245333-3.232 10.026667-7.594667l76.938666-188.170666c16.032-39.2 60.618667-57.92 99.52-41.461334a76.309333 76.309333 0 0 1 40.832 41.461334l76.938667 188.16c1.781333 4.373333 5.674667 7.253333 10.026667 7.605333l199.712 16.277333c41.877333 3.413333 72.885333 40.458667 69.568 82.517334a76.938667 76.938667 0 0 1-26.08 51.978666l-152.16 132.586667c-3.541333 3.082667-5.141333 8.074667-4.021334 12.853333l46.485334 198.24c9.621333 41.013333-15.36 82.336-56.138667 92.224a75.285333 75.285333 0 0 1-57.525333-9.237333l-170.976-106.24a11.296 11.296 0 0 0-12.010667 0l-170.986667 106.24z"
+                                    fill="#bfbfbf"></path>
+                              </svg>
+                              <span style="padding-left: 4px">{item.totalCollections}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                  )
+                }
+              </div>
             </Card>
           </NGi>
           <NGi span={1}>
-            <Card title={'数据存储量'} style={{ height: '300px' }}>
-              {AssetOverviewLineData.length > 0 && <LineBox data={AssetOverviewLineData} title='' label='dataSize' />}
+            <Card style={{height: '300px'}}>
+              <NSpace justify='space-between' style={{height: '40px'}}>
+                <p style="font-size:16px;">我的点赞</p>
+                <router-link to="/data-assets/assets-catalog?type=like&back=true"
+                             style={{'text-decoration': 'none', 'color': '#0974f1'}}>
+                  更多 &gt;
+                </router-link>
+              </NSpace>
+              <div style={{height: '260px', 'overflow-y': 'auto'}} class={styles['scrollable-div']}>
+                {
+                  likeData.map((item: any) =>
+                      <div style="padding: 16px; border-bottom: 1px solid rgb(240, 240, 240);" class={styles['ant-card-body']}>
+                        <div class={[styles.FBH, styles.mb8]}>
+                          <svg style="position: relative; top: 2px" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                               xmlns="http://www.w3.org/2000/svg" p-id="7015" width="20" height="20">
+                            <path
+                                d="M102.4 179.2a76.8 76.8 0 0 1 76.8-76.8h665.6a76.8 76.8 0 0 1 76.8 76.8v665.6a76.8 76.8 0 0 1-76.8 76.8H179.2a76.8 76.8 0 0 1-76.8-76.8V179.2z"
+                                fill="#1677FF" p-id="7016"></path>
+                            <path
+                                d="M102.4 332.8a76.8 76.8 0 0 1 76.8-76.8h665.6a76.8 76.8 0 0 1 76.8 76.8v512a76.8 76.8 0 0 1-76.8 76.8H179.2a76.8 76.8 0 0 1-76.8-76.8V332.8z"
+                                fill="#FFFFFF" fill-opacity=".35" p-id="7017"></path>
+                            <path d="M332.8 256h358.4v51.2H332.8v-51.2z" fill="#FFFFFF" p-id="7018"></path>
+                            <path
+                                d="M320 588.8V384h-51.2v204.8H102.4v51.2h166.4v281.6h51.2V640h166.4v281.6h51.2V640h166.4v281.6h51.2V640h166.4v-51.2H320z"
+                                fill="#FFFFFF" p-id="7019"></path>
+                          </svg>
+                          <div class={[styles.FBH, styles.FBJB, styles.FB1]}>
+                            <span class={[styles.color65, styles.pr16, styles.omit, styles.ml8]} style="width: 220px;">{item.sqllineageName}</span>
+                            <span class={[styles.color45, styles.nowrap]}>{'点赞时间: ' + item.likeTime}</span>
+                          </div>
+                        </div>
+                        <div>
+                          <div class={[styles.FBH, styles.FBJB, styles.FBAC]}>
+                            <div style="height: 22px; overflow: hidden; padding-right: 160px;"></div>
+                            <div class="color45 nowrap mb4 FBH FBAC">
+                              <svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="15" height="15">
+                                <path d="M948.4 407.2c-29.2-35.5-76.9-35.5-92.6-35.5H730c10.2-55.2 18.9-119.4 0.2-187.1-12.8-46.6-36.3-79.7-72-101.1-18.7-11.2-38.1-16.9-57.8-16.9-51.8 0-90.6 38.4-96.4 95.7-2.2 21.4-4.2 41.7-9.3 59.1-19 63.9-65.4 112.7-108.3 151.8-16 14.4-33.1 40.2-33.3 69.2-0.6 77.6-0.7 155.5-0.7 235.1l-0.1 141.4c-0.2 47.3 25 85.4 67 101.7 22.2 9 45.7 14 70.1 14.7 38.8 0.5 77.8 0.5 114.3 0.5h56.9c37.2 0 74.4 0 111.8 0.4h1.2c43.5 0 77.7-21.7 93.9-59.5l4.8-11.1c11.3-26 22.9-52.9 30.1-82.8 22-90.9 44.9-188.2 63.4-283.8 7.4-37.9 1.6-68.8-17.4-91.8zM216.1 374.5h-11.9c-56.2 0-101.9 45.7-101.9 101.9v348.4c0 56.2 45.7 101.9 101.9 101.9h11.9c56.2 0 101.9-45.7 101.9-101.9V476.4c0.1-56.2-45.7-101.9-101.9-101.9z" fill="#bfbfbf"></path>
+                              </svg>
+                              <span style="padding-left: 4px">{item.totalLikes}</span>
+                            </div>
+                          </div>
+                        </div>
+                  </div>
+                  )
+                }
+              </div>
             </Card>
           </NGi>
           <NGi span={1}>
-            <Card title={'存储记录数'} style={{ height: '300px' }}>
-              {AssetOverviewLineData.length > 0 && <LineBox data={AssetOverviewLineData} title='' label='totalRecords' />}
+            <Card title={'数据表总数'} style={{height: '300px'}}>
+              {AssetOverviewLineData.length > 0 && <LineBox data={AssetOverviewLineData} title='' label='totalTables'/>}
             </Card>
           </NGi>
           <NGi span={1}>
-            <Card title={'API服务数'} style={{ height: '300px' }}>
-              {AssetOverviewLineData.length > 0 && <LineBox data={AssetOverviewLineData} title='' label='totalApiInterface' />}
+            <Card title={'数据存储量'} style={{height: '300px'}}>
+              {AssetOverviewLineData.length > 0 && <LineBox data={AssetOverviewLineData} title='' label='dataSize'/>}
+            </Card>
+          </NGi>
+          <NGi span={1}>
+            <Card title={'存储记录数'} style={{height: '300px'}}>
+              {AssetOverviewLineData.length > 0 &&
+                  <LineBox data={AssetOverviewLineData} title='' label='totalRecords'/>}
+            </Card>
+          </NGi>
+          <NGi span={1}>
+            <Card title={'API服务数'} style={{height: '300px'}}>
+              {AssetOverviewLineData.length > 0 &&
+                  <LineBox data={AssetOverviewLineData} title='' label='totalApiInterface'/>}
             </Card>
           </NGi>
           <NGi span={2}>
             <Card>
-              <NSpace justify='space-between' style={{ height: '40px' }}>
+              <NSpace justify='space-between' style={{height: '40px'}}>
                 <p style="font-size:16px;">API调用次数TOP10</p>
                 <NSelect
                     size='small'
@@ -189,7 +347,7 @@ const StateCard = defineComponent({
                 />
               </NSpace>
               <NDataTable
-                  columns={ApiTop10DataHeader.value}
+                  columns={ApiTop10DataHeader}
                   data={ApiTop10Data}
                   size='small'
                   striped
@@ -200,8 +358,8 @@ const StateCard = defineComponent({
 
             </Card>
           </NGi>
-        </NGrid >
-      </div >
+        </NGrid>
+      </div>
     )
   }
 })

@@ -42,13 +42,37 @@
         </div>
         <div class="cue-drag-layout__mainview" :style="{width: 'calc(100% - ' + (280 + 12) + 'px)'}">
           <div class="cue-crud cue-crud-v2">
-            <CrudHead title="全部数据" defineButton button-title="元数据采集" :loadingMeta="loadingMeta" @click-event="handleMetadata"/>
+            <CrudHead title="全部数据" defineButton button-title="元数据采集" :loadingMeta="loadingMeta" @click-event="handleMetadata">
+              <template v-slot:button-group>
+                <div>
+                  <el-button
+                      class="show-text"
+                      :class="{'active-button': paginationReactive.likeState, 'noActive-button': !paginationReactive.likeState}"
+                      @click="queryLike"
+                  >
+                    我的点赞
+                  </el-button>
+                </div>
+                <div>
+                  <el-button
+                      class="show-text"
+                      :class="{'active-button': paginationReactive.collectionState, 'noActive-button': !paginationReactive.collectionState}"
+                      @click="queryCollect"
+                  >
+                    我的收藏
+                  </el-button>
+                </div>
+              </template>
+            </CrudHead>
             <div class="crud-v2-condition" >
               <div class="cue-crud__header-condition">
                 <div class="cue-crud__header-content">
                   <el-form inline>
-                    <el-form-item label="表名/注释">
+                    <el-form-item label="表名">
                       <el-input type="text" style="width: 180px" clearable v-model="paginationReactive.sqlLineageName"/>
+                    </el-form-item>
+                    <el-form-item label="注释">
+                      <el-input type="text" style="width: 180px" clearable v-model="paginationReactive.notes"/>
                     </el-form-item>
                   </el-form>
                 </div>
@@ -58,83 +82,68 @@
               </div>
             </div>
             <div class="cue-crud__body">
-              <div class="cue-table">
-                <div class="cue-table-container">
-                  <div v-if="dataRef.length === 0" class="no-data">暂无数据</div>
-                  <div class="list-item mb16 bgf" v-for="item in dataRef" :key="item.id">
-                    <div class="top pb16">
-                      <div class="FBH FBJ t-title">
-                        <div class="t-left">
-                          <img class="l-icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMTNweCIgaGVpZ2h0PSIxNHB4IiB2aWV3Qm94PSIwIDAgMTMgMTQiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8IS0tIEdlbmVyYXRvcjogU2tldGNoIDYzLjEgKDkyNDUyKSAtIGh0dHBzOi8vc2tldGNoLmNvbSAtLT4KICAgIDx0aXRsZT5zLWt1PC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGcgaWQ9Iumhtemdoi0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4KICAgICAgICA8ZyBpZD0iMDfmlbDmja7lnLDlm74t5pWw5o2u5pCc57SiLee7k+aenOmhtS3mlbDmja7lpIfku70iIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNDkuMDAwMDAwLCAtOTI1LjAwMDAwMCkiPgogICAgICAgICAgICA8ZyBpZD0i57yW57uELTYiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDIyNC4wMDAwMDAsIDI0OC4wMDAwMDApIj4KICAgICAgICAgICAgICAgIDxnIGlkPSLnvJbnu4QtM+Wkh+S7vS02IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNC4wMDAwMDAsIDY3Mi4wMDAwMDApIj4KICAgICAgICAgICAgICAgICAgICA8ZyBpZD0icy1rdSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMC4wMDAwMDAsIDQuMDAwMDAwKSI+CiAgICAgICAgICAgICAgICAgICAgICAgIDxnIGlkPSLpobXpnaItMSIgb3BhY2l0eT0iMC40NSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMS44NjA0NjUsIDEuNDg4MzcyKSIgZmlsbD0iIzAwMDAwMCIgZmlsbC1ydWxlPSJub256ZXJvIj4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxnIGlkPSLnvJbnu4TlpIfku70tNCI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHBhdGggZD0iTTUuODg2NTExNjMsNi40MTExNjI3OSBDMi42NDkzMDIzMyw2LjQxMTE2Mjc5IDAuMDI2MDQ2NTExNiw0Ljk3NDg4MzcyIDAuMDI2MDQ2NTExNiwzLjIwNzQ0MTg2IEMwLjAyNjA0NjUxMTYsMS40NCAyLjY0OTMwMjMzLDAgNS44ODY1MTE2MywwIEM5LjEyMzcyMDkzLDAgMTEuNzUwNjk3NywxLjQzMjU1ODE0IDExLjc1MDY5NzcsMy4yMDM3MjA5MyBDMTEuNzUwNjk3Nyw0Ljk3NDg4MzcyIDkuMTI3NDQxODYsNi40MTExNjI3OSA1Ljg4NjUxMTYzLDYuNDExMTYyNzkgWiBNMTEuMjAzNzIwOSw5LjIxNjc0NDE5IEMxMS4yMzk4NjY3LDkuMTc0MjI5ODYgMTEuMjk0NDY4LDkuMTUyMDA0OTMgMTEuMzUwMDI5Niw5LjE1NzE5MDY4IEMxMS40MDU1OTEzLDkuMTYyMzc2NDMgMTEuNDU1MTM2Nyw5LjE5NDMyMTcyIDExLjQ4Mjc5MDcsOS4yNDI3OTA3IEMxMS42NTYwMzI5LDkuNTMzMjA0NjggMTEuNzQ4NTI1NCw5Ljg2NDYzNjI4IDExLjc1MDY5NzcsMTAuMjAyNzkwNyBDMTEuNzUwNjk3NywxMS45NzAyMzI2IDkuMTQ2MDQ2NTEsMTMuNDA2NTExNiA1Ljg4NjUxMTYzLDEzLjQwNjUxMTYgQzIuNjI2OTc2NzQsMTMuNDA2NTExNiAwLjAyNjA0NjUxMTYsMTEuOTcwMjMyNiAwLjAyNjA0NjUxMTYsMTAuMjAyNzkwNyBDMC4wMjgyMTg3ODk2LDkuODY0NjM2MjggMC4xMjA3MTEzMyw5LjUzMzIwNDY4IDAuMjkzOTUzNDg4LDkuMjQyNzkwNyBDMC4zMjEzNTQ4MzEsOS4xOTM1MzY1IDAuMzcxNjk3Nzc4LDkuMTYxMzcyOTUgMC40Mjc5MDY5NzcsOS4xNTcyMDkzIEMwLjQ4Mjk2NTIwMSw5LjE1MzAzMjU0IDAuNTM2NzYyMTEyLDkuMTc1MTAzMDcgMC41NzMwMjMyNTYsOS4yMTY3NDQxOSBDMS41MTA2OTc2NywxMC4zMTA2OTc3IDMuNTQ5NzY3NDQsMTEuMDc3MjA5MyA1Ljg4NjUxMTYzLDExLjA3NzIwOTMgQzguMjIzMjU1ODEsMTEuMDc3MjA5MyAxMC4yNjk3Njc0LDEwLjMxMDY5NzcgMTEuMjAzNzIwOSw5LjIxNjc0NDE5IFogTTExLjIwMzcyMDksNS43MjI3OTA3IEMxMS4yMzg4MjAyLDUuNjc5NTU3NjYgMTEuMjkzNDg4MSw1LjY1NzEyOTgyIDExLjM0ODgzNzIsNS42NjMyNTU4MSBDMTEuNDA0MzA1OSw1LjY2NjYyMzY5IDExLjQ1NDQ5LDUuNjk3MjkxNzIgMTEuNDgyNzkwNyw1Ljc0NTExNjI4IEMxMS42NTQxMDc4LDYuMDMzNjM2NDkgMTEuNzQ2NTAyNSw2LjM2MjE1MTE2IDExLjc1MDY5NzcsNi42OTc2NzQ0MiBDMTEuNzUwNjk3Nyw4LjQ2NTExNjI4IDkuMTQ2MDQ2NTEsOS44OTc2NzQ0MiA1Ljg4NjUxMTYzLDkuODk3Njc0NDIgQzIuNjI2OTc2NzQsOS44OTc2NzQ0MiAwLjAyNjA0NjUxMTYsOC40NzYyNzkwNyAwLjAyNjA0NjUxMTYsNi42OTc2NzQ0MiBDMC4wMjg4MDg3OTU4LDYuMzU4NDMwNzQgMC4xMjEyMzU2NDMsNi4wMjU5NTA4MyAwLjI5Mzk1MzQ4OCw1LjczMzk1MzQ5IEMwLjMyMTc1ODE1OSw1LjY4NTY0MjgyIDAuMzcyMjMxOTc3LDUuNjU0Nzk3NyAwLjQyNzkwNjk3Nyw1LjY1MjA5MzAyIEMwLjQ4Mjk2NTIwMSw1LjY0NzkxNjI2IDAuNTM2NzYyMTEyLDUuNjY5OTg2NzkgMC41NzMwMjMyNTYsNS43MTE2Mjc5MSBDMS41MTA2OTc2Nyw2LjgwMTg2MDQ3IDMuNTQ5NzY3NDQsNy41NzIwOTMwMiA1Ljg4NjUxMTYzLDcuNTcyMDkzMDIgQzguMjIzMjU1ODEsNy41NzIwOTMwMiAxMC4yNjk3Njc0LDYuODI3OTA2OTggMTEuMjAzNzIwOSw1LjcxMTYyNzkxIEwxMS4yMDM3MjA5LDUuNzIyNzkwNyBaIiBpZD0i5b2i54q2Ij48L3BhdGg+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2c+CiAgICAgICAgICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgICAgICAgICAgPHJlY3QgaWQ9IuefqeW9oiIgeD0iMCIgeT0iMCIgd2lkdGg9IjE1LjYzNTM0ODgiIGhlaWdodD0iMTUuNjM1MzQ4OCI+PC9yZWN0PgogICAgICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgPC9nPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+" alt="img">
-                          <a target="_blank" rel="noopener noreferrer" class="ml8 mr48 fs16" :title="item.sqlLineageName" @click="play(item)">{{ item.sqlLineageName }}</a>
+                <div class="cue-table">
+                  <div class="cue-table-container">
+                    <div v-if="dataRef.length === 0" class="no-data">暂无数据</div>
+                    <div class="list-item mb16 bgf" v-for="item in dataRef" :key="item.id">
+                      <div class="top pb16">
+                        <div class="FBH FBJ t-title">
+                          <div class="t-left">
+                            <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="18" height="18"><path d="M887 373H137c-22.09 0-40-17.91-40-40V135c0-22.09 17.91-40 40-40h750c22.09 0 40 17.91 40 40v198c0 22.09-17.91 40-40 40zM304 651H138c-22.09 0-40-17.91-40-40V445c0-22.09 17.91-40 40-40h166c22.09 0 40 17.91 40 40v166c0 22.09-17.91 40-40 40zM594.5 651h-166c-22.09 0-40-17.91-40-40V445c0-22.09 17.91-40 40-40h166c22.09 0 40 17.91 40 40v166c0 22.09-17.91 40-40 40zM885 651H719c-22.09 0-40-17.91-40-40V445c0-22.09 17.91-40 40-40h166c22.09 0 40 17.91 40 40v166c0 22.09-17.91 40-40 40z" p-id="28273" fill="#8a8a8a"></path><path d="M304 929H138c-22.09 0-40-17.91-40-40V723c0-22.09 17.91-40 40-40h166c22.09 0 40 17.91 40 40v166c0 22.09-17.91 40-40 40zM594.5 929h-166c-22.09 0-40-17.91-40-40V723c0-22.09 17.91-40 40-40h166c22.09 0 40 17.91 40 40v166c0 22.09-17.91 40-40 40zM885 929H719c-22.09 0-40-17.91-40-40V723c0-22.09 17.91-40 40-40h166c22.09 0 40 17.91 40 40v166c0 22.09-17.91 40-40 40z" fill="#8a8a8a"></path></svg>
+                            <a target="_blank" rel="noopener noreferrer" class="ml8 mr48 fs16" :title="item.sqlLineageName" @click="play(item)">{{ item.sqlLineageName }}</a>
+                          </div>
+                          <div class="FBH FBJ FBAC t-right">
+                            <div style="display: flex; align-items: center;">
+                              <div class="hand">
+                                <svg @click="handleLikeCollection(true, item.likeState, item.collectionState, item.sqlLineageName)" class="icon" viewBox="0 0 1024 1024"  xmlns="http://www.w3.org/2000/svg" width="15" height="15"><path d="M335.008 916.629333c-35.914667 22.314667-82.88 10.773333-104.693333-25.557333a77.333333 77.333333 0 0 1-8.96-57.429333l46.485333-198.24a13.141333 13.141333 0 0 0-4.021333-12.864l-152.16-132.586667c-31.605333-27.52-35.253333-75.648-8.234667-107.733333a75.68 75.68 0 0 1 51.733333-26.752L354.848 339.2c4.352-0.362667 8.245333-3.232 10.026667-7.594667l76.938666-188.170666c16.032-39.2 60.618667-57.92 99.52-41.461334a76.309333 76.309333 0 0 1 40.832 41.461334l76.938667 188.16c1.781333 4.373333 5.674667 7.253333 10.026667 7.605333l199.712 16.277333c41.877333 3.413333 72.885333 40.458667 69.568 82.517334a76.938667 76.938667 0 0 1-26.08 51.978666l-152.16 132.586667c-3.541333 3.082667-5.141333 8.074667-4.021334 12.853333l46.485334 198.24c9.621333 41.013333-15.36 82.336-56.138667 92.224a75.285333 75.285333 0 0 1-57.525333-9.237333l-170.976-106.24a11.296 11.296 0 0 0-12.010667 0l-170.986667 106.24z" :fill="item.collectionState ? '#F0D155' : '#bfbfbf'"></path></svg>
+                              </div>
+                              <span style="color: rgba(0, 0, 0, 0.15); padding: 0 8px">|</span>
+                              <div class="hand">
+                                <svg @click="handleLikeCollection(false, item.likeState, item.collectionState, item.sqlLineageName)" class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="15" height="15"><path d="M948.4 407.2c-29.2-35.5-76.9-35.5-92.6-35.5H730c10.2-55.2 18.9-119.4 0.2-187.1-12.8-46.6-36.3-79.7-72-101.1-18.7-11.2-38.1-16.9-57.8-16.9-51.8 0-90.6 38.4-96.4 95.7-2.2 21.4-4.2 41.7-9.3 59.1-19 63.9-65.4 112.7-108.3 151.8-16 14.4-33.1 40.2-33.3 69.2-0.6 77.6-0.7 155.5-0.7 235.1l-0.1 141.4c-0.2 47.3 25 85.4 67 101.7 22.2 9 45.7 14 70.1 14.7 38.8 0.5 77.8 0.5 114.3 0.5h56.9c37.2 0 74.4 0 111.8 0.4h1.2c43.5 0 77.7-21.7 93.9-59.5l4.8-11.1c11.3-26 22.9-52.9 30.1-82.8 22-90.9 44.9-188.2 63.4-283.8 7.4-37.9 1.6-68.8-17.4-91.8zM216.1 374.5h-11.9c-56.2 0-101.9 45.7-101.9 101.9v348.4c0 56.2 45.7 101.9 101.9 101.9h11.9c56.2 0 101.9-45.7 101.9-101.9V476.4c0.1-56.2-45.7-101.9-101.9-101.9z" :fill="item.likeState ? '#F0D155' : '#bfbfbf'"></path></svg>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                        <div class="FBH FBJ FBAC t-right"></div>
-                      </div>
-                      <div class="text-box notesPi">
-                        <span class="t-label">描述：</span>
-                        <span class="color25">{{ item.notes }}</span>
-                      </div>
-                      <div class="FBH FBJ">
-                        <div class="text-box">
-                          <span class="t-label">任务流：</span>
-                          <span class="t-content">{{ item.taskName }}</span>
+                        <div class="text-box notesPi">
+                          <span class="t-label">描述：</span>
+                          <span class="color25">{{ item.notes }}</span>
                         </div>
-                        <div class="text-box">
-                          <span class="t-label">数据库：</span>
-                          <span class="t-content">{{ item.dataSourceName }}</span>
+                        <div class="FBH FBJ">
+                          <div class="text-box">
+                            <span class="t-label">任务流：</span>
+                            <span class="t-content">{{ item.taskName }}</span>
+                          </div>
+                          <div class="text-box">
+                            <span class="t-label">数据库：</span>
+                            <span class="t-content">{{ item.dataSourceName }}</span>
+                          </div>
+                          <div class="text-box">
+                            <span class="t-label">数据库类型：</span>
+                            <span class="t-content">{{ item.dbType }}</span>
+                          </div>
                         </div>
-                        <div class="text-box">
-                          <span class="t-label">数据库类型：</span>
-                          <span class="t-content">{{ item.dbType }}</span>
+                      </div>
+                      <div class="bottom pt16 FBH FBJS">
+                        <div class="text-box-4">
+                          <span class="t-label">数据行数：</span>
+                          <span class="t-content text-break">{{ item.tableDataRow }}</span>
                         </div>
-                      </div>
-                    </div>
-                    <div class="bottom pt16 FBH FBJS">
-                      <div class="text-box-4">
-                        <span class="t-label">数据行数：</span>
-                        <span class="t-content text-break">{{ item.tableDataRow }}</span>
-                      </div>
-                      <div class="text-box-4">
-                        <span class="t-label">表大小：</span>
-                        <span class="t-content text-break">{{ item.tableDataLength }}</span>
-                      </div>
-                      <div class="text-box-4">
-                        <span class="t-label">添加时间：</span>
-                        <span class="t-content">{{ item.tableCreateTime }}</span>
-                      </div>
-                      <div class="text-box-4">
-                        <span class="t-label">修改时间：</span>
-                        <span class="t-content">{{ item.tableUpdateTime }}</span>
+                        <div class="text-box-4">
+                          <span class="t-label">表大小：</span>
+                          <span class="t-content text-break">{{ item.tableDataLength }}</span>
+                        </div>
+                        <div class="text-box-4">
+                          <span class="t-label">添加时间：</span>
+                          <span class="t-content">{{ item.tableCreateTime }}</span>
+                        </div>
+                        <div class="text-box-4">
+                          <span class="t-label">修改时间：</span>
+                          <span class="t-content">{{ item.tableUpdateTime }}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-<!--                  <el-table v-loading="loadingRef" :data="dataRef" show-overflow-tooltip border resizable highlight-current-row height="100%">
-                    <el-table-column type="expand" fixed>
-                      <template #default="props">
-                        <div style="margin: 6px">
-                          <p style="display: inline-block;padding-left: 50px">数据行数: {{ props.row.tableDataRow }}</p>
-                          <p style="display: inline-block;padding-left: 50px">表大小: {{ props.row.tableDataLength }}</p>
-                          <p style="display: inline-block;padding-left: 50px">创建时间: {{ props.row.tableCreateTime }}</p>
-                          <p style="padding: 10px 0 0 50px">更新时间: {{ props.row.tableUpdateTime }}</p>
-                        </div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column type="index" fixed label="序号" width="50" align="center"/>
-                    <el-table-column prop="sqlLineageName" label="表名" align="center"/>
-                    <el-table-column prop="notes" label="注释" align="center"/>
-                    <el-table-column prop="taskName" label="任务流" align="center"/>
-                    <el-table-column prop="dataSourceName" label="数据库" width="120" align="center"/>
-                    <el-table-column prop="dbType" label="数据库类型" width="120" align="center"/>
-                    <el-table-column fixed="right" label="操作" width="120" align="center">
-                      <template #default="scope">
-                        <el-button class="el-button&#45;&#45;text" size="small" @click="play(scope.row)">
-                          详情
-                        </el-button>
-                      </template>
-                    </el-table-column>
-                  </el-table>-->
                 </div>
-              </div>
               <div class="cue-crud__body-border-bottom"></div>
             </div>
             <div class="cue-crud__footer">
@@ -170,155 +179,188 @@ import {
   TableOutlined
 } from '@vicons/antd'
 import { NIcon, useMessage } from "naive-ui";
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import { CaretUp, CaretDown } from "@vicons/fa";
 import CrudHead from "@/components/cue/crud-header.vue"
 import {Add12Filled} from "@vicons/fluent";
 import utils from "@/utils";
+import {ElButton} from "element-plus";
+import {useUserStore} from "@/store/user/user";
+import {updateLikeCollection} from "@/service/modules/data-bussiness";
 
 const TableData = reactive({
   tableList: [],
   totalNum: 0
 })
 
-    const dataRef = ref([])
-    const router = useRouter()
-    const loadingRef = ref(true)
-    const loadingMeta = ref(false)
-    const showSpin = ref(false)
-    const message = useMessage()
-    const treeFolder = ref([])
-    const expandedKeys = ref([1]);
-    const pattern = ref('');
-    const getApiFolderUrl = utils.getUrl('interface_lineage/getTreeAll')
-    const paginationReactive = reactive({
-      page: 1,
-      pageSize: 10,
-      sqlLineageName: '',
-      apiTreeId: 1,
-      itemCount: 0
-    })
+const userStore = useUserStore()
+const dataRef = ref([])
+const router = useRouter()
+const loadingRef = ref(true)
+const loadingMeta = ref(false)
+const showSpin = ref(false)
+const message = useMessage()
+const treeFolder = ref([])
+const expandedKeys = ref([1]);
+const pattern = ref('');
+const route = useRoute()
+const getApiFolderUrl = utils.getUrl('interface_lineage/getTreeAll')
+const paginationReactive = reactive({
+  page: 1,
+  pageSize: 10,
+  sqlLineageName: '',
+  notes: '',
+  apiTreeId: 1,
+  userId: userStore.getUserInfo.id,
+  likeState: 0,
+  collectionState: 0,
+  itemCount: 0
+})
 
-    function query(
-        page,
-        pageSize = 10,
-        sqlLineageName = '',
-        apiTreeId = 1
-    ) {
-      const url = utils.getUrl('interface_lineage/getSqlLineageListByParams')
-      const params = {
-        'pageNum': page,
-        'pageSize': pageSize,
-        'sqlLineageName': sqlLineageName,
-        'apiTreeId': apiTreeId
-      }
-
-      axios
-          .post(url, params)
-          .then(function (response) {
-
-            TableData.tableList = response.data.data
-            TableData.totalNum = response.data.totalNum
-            TableData.tableList.forEach((item) => {
-              if (item.dbType === '0') {
-                item.dbType = 'mysql'
-              }
-              if (item.dbType === '5') {
-                item.dbType = 'oracle'
-              }
-              if (item.dbType === '2') {
-                item.dbType = 'hive'
-              }
-              if (item.dbType === '12') {
-                item.dbType = 'dm'
-              }
-            })
-            dataRef.value = TableData.tableList.map((v) => v)
-            paginationReactive.itemCount = TableData.totalNum
-            loadingRef.value = false
-          })
-          .catch(function (error) {
-            console.log(error)
-          })
-    }
-
-    function nodeProps ({option}) {
-      return {
-        onClick() {
-          paginationReactive.apiTreeId = option.id
-          handlePageChange(1, paginationReactive.pageSize)
-        }
-      }
-    }
-
-    function handleMetadata() {
-      let url = utils.getUrl('interface_lineage/sqlLineageExcute')
-      axios
-          .get(url)
-          .then(function () {
-
-            loadingMeta.value = true
-            message.info('采集中，请稍后查看')
-            setTimeout(() => {
-              loadingMeta.value = false
-            }, 2000)
-          })
-          .catch(function () {
-            message.error('采集数据失败，请咨询管理员')
-          })
-    }
-
-    function getApiFolder ()  {
-      showSpin.value = true
-      let params ={}
-      axios.post(getApiFolderUrl,params).then((res) => {
-        treeFolder.value = res.data.data
-        showSpin.value = false
-      })
-    }
-
-    function handlePageChange(currentPage, pageSize) {
-      if (!loadingRef.value) {
-        loadingRef.value = true
-        paginationReactive.page = currentPage
-        paginationReactive.pageSize = pageSize
-        query(
-            paginationReactive.page,
-            paginationReactive.pageSize,
-            paginationReactive.sqlLineageName,
-            paginationReactive.apiTreeId
-        )
-      }
-    }
-
-    function play(row) {
-      router.push({
-            name: 'assets-detail',
-            state: {tableName: row.sqlLineageName, tableComment: row.notes, dbType: row.dbType, fieldArray: row.fieldArray, backName: 'assets-catalog'}
+function query(
+    page,
+    pageSize = 10,
+    sqlLineageName = '',
+    notes = '',
+    apiTreeId = 1,
+    userId,
+    likeState,
+    collectionState,
+) {
+  const url = utils.getUrl('interface_lineage/getSqlLineageListByParams')
+  const params = {
+    'pageNum': page,
+    'pageSize': pageSize,
+    'sqlLineageName': sqlLineageName,
+    'notes': notes,
+    'apiTreeId': apiTreeId,
+    'userId': userId,
+    'likeState': likeState,
+    'collectionState': collectionState,
+  }
+  axios
+      .post(url, params)
+      .then(function (response) {
+        TableData.tableList = response.data.data
+        TableData.totalNum = response.data.totalNum
+        TableData.tableList.forEach((item) => {
+          if (item.dbType === '0') {
+            item.dbType = 'mysql'
           }
-      )
+          if (item.dbType === '5') {
+            item.dbType = 'oracle'
+          }
+          if (item.dbType === '2') {
+            item.dbType = 'hive'
+          }
+          if (item.dbType === '12') {
+            item.dbType = 'dm'
+          }
+        })
+        dataRef.value = TableData.tableList.map((v) => v)
+        paginationReactive.itemCount = TableData.totalNum
+        loadingRef.value = false
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+}
+function nodeProps ({option}) {
+  return {
+    onClick() {
+      paginationReactive.apiTreeId = option.id
+      handlePageChange(1, paginationReactive.pageSize)
     }
+  }
+}
+function queryLike () {
+  paginationReactive.likeState = 1 - paginationReactive.likeState
+  handlePageChange(1, paginationReactive.pageSize)
+}
+function queryCollect () {
+  paginationReactive.collectionState = 1 - paginationReactive.collectionState
+  handlePageChange(1, paginationReactive.pageSize)
+}
 
-    function onExpandedKeys(keys) {
-      expandedKeys.value = keys;
-    }
+async function handleLikeCollection(ifCollection, initLike, initCollection, tableName) {
+  let params = {
+    userId: userStore.getUserInfo.id,
+    sqllineageName: tableName,
+    likeState: initLike,
+    collectionState: initCollection,
+  }
+  if (ifCollection) {
+    params.collectionState = 1 - initCollection
+  } else {
+    params.likeState = 1 - initLike
+  }
+  await updateLikeCollection(params)
+  handlePageChange(paginationReactive.page, paginationReactive.pageSize)
+}
 
-    function packHandle() {
-      if (expandedKeys.value.length) {
-        expandedKeys.value = [];
-      } else {
-        setId(unref(treeFolder.value))
+function handleMetadata() {
+  let url = utils.getUrl('interface_lineage/sqlLineageExcute')
+  loadingMeta.value = true
+  message.info('采集中，请稍后查看')
+  axios
+      .get(url)
+      .then(function () {
+        loadingMeta.value = false
+      })
+      .catch(function () {
+        message.error('采集数据失败，请咨询管理员')
+      })
+}
+function getApiFolder ()  {
+  showSpin.value = true
+  let params ={}
+  axios.post(getApiFolderUrl,params).then((res) => {
+    treeFolder.value = res.data.data
+    showSpin.value = false
+  })
+}
+function handlePageChange(currentPage, pageSize) {
+  if (!loadingRef.value) {
+    loadingRef.value = true
+    paginationReactive.page = currentPage
+    paginationReactive.pageSize = pageSize
+    query(
+        paginationReactive.page,
+        paginationReactive.pageSize,
+        paginationReactive.sqlLineageName,
+        paginationReactive.notes,
+        paginationReactive.apiTreeId,
+        paginationReactive.userId,
+        paginationReactive.likeState,
+        paginationReactive.collectionState
+    )
+  }
+}
+function play(row) {
+  router.push({
+        name: 'assets-detail',
+        state: {tableName: row.sqlLineageName, tableComment: row.notes, dbType: row.dbType, fieldArray: row.fieldArray, backName: 'assets-catalog'}
       }
+  )
+}
+function onExpandedKeys(keys) {
+  expandedKeys.value = keys;
+}
+function packHandle() {
+  if (expandedKeys.value.length) {
+    expandedKeys.value = [];
+  } else {
+    setId(unref(treeFolder.value))
+  }
+}
+function setId(datas) { //遍历树  获取id数组
+  for (let i in datas) {
+    expandedKeys.value.push(datas[i].id)  // 遍历项目满足条件后的操作
+    if (datas[i].children) {  //存在子节点就递归
+      setId(datas[i].children);
     }
-
-    function setId(datas) { //遍历树  获取id数组
-      for (let i in datas) {
-        expandedKeys.value.push(datas[i].id)  // 遍历项目满足条件后的操作
-        if (datas[i].children) {  //存在子节点就递归
-          setId(datas[i].children);
-        }
-      }
-    }
+  }
+}
 
 function menuIcon({ option }) {
   switch (option.type) {
@@ -361,15 +403,24 @@ function menuIcon({ option }) {
   }
 }
 
-    onMounted(() => {
-      getApiFolder()
-      query(
-          paginationReactive.page,
-          paginationReactive.pageSize,
-          paginationReactive.sqlLineageName,
-          paginationReactive.apiTreeId
-      )
-    })
+onMounted(() => {
+  getApiFolder()
+  if(route.query.type === 'collect'){
+    paginationReactive.collectionState = 1
+  } else if(route.query.type === 'like'){
+    paginationReactive.likeState = 1
+  }
+  query(
+      paginationReactive.page,
+      paginationReactive.pageSize,
+      paginationReactive.sqlLineageName,
+      paginationReactive.notes,
+      paginationReactive.apiTreeId,
+      paginationReactive.userId,
+      paginationReactive.likeState,
+      paginationReactive.collectionState
+  )
+})
 </script>
 
 <style scoped lang="scss">
@@ -512,6 +563,22 @@ a {
   display: flex;              /* 启用Flexbox布局 */
   justify-content: center;    /* 在水平方向上居中 */
   align-items: center;
+}
+
+.active-button {
+  color: #4698EBFF !important;
+  border-color: #C8E0F9FF !important;
+  background-color: #EDF5FDFF !important;
+}
+
+.noActive-button {
+  color: #000000 !important;
+  border-color: #F1F2F4FF !important;
+  background-color: #F1F2F4FF !important;
+}
+
+.hand {
+  cursor: pointer;
 }
 
 </style>
