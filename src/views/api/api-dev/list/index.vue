@@ -747,7 +747,7 @@
       router.push({
         path: '/service/api-dev-step',
         query: { apiId: row.apiId },
-        state: {type: checkRow.value[0]}
+        state: {type: row.apiFlag}
       })
     }
   }

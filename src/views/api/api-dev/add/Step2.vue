@@ -204,6 +204,8 @@ function nextStep2_1(value) {
   formValue.value.apiDatasourceTable = value.apiDatasourceTable
   if(history.state.type === "标签API") {
     formValue.value.codeValue = 'SELECT tag_id,tag_value,dw FROM ' + value.apiDatasourceTable
+    formValue.value.dataBaseLabelClassTypeNum = value.dataBaseLabelClassTypeNum
+    formValue.value.dataBaseLabelId = value.dataBaseLabelId
   }
 }
 
@@ -288,8 +290,6 @@ onMounted(() => {
   if (route.query.apiId !== undefined) {
     getInitData()
   }
-  console.log(history.state.type)
-  console.log(currentStep.value)
 })
 </script>
 

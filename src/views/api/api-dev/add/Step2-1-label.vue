@@ -110,8 +110,7 @@
     })
   }
 
-  function submitValue(){
-    formValue.value.apiDatasourceTable = sList.value?.find((obj: any) => obj.labelName === formValue.value.dataBaseLabelId).tableName
+  function queryCol() {
     const url = utils.getUrl('apiService/getColumnsByTable')
     const params = {
       type : formValue.value.apiDatasourceType,
@@ -121,6 +120,11 @@
     axios.post(url, params).then(function (response) {
       colList.value = response.data.data
     })
+  }
+
+  async function submitValue(){
+    formValue.value.apiDatasourceTable = sList.value.find((obj: any) => obj.labelName === formValue.value.dataBaseLabelId).tableName
+    await queryCol()
     emit('nextStep2_1', formValue.value)
   }
 
@@ -136,7 +140,7 @@
           queryDataSource()
           formValue.value.dataBaseLabelId = response.data.obj.dataBaseLabelId
           formValue.value.apiDatasourceTable = response.data.obj.apiDatasourceTable
-          queryCol(formValue.value.apiDatasourceTable)
+          queryCol()
         })
         .catch(function (error) {
           console.log(error)
@@ -144,11 +148,11 @@
   }
 
   onMounted(() => {
+    getDataWarehouse()
+    querySourceType()
     if (!!route.query.apiId) {
       getInitData()
     }
-    getDataWarehouse()
-    querySourceType()
   })
 </script>
 
