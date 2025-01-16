@@ -235,7 +235,7 @@ async function analysisSql() {
 
 function formSubmit() {
   if((history.state.type === '自定义SQL' && !formValue.value.apiDatasourceTable) || (history.state.type === '标签API' && !formValue.value.dataBaseLabelId)){
-    message.error('请先选择数据源!')
+    message.error('请先配置数据源!')
   }
   else{
     loading.value = true
